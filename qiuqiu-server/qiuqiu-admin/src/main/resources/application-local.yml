@@ -1,0 +1,95 @@
+########################################################
+###common
+########################################################
+app:
+  db:
+    ip: localhost
+    port: 33306
+    username: root
+    password:
+    name: test
+  filesever:
+    host: localhost
+    path: /tmp
+    thumbPath: /tmp/testUpload/image
+  redis:
+    host: localhost
+    port: 36379
+    database: 0
+########################################################
+### static resources and upload load file
+########################################################
+base_assets_url: http://${app.filesever.host}/${spring.application.name}/assets/
+base_assets_upload_path: ${app.filesever.path}/${spring.application.name}/upload/
+base_assets_upload_url: http://${app.filesever.host}/${spring.application.name}/upload/
+base_thumb_path: ${app.filesever.thumbPath}/${spring.application.name}/
+########################################################
+### 文档生成地址
+########################################################
+document:
+  project-path: /Users/penghuiping/Programming/workspace-jintianli/企业微信/代码/wx-company/wx-company-admin
+########################################################
+### LOG
+########################################################
+logging:
+  config: classpath:logback.xml
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.jdbc: INFO
+    com.php25: INFO
+    org.springframework.security: INFO
+  file:
+    name: logs/wxcompany-admin.log
+spring:
+  ########################################################
+  ###datasource
+  ########################################################
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${app.db.username}
+    password: ${app.db.password}
+    minIdle: 1
+    connectionTimeout: 30000
+    idleTimeout: 300000
+    maxLifetime: 1800000
+    maximumPoolSize: 15
+    poolName: hikariDataSource
+  ########################################################
+  ### redis
+  ########################################################
+  redis:
+    host: ${app.redis.host}
+    port: ${app.redis.port}
+    database: ${app.redis.database}
+    #    password: ${app.redis.password}
+    ssl: false
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1s
+        min-idle: 0
+    timeout: 5s
+  ########################################################
+  ### servlet
+  ########################################################
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+########################################################
+### 服务器运行时信息
+########################################################
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  server:
+    port: 9091
+  metrics:
+    tags:
+      application: ${spring.application.name}
