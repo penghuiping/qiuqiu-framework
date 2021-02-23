@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableScheduling
 @ComponentScan(basePackages = {"com.php25"})
-public class WxCompanyAdminApplication {
+public class QiuQiuAdminApplication {
     public static void main(String[] args) {
-        SpringApplication.run(WxCompanyAdminApplication.class, args);
+        SpringApplication.run(QiuQiuAdminApplication.class, args);
     }
 }
