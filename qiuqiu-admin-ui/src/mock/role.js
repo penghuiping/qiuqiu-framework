@@ -76,3 +76,38 @@ Mock.mock(ApiConstant.PERMISSION_GET_ALL, 'POST', function () {
     reportPageList
   ], null)
 })
+
+Mock.mock(ApiConstant.PERMISSION_GET_BY_ROLE_ID, 'POST', function (options) {
+  const requestBody = JSON.parse(options.body)
+  console.log('requestBody:', requestBody)
+  if (requestBody.roleId === '1') {
+    // admin
+    return new JsonResponse(0, [
+      MockData.permissions.home,
+      MockData.permissions.permissionManagement,
+      MockData.permissions.mediaManagement,
+      MockData.permissions.reportManagement,
+      MockData.permissions.userPageList,
+      MockData.permissions.userAdd,
+      MockData.permissions.userDetail,
+      MockData.permissions.userUpdate,
+      MockData.permissions.userDelete,
+      MockData.permissions.rolePageList,
+      MockData.permissions.roleAdd,
+      MockData.permissions.roleDetail,
+      MockData.permissions.roleUpdate,
+      MockData.permissions.roleDelete,
+      MockData.permissions.departmentPageList,
+      MockData.permissions.mediaPageList,
+      MockData.permissions.reportPageList
+    ], null)
+  } else if (requestBody.roleId === '2') {
+    // common_role
+    return new JsonResponse(0, [
+      MockData.permissions.home,
+      MockData.permissions.departmentPageList,
+      MockData.permissions.mediaPageList,
+      MockData.permissions.reportPageList
+    ], null)
+  }
+})

@@ -100,7 +100,7 @@
         <el-form-item label="权限:" :label-width="dialogFormLabelWidth">
           <el-tree show-checkbox
                    node-key="id"
-                   :default-checked-keys="[2,3,4]"
+                   :default-checked-keys="permissionChecked"
                    :default-expand-all="true"
                    :props="treeProps"
                    :data="permissionTree"></el-tree>
@@ -133,6 +133,8 @@ export default class Role extends BaseVue {
     label: 'label'
   }
 
+  private permissionChecked: string[] = []
+
   mounted () {
     this.goToPage(1, this.pageSize)
   }
@@ -143,6 +145,13 @@ export default class Role extends BaseVue {
     const res = await RoleApi.detail(row.id)
     this.roleDetail = res.data.returnObject
     this.roleDetailDialogVisible = true
+
+    const checkedPermissions = this.roleDetail.permissions
+    this.permissionChecked = []
+    for (let i = 0; i < checkedPermissions.length; i++) {
+      const permission = checkedPermissions[i]
+      this.permissionChecked.push(permission.id)
+    }
 
     const res1 = await RoleApi.getAllSystemPermissions()
     this.permissionTree = res1.data.returnObject

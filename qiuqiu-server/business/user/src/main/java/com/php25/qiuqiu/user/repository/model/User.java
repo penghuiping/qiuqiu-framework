@@ -7,6 +7,8 @@ import com.php25.common.db.core.annotation.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +19,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table("t_user")
-public class User {
+public class User implements Persistable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +44,12 @@ public class User {
     @Column
     private Integer enable;
 
+    @Transient
+    private Boolean isNew;
+
+
+    @Override
+    public boolean isNew() {
+        return this.isNew;
+    }
 }

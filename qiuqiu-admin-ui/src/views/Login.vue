@@ -12,10 +12,10 @@
       </el-form-item>
       <el-row justify="space-between" type="flex">
         <el-form-item>
-          <el-checkbox v-model="loginForm.checked">记住密码</el-checkbox>
+          <el-checkbox v-model="loginForm.checked" id="rememberPwd">记住密码</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <a @click="forgetPwd()">忘记密码?</a>
+          <a @click="forgetPwd()" id="forgetPwdBtn">忘记密码?</a>
         </el-form-item>
       </el-row>
       <el-form-item>
@@ -82,43 +82,76 @@ export default class Login extends BaseVue {
 </script>
 
 <style lang="scss" scoped>
+//PC 端
+@media (min-width: 992px) {
+  .loginFormWrapper {
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    text-align: center;
+  }
 
-.loginFormWrapper {
-  width: 100vw;
-  height: 100vh;
-  background-color: black;
-  text-align: center;
-}
+  a,label{
+    color: white;
+  }
 
-a,label{
-  color: white;
-}
-
-.loginForm {
-  width: 500px;
-  height: 500px;
-}
-
-@media screen and (max-width: 500px) {
   .loginForm {
+    width: 500px;
+    height: 500px;
+  }
+
+  .loginFormTitle {
+    font-size: 30px;
+    color: white;
+  }
+
+  #loginBtn {
     width: 100%;
-    height: 100%;
+  }
+
+  .account {
+    color: yellow !important;
+    display: block;
   }
 }
 
-.loginFormTitle {
-  font-size: 30px;
-  color: white;
+//移动端
+@media (max-width: 991px) {
+  .loginFormWrapper {
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    text-align: center;
+  }
+
+  a,label{
+    color: white;
+  }
+
+  .loginForm {
+    width: 90%;
+    height: 500px;
+  }
+
+  .loginFormTitle {
+    font-size: 20px;
+    color: white;
+  }
+
+  #loginBtn {
+    width: 100%;
+  }
+
+  .account {
+    color: yellow !important;
+    display: block;
+  }
+
+  #forgetPwdBtn,#rememberPwd{
+    font-size: 5px !important;
+  }
 }
 
-#loginBtn {
-  width: 100%;
-}
-
-.account {
-  color: yellow !important;
-  display: block;
-}
 </style>
 
 <style scoped>

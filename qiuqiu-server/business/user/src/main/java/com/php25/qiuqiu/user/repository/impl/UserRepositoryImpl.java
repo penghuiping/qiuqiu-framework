@@ -4,6 +4,7 @@ import com.php25.common.db.DbType;
 import com.php25.common.db.Queries;
 import com.php25.common.db.QueriesExecute;
 import com.php25.common.db.core.sql.SqlParams;
+import com.php25.common.db.repository.BaseDbRepositoryImpl;
 import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.repository.model.User;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,15 +17,10 @@ import java.util.Optional;
  * @date 2021/2/3 14:51
  */
 @Component
-public class UserRepositoryImpl implements UserRepository {
+public class UserRepositoryImpl extends BaseDbRepositoryImpl<User,Long> implements UserRepository {
 
-    private final DbType dbType;
-
-    private final JdbcTemplate jdbcTemplate;
-
-    public UserRepositoryImpl(DbType dbType, JdbcTemplate jdbcTemplate) {
-        this.dbType = dbType;
-        this.jdbcTemplate = jdbcTemplate;
+    public UserRepositoryImpl(JdbcTemplate jdbcTemplate, DbType dbType) {
+        super(jdbcTemplate, dbType);
     }
 
     @Override

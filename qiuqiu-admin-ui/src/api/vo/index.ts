@@ -26,6 +26,7 @@ class ElementUiTreeVo {
   id: string
   label: string
   children: ElementUiTreeVo[]
+  disabled = true
 
   constructor (id: string, label: string, children: ElementUiTreeVo[]) {
     this.id = id

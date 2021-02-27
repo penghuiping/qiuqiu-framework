@@ -75,9 +75,20 @@
       <el-table-column
         fixed="right"
         label="操作"
-        width="150">
+        width="200">
         <template slot-scope="scope">
-          <el-button @click="detailInfo(scope.row)" type="text" size="small" v-if="permissionExists(permissions.USER_DETAIL)">查看</el-button>
+          <el-button
+            size="small"
+            type="text"
+            @click="detailInfo(scope.row)"  v-if="permissionExists(permissions.USER_DETAIL)">
+            查看
+          </el-button>
+          <el-button
+            size="small"
+            type="text"
+            @click="updateRow(scope.row)"  v-if="permissionExists(permissions.USER_UPDATE)">
+            编辑
+          </el-button>
           <el-button
             size="small"
             type="text"
@@ -287,6 +298,10 @@ export default class User extends BaseVue {
         message: '已取消删除'
       })
     })
+  }
+
+  updateRow (row: UserListVo) {
+    console.log('更新信息:', row)
   }
 
   // 查看详情按钮操作
