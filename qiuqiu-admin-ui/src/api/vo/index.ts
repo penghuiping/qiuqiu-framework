@@ -50,16 +50,26 @@ class UserListVo {
   username: string
   nickname: string
   mobile: string
+  department: string
   roles: string
   createTime: string
   lastModifiedTime: string
   enable: string
 
-  constructor (id: string, username: string, nickname: string, mobile: string, roles: string, createTime: string, lastModifiedTime: string, enable: string) {
+  constructor (id: string,
+    username: string,
+    nickname: string,
+    mobile: string,
+    department: string,
+    roles: string,
+    createTime: string,
+    lastModifiedTime: string,
+    enable: string) {
     this.id = id
     this.username = username
     this.nickname = nickname
     this.mobile = mobile
+    this.department = department
     this.roles = roles
     this.createTime = createTime
     this.lastModifiedTime = lastModifiedTime
@@ -72,17 +82,28 @@ class UserDetailVo {
   username: string
   nickname: string
   mobile: string
+  department: string
   roles: string
   createTime: string
   lastModifiedTime: string
   enable: string
   permissions: string[]
 
-  constructor (id: string, username: string, nickname: string, mobile: string, roles: string, createTime: string, lastModifiedTime: string, enable: string, permissions: string[]) {
+  constructor (id: string,
+    username: string,
+    nickname: string,
+    mobile: string,
+    department: string,
+    roles: string,
+    createTime: string,
+    lastModifiedTime: string,
+    enable: string,
+    permissions: string[]) {
     this.id = id
     this.username = username
     this.nickname = nickname
     this.mobile = mobile
+    this.department = department
     this.roles = roles
     this.createTime = createTime
     this.lastModifiedTime = lastModifiedTime
@@ -96,7 +117,9 @@ class RoleVo {
   name: string
   description: string
 
-  constructor (id: string, name: string, description: string) {
+  constructor (id: string,
+    name: string,
+    description: string) {
     this.id = id
     this.name = name
     this.description = description
@@ -111,7 +134,12 @@ class RoleListVo {
   lastModifiedTime: string
   enable: string
 
-  constructor (id: string, name: string, description: string, createTime: string, lastModifiedTime: string, enable: string) {
+  constructor (id: string,
+    name: string,
+    description: string,
+    createTime: string,
+    lastModifiedTime: string,
+    enable: string) {
     this.id = id
     this.name = name
     this.description = description
@@ -134,7 +162,13 @@ class RoleDetailVo {
     return new RoleDetailVo('', '', '', [], '', '', '')
   }
 
-  constructor (id: string, name: string, description: string, permissions: PermissionVo[], createTime: string, lastModifiedTime: string, enable: string) {
+  constructor (id: string,
+    name: string,
+    description: string,
+    permissions: PermissionVo[],
+    createTime: string,
+    lastModifiedTime: string,
+    enable: string) {
     this.id = id
     this.name = name
     this.description = description
@@ -151,7 +185,10 @@ class PermissionVo {
   description: string
   parentId: string
 
-  constructor (id: string, name: string, description: string, parentId: string) {
+  constructor (id: string,
+    name: string,
+    description: string,
+    parentId: string) {
     this.id = id
     this.name = name
     this.description = description
@@ -159,4 +196,33 @@ class PermissionVo {
   }
 }
 
-export { JsonResponse, ElementUiTreeVo, TokenVo, PageVo, UserListVo, UserDetailVo, RoleVo, RoleListVo, RoleDetailVo, PermissionVo }
+class DepartmentVo {
+  id: string
+  name: string
+  description: string
+  parentId: string
+
+  constructor (id: string,
+    name: string,
+    description: string,
+    parentId: string) {
+    this.id = id
+    this.name = name
+    this.description = description
+    this.parentId = parentId
+  }
+}
+
+export {
+  JsonResponse,
+  ElementUiTreeVo,
+  TokenVo,
+  PageVo,
+  UserListVo,
+  UserDetailVo,
+  RoleVo,
+  RoleListVo,
+  RoleDetailVo,
+  PermissionVo,
+  DepartmentVo
+}

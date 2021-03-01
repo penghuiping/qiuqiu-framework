@@ -13,6 +13,12 @@ class RoleApi {
     })
   }
 
+  public static delete (id: string): Promise<AxiosResponse<JsonResponse<boolean>>> {
+    return axios.post(ApiConstant.ROLE_DELETE, {
+      id: id
+    })
+  }
+
   public static page (pageNum: number, pageSize: number): Promise<AxiosResponse<JsonResponse<PageVo<RoleListVo>>>> {
     return axios.post(ApiConstant.ROLE_PAGE, {
       pageNum: pageNum,

@@ -1,5 +1,8 @@
-import { PermissionVo, RoleListVo } from '@/api/vo'
+import { DepartmentVo, PermissionVo, RoleListVo, UserListVo } from '@/api/vo'
 
+/**
+ * 权限相关mock数据
+ */
 const home = new PermissionVo('1', '_home', '首页', '')
 const permissionManagement = new PermissionVo('2', '_permission_management', '权限管理', '')
 const mediaManagement = new PermissionVo('3', '_media_management', '媒体管理', '')
@@ -22,75 +25,36 @@ const departmentPageList = new PermissionVo('15', '_department_page_list', '部�
 const mediaPageList = new PermissionVo('16', '_media_page_list', '媒体列表', '3')
 const reportPageList = new PermissionVo('17', '_report_page_list', '报表列表', '4')
 
+/**
+ * 角色相关mock数据
+ */
 const adminRole = new RoleListVo('1', 'admin', '超级管理员', '2021-01-01 10:00:00', '2021-01-01 10:00:00', '1')
 const commonUserRole = new RoleListVo('2', 'common_user', '普通用户', '2021-01-01 10:00:00', '2021-01-01 10:00:00', '1')
 
-const admin =
-  {
-    id: '1',
-    username: 'Admin',
-    nickname: '超级管理员',
-    mobile: '18812345678',
-    roles: '超级管理员',
-    createTime: '2020-11-1 10:00:00',
-    lastModifiedTime: '2020-11-1 10:00:00',
-    enable: '1'
-  }
+/**
+ * 部门相关mock数据
+ */
+const rootDepartment = new DepartmentVo('1', '总部', '总部', '')
+const shangHaiDepartment = new DepartmentVo('2', '上海分部', '上海分部', '1')
+const beiJinDepartment = new DepartmentVo('3', '北京分部', '北京分部', '1')
+const minHangDepartment = new DepartmentVo('4', '上海闵行分部', '上海闵行分部', '2')
+const xuHuiDepartment = new DepartmentVo('5', '上海徐汇分部', '上海徐汇分部', '2')
 
-const mary = {
-  id: '2',
-  username: 'Mary',
-  nickname: '玛丽',
-  mobile: '18812345677',
-  roles: '普通用户',
-  createTime: '2020-11-1 10:00:00',
-  lastModifiedTime: '2020-11-1 10:00:00',
-  enable: '1'
-}
-
-const tom = {
-  id: '3',
-  username: 'Tom',
-  nickname: '汤姆',
-  mobile: '18812345676',
-  roles: '普通用户',
-  createTime: '2020-11-1 10:00:00',
-  lastModifiedTime: '2020-11-1 10:00:00',
-  enable: '1'
-}
-
-const ted = {
-  id: '4',
-  username: 'Ted',
-  nickname: '泰德',
-  mobile: '18812345675',
-  roles: '普通用户',
-  createTime: '2020-11-1 10:00:00',
-  lastModifiedTime: '2020-11-1 10:00:00',
-  enable: '1'
-}
-
-const jack = {
-  id: '5',
-  username: 'Jack',
-  nickname: '杰克',
-  mobile: '18812345674',
-  roles: '普通用户',
-  createTime: '2020-11-1 10:00:00',
-  lastModifiedTime: '2020-11-1 10:00:00',
-  enable: '1'
-}
-
-const alice = {
-  id: '6',
-  username: 'Alice',
-  nickname: '爱丽丝',
-  mobile: '18812345673',
-  roles: '普通用户',
-  createTime: '2020-11-1 10:00:00',
-  lastModifiedTime: '2020-11-1 10:00:00',
-  enable: '1'
-}
+/**
+ * 用户相关mock数据
+ */
+const admin = new UserListVo('1', 'Admin', '超级管理员', '18812345678', '总部',
+  '超级管理员', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
+const mary = new UserListVo('2', 'Mary', '玛丽', '18812345677', '上海分部',
+  '普通用户', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
+const tom = new UserListVo('3', 'Tom', '汤姆', '18812345676', '上海闵行分部',
+  '普通用户', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
+const ted = new UserListVo('4', 'Ted', '泰德', '18812345675', '上海徐汇分部',
+  '普通用户', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
+const jack = new UserListVo('5', 'Jack', '杰克', '18812345674', '上海闵行分部',
+  '普通用户', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
+const alice = new UserListVo('6', 'Alice', '爱丽丝', '18812345673', '北京分部',
+  '普通用户', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
 
 class MockData {
   static permissions = {
@@ -125,6 +89,14 @@ class MockData {
   static roles = {
     adminRole: adminRole,
     commonUserRole: commonUserRole
+  }
+
+  static departments = {
+    rootDepartment: rootDepartment,
+    shangHaiDepartment: shangHaiDepartment,
+    beiJinDepartment: beiJinDepartment,
+    minHangDepartment: minHangDepartment,
+    xuHuiDepartment: xuHuiDepartment
   }
 }
 

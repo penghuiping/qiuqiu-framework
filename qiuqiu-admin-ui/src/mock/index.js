@@ -6,3 +6,4 @@ Mock.setup({
 
 require('./user')
 require('./role')
+require('./department')

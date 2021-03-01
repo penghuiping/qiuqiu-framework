@@ -55,6 +55,11 @@
         width="150">
       </el-table-column>
       <el-table-column
+        label="部门名"
+        prop="department"
+        width="150">
+      </el-table-column>
+      <el-table-column
         label="创建时间"
         prop="createTime"
         width="150">
@@ -176,6 +181,37 @@
         <el-button type="primary" @click="handleCreateUserConfirm">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!--更新用户信息表单-->
+    <el-dialog title="用户更新" :visible.sync="userUpdateDialogVisible">
+      <el-form :model="userDetail" ref="userAddForm" :rules="rules">
+        <el-form-item label="用户名:" :label-width="dialogFormLabelWidth" prop="username">
+          <el-input v-model="userDetail.username"></el-input>
+        </el-form-item>
+        <el-form-item label="用户昵称:" :label-width="dialogFormLabelWidth" prop="nickname">
+          <el-input v-model="userDetail.nickname"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号:" :label-width="dialogFormLabelWidth" prop="mobile">
+          <el-input v-model="userDetail.mobile"></el-input>
+        </el-form-item>
+        <el-form-item label="角色名:" :label-width="dialogFormLabelWidth" prop="roles">
+          <el-select v-model="userDetail.roles" placeholder="请选择角色">
+            <el-option v-for="item in roles" :key=item.id :label=item.description :value=item.name ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth" prop="enable">
+          <el-switch
+            v-model="userDetail.enable"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="userUpdateDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleUpdateUserConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -198,6 +234,7 @@ export default class User extends BaseVue {
   private tableData: UserListVo[] = []
   private userDetailDialogVisible = false
   private userAddDialogVisible = false
+  private userUpdateDialogVisible = false
   private hideOnSinglePage = false
   private loading = true
   private dialogFormLabelWidth = '120px'
@@ -301,7 +338,8 @@ export default class User extends BaseVue {
   }
 
   updateRow (row: UserListVo) {
-    console.log('更新信息:', row)
+    this.userDetail = row
+    this.userUpdateDialogVisible = true
   }
 
   // 查看详情按钮操作
@@ -348,6 +386,14 @@ export default class User extends BaseVue {
     (this.$refs.userAddForm as ElForm).validate(async valid => {
       if (valid) {
         this.userAddDialogVisible = false
+      }
+    })
+  }
+
+  handleUpdateUserConfirm () {
+    (this.$refs.userAddForm as ElForm).validate(async valid => {
+      if (valid) {
+        this.userUpdateDialogVisible = false
       }
     })
   }

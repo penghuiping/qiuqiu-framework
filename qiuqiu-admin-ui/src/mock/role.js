@@ -49,21 +49,66 @@ Mock.mock(ApiConstant.ROLE_PAGE, 'post', function (options) {
 })
 
 Mock.mock(ApiConstant.PERMISSION_GET_ALL, 'POST', function () {
-  const home = new ElementUiTreeVo(MockData.permissions.home.id, MockData.permissions.home.description, [])
-  const permissionManagement = new ElementUiTreeVo(MockData.permissions.permissionManagement.id, MockData.permissions.permissionManagement.description, [])
-  const userPageList = new ElementUiTreeVo(MockData.permissions.userPageList.id, MockData.permissions.userPageList.description, [])
-  const userDetail = new ElementUiTreeVo(MockData.permissions.userDetail.id, MockData.permissions.userDetail.description, [])
-  const userAdd = new ElementUiTreeVo(MockData.permissions.userAdd.id, MockData.permissions.userAdd.description, [])
-  const userDelete = new ElementUiTreeVo(MockData.permissions.userDelete.id, MockData.permissions.userDelete.description, [])
-  const userUpdate = new ElementUiTreeVo(MockData.permissions.userUpdate.id, MockData.permissions.userUpdate.description, [])
-  const rolePageList = new ElementUiTreeVo(MockData.permissions.rolePageList.id, MockData.permissions.rolePageList.description, [])
-  const roleDetail = new ElementUiTreeVo(MockData.permissions.roleDetail.id, MockData.permissions.roleDetail.description, [])
-  const roleDelete = new ElementUiTreeVo(MockData.permissions.roleDelete.id, MockData.permissions.roleDelete.description, [])
-  const roleAdd = new ElementUiTreeVo(MockData.permissions.roleAdd.id, MockData.permissions.roleAdd.description, [])
-  const roleUpdate = new ElementUiTreeVo(MockData.permissions.roleUpdate.id, MockData.permissions.roleUpdate.description, [])
-  const departmentPageList = new ElementUiTreeVo(MockData.permissions.departmentPageList.id, MockData.permissions.departmentPageList.description, [])
-  const mediaPageList = new ElementUiTreeVo(MockData.permissions.mediaPageList.id, MockData.permissions.mediaPageList.description, [])
-  const reportPageList = new ElementUiTreeVo(MockData.permissions.reportPageList.id, MockData.permissions.reportPageList.description, [])
+  const home = new ElementUiTreeVo(
+    MockData.permissions.home.id,
+    MockData.permissions.home.description,
+    [])
+  const permissionManagement = new ElementUiTreeVo(
+    MockData.permissions.permissionManagement.id,
+    MockData.permissions.permissionManagement.description,
+    [])
+  const userPageList = new ElementUiTreeVo(
+    MockData.permissions.userPageList.id,
+    MockData.permissions.userPageList.description,
+    [])
+  const userDetail = new ElementUiTreeVo(
+    MockData.permissions.userDetail.id,
+    MockData.permissions.userDetail.description,
+    [])
+  const userAdd = new ElementUiTreeVo(
+    MockData.permissions.userAdd.id,
+    MockData.permissions.userAdd.description,
+    [])
+  const userDelete = new ElementUiTreeVo(
+    MockData.permissions.userDelete.id,
+    MockData.permissions.userDelete.description,
+    [])
+  const userUpdate = new ElementUiTreeVo(
+    MockData.permissions.userUpdate.id,
+    MockData.permissions.userUpdate.description,
+    [])
+  const rolePageList = new ElementUiTreeVo(
+    MockData.permissions.rolePageList.id,
+    MockData.permissions.rolePageList.description,
+    [])
+  const roleDetail = new ElementUiTreeVo(
+    MockData.permissions.roleDetail.id,
+    MockData.permissions.roleDetail.description,
+    [])
+  const roleDelete = new ElementUiTreeVo(
+    MockData.permissions.roleDelete.id,
+    MockData.permissions.roleDelete.description,
+    [])
+  const roleAdd = new ElementUiTreeVo(
+    MockData.permissions.roleAdd.id,
+    MockData.permissions.roleAdd.description,
+    [])
+  const roleUpdate = new ElementUiTreeVo(
+    MockData.permissions.roleUpdate.id,
+    MockData.permissions.roleUpdate.description,
+    [])
+  const departmentPageList = new ElementUiTreeVo(
+    MockData.permissions.departmentPageList.id,
+    MockData.permissions.departmentPageList.description,
+    [])
+  const mediaPageList = new ElementUiTreeVo(
+    MockData.permissions.mediaPageList.id,
+    MockData.permissions.mediaPageList.description,
+    [])
+  const reportPageList = new ElementUiTreeVo(
+    MockData.permissions.reportPageList.id,
+    MockData.permissions.reportPageList.description,
+    [])
 
   userPageList.children = [userAdd, userUpdate, userDelete, userDetail]
   rolePageList.children = [roleAdd, roleUpdate, roleDelete, roleDetail]
@@ -110,4 +155,10 @@ Mock.mock(ApiConstant.PERMISSION_GET_BY_ROLE_ID, 'POST', function (options) {
       MockData.permissions.reportPageList
     ], null)
   }
+})
+
+Mock.mock(ApiConstant.ROLE_DELETE, 'POST', function (options) {
+  const requestBody = JSON.parse(options.body)
+  console.log('requestBody:', requestBody)
+  return new JsonResponse(0, true, '')
 })
