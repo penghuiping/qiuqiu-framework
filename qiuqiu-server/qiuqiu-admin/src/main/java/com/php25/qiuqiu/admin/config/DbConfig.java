@@ -63,8 +63,15 @@ public class DbConfig {
         return new JdbcTemplate(dataSource);
     }
 
+    @Profile(value = {"local"})
     @Bean
     public DbType dbType() {
+        return DbType.SQLITE;
+    }
+
+    @Profile(value = {"dev", "test"})
+    @Bean
+    public DbType dbType1() {
         return DbType.MYSQL;
     }
 

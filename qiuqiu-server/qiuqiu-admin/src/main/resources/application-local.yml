@@ -39,6 +39,10 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 20MB
+  data:
+    redis:
+      repositories:
+        enabled: false
 ########################################################
 ### 服务器运行时信息
 ########################################################
@@ -47,6 +51,9 @@ management:
     web:
       exposure:
         include: "*"
+  health:
+    redis:
+      enabled: false
   server:
     port: 9091
   metrics:
