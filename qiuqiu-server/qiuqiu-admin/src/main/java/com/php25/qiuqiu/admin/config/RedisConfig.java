@@ -2,7 +2,8 @@ package com.php25.qiuqiu.admin.config;
 
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RedisManager;
-import com.php25.common.redis.RedisManagerImpl;
+import com.php25.common.redis.impl.RedisManagerImpl;
+import com.php25.common.redis.local.LocalRedisManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
@@ -19,13 +20,20 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 @Configuration
 public class RedisConfig {
+    @Profile(value = {"local"})
+    @Bean
+    public RedisManager redisManager1() {
+        return new LocalRedisManager(1024);
+    }
+
+    @Profile(value = {"dev", "test"})
     @Bean
     public RedisManager redisManager(@Autowired StringRedisTemplate stringRedisTemplate) {
         return new RedisManagerImpl(stringRedisTemplate);
     }
 
 
-    @Profile(value = {"test","dev"})
+    @Profile(value = {"test"})
     @Bean
     public LettuceConnectionFactory redisConnectionFactory(RedisProperties redisProperties) {
         RedisProperties.Cluster clusterProperties = redisProperties.getCluster();
@@ -38,7 +46,7 @@ public class RedisConfig {
         return new LettuceConnectionFactory(config);
     }
 
-    @Profile(value = {"local"})
+    @Profile(value = {"dev"})
     @Bean
     public LettuceConnectionFactory redisConnectionFactory1(RedisProperties redisProperties) {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
