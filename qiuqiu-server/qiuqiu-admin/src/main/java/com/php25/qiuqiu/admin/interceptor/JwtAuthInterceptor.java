@@ -30,6 +30,7 @@ public class JwtAuthInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info("进入jwt验证拦截器");
+        //1. 先认证身份
         String jwt = request.getHeader("jwt");
         if (StringUtil.isBlank(jwt)) {
             throw Exceptions.throwBusinessException(UserErrorCode.JWT_NOT_FIND);
@@ -40,6 +41,14 @@ public class JwtAuthInterceptor extends HandlerInterceptorAdapter {
         }
         String username = userService.getUsernameFromJwt(jwt);
         request.setAttribute("username", username);
+
+        //2. 在认证权限
+        String uri = request.getRequestURI();
+        boolean hasPermission = userService.hasPermission(username, uri);
+        if (!hasPermission) {
+            throw Exceptions.throwBusinessException(UserErrorCode.HAS_NO_PERMISSION);
+        }
+
         return true;
     }
 }

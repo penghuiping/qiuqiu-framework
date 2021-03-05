@@ -3,7 +3,7 @@ package com.php25.qiuqiu.user.service.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author penghuiping
@@ -26,5 +26,10 @@ public class UserSessionDto {
     /**
      * 此用户具有的角色
      */
-    private List<String> roles;
+    private Set<RoleDto> roles;
+
+    /**
+     * 此用户具有的权限
+     */
+    private Set<PermissionDto> permissions;
 }

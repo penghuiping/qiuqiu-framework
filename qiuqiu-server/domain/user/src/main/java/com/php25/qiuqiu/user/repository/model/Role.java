@@ -3,6 +3,7 @@ package com.php25.qiuqiu.user.repository.model;
 import com.php25.common.db.core.GenerationType;
 import com.php25.common.db.core.annotation.Column;
 import com.php25.common.db.core.annotation.GeneratedValue;
+import com.php25.common.db.core.annotation.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Persistable;
  */
 @Setter
 @Getter
+@Table("t_role")
 public class Role implements Persistable<Long> {
 
     /**

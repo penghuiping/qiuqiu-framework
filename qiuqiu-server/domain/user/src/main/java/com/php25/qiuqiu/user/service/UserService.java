@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.user.service;
 
+import com.php25.qiuqiu.user.service.dto.TokenDto;
 import com.php25.qiuqiu.user.service.dto.UserDto;
 
 /**
@@ -17,7 +18,7 @@ public interface UserService {
      * @param password 密码
      * @return jwt令牌, 后面访问本系统接口，都需要带上此jwt令牌
      */
-    public String login(String username, String password);
+    TokenDto login(String username, String password);
 
     /**
      * 验证jwt令牌是否有效
@@ -25,7 +26,7 @@ public interface UserService {
      * @param jwt 令牌
      * @return true:有效,false:无效
      */
-    public Boolean isTokenValid(String jwt);
+    Boolean isTokenValid(String jwt);
 
     /**
      * 根据jwt获取用户名
@@ -33,7 +34,7 @@ public interface UserService {
      * @param jwt 令牌
      * @return 用户名
      */
-    public String getUsernameFromJwt(String jwt);
+    String getUsernameFromJwt(String jwt);
 
     /**
      * 登出接口
@@ -41,7 +42,7 @@ public interface UserService {
      * @param username 用户名
      * @return true:登出成功,false:登出失败
      */
-    public Boolean logout(String username);
+    Boolean logout(String username);
 
     /**
      * 获取持有jwt令牌的用户信息接口
@@ -49,5 +50,14 @@ public interface UserService {
      * @param username 用户名
      * @return 用户信息
      */
-    public UserDto getUserInfo(String username);
+    UserDto getUserInfo(String username);
+
+    /**
+     * 判断某个用户是否具有访问某个接口地址的权限
+     *
+     * @param username 用户名
+     * @param uri      接口地址
+     * @return true: 有权限
+     */
+    Boolean hasPermission(String username, String uri);
 }

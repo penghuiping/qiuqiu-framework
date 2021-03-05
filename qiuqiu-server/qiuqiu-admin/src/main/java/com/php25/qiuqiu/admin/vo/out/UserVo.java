@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author penghuiping
@@ -28,6 +29,21 @@ public class UserVo {
      * 用户名
      */
     private String username;
+
+    /**
+     * 角色名列表
+     */
+    private List<String> roles;
+
+    /**
+     * 权限名列表
+     */
+    private List<String> permissions;
+
+    /**
+     * 组名
+     */
+    private String groupName;
 
     /**
      * 用户信息创建时间
