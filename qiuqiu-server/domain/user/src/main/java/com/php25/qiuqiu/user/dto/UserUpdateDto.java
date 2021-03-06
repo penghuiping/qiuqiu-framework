@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.service.dto;
+package com.php25.qiuqiu.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,18 +7,20 @@ import java.util.List;
 
 /**
  * @author penghuiping
- * @date 2021/3/5 21:38
+ * @date 2021/3/5 21:42
  */
 @Setter
 @Getter
-public class UserCreateDto {
-    private String nickname;
+public class UserUpdateDto {
+    private Long id;
 
-    private String username;
+    private String nickname;
 
     private String password;
 
     private List<Long> roleIds;
 
     private Long groupId;
+
+    private Integer enable;
 }

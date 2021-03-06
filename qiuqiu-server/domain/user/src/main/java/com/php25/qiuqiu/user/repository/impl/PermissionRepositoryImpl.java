@@ -2,8 +2,8 @@ package com.php25.qiuqiu.user.repository.impl;
 
 import com.php25.common.db.DbType;
 import com.php25.common.db.repository.BaseDbRepositoryImpl;
+import com.php25.qiuqiu.user.model.Permission;
 import com.php25.qiuqiu.user.repository.PermissionRepository;
-import com.php25.qiuqiu.user.repository.model.Permission;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 

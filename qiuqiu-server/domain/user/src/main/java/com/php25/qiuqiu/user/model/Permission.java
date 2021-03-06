@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.repository.model;
+package com.php25.qiuqiu.user.model;
 
 import com.php25.common.db.core.GenerationType;
 import com.php25.common.db.core.annotation.Column;
@@ -11,38 +11,44 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 
 /**
- * 角色
+ * 权限
  *
  * @author penghuiping
  * @date 2021/3/2 08:54
  */
 @Setter
 @Getter
-@Table("t_role")
-public class Role implements Persistable<Long> {
+@Table("t_permission")
+public class Permission implements Persistable<Long> {
 
     /**
      * id,自增
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * 角色名
+     * 权限名
      */
     @Column
     private String name;
 
     /**
-     * 角色描述
+     * 权限描述
      */
     @Column
     private String description;
 
     /**
-     * 是否可用 0:不可用 1:可用
+     * 此权限对应的后台接口地址
+     */
+    @Column
+    private String uri;
+
+    /**
+     * 是否有效 0:无效 1:有效
      */
     @Column
     private Boolean enable;

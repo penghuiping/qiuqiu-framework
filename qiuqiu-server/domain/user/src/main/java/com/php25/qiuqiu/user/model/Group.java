@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.repository.model;
+package com.php25.qiuqiu.user.model;
 
 import com.php25.common.db.core.GenerationType;
 import com.php25.common.db.core.annotation.Column;
@@ -11,41 +11,41 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 
 /**
- * 权限
+ * 组织机构部门
  *
  * @author penghuiping
  * @date 2021/3/2 08:54
  */
 @Setter
 @Getter
-@Table("t_permission")
-public class Permission implements Persistable<Long> {
+@Table("t_group")
+public class Group implements Persistable<Long> {
 
     /**
      * id,自增
      */
     @Id
-    @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Long id;
 
     /**
-     * 权限名
+     * 组名
      */
     @Column
     private String name;
 
     /**
-     * 权限描述
+     * 描述
      */
     @Column
     private String description;
 
     /**
-     * 此权限对应的后台接口地址
+     * 父节点id
      */
-    @Column
-    private String uri;
+    @Column("parent_id")
+    private Long parentId;
 
     /**
      * 是否有效 0:无效 1:有效
@@ -58,6 +58,6 @@ public class Permission implements Persistable<Long> {
 
     @Override
     public boolean isNew() {
-        return isNew;
+        return this.isNew;
     }
 }

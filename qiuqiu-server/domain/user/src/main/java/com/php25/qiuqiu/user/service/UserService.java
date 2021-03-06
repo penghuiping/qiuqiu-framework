@@ -1,11 +1,11 @@
 package com.php25.qiuqiu.user.service;
 
 import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.qiuqiu.user.service.dto.TokenDto;
-import com.php25.qiuqiu.user.service.dto.UserCreateDto;
-import com.php25.qiuqiu.user.service.dto.UserDto;
-import com.php25.qiuqiu.user.service.dto.UserPageDto;
-import com.php25.qiuqiu.user.service.dto.UserUpdateDto;
+import com.php25.qiuqiu.user.dto.TokenDto;
+import com.php25.qiuqiu.user.dto.UserCreateDto;
+import com.php25.qiuqiu.user.dto.UserDto;
+import com.php25.qiuqiu.user.dto.UserPageDto;
+import com.php25.qiuqiu.user.dto.UserUpdateDto;
 
 /**
  * 系统用户

@@ -1,7 +1,7 @@
 package com.php25.qiuqiu.user.repository;
 
 import com.php25.common.db.repository.BaseDbRepository;
-import com.php25.qiuqiu.user.repository.model.Permission;
+import com.php25.qiuqiu.user.model.Permission;
 
 /**
  * @author penghuiping

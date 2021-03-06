@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.repository.model;
+package com.php25.qiuqiu.user.model;
 
 import com.php25.common.db.core.GenerationType;
 import com.php25.common.db.core.annotation.Column;
@@ -10,16 +10,18 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 
+import java.time.LocalDateTime;
+
 /**
- * 组织机构部门
+ * 用户
  *
  * @author penghuiping
- * @date 2021/3/2 08:54
+ * @date 2021/2/3 11:30
  */
-@Setter
 @Getter
-@Table("t_group")
-public class Group implements Persistable<Long> {
+@Setter
+@Table("t_user")
+public class User implements Persistable<Long> {
 
     /**
      * id,自增
@@ -30,31 +32,53 @@ public class Group implements Persistable<Long> {
     private Long id;
 
     /**
-     * 组名
+     * 用户昵称
      */
     @Column
-    private String name;
+    private String nickname;
 
     /**
-     * 描述
+     * 用户名全局唯一不可重复
      */
     @Column
-    private String description;
+    private String username;
 
     /**
-     * 父节点id
+     * 密码
      */
-    @Column("parent_id")
-    private Long parentId;
+    @Column
+    private String password;
 
     /**
-     * 是否有效 0:无效 1:有效
+     * 创建时间
+     */
+    @Column("create_time")
+    private LocalDateTime createTime;
+
+    /**
+     * 最后修改时间
+     */
+    @Column("last_modified_time")
+    private LocalDateTime lastModifiedTime;
+
+    /**
+     * 组织机构部门
+     */
+    @Column("group_id")
+    private Long groupId;
+
+    /**
+     * 是否可用 0:不可用 1:可用
      */
     @Column
     private Boolean enable;
 
+    /**
+     * 用于判断是新增还是更新,true:新增 false:更新
+     */
     @Transient
     private Boolean isNew;
+
 
     @Override
     public boolean isNew() {

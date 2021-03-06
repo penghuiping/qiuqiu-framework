@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.repository.model;
+package com.php25.qiuqiu.user.model;
 
 import com.php25.common.db.core.annotation.Column;
 import com.php25.common.db.core.annotation.Table;

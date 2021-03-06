@@ -1,8 +1,8 @@
 package com.php25.qiuqiu.user.repository;
 
 import com.php25.common.db.repository.BaseDbRepository;
-import com.php25.qiuqiu.user.repository.model.RoleRef;
-import com.php25.qiuqiu.user.repository.model.User;
+import com.php25.qiuqiu.user.model.RoleRef;
+import com.php25.qiuqiu.user.model.User;
 
 import java.util.List;
 import java.util.Optional;

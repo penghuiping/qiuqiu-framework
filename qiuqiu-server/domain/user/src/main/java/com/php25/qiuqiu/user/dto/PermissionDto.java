@@ -1,5 +1,6 @@
-package com.php25.qiuqiu.user.service.dto;
+package com.php25.qiuqiu.user.dto;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,14 +10,15 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class GroupDto {
+@EqualsAndHashCode
+public class PermissionDto {
 
     private Long id;
 
     private String name;
 
+    @EqualsAndHashCode.Exclude
     private String description;
 
-    private Long parentId;
-
+    private String uri;
 }

@@ -5,17 +5,22 @@ import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.LoginVo;
+import com.php25.qiuqiu.admin.vo.in.UserCreateVo;
+import com.php25.qiuqiu.admin.vo.in.UserDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.UserPageVo;
+import com.php25.qiuqiu.admin.vo.in.UserUpdateVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.TokenVo;
 import com.php25.qiuqiu.admin.vo.out.UserPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.UserVo;
+import com.php25.qiuqiu.user.dto.PermissionDto;
+import com.php25.qiuqiu.user.dto.RoleDto;
+import com.php25.qiuqiu.user.dto.TokenDto;
+import com.php25.qiuqiu.user.dto.UserCreateDto;
+import com.php25.qiuqiu.user.dto.UserDto;
+import com.php25.qiuqiu.user.dto.UserPageDto;
+import com.php25.qiuqiu.user.dto.UserUpdateDto;
 import com.php25.qiuqiu.user.service.UserService;
-import com.php25.qiuqiu.user.service.dto.PermissionDto;
-import com.php25.qiuqiu.user.service.dto.RoleDto;
-import com.php25.qiuqiu.user.service.dto.TokenDto;
-import com.php25.qiuqiu.user.service.dto.UserDto;
-import com.php25.qiuqiu.user.service.dto.UserPageDto;
 import io.github.yedaxia.apidocs.ApiDoc;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -94,6 +99,34 @@ public class UserController extends JSONController {
         }).collect(Collectors.toList());
         resultVo.setData(list);
         return succeed(resultVo);
+    }
+
+    @ApiDoc(result = Boolean.class, url = "/wxadmin/v1/user/create")
+    @APIVersion("v1")
+    @PostMapping("/create")
+    public JSONResponse create(@Valid @RequestBody UserCreateVo userCreateVo) {
+        UserCreateDto userCreateDto = new UserCreateDto();
+        BeanUtils.copyProperties(userCreateVo, userCreateDto);
+        return succeed(userService.create(userCreateDto));
+    }
+
+    @ApiDoc(result = Boolean.class, url = "/wxadmin/v1/user/update")
+    @APIVersion("v1")
+    @PostMapping("/update")
+    public JSONResponse update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
+        UserUpdateDto userUpdateDto = new UserUpdateDto();
+        BeanUtils.copyProperties(userUpdateVo, userUpdateDto);
+        return succeed(userService.update(userUpdateDto));
+    }
+
+    @ApiDoc(result = Boolean.class, url = "/wxadmin/v1/user/update")
+    @APIVersion("v1")
+    @PostMapping("/delete")
+    public JSONResponse delete(@Valid @RequestBody UserDeleteVo userDeleteVo) {
+        for (Long userId : userDeleteVo.getUserIds()) {
+            userService.delete(userId);
+        }
+        return succeed(true);
     }
 
     /**

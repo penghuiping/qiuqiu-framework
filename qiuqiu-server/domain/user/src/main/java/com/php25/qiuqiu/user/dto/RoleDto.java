@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.service.dto;
+package com.php25.qiuqiu.user.dto;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

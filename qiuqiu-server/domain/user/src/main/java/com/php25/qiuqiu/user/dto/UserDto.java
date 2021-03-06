@@ -1,23 +1,32 @@
-package com.php25.qiuqiu.user.service.dto;
+package com.php25.qiuqiu.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * @author penghuiping
- * @date 2021/3/5 21:32
+ * @date 2021/2/3 13:24
  */
 @Setter
 @Getter
-public class UserPageDto {
+public class UserDto {
 
     private Long id;
 
     private String nickname;
 
     private String username;
+
+    private String password;
+
+    private Set<RoleDto> roles;
+
+    private Set<PermissionDto> permissions;
+
+    private GroupDto group;
 
     private LocalDateTime createTime;
 
