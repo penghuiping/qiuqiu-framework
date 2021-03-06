@@ -77,6 +77,6 @@ public class DbConfig {
 
     @PostConstruct
     public void init() {
-        new EntitiesScan().scanPackage("com.php25.qiuqiu.user.repository.model");
+        new EntitiesScan().scanPackage("com.php25.qiuqiu.user.model");
     }
 }

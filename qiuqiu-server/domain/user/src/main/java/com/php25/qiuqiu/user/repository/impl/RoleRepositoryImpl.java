@@ -67,4 +67,11 @@ public class RoleRepositoryImpl extends BaseDbRepositoryImpl<Role, Long> impleme
         QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).delete(sqlParams);
         return true;
     }
+
+    @Override
+    public boolean deletePermissionRefsByRoleIds(List<Long> roleIds) {
+        SqlParams sqlParams = Queries.of(dbType).from(PermissionRef.class).whereIn("roleId", roleIds).delete();
+        QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).delete(sqlParams);
+        return true;
+    }
 }

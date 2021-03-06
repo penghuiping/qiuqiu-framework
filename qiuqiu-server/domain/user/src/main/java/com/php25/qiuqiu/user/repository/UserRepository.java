@@ -52,5 +52,21 @@ public interface UserRepository extends BaseDbRepository<User, Long> {
      */
     boolean deleteRoleRefsByUserId(Long userId);
 
+    /**
+     * 根据roleId列表获取userid列表
+     *
+     * @param roleIds 角色列表id
+     * @return 用户id列表
+     */
+    List<Long> findUserIdsByRoleIds(List<Long> roleIds);
+
+    /**
+     * 获取在某个组中的用户数
+     *
+     * @param groupId 组id
+     * @return 在组中的用户数
+     */
+    Long countByGroupId(Long groupId);
+
 
 }

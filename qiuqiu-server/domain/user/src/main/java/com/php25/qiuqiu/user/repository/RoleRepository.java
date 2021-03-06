@@ -40,8 +40,16 @@ public interface RoleRepository extends BaseDbRepository<Role, Long> {
     /**
      * 删除角色与权限关系
      *
-     * @param roleId id
+     * @param roleId 角色id
      * @return true:成功
      */
     boolean deletePermissionRefsByRoleId(Long roleId);
+
+    /**
+     * 删除角色与权限关系
+     *
+     * @param roleIds 角色id列表
+     * @return true:成功
+     */
+    boolean deletePermissionRefsByRoleIds(List<Long> roleIds);
 }

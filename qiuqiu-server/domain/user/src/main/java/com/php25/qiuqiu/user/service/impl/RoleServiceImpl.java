@@ -16,6 +16,7 @@ import com.php25.qiuqiu.user.model.PermissionRef;
 import com.php25.qiuqiu.user.model.Role;
 import com.php25.qiuqiu.user.repository.PermissionRepository;
 import com.php25.qiuqiu.user.repository.RoleRepository;
+import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +42,8 @@ import java.util.stream.Collectors;
 public class RoleServiceImpl implements RoleService, InitializingBean {
 
     private final RoleRepository roleRepository;
+
+    private final UserRepository userRepository;
 
     private final PermissionRepository permissionRepository;
 
@@ -102,10 +105,11 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
     }
 
     @Override
+    @Transactional
     public Boolean delete(List<Long> roleIds) {
-        List<Long> permissionIds = roleRepository.getPermissionIdsByRoleIds(roleIds);
-        if (null != permissionIds && permissionIds.isEmpty()) {
-            throw Exceptions.throwBusinessException(UserErrorCode.DELETE_ROLE_HAS_PERMISSION);
+        List<Long> userIds = userRepository.findUserIdsByRoleIds(roleIds);
+        if (null != userIds && userIds.isEmpty()) {
+            throw Exceptions.throwBusinessException(UserErrorCode.ROLE_HAS_BEEN_REFERENCED_BY_USER);
         }
         List<Role> roles = roleIds.stream().map(roleId -> {
             Role role = new Role();
@@ -113,6 +117,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
             return role;
         }).collect(Collectors.toList());
         roleRepository.deleteAll(roles);
+        roleRepository.deletePermissionRefsByRoleIds(roleIds);
         return true;
     }
 

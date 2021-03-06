@@ -78,4 +78,24 @@ public class UserRepositoryImpl extends BaseDbRepositoryImpl<User, Long> impleme
         QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).delete(sqlParams);
         return true;
     }
+
+    @Override
+    public List<Long> findUserIdsByRoleIds(List<Long> roleIds) {
+        SqlParams sqlParams = Queries.of(dbType).from(RoleRef.class)
+                .whereIn("roleId", roleIds)
+                .select();
+        List<RoleRef> roleRefs = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
+        if (null != roleRefs && !roleRefs.isEmpty()) {
+            return roleRefs.stream().map(RoleRef::getUserId).distinct().collect(Collectors.toList());
+        }
+        return Lists.newArrayList();
+    }
+
+    @Override
+    public Long countByGroupId(Long groupId) {
+        SqlParams sqlParams = Queries.of(dbType).from(User.class)
+                .whereEq("groupId", groupId)
+                .select();
+        return QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).count(sqlParams);
+    }
 }

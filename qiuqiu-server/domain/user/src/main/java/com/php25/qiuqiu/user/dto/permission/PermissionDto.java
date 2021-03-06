@@ -21,4 +21,6 @@ public class PermissionDto {
     private String description;
 
     private String uri;
+
+    private Integer enable;
 }

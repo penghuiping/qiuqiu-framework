@@ -218,6 +218,7 @@ public class UserServiceImpl implements UserService {
         List<UserPageDto> list = userPage.get().map(user -> {
             UserPageDto userPageDto = new UserPageDto();
             BeanUtils.copyProperties(user, userPageDto);
+            userPageDto.setEnable(user.getEnable() ? 1 : 0);
             return userPageDto;
         }).collect(Collectors.toList());
         res.setData(list);
@@ -271,8 +272,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Boolean delete(Long userId) {
         userRepository.deleteById(userId);
+        userRepository.deleteRoleRefsByUserId(userId);
         return true;
     }
 
