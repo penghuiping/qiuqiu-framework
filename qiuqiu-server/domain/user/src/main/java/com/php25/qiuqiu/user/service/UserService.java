@@ -1,7 +1,11 @@
 package com.php25.qiuqiu.user.service;
 
+import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.qiuqiu.user.service.dto.TokenDto;
+import com.php25.qiuqiu.user.service.dto.UserCreateDto;
 import com.php25.qiuqiu.user.service.dto.UserDto;
+import com.php25.qiuqiu.user.service.dto.UserPageDto;
+import com.php25.qiuqiu.user.service.dto.UserUpdateDto;
 
 /**
  * 系统用户
@@ -60,4 +64,38 @@ public interface UserService {
      * @return true: 有权限
      */
     Boolean hasPermission(String username, String uri);
+
+    /**
+     * 用户列表分页
+     *
+     * @param username 用户名
+     * @param pageNum  当前页码
+     * @param pageSize 每页条数
+     * @return 分页数据结果
+     */
+    DataGridPageDto<UserPageDto> page(String username, Integer pageNum, Integer pageSize);
+
+    /**
+     * 创建用户
+     *
+     * @param userCreateDto 可以创建的用户信息
+     * @return true:成功
+     */
+    Boolean create(UserCreateDto userCreateDto);
+
+    /**
+     * 修改用户
+     *
+     * @param userUpdateDto 可以更新的用户信息
+     * @return true:成功
+     */
+    Boolean update(UserUpdateDto userUpdateDto);
+
+    /**
+     * 物理删除用户信息
+     *
+     * @param userId 用户id
+     * @return true:删除成功
+     */
+    Boolean delete(Long userId);
 }

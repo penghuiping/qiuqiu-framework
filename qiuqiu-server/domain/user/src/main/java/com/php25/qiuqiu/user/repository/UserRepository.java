@@ -1,6 +1,7 @@
 package com.php25.qiuqiu.user.repository;
 
 import com.php25.common.db.repository.BaseDbRepository;
+import com.php25.qiuqiu.user.repository.model.RoleRef;
 import com.php25.qiuqiu.user.repository.model.User;
 
 import java.util.List;
@@ -34,5 +35,22 @@ public interface UserRepository extends BaseDbRepository<User, Long> {
      * @return roleId列表
      */
     List<Long> findRoleIdsByUserId(Long userId);
+
+    /**
+     * 创建用户与角色关系
+     *
+     * @param roleRefs 用户与角色关系
+     * @return true:成功
+     */
+    boolean createRoleRefs(List<RoleRef> roleRefs);
+
+    /**
+     * 根据userId删除对应角色关系
+     *
+     * @param userId 用户id
+     * @return true:成功
+     */
+    boolean deleteRoleRefsByUserId(Long userId);
+
 
 }

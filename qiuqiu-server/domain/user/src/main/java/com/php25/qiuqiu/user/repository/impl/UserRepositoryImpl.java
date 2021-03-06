@@ -61,4 +61,21 @@ public class UserRepositoryImpl extends BaseDbRepositoryImpl<User, Long> impleme
         }
         return Lists.newArrayList();
     }
+
+    @Override
+    public boolean createRoleRefs(List<RoleRef> roleRefs) {
+        SqlParams sqlParams = Queries.of(dbType).from(RoleRef.class)
+                .insertBatch(roleRefs);
+        QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).insertBatch(sqlParams);
+        return true;
+    }
+
+    @Override
+    public boolean deleteRoleRefsByUserId(Long userId) {
+        SqlParams sqlParams = Queries.of(dbType).from(RoleRef.class)
+                .whereEq("userId", userId)
+                .delete();
+        QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).delete(sqlParams);
+        return true;
+    }
 }

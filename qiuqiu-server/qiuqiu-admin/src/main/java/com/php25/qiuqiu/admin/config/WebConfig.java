@@ -8,10 +8,12 @@ import com.php25.qiuqiu.admin.interceptor.JwtAuthInterceptor;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.hibernate.validator.internal.constraintvalidators.hv.SafeHtmlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
@@ -59,5 +61,10 @@ public class WebConfig extends WebMvcConfigurationSupport {
             }
         }));
         return requestMappingHandlerAdapter;
+    }
+
+    @Bean
+    public AntPathMatcher antPathMatcher() {
+        return new AntPathMatcher();
     }
 }

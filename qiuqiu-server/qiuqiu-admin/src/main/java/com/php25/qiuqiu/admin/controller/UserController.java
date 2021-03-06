@@ -1,17 +1,21 @@
 package com.php25.qiuqiu.admin.controller;
 
+import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.LoginVo;
 import com.php25.qiuqiu.admin.vo.in.UserPageVo;
+import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.TokenVo;
+import com.php25.qiuqiu.admin.vo.out.UserPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.UserVo;
 import com.php25.qiuqiu.user.service.UserService;
 import com.php25.qiuqiu.user.service.dto.PermissionDto;
 import com.php25.qiuqiu.user.service.dto.RoleDto;
 import com.php25.qiuqiu.user.service.dto.TokenDto;
 import com.php25.qiuqiu.user.service.dto.UserDto;
+import com.php25.qiuqiu.user.service.dto.UserPageDto;
 import io.github.yedaxia.apidocs.ApiDoc;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -72,12 +76,24 @@ public class UserController extends JSONController {
 
     /**
      * 用户列表分页查询
+     *
+     * @param userPageVo 分页请求信息
      */
     @ApiDoc(result = UserVo.class, url = "/wxadmin/v1/user/page")
     @APIVersion("v1")
     @PostMapping("/page")
     public JSONResponse page(@RequestAttribute @NotBlank String username, @Valid @RequestBody UserPageVo userPageVo) {
-        return succeed(null);
+        DataGridPageDto<UserPageDto> result = userService.page(userPageVo.getUsername(), userPageVo.getPageNum(), userPageVo.getPageSize());
+        PageResultVo<UserPageOutVo> resultVo = new PageResultVo<>();
+        resultVo.setPageNum(userPageVo.getPageNum());
+        resultVo.setTotal(result.getRecordsTotal());
+        List<UserPageOutVo> list = result.getData().stream().map(userPageDto -> {
+            UserPageOutVo userPageOutVo = new UserPageOutVo();
+            BeanUtils.copyProperties(userPageDto, userPageOutVo);
+            return userPageOutVo;
+        }).collect(Collectors.toList());
+        resultVo.setData(list);
+        return succeed(resultVo);
     }
 
     /**

@@ -1,13 +1,17 @@
 package com.php25.qiuqiu.user.service.impl;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.core.util.DigestUtil;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.core.util.crypto.constant.SignAlgorithm;
 import com.php25.common.core.util.crypto.key.SecretKeyUtil;
+import com.php25.common.core.util.jwt.JwtUtil;
+import com.php25.common.core.util.jwt.UserRoleInfo;
+import com.php25.common.db.specification.Operator;
+import com.php25.common.db.specification.SearchParam;
+import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.common.redis.RedisManager;
 import com.php25.qiuqiu.user.constant.UserConstants;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
@@ -18,25 +22,31 @@ import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.repository.model.Group;
 import com.php25.qiuqiu.user.repository.model.Permission;
 import com.php25.qiuqiu.user.repository.model.Role;
+import com.php25.qiuqiu.user.repository.model.RoleRef;
 import com.php25.qiuqiu.user.repository.model.User;
 import com.php25.qiuqiu.user.service.UserService;
 import com.php25.qiuqiu.user.service.dto.GroupDto;
 import com.php25.qiuqiu.user.service.dto.PermissionDto;
 import com.php25.qiuqiu.user.service.dto.RoleDto;
 import com.php25.qiuqiu.user.service.dto.TokenDto;
+import com.php25.qiuqiu.user.service.dto.UserCreateDto;
 import com.php25.qiuqiu.user.service.dto.UserDto;
+import com.php25.qiuqiu.user.service.dto.UserPageDto;
 import com.php25.qiuqiu.user.service.dto.UserSessionDto;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
+import com.php25.qiuqiu.user.service.dto.UserUpdateDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.AntPathMatcher;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -63,6 +73,8 @@ public class UserServiceImpl implements UserService {
 
     private final IdGenerator idGenerator;
 
+    private final AntPathMatcher antPathMatcher;
+
     @Override
     public TokenDto login(String username, String password) {
         Optional<User> userOptional = userRepository.findByUsernameAndPassword(username, password);
@@ -70,38 +82,15 @@ public class UserServiceImpl implements UserService {
             throw Exceptions.throwBusinessException(UserErrorCode.USER_NOT_FOUND);
         }
         String jti = idGenerator.getUUID();
-
         RSAPrivateKey privateKey = (RSAPrivateKey) SecretKeyUtil.generatePrivateKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(UserConstants.JWT_PRIVATE_KEY));
-
-        String accessToken = Jwts.builder().signWith(privateKey)
-                .setClaims(Maps.toMap(Lists.newArrayList("username"), s -> {
-                    switch (s) {
-                        case "username":
-                            return username;
-                        default:
-                            return null;
-                    }
-                }))
-                .setIssuer("QiuQiu-Admin")
-                .setIssuedAt(new Date())
-                .setSubject("QiuQiu-Admin")
-                .setId(jti)
-                .compact();
-
         //存入redis
         redisManager.string().set(getRedisJwtKey(username), jti, 1800L);
-
         //构造redisSession
-        UserSessionDto userSessionDto = new UserSessionDto();
-        userSessionDto.setUsername(username);
-        userSessionDto.setJti(jti);
+        UserSessionDto userSessionDto = this.createUserSession(username, 1800L);
 
-        UserDto userDto = this.getUserInfo(username);
-        //角色
-        userSessionDto.setRoles(userDto.getRoles());
-        //权限
-        userSessionDto.setPermissions(userDto.getPermissions());
-        redisManager.string().set(getRedisSessionKey(username), userSessionDto, 1800L);
+        //生成accessToken
+        List<String> roles = userSessionDto.getRoles().stream().map(RoleDto::getName).collect(Collectors.toList());
+        String accessToken = JwtUtil.generateToken(jti, username, roles, 1800L, "QiuQiu", privateKey);
         return new TokenDto(accessToken, 1800L);
     }
 
@@ -109,24 +98,22 @@ public class UserServiceImpl implements UserService {
     public Boolean isTokenValid(String jwt) {
         try {
             RSAPublicKey publicKey = (RSAPublicKey) SecretKeyUtil.generatePublicKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(UserConstants.JWT_PUBLIC_KEY));
-            boolean isSigned = Jwts.parser().setSigningKey(publicKey).isSigned(jwt);
-            if (!isSigned) {
+            if (!JwtUtil.isValidSign(jwt, publicKey)) {
                 return false;
             }
-            Jws<Claims> jwtObject = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(jwt);
-            Claims claims = jwtObject.getBody();
-            Object username = claims.getOrDefault("username", null);
-            if (username == null || StringUtil.isBlank(username.toString())) {
+            UserRoleInfo userRoleInfo = JwtUtil.parse(jwt, publicKey);
+            if (!userRoleInfo.isValid()) {
                 throw Exceptions.throwBusinessException(UserErrorCode.JWT_ILLEGAL);
             }
 
-            if (!redisManager.exists(getRedisJwtKey(username.toString()))) {
+            String username = userRoleInfo.getUsername();
+            if (!redisManager.exists(getRedisJwtKey(username))) {
                 return false;
             }
+            String jti = userRoleInfo.getJti();
 
-            String jti = claims.getId();
-            UserSessionDto userSessionDto = redisManager.string().get(getRedisSessionKey(username.toString()), UserSessionDto.class);
-            if (StringUtil.isBlank(jti) || !jti.equals(userSessionDto.getJti())) {
+            String jti0 = redisManager.string().get(getRedisJwtKey(username), String.class);
+            if (StringUtil.isBlank(jti) || !jti.equals(jti0)) {
                 throw Exceptions.throwBusinessException(UserErrorCode.JWT_ILLEGAL);
             }
             return true;
@@ -134,7 +121,6 @@ public class UserServiceImpl implements UserService {
             log.error("jwt解析出错", e);
             throw Exceptions.throwBusinessException(UserErrorCode.JWT_ILLEGAL);
         }
-
     }
 
     @Override
@@ -145,22 +131,12 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
-    private String getRedisJwtKey(String username) {
-        return UserConstants.JWT_REDIS_PREFIX + username;
-    }
-
-    private String getRedisSessionKey(String username) {
-        return UserConstants.SESSION_PREFIX + username;
-    }
-
 
     @Override
     public String getUsernameFromJwt(String jwt) {
         RSAPublicKey publicKey = (RSAPublicKey) SecretKeyUtil.generatePublicKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(UserConstants.JWT_PUBLIC_KEY));
-        Jws<Claims> jwtObject = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(jwt);
-        Claims claims = jwtObject.getBody();
-        Object username = claims.getOrDefault("username", null);
-        return username.toString();
+        UserRoleInfo userRoleInfo = JwtUtil.parse(jwt, publicKey);
+        return userRoleInfo.getUsername();
     }
 
     @Override
@@ -209,7 +185,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean hasPermission(String username, String uri) {
         //先通过session判断
-        UserSessionDto userSessionDto = redisManager.string().get(getRedisSessionKey(username), UserSessionDto.class);
+        UserSessionDto userSessionDto = getUserSession(username);
         if (null == userSessionDto) {
             return false;
         }
@@ -217,11 +193,117 @@ public class UserServiceImpl implements UserService {
 
         boolean res = false;
         for (PermissionDto permissionDto : permissions) {
-            if (uri.endsWith(permissionDto.getUri())) {
+            if (antPathMatcher.match("/**" + permissionDto.getUri(), uri)) {
                 res = true;
                 break;
             }
         }
         return res;
     }
+
+    @Override
+    public DataGridPageDto<UserPageDto> page(String username, Integer pageNum, Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
+        SearchParamBuilder builder = SearchParamBuilder.builder();
+        if (!StringUtil.isBlank(username)) {
+            builder.append(SearchParam.of("username", Operator.EQ, username));
+        }
+        Page<User> userPage = userRepository.findAll(builder, pageRequest);
+        DataGridPageDto<UserPageDto> res = new DataGridPageDto<>();
+        List<UserPageDto> list = userPage.get().map(user -> {
+            UserPageDto userPageDto = new UserPageDto();
+            BeanUtils.copyProperties(user, userPageDto);
+            return userPageDto;
+        }).collect(Collectors.toList());
+        res.setData(list);
+        res.setRecordsTotal(userPage.getTotalElements());
+        return res;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean create(UserCreateDto userCreateDto) {
+        User user = new User();
+        BeanUtils.copyProperties(userCreateDto, user);
+        user.setCreateTime(LocalDateTime.now());
+        user.setLastModifiedTime(LocalDateTime.now());
+        user.setEnable(true);
+        user.setIsNew(true);
+        userRepository.save(user);
+
+        List<RoleRef> roleRefs = userCreateDto.getRoleIds().stream().map(roleId -> {
+            RoleRef roleRef = new RoleRef();
+            roleRef.setRoleId(roleId);
+            roleRef.setUserId(user.getId());
+            return roleRef;
+        }).collect(Collectors.toList());
+
+        userRepository.createRoleRefs(roleRefs);
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean update(UserUpdateDto userUpdateDto) {
+        User user = new User();
+        BeanUtils.copyProperties(userUpdateDto, user);
+        user.setLastModifiedTime(LocalDateTime.now());
+        user.setIsNew(false);
+        userRepository.save(user);
+        if (null != userUpdateDto.getRoleIds() && !userUpdateDto.getRoleIds().isEmpty()) {
+            List<RoleRef> roleRefs = userUpdateDto.getRoleIds().stream().map(roleId -> {
+                RoleRef roleRef = new RoleRef();
+                roleRef.setRoleId(roleId);
+                roleRef.setUserId(user.getId());
+                return roleRef;
+            }).collect(Collectors.toList());
+
+            userRepository.deleteRoleRefsByUserId(user.getId());
+            userRepository.createRoleRefs(roleRefs);
+        }
+        clearUserSession(user.getUsername());
+        return true;
+    }
+
+    @Override
+    public Boolean delete(Long userId) {
+        userRepository.deleteById(userId);
+        return true;
+    }
+
+    private String getRedisJwtKey(String username) {
+        return UserConstants.JWT_REDIS_PREFIX + username;
+    }
+
+    private String getRedisSessionKey(String username) {
+        return UserConstants.SESSION_PREFIX + username;
+    }
+
+    private UserSessionDto createUserSession(String username, Long expireTime) {
+        String jti = redisManager.string().get(getRedisJwtKey(username), String.class);
+        //构造redisSession
+        UserSessionDto userSessionDto = new UserSessionDto();
+        userSessionDto.setUsername(username);
+        userSessionDto.setJti(jti);
+
+        UserDto userDto = this.getUserInfo(username);
+        //角色
+        userSessionDto.setRoles(userDto.getRoles());
+        //权限
+        userSessionDto.setPermissions(userDto.getPermissions());
+        redisManager.string().set(getRedisSessionKey(username), userSessionDto, expireTime);
+        return userSessionDto;
+    }
+
+    private UserSessionDto getUserSession(String username) {
+        if (!redisManager.exists(getRedisSessionKey(username))) {
+            this.createUserSession(username, 1800L);
+        }
+        return redisManager.string().get(getRedisSessionKey(username), UserSessionDto.class);
+    }
+
+    private void clearUserSession(String username) {
+        redisManager.remove(getRedisSessionKey(username));
+    }
+
 }

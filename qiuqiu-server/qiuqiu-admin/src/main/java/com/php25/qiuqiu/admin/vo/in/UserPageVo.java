@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author penghuiping
@@ -17,14 +17,14 @@ public class UserPageVo {
     /**
      * 当前第几页
      */
-    @NotBlank(message = "页数不能为空")
-    @Min(1)
+    @NotNull(message = "页数不能为空")
+    @Min(0)
     private Integer pageNum;
 
     /**
      * 每页几条数据
      */
-    @NotBlank(message = "每页条数不能为空")
+    @NotNull(message = "每页条数不能为空")
     @Min(1)
     private Integer pageSize;
 
