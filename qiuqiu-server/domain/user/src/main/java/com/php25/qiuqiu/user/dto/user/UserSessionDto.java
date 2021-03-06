@@ -1,5 +1,6 @@
-package com.php25.qiuqiu.user.dto;
+package com.php25.qiuqiu.user.dto.user;
 
+import com.php25.qiuqiu.user.dto.role.RoleDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,9 +28,4 @@ public class UserSessionDto {
      * 此用户具有的角色
      */
     private Set<RoleDto> roles;
-
-    /**
-     * 此用户具有的权限
-     */
-    private Set<PermissionDto> permissions;
 }

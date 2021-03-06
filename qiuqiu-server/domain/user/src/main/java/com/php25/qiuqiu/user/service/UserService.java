@@ -1,11 +1,12 @@
 package com.php25.qiuqiu.user.service;
 
 import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.qiuqiu.user.dto.TokenDto;
-import com.php25.qiuqiu.user.dto.UserCreateDto;
-import com.php25.qiuqiu.user.dto.UserDto;
-import com.php25.qiuqiu.user.dto.UserPageDto;
-import com.php25.qiuqiu.user.dto.UserUpdateDto;
+import com.php25.qiuqiu.user.dto.user.TokenDto;
+import com.php25.qiuqiu.user.dto.user.UserCreateDto;
+import com.php25.qiuqiu.user.dto.user.UserDto;
+import com.php25.qiuqiu.user.dto.user.UserPageDto;
+import com.php25.qiuqiu.user.dto.user.UserSessionDto;
+import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 
 /**
  * 系统用户
@@ -98,4 +99,30 @@ public interface UserService {
      * @return true:删除成功
      */
     Boolean delete(Long userId);
+
+    /**
+     * 创建用户会话信息
+     *
+     * @param username   用户名
+     * @param expireTime 过期时长(秒)
+     * @return 用户会话信息
+     */
+    UserSessionDto createUserSession(String username, Long expireTime);
+
+    /**
+     * 获取用户会话信息
+     *
+     * @param username 用户名
+     * @return 用户会话信息
+     */
+    UserSessionDto getUserSession(String username);
+
+    /**
+     * 清除用户会话信息
+     *
+     * @param username 用户名
+     */
+    void clearUserSession(String username);
+
+
 }

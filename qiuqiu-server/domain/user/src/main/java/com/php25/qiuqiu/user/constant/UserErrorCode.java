@@ -7,10 +7,11 @@ import com.php25.common.core.exception.BusinessErrorStatus;
  * @date 2021/2/3 13:41
  */
 public enum UserErrorCode implements BusinessErrorStatus {
-    USER_NOT_FOUND("00000", "用户不存在"),
-    JWT_ILLEGAL("00001", "token不合法"),
-    JWT_NOT_FIND("00002", "token缺失"),
-    HAS_NO_PERMISSION("00004", "没有此接口权限");
+    USER_NOT_FOUND("10000", "用户不存在"),
+    JWT_ILLEGAL("10001", "token不合法"),
+    JWT_NOT_FIND("10002", "token缺失"),
+    HAS_NO_PERMISSION("10004", "没有此接口权限"),
+    DELETE_ROLE_HAS_PERMISSION("10005", "无法删除有权限关联的角色");
 
 
     String code;

@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.dto;
+package com.php25.qiuqiu.user.dto.user;
 
 import lombok.Getter;
 import lombok.Setter;

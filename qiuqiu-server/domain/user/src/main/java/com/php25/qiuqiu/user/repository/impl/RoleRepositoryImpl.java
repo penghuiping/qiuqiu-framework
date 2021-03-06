@@ -39,4 +39,32 @@ public class RoleRepositoryImpl extends BaseDbRepositoryImpl<Role, Long> impleme
             return Lists.newArrayList();
         }
     }
+
+
+    @Override
+    public List<Long> getPermissionIdsByRoleId(Long roleId) {
+        SqlParams sqlParams = Queries.of(dbType).from(PermissionRef.class)
+                .whereEq("roleId", roleId)
+                .select();
+        List<PermissionRef> list = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
+        if (null != list && !list.isEmpty()) {
+            return list.stream().map(PermissionRef::getPermissionId).distinct().collect(Collectors.toList());
+        } else {
+            return Lists.newArrayList();
+        }
+    }
+
+    @Override
+    public boolean createPermissionRefs(List<PermissionRef> permissionRefs) {
+        SqlParams sqlParams = Queries.of(dbType).from(PermissionRef.class).insertBatch(permissionRefs);
+        QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).insertBatch(sqlParams);
+        return true;
+    }
+
+    @Override
+    public boolean deletePermissionRefsByRoleId(Long roleId) {
+        SqlParams sqlParams = Queries.of(dbType).from(PermissionRef.class).whereEq("roleId", roleId).delete();
+        QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).delete(sqlParams);
+        return true;
+    }
 }

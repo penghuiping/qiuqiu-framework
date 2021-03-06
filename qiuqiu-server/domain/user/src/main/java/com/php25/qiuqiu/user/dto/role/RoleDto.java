@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.dto;
+package com.php25.qiuqiu.user.dto.role;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @EqualsAndHashCode
-public class PermissionDto {
+public class RoleDto {
 
     private Long id;
 
@@ -19,6 +19,4 @@ public class PermissionDto {
 
     @EqualsAndHashCode.Exclude
     private String description;
-
-    private String uri;
 }

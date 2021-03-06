@@ -13,13 +13,13 @@ import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.TokenVo;
 import com.php25.qiuqiu.admin.vo.out.UserPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.UserVo;
-import com.php25.qiuqiu.user.dto.PermissionDto;
-import com.php25.qiuqiu.user.dto.RoleDto;
-import com.php25.qiuqiu.user.dto.TokenDto;
-import com.php25.qiuqiu.user.dto.UserCreateDto;
-import com.php25.qiuqiu.user.dto.UserDto;
-import com.php25.qiuqiu.user.dto.UserPageDto;
-import com.php25.qiuqiu.user.dto.UserUpdateDto;
+import com.php25.qiuqiu.user.dto.permission.PermissionDto;
+import com.php25.qiuqiu.user.dto.role.RoleDto;
+import com.php25.qiuqiu.user.dto.user.TokenDto;
+import com.php25.qiuqiu.user.dto.user.UserCreateDto;
+import com.php25.qiuqiu.user.dto.user.UserDto;
+import com.php25.qiuqiu.user.dto.user.UserPageDto;
+import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 import com.php25.qiuqiu.user.service.UserService;
 import io.github.yedaxia.apidocs.ApiDoc;
 import lombok.AllArgsConstructor;
@@ -138,6 +138,4 @@ public class UserController extends JSONController {
     public JSONResponse logout(@RequestAttribute @NotBlank String username) {
         return succeed(userService.logout(username));
     }
-
-
 }
