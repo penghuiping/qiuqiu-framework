@@ -66,21 +66,21 @@
 </template>
 
 <script lang="ts">
-import {Component} from 'vue-property-decorator'
-import {BaseVue} from '@/BaseVue'
-import {UserApi} from '@/api/user'
-import {Permission} from '@/permission'
+import { Component } from 'vue-property-decorator'
+import { BaseVue } from '@/BaseVue'
+import { UserApi } from '@/api/user'
+import { Permission } from '@/permission'
 
 class TabItem {
   title: string
   name: string
   key: string
 
-  constructor(title: string, name: string, key: string) {
+  constructor (title: string, name: string, key: string) {
     this.title = title
     this.name = name
     this.key = key
-   }
+  }
 }
 
 @Component

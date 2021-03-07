@@ -194,13 +194,13 @@
 
 <script lang="ts">
 
-import {Component} from 'vue-property-decorator'
-import {BaseVue} from '@/BaseVue'
-import {UserApi} from '@/api/user'
-import {ElementUiTreeVo, RoleVo, UserCreateVo, UserListVo} from '@/api/vo/'
-import {ElForm} from 'element-ui/types/form'
-import {RoleApi} from '@/api/role'
-import {GroupApi} from '@/api/group'
+import { Component } from 'vue-property-decorator'
+import { BaseVue } from '@/BaseVue'
+import { UserApi } from '@/api/user'
+import { ElementUiTreeVo, RoleVo, UserCreateVo, UserListVo } from '@/api/vo/'
+import { ElForm } from 'element-ui/types/form'
+import { RoleApi } from '@/api/role'
+import { GroupApi } from '@/api/group'
 
 @Component
 export default class User extends BaseVue {
@@ -244,20 +244,20 @@ export default class User extends BaseVue {
 
   private rules = {
     username: [
-      {required: true, message: '请输入用户名', trigger: 'blur'}
+      { required: true, message: '请输入用户名', trigger: 'blur' }
     ],
     nickname: [
-      {required: true, message: '请输入昵称', trigger: 'blur'}
+      { required: true, message: '请输入昵称', trigger: 'blur' }
     ],
     password: [
-      {required: true, message: '请输入密码', trigger: 'blur'},
-      {min: 6, message: '买长度至少6位', trigger: 'blur'}
+      { required: true, message: '请输入密码', trigger: 'blur' },
+      { min: 6, message: '买长度至少6位', trigger: 'blur' }
     ],
     roleIds: [
-      {required: true, message: '请选择角色', trigger: 'blur'}
+      { required: true, message: '请选择角色', trigger: 'blur' }
     ],
     groupId: [
-      {required: true, message: '请选择组', trigger: 'blur'}
+      { required: true, message: '请选择组', trigger: 'blur' }
     ]
   }
 
@@ -267,19 +267,19 @@ export default class User extends BaseVue {
     this.getGroups()
   }
 
-  async getRoles() {
+  async getRoles () {
     const res = await RoleApi.getAll()
     console.log(res)
     this.roles = res.data.data
   }
 
-  async getGroups() {
+  async getGroups () {
     const res = await GroupApi.getAll()
     this.groups.push(res.data.data)
   }
 
   // 状态有效/无效开关操作
-  toggleEnable(index: number, rows: UserListVo[]) {
+  toggleEnable (index: number, rows: UserListVo[]) {
     const userDto = rows[index]
     let message = ''
     let enable = ''
@@ -338,21 +338,21 @@ export default class User extends BaseVue {
     })
   }
 
-  async updateRow(row: UserListVo) {
+  async updateRow (row: UserListVo) {
     const res = await UserApi.detail(parseInt(row.id))
     Object.assign(this.userDetail, res.data.data)
     this.userUpdateDialogVisible = true
   }
 
   // 查看详情按钮操作
-  async detailInfo(row: UserListVo) {
+  async detailInfo (row: UserListVo) {
     const res = await UserApi.detail(parseInt(row.id))
     Object.assign(this.userDetail, res.data.data)
     this.userDetailDialogVisible = true
   }
 
   // 分页器每页大小改变时候的回调方法
-  handleSizeChange(pageSize: number) {
+  handleSizeChange (pageSize: number) {
     this.pageSize = pageSize
     this.goToPage(this.username, this.mobile, this.currentPage, this.pageSize)
   }
@@ -370,7 +370,7 @@ export default class User extends BaseVue {
   }
 
   // 创建新用户
-  async handleCreateUser() {
+  async handleCreateUser () {
     this.userAddDialogVisible = true
   }
 

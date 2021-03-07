@@ -1,4 +1,4 @@
-import {GroupVo, PermissionVo, RoleListVo, UserListVo} from '@/api/vo'
+import { GroupVo, PermissionVo, RoleListVo, UserListVo } from '@/api/vo'
 
 /**
  * 权限相关mock数据

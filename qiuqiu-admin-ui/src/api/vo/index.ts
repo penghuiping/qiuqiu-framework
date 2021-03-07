@@ -3,7 +3,7 @@ class JsonResponse<T> {
   data: T
   message: string
 
-  constructor(code: string, data: T, message: string) {
+  constructor (code: string, data: T, message: string) {
     this.code = code
     this.data = data
     this.message = message
@@ -29,7 +29,7 @@ class ElementUiTreeVo {
   children: ElementUiTreeVo[]
   disabled = true
 
-  constructor(id: string, value: string, label: string, children: ElementUiTreeVo[]) {
+  constructor (id: string, value: string, label: string, children: ElementUiTreeVo[]) {
     this.id = id
     this.value = value
     this.label = label
@@ -41,7 +41,7 @@ class TokenVo {
   expireTime: string
   token: string
 
-  constructor(expireTime: string, token: string) {
+  constructor (expireTime: string, token: string) {
     this.expireTime = expireTime
     this.token = token
   }
@@ -54,7 +54,7 @@ class UserCreateVo {
   groupId: number
   roleIds: number[]
 
-  constructor(username: string, nickname: string, password: string, groupId: number, roleIds: number[]) {
+  constructor (username: string, nickname: string, password: string, groupId: number, roleIds: number[]) {
     this.username = username
     this.nickname = nickname
     this.password = password
@@ -71,7 +71,7 @@ class UserListVo {
   lastModifiedTime: string
   enable: string
 
-  constructor(id: string,
+  constructor (id: string,
     username: string,
     nickname: string,
     createTime: string,
@@ -97,15 +97,15 @@ class UserDetailVo {
   enable: string
   permissions: string[]
 
-  constructor(id: string,
-              username: string,
-              nickname: string,
-              groupName: string,
-              roles: string[],
-              createTime: string,
-              lastModifiedTime: string,
-              enable: string,
-              permissions: string[]) {
+  constructor (id: string,
+    username: string,
+    nickname: string,
+    groupName: string,
+    roles: string[],
+    createTime: string,
+    lastModifiedTime: string,
+    enable: string,
+    permissions: string[]) {
     this.id = id
     this.username = username
     this.nickname = nickname
@@ -208,10 +208,10 @@ class GroupVo {
   description: string
   parentId: string
 
-  constructor(id: string,
-              name: string,
-              description: string,
-              parentId: string) {
+  constructor (id: string,
+    name: string,
+    description: string,
+    parentId: string) {
     this.id = id
     this.name = name
     this.description = description
