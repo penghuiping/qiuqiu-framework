@@ -1,11 +1,11 @@
 class JsonResponse<T> {
-  errorCode: number
-  returnObject: T
+  code: string
+  data: T
   message: string
 
-  constructor (errorCode: number, returnObject: T, message: string) {
-    this.errorCode = errorCode
-    this.returnObject = returnObject
+  constructor(code: string, data: T, message: string) {
+    this.code = code
+    this.data = data
     this.message = message
   }
 }
@@ -24,12 +24,14 @@ class PageVo<T> {
 
 class ElementUiTreeVo {
   id: string
+  value: string
   label: string
   children: ElementUiTreeVo[]
   disabled = true
 
-  constructor (id: string, label: string, children: ElementUiTreeVo[]) {
+  constructor(id: string, value: string, label: string, children: ElementUiTreeVo[]) {
     this.id = id
+    this.value = value
     this.label = label
     this.children = children
   }
@@ -39,9 +41,25 @@ class TokenVo {
   expireTime: string
   token: string
 
-  constructor (expireTime: string, token: string) {
+  constructor(expireTime: string, token: string) {
     this.expireTime = expireTime
     this.token = token
+  }
+}
+
+class UserCreateVo {
+  username: string
+  nickname: string
+  password: string
+  groupId: number
+  roleIds: number[]
+
+  constructor(username: string, nickname: string, password: string, groupId: number, roleIds: number[]) {
+    this.username = username
+    this.nickname = nickname
+    this.password = password
+    this.groupId = groupId
+    this.roleIds = roleIds
   }
 }
 
@@ -49,28 +67,19 @@ class UserListVo {
   id: string
   username: string
   nickname: string
-  mobile: string
-  department: string
-  roles: string
   createTime: string
   lastModifiedTime: string
   enable: string
 
-  constructor (id: string,
+  constructor(id: string,
     username: string,
     nickname: string,
-    mobile: string,
-    department: string,
-    roles: string,
     createTime: string,
     lastModifiedTime: string,
     enable: string) {
     this.id = id
     this.username = username
     this.nickname = nickname
-    this.mobile = mobile
-    this.department = department
-    this.roles = roles
     this.createTime = createTime
     this.lastModifiedTime = lastModifiedTime
     this.enable = enable
@@ -81,29 +90,26 @@ class UserDetailVo {
   id: string
   username: string
   nickname: string
-  mobile: string
-  department: string
-  roles: string
+  groupName: string
+  roles: string[]
   createTime: string
   lastModifiedTime: string
   enable: string
   permissions: string[]
 
-  constructor (id: string,
-    username: string,
-    nickname: string,
-    mobile: string,
-    department: string,
-    roles: string,
-    createTime: string,
-    lastModifiedTime: string,
-    enable: string,
-    permissions: string[]) {
+  constructor(id: string,
+              username: string,
+              nickname: string,
+              groupName: string,
+              roles: string[],
+              createTime: string,
+              lastModifiedTime: string,
+              enable: string,
+              permissions: string[]) {
     this.id = id
     this.username = username
     this.nickname = nickname
-    this.mobile = mobile
-    this.department = department
+    this.groupName = groupName
     this.roles = roles
     this.createTime = createTime
     this.lastModifiedTime = lastModifiedTime
@@ -196,16 +202,16 @@ class PermissionVo {
   }
 }
 
-class DepartmentVo {
+class GroupVo {
   id: string
   name: string
   description: string
   parentId: string
 
-  constructor (id: string,
-    name: string,
-    description: string,
-    parentId: string) {
+  constructor(id: string,
+              name: string,
+              description: string,
+              parentId: string) {
     this.id = id
     this.name = name
     this.description = description
@@ -220,9 +226,10 @@ export {
   PageVo,
   UserListVo,
   UserDetailVo,
+  UserCreateVo,
   RoleVo,
   RoleListVo,
   RoleDetailVo,
   PermissionVo,
-  DepartmentVo
+  GroupVo
 }

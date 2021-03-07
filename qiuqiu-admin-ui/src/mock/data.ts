@@ -1,4 +1,4 @@
-import { DepartmentVo, PermissionVo, RoleListVo, UserListVo } from '@/api/vo'
+import {GroupVo, PermissionVo, RoleListVo, UserListVo} from '@/api/vo'
 
 /**
  * 权限相关mock数据
@@ -34,27 +34,21 @@ const commonUserRole = new RoleListVo('2', 'common_user', '普通用户', '2021-
 /**
  * 部门相关mock数据
  */
-const rootDepartment = new DepartmentVo('1', '总部', '总部', '')
-const shangHaiDepartment = new DepartmentVo('2', '上海分部', '上海分部', '1')
-const beiJinDepartment = new DepartmentVo('3', '北京分部', '北京分部', '1')
-const minHangDepartment = new DepartmentVo('4', '上海闵行分部', '上海闵行分部', '2')
-const xuHuiDepartment = new DepartmentVo('5', '上海徐汇分部', '上海徐汇分部', '2')
+const rootDepartment = new GroupVo('1', '总部', '总部', '')
+const shangHaiDepartment = new GroupVo('2', '上海分部', '上海分部', '1')
+const beiJinDepartment = new GroupVo('3', '北京分部', '北京分部', '1')
+const minHangDepartment = new GroupVo('4', '上海闵行分部', '上海闵行分部', '2')
+const xuHuiDepartment = new GroupVo('5', '上海徐汇分部', '上海徐汇分部', '2')
 
 /**
  * 用户相关mock数据
  */
-const admin = new UserListVo('1', 'Admin', '超级管理员', '18812345678', '总部',
-  '超级管理员', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
-const mary = new UserListVo('2', 'Mary', '玛丽', '18812345677', '上海分部',
-  '普通用户', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
-const tom = new UserListVo('3', 'Tom', '汤姆', '18812345676', '上海闵行分部',
-  '普通用户', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
-const ted = new UserListVo('4', 'Ted', '泰德', '18812345675', '上海徐汇分部',
-  '普通用户', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
-const jack = new UserListVo('5', 'Jack', '杰克', '18812345674', '上海闵行分部',
-  '普通用户', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
-const alice = new UserListVo('6', 'Alice', '爱丽丝', '18812345673', '北京分部',
-  '普通用户', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
+const admin = new UserListVo('1', 'Admin', '超级管理员', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
+const mary = new UserListVo('2', 'Mary', '玛丽', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
+const tom = new UserListVo('3', 'Tom', '汤姆', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
+const ted = new UserListVo('4', 'Ted', '泰德', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
+const jack = new UserListVo('5', 'Jack', '杰克', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
+const alice = new UserListVo('6', 'Alice', '爱丽丝', '2020-11-1 10:00:00', '2020-11-1 10:00:00', '1')
 
 class MockData {
   static permissions = {

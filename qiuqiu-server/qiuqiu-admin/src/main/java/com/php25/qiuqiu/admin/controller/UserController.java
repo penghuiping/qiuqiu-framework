@@ -7,6 +7,7 @@ import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.LoginVo;
 import com.php25.qiuqiu.admin.vo.in.UserCreateVo;
 import com.php25.qiuqiu.admin.vo.in.UserDeleteVo;
+import com.php25.qiuqiu.admin.vo.in.UserDetailVo;
 import com.php25.qiuqiu.admin.vo.in.UserPageVo;
 import com.php25.qiuqiu.admin.vo.in.UserUpdateVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
@@ -23,6 +24,7 @@ import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 import com.php25.qiuqiu.user.service.UserService;
 import io.github.yedaxia.apidocs.ApiDoc;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -41,7 +43,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/user")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserController extends JSONController {
 
     private final UserService userService;
@@ -51,7 +53,7 @@ public class UserController extends JSONController {
      *
      * @param loginVo 登入信息
      */
-    @ApiDoc(stringResult = "返回jwt令牌", url = "/wxadmin/v1/user/login")
+    @ApiDoc(stringResult = "返回jwt令牌", url = "/qiuqiu_admin/v1/user/login")
     @APIVersion("v1")
     @PostMapping("/login")
     public JSONResponse login(@Valid @RequestBody LoginVo loginVo) {
@@ -64,18 +66,36 @@ public class UserController extends JSONController {
     /**
      * 获取用户信息接口
      */
-    @ApiDoc(result = UserVo.class, url = "/wxadmin/v1/user/getUserInfo")
+    @ApiDoc(result = UserVo.class, url = "/qiuqiu_admin/v1/user/info")
     @APIVersion("v1")
-    @PostMapping("/getUserInfo")
+    @PostMapping("/info")
     public JSONResponse getUserInfo(@RequestAttribute @NotBlank String username) {
         UserDto userDto = userService.getUserInfo(username);
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(userDto, userVo);
-        List<String> roleNames = userDto.getRoles().stream().map(RoleDto::getName).collect(Collectors.toList());
+        List<String> roleNames = userDto.getRoles().stream().map(RoleDto::getDescription).collect(Collectors.toList());
         userVo.setRoles(roleNames);
         List<String> permissionNames = userDto.getPermissions().stream().map(PermissionDto::getName).collect(Collectors.toList());
         userVo.setPermissions(permissionNames);
-        userVo.setGroupName(userDto.getGroup().getName());
+        userVo.setGroupName(userDto.getGroup().getDescription());
+        return succeed(userVo);
+    }
+
+    /**
+     * 获取用户信息接口
+     */
+    @ApiDoc(result = UserVo.class, url = "/qiuqiu_admin/v1/user/detail")
+    @APIVersion("v1")
+    @PostMapping("/detail")
+    public JSONResponse detail(@RequestAttribute @NotBlank String username, @RequestBody UserDetailVo user) {
+        UserDto userDto = userService.detail(user.getUserId());
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(userDto, userVo);
+        List<String> roleNames = userDto.getRoles().stream().map(RoleDto::getDescription).collect(Collectors.toList());
+        userVo.setRoles(roleNames);
+        List<String> permissionNames = userDto.getPermissions().stream().map(PermissionDto::getName).collect(Collectors.toList());
+        userVo.setPermissions(permissionNames);
+        userVo.setGroupName(userDto.getGroup().getDescription());
         return succeed(userVo);
     }
 
@@ -84,7 +104,7 @@ public class UserController extends JSONController {
      *
      * @param userPageVo 分页请求信息
      */
-    @ApiDoc(result = UserVo.class, url = "/wxadmin/v1/user/page")
+    @ApiDoc(result = UserVo.class, url = "/qiuqiu_admin/v1/user/page")
     @APIVersion("v1")
     @PostMapping("/page")
     public JSONResponse page(@RequestAttribute @NotBlank String username, @Valid @RequestBody UserPageVo userPageVo) {
@@ -101,7 +121,12 @@ public class UserController extends JSONController {
         return succeed(resultVo);
     }
 
-    @ApiDoc(result = Boolean.class, url = "/wxadmin/v1/user/create")
+    /**
+     * 创建用户
+     *
+     * @param userCreateVo 创建用户信息
+     */
+    @ApiDoc(stringResult = "true:创建成功", url = "/qiuqiu_admin/v1/user/create")
     @APIVersion("v1")
     @PostMapping("/create")
     public JSONResponse create(@Valid @RequestBody UserCreateVo userCreateVo) {
@@ -110,7 +135,12 @@ public class UserController extends JSONController {
         return succeed(userService.create(userCreateDto));
     }
 
-    @ApiDoc(result = Boolean.class, url = "/wxadmin/v1/user/update")
+    /**
+     * 更新用户
+     *
+     * @param userUpdateVo 更新用户信息
+     */
+    @ApiDoc(stringResult = "true:更新成功", url = "/qiuqiu_admin/v1/user/update")
     @APIVersion("v1")
     @PostMapping("/update")
     public JSONResponse update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
@@ -119,7 +149,12 @@ public class UserController extends JSONController {
         return succeed(userService.update(userUpdateDto));
     }
 
-    @ApiDoc(result = Boolean.class, url = "/wxadmin/v1/user/update")
+    /**
+     * 删除用户
+     * @param userDeleteVo 删除用户信息
+     *
+     */
+    @ApiDoc(stringResult = "true:删除成功", url = "/qiuqiu_admin/v1/user/delete")
     @APIVersion("v1")
     @PostMapping("/delete")
     public JSONResponse delete(@Valid @RequestBody UserDeleteVo userDeleteVo) {
@@ -132,7 +167,7 @@ public class UserController extends JSONController {
     /**
      * 登出接口
      */
-    @ApiDoc(stringResult = "是否成功登出", url = "/wxadmin/v1/user/logout")
+    @ApiDoc(stringResult = "是否成功登出", url = "/qiuqiu_admin/v1/user/logout")
     @APIVersion("v1")
     @PostMapping("/logout")
     public JSONResponse logout(@RequestAttribute @NotBlank String username) {

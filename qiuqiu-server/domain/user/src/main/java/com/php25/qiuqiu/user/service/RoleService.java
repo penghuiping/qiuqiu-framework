@@ -4,6 +4,7 @@ import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleCreateDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
+import com.php25.qiuqiu.user.dto.role.RolePageDto;
 import com.php25.qiuqiu.user.dto.role.RoleUpdateDto;
 
 import java.util.List;
@@ -47,8 +48,15 @@ public interface RoleService {
      * @param pageSize 每页记录数
      * @return 列表数据
      */
-    DataGridPageDto<RoleDto> page(String roleName, Integer pageNum, Integer pageSize);
+    DataGridPageDto<RolePageDto> page(String roleName, Integer pageNum, Integer pageSize);
 
+
+    /**
+     * 获取系统中所有的有效角色
+     *
+     * @return 角色列表
+     */
+    List<RoleDto> getAllRoles();
 
     /**
      * 根据角色名获取权限列表

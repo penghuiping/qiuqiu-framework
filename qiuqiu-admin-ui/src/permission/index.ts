@@ -25,20 +25,19 @@ class Permission {
   // 用于把服务端的权限名称映射为本地定义的权限名称
   public static mapToLocalPermissions (remotePermissions: string[]) {
     const remoteToLocalPermission = new Map<string, string>()
-    remoteToLocalPermission.set('_home', Permission.permissions.HOME)
-    remoteToLocalPermission.set('_user_page_list', Permission.permissions.USER_LIST_SEARCH)
-    remoteToLocalPermission.set('_user_add', Permission.permissions.USER_ADD)
-    remoteToLocalPermission.set('_user_detail', Permission.permissions.USER_DETAIL)
-    remoteToLocalPermission.set('_user_update', Permission.permissions.USER_UPDATE)
-    remoteToLocalPermission.set('_user_delete', Permission.permissions.USER_DELETE)
-    remoteToLocalPermission.set('_role_page_list', Permission.permissions.ROLE_LIST_SEARCH)
-    remoteToLocalPermission.set('_role_add', Permission.permissions.ROLE_ADD)
-    remoteToLocalPermission.set('_role_detail', Permission.permissions.ROLE_DETAIL)
-    remoteToLocalPermission.set('_role_update', Permission.permissions.ROLE_UPDATE)
-    remoteToLocalPermission.set('_role_delete', Permission.permissions.ROLE_DELETE)
-    remoteToLocalPermission.set('_department_page_list', Permission.permissions.DEPARTMENT_LIST_SEARCH)
-    remoteToLocalPermission.set('_media_page_list', Permission.permissions.MEDIA_LIST_SEARCH)
-    remoteToLocalPermission.set('_report_page_list', Permission.permissions.REPORT_LIST_SEARCH)
+    remoteToLocalPermission.set('user_page', Permission.permissions.USER_LIST_SEARCH)
+    remoteToLocalPermission.set('user_create', Permission.permissions.USER_ADD)
+    remoteToLocalPermission.set('user_info', Permission.permissions.USER_DETAIL)
+    remoteToLocalPermission.set('user_update', Permission.permissions.USER_UPDATE)
+    remoteToLocalPermission.set('user_delete', Permission.permissions.USER_DELETE)
+    // remoteToLocalPermission.set('_role_page_list', Permission.permissions.ROLE_LIST_SEARCH)
+    // remoteToLocalPermission.set('_role_add', Permission.permissions.ROLE_ADD)
+    // remoteToLocalPermission.set('_role_detail', Permission.permissions.ROLE_DETAIL)
+    // remoteToLocalPermission.set('_role_update', Permission.permissions.ROLE_UPDATE)
+    // remoteToLocalPermission.set('_role_delete', Permission.permissions.ROLE_DELETE)
+    // remoteToLocalPermission.set('_department_page_list', Permission.permissions.DEPARTMENT_LIST_SEARCH)
+    // remoteToLocalPermission.set('_media_page_list', Permission.permissions.MEDIA_LIST_SEARCH)
+    // remoteToLocalPermission.set('_report_page_list', Permission.permissions.REPORT_LIST_SEARCH)
 
     const userPermissions = new Set<string>()
     for (let i = 0; i < remotePermissions.length; i++) {
@@ -48,6 +47,7 @@ class Permission {
         userPermissions.add(localPermission)
       }
     }
+    userPermissions.add(Permission.permissions.HOME)
     store.commit('loginUserPermissions', userPermissions)
   }
 

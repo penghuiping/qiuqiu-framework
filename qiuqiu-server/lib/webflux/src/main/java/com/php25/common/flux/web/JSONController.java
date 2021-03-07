@@ -20,19 +20,17 @@ public class JSONController {
 
     protected JSONResponse failed(BusinessErrorStatus returnStatus) {
         JSONResponse ret = new JSONResponse();
-        ret.setErrorCode(returnStatus.getCode());
+        ret.setCode(returnStatus.getCode());
         ret.setMessage(returnStatus.getDesc());
         return ret;
     }
 
     protected JSONResponse succeed(Object obj) {
         JSONResponse ret = new JSONResponse();
-        ret.setErrorCode(ApiErrorCode.ok.value);
-        ret.setReturnObject(obj);
+        ret.setCode(ApiErrorCode.ok.value);
+        ret.setData(obj);
         ret.setMessage("success");
         return ret;
     }
-
-
 
 }

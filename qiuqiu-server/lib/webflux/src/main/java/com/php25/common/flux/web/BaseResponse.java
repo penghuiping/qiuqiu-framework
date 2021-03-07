@@ -6,28 +6,27 @@ package com.php25.common.flux.web;
  * @description:
  */
 public abstract class BaseResponse<T> {
-
     /**
      * 错误码
      */
-    private String errorCode;
+    private String code;
 
     /**
-     * 返回对象
+     * 接口返回数据
      */
-    private T returnObject;
+    private T data;
 
     /**
-     * 提示信息
+     * 对应错误码的提示信息
      */
     private String message;
 
-    public String getErrorCode() {
-        return errorCode;
+    public String getCode() {
+        return code;
     }
 
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getMessage() {
@@ -38,11 +37,11 @@ public abstract class BaseResponse<T> {
         this.message = message;
     }
 
-    public T getReturnObject() {
-        return returnObject;
+    public T getData() {
+        return data;
     }
 
-    public void setReturnObject(T returnObject) {
-        this.returnObject = returnObject;
+    public void setData(T data) {
+        this.data = data;
     }
 }

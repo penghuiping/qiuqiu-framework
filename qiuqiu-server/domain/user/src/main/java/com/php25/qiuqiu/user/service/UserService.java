@@ -58,6 +58,14 @@ public interface UserService {
     UserDto getUserInfo(String username);
 
     /**
+     * 用户详情
+     *
+     * @param userId 用户id
+     * @return 用户信息
+     */
+    UserDto detail(Long userId);
+
+    /**
      * 判断某个用户是否具有访问某个接口地址的权限
      *
      * @param username 用户名

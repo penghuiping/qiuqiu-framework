@@ -9,13 +9,6 @@
           placeholder="请输入用户名">
         </el-input>
       </div>
-      <div class="searchInput">
-        <el-input
-          v-model="mobile"
-          clearable
-          placeholder="请输入手机号">
-        </el-input>
-      </div>
       <el-button id="searchBtn" icon="el-icon-search" type="primary" @click="handleSearch">搜索</el-button>
     </el-row>
     <!--操作栏-->
@@ -27,7 +20,7 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      :data= "tableData">
+      :data="tableData">
       <el-table-column
         fixed
         label="ID"
@@ -45,21 +38,6 @@
         width="150">
       </el-table-column>
       <el-table-column
-        label="手机号"
-        prop="mobile"
-        width="150">
-      </el-table-column>
-      <el-table-column
-        label="角色名"
-        prop="roles"
-        width="150">
-      </el-table-column>
-      <el-table-column
-        label="部门名"
-        prop="department"
-        width="150">
-      </el-table-column>
-      <el-table-column
         label="创建时间"
         prop="createTime"
         width="150">
@@ -74,7 +52,7 @@
         prop="enable"
         width="50">
         <template slot-scope="scope">
-          <span >{{ scope.row.enable==='1'?'有效':'无效' }}</span>
+          <span>{{ scope.row.enable === 1 ? '有效' : '无效' }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -85,13 +63,13 @@
           <el-button
             size="small"
             type="text"
-            @click="detailInfo(scope.row)"  v-if="permissionExists(permissions.USER_DETAIL)">
+            v-if="permissionExists(permissions.USER_DETAIL)" @click="detailInfo(scope.row)">
             查看
           </el-button>
           <el-button
             size="small"
             type="text"
-            @click="updateRow(scope.row)"  v-if="permissionExists(permissions.USER_UPDATE)">
+            v-if="permissionExists(permissions.USER_UPDATE)" @click="updateRow(scope.row)">
             编辑
           </el-button>
           <el-button
@@ -103,8 +81,9 @@
           <el-button
             size="small"
             type="text"
-            @click.native.prevent="toggleEnable(scope.$index, tableData)" v-if="permissionExists(permissions.USER_UPDATE)">
-            {{scope.row.enable==='1'?'使无效':'使有效'}}
+            v-if="permissionExists(permissions.USER_UPDATE)"
+            @click.native.prevent="toggleEnable(scope.$index, tableData)">
+            {{ scope.row.enable === '1' ? '使无效' : '使有效' }}
           </el-button>
         </template>
       </el-table-column>
@@ -127,53 +106,54 @@
     <!--查看详情表单-->
     <el-dialog title="用户详情" :visible.sync="userDetailDialogVisible">
       <el-form :model="userDetail" id="userDetailForm">
-          <el-form-item label="用户名:" :label-width="dialogFormLabelWidth">
-            {{userDetail.username}}
-          </el-form-item>
-          <el-form-item label="昵称:" :label-width="dialogFormLabelWidth">
-            {{userDetail.nickname}}
-          </el-form-item>
-          <el-form-item label="手机:" :label-width="dialogFormLabelWidth">
-            {{userDetail.mobile}}
-          </el-form-item>
-          <el-form-item label="角色名:" :label-width="dialogFormLabelWidth">
-            {{userDetail.roles}}
-          </el-form-item>
-          <el-form-item label="创建时间:" :label-width="dialogFormLabelWidth">
-            {{userDetail.createTime}}
-          </el-form-item>
-          <el-form-item label="修改时间:" :label-width="dialogFormLabelWidth">
-            {{userDetail.lastModifiedTime}}
-          </el-form-item>
-          <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth">
-            {{userDetail.enable==='1'?'有效':'无效'}}
-          </el-form-item>
+        <el-form-item :label-width="dialogFormLabelWidth" label="用户名:">
+          {{ userDetail.username }}
+        </el-form-item>
+        <el-form-item :label-width="dialogFormLabelWidth" label="昵称:">
+          {{ userDetail.nickname }}
+        </el-form-item>
+        <el-form-item :label-width="dialogFormLabelWidth" label="角色名:">
+          {{ userDetail.roles }}
+        </el-form-item>
+        <el-form-item :label-width="dialogFormLabelWidth" label="部门名:">
+          {{ userDetail.groupName }}
+        </el-form-item>
+        <el-form-item :label-width="dialogFormLabelWidth" label="创建时间:">
+          {{ userDetail.createTime }}
+        </el-form-item>
+        <el-form-item :label-width="dialogFormLabelWidth" label="修改时间:">
+          {{ userDetail.lastModifiedTime }}
+        </el-form-item>
+        <el-form-item :label-width="dialogFormLabelWidth" label="是否有效:">
+          {{ userDetail.enable === 1 ? '有效' : '无效' }}
+        </el-form-item>
       </el-form>
     </el-dialog>
 
     <!--新增用户信息表单-->
     <el-dialog title="用户新增" :visible.sync="userAddDialogVisible">
-      <el-form :model="userDetail" ref="userAddForm" :rules="rules">
+      <el-form ref="userAddForm" :model="userCreateVo" :rules="rules">
         <el-form-item label="用户名:" :label-width="dialogFormLabelWidth" prop="username">
-          <el-input v-model="userDetail.username"></el-input>
+          <el-input v-model="userCreateVo.username"></el-input>
         </el-form-item>
         <el-form-item label="用户昵称:" :label-width="dialogFormLabelWidth" prop="nickname">
-          <el-input v-model="userDetail.nickname"></el-input>
+          <el-input v-model="userCreateVo.nickname"></el-input>
         </el-form-item>
-        <el-form-item label="手机号:" :label-width="dialogFormLabelWidth" prop="mobile">
-          <el-input v-model="userDetail.mobile"></el-input>
+        <el-form-item :label-width="dialogFormLabelWidth" label="用户密码:" prop="password">
+          <el-input v-model="userCreateVo.password"></el-input>
         </el-form-item>
-        <el-form-item label="角色名:" :label-width="dialogFormLabelWidth" prop="roles">
-          <el-select v-model="userDetail.roles" placeholder="请选择角色">
-            <el-option v-for="item in roles" :key=item.id :label=item.description :value=item.name ></el-option>
+        <el-form-item :label-width="dialogFormLabelWidth" label="角色名:" prop="roleIds">
+          <el-select v-model="userCreateVo.roleIds" multiple placeholder="请选择角色">
+            <el-option v-for="item in roles" :key=item.id :label=item.description :value=item.id></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth" prop="enable">
-          <el-switch
-            v-model="userDetail.enable"
-            active-color="#13ce66"
-            inactive-color="#ff4949">
-          </el-switch>
+        <el-form-item :label-width="dialogFormLabelWidth" label="用户组:" prop="groupId">
+          <el-cascader
+            v-model="userCreateVo.groupId"
+            :options="groups"
+            :show-all-levels="false"
+            clearable>
+          </el-cascader>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -191,12 +171,9 @@
         <el-form-item label="用户昵称:" :label-width="dialogFormLabelWidth" prop="nickname">
           <el-input v-model="userDetail.nickname"></el-input>
         </el-form-item>
-        <el-form-item label="手机号:" :label-width="dialogFormLabelWidth" prop="mobile">
-          <el-input v-model="userDetail.mobile"></el-input>
-        </el-form-item>
         <el-form-item label="角色名:" :label-width="dialogFormLabelWidth" prop="roles">
-          <el-select v-model="userDetail.roles" placeholder="请选择角色">
-            <el-option v-for="item in roles" :key=item.id :label=item.description :value=item.name ></el-option>
+          <el-select v-model="userDetail.roles" multiple placeholder="请选择角色">
+            <el-option v-for="item in roles" :key=item.id :label=item.description :value=item.name></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth" prop="enable">
@@ -217,18 +194,19 @@
 
 <script lang="ts">
 
-import { Component } from 'vue-property-decorator'
-import { BaseVue } from '@/BaseVue'
-import { UserApi } from '@/api/user'
-import { RoleVo, UserListVo } from '@/api/vo/'
-import { ElForm } from 'element-ui/types/form'
-import { RoleApi } from '@/api/role'
+import {Component} from 'vue-property-decorator'
+import {BaseVue} from '@/BaseVue'
+import {UserApi} from '@/api/user'
+import {ElementUiTreeVo, RoleVo, UserCreateVo, UserListVo} from '@/api/vo/'
+import {ElForm} from 'element-ui/types/form'
+import {RoleApi} from '@/api/role'
+import {GroupApi} from '@/api/group'
 
 @Component
 export default class User extends BaseVue {
   private username = ''
   private mobile = ''
-  private currentPage =1
+  private currentPage = 1
   private total = 1
   private pageSize = 5
   private tableData: UserListVo[] = []
@@ -239,46 +217,69 @@ export default class User extends BaseVue {
   private loading = true
   private dialogFormLabelWidth = '120px'
   private roles: RoleVo[] = []
-  private userDetail ={
+  private userDetail = {
     id: '',
     username: '',
     nickname: '',
-    mobile: '',
-    roles: '',
+    roles: [],
+    groupName: '',
     createTime: '',
     lastModifiedTime: '',
     enable: ''
   }
 
+  private groups: ElementUiTreeVo[] = []
+  private treeProps = {
+    children: 'children',
+    label: 'label'
+  }
+
+  private userCreateVo = {
+    username: '',
+    nickname: '',
+    password: '',
+    groupId: '',
+    roleIds: ''
+  }
+
   private rules = {
     username: [
-      { required: true, message: '请输入用户名', trigger: 'blur' }
+      {required: true, message: '请输入用户名', trigger: 'blur'}
     ],
     nickname: [
-      { required: true, message: '请输入昵称', trigger: 'blur' }
+      {required: true, message: '请输入昵称', trigger: 'blur'}
     ],
-    mobile: [
-      { required: true, message: '请输入手机号', trigger: 'blur' },
-      { min: 11, max: 11, message: '手机号长度为11位', trigger: 'blur' }
+    password: [
+      {required: true, message: '请输入密码', trigger: 'blur'},
+      {min: 6, message: '买长度至少6位', trigger: 'blur'}
     ],
-    roles: [
-      { required: true, message: '请选择角色', trigger: 'blur' }
+    roleIds: [
+      {required: true, message: '请选择角色', trigger: 'blur'}
+    ],
+    groupId: [
+      {required: true, message: '请选择组', trigger: 'blur'}
     ]
   }
 
   mounted () {
     this.goToPage('', '', this.currentPage, this.pageSize)
     this.getRoles()
+    this.getGroups()
   }
 
-  async getRoles () {
+  async getRoles() {
     const res = await RoleApi.getAll()
     console.log(res)
-    this.roles = res.data.returnObject
+    this.roles = res.data.data
+  }
+
+  async getGroups() {
+    const res = await GroupApi.getAll()
+    this.groups.push(res.data.data)
   }
 
   // 状态有效/无效开关操作
-  toggleEnable (index: number, rows: UserListVo[]) {
+  toggleEnable(index: number, rows: UserListVo[]) {
     const userDto = rows[index]
     let message = ''
     let enable = ''
@@ -317,7 +318,7 @@ export default class User extends BaseVue {
     }).then(async () => {
       const user = rows[index]
       const res = await UserApi.delete(user.id)
-      if (res && res.data.returnObject) {
+      if (res && res.data.data) {
         rows.splice(index, 1)
         this.$message({
           type: 'success',
@@ -337,19 +338,21 @@ export default class User extends BaseVue {
     })
   }
 
-  updateRow (row: UserListVo) {
-    this.userDetail = row
+  async updateRow(row: UserListVo) {
+    const res = await UserApi.detail(parseInt(row.id))
+    Object.assign(this.userDetail, res.data.data)
     this.userUpdateDialogVisible = true
   }
 
   // 查看详情按钮操作
-  detailInfo (row: UserListVo) {
-    this.userDetail = row
+  async detailInfo(row: UserListVo) {
+    const res = await UserApi.detail(parseInt(row.id))
+    Object.assign(this.userDetail, res.data.data)
     this.userDetailDialogVisible = true
   }
 
   // 分页器每页大小改变时候的回调方法
-  handleSizeChange (pageSize: number) {
+  handleSizeChange(pageSize: number) {
     this.pageSize = pageSize
     this.goToPage(this.username, this.mobile, this.currentPage, this.pageSize)
   }
@@ -367,24 +370,18 @@ export default class User extends BaseVue {
   }
 
   // 创建新用户
-  handleCreateUser () {
-    console.log('createUser...')
-    this.userDetail = {
-      id: '',
-      username: '',
-      nickname: '',
-      mobile: '',
-      roles: '',
-      createTime: '',
-      lastModifiedTime: '',
-      enable: ''
-    }
+  async handleCreateUser() {
     this.userAddDialogVisible = true
   }
 
   handleCreateUserConfirm () {
     (this.$refs.userAddForm as ElForm).validate(async valid => {
       if (valid) {
+        console.log('create user:', this.userCreateVo)
+        const userVo = new UserCreateVo('', '', '', -1, [])
+        Object.assign(userVo, this.userCreateVo)
+        console.log('create user:', userVo)
+        await UserApi.create(userVo)
         this.userAddDialogVisible = false
       }
     })
@@ -403,9 +400,9 @@ export default class User extends BaseVue {
     this.loading = true
     const res = await UserApi.page(username, mobile, pageNum, pageSize)
     this.loading = false
-    this.tableData = res.data.returnObject.data
-    this.currentPage = res.data.returnObject.currentPage
-    this.total = res.data.returnObject.total
+    this.tableData = res.data.data.data
+    this.currentPage = res.data.data.currentPage
+    this.total = res.data.data.total
 
     if ((this.total / this.pageSize) === 0) {
       this.hideOnSinglePage = true
@@ -416,7 +413,7 @@ export default class User extends BaseVue {
 </script>
 
 <style lang="scss" scoped>
-#userDetailForm .el-form-item{
+#userDetailForm .el-form-item {
   color: black !important;
 }
 
@@ -431,7 +428,7 @@ export default class User extends BaseVue {
   margin-right: 1em;
 }
 
-.el-button-group , #pagination , #searchBtn {
+.el-button-group, #pagination, #searchBtn {
   margin-top: 1em;
 }
 

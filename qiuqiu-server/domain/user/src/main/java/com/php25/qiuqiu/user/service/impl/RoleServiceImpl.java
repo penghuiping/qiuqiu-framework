@@ -10,6 +10,7 @@ import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleCreateDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
+import com.php25.qiuqiu.user.dto.role.RolePageDto;
 import com.php25.qiuqiu.user.dto.role.RoleUpdateDto;
 import com.php25.qiuqiu.user.model.Permission;
 import com.php25.qiuqiu.user.model.PermissionRef;
@@ -122,22 +123,33 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
     }
 
     @Override
-    public DataGridPageDto<RoleDto> page(String roleName, Integer pageNum, Integer pageSize) {
+    public DataGridPageDto<RolePageDto> page(String roleName, Integer pageNum, Integer pageSize) {
         SearchParamBuilder builder = SearchParamBuilder.builder();
         if (!StringUtil.isBlank(roleName)) {
             builder.append(SearchParam.of("name", Operator.EQ, roleName));
         }
         PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
         Page<Role> page = roleRepository.findAll(builder, pageRequest);
-        DataGridPageDto<RoleDto> res = new DataGridPageDto<>();
-        List<RoleDto> roleDtos = page.get().map(role -> {
-            RoleDto roleDto = new RoleDto();
+        DataGridPageDto<RolePageDto> res = new DataGridPageDto<>();
+        List<RolePageDto> roleDtos = page.get().map(role -> {
+            RolePageDto roleDto = new RolePageDto();
             BeanUtils.copyProperties(role, roleDto);
+            roleDto.setEnable(role.getEnable() ? 1 : 0);
             return roleDto;
         }).collect(Collectors.toList());
         res.setRecordsTotal(page.getTotalElements());
         res.setData(roleDtos);
         return res;
+    }
+
+    @Override
+    public List<RoleDto> getAllRoles() {
+        List<Role> roles = roleRepository.findAllEnabled();
+        return roles.stream().map(role -> {
+            RoleDto roleDto = new RoleDto();
+            BeanUtils.copyProperties(role, roleDto);
+            return roleDto;
+        }).collect(Collectors.toList());
     }
 
     private void loadPermissionRelation() {

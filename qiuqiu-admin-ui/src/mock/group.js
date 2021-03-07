@@ -3,7 +3,7 @@ import Mock from 'better-mock'
 import { ElementUiTreeVo, JsonResponse } from '@/api/vo'
 import { MockData } from '@/mock/data'
 
-Mock.mock(ApiConstant.DEPARTMENT_GET_ALL, 'POST', function () {
+Mock.mock(ApiConstant.GROUP_GET_ALL, 'POST', function () {
   const rootDepartment = new ElementUiTreeVo(
     MockData.departments.rootDepartment.id,
     MockData.departments.rootDepartment.name,

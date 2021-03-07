@@ -30,10 +30,10 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'vue-property-decorator'
-import { BaseVue } from '@/BaseVue'
-import { UserApi } from '@/api/user'
-import { ElForm } from 'element-ui/types/form'
+import {Component} from 'vue-property-decorator'
+import {BaseVue} from '@/BaseVue'
+import {UserApi} from '@/api/user'
+import {ElForm} from 'element-ui/types/form'
 
 @Component
 export default class Login extends BaseVue {
@@ -60,9 +60,10 @@ export default class Login extends BaseVue {
         const res = await UserApi.login(this.loginForm.username, this.loginForm.password)
         this.closeLoading(loading)
         const jsonResponse = res.data
-        if (jsonResponse.errorCode === 0) {
-          const token = res.data.returnObject.token
-          const expireTime = res.data.returnObject.expireTime
+        if (jsonResponse.code === '0') {
+          const token = res.data.data.token
+          const expireTime = res.data.data.expireTime
+          console.log(expireTime)
           this.$store.commit('login', {
             token: token,
             expireTime: expireTime

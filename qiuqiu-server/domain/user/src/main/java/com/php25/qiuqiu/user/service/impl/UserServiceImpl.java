@@ -186,6 +186,49 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto detail(Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (!userOptional.isPresent()) {
+            throw Exceptions.throwImpossibleException();
+        }
+        User user = userOptional.get();
+
+        //角色
+        List<Long> roleIds = userRepository.findRoleIdsByUserId(user.getId());
+        List<Role> roles = (List<Role>) roleRepository.findAllById(roleIds);
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(user, userDto);
+        Set<RoleDto> roleDtoSet = roles.stream().map(role -> {
+            RoleDto roleDto = new RoleDto();
+            BeanUtils.copyProperties(role, roleDto);
+            return roleDto;
+        }).collect(Collectors.toSet());
+        userDto.setRoles(roleDtoSet);
+        userDto.setEnable(user.getEnable() ? 1 : 0);
+
+        //权限
+        List<Long> permissionIds = roleRepository.getPermissionIdsByRoleIds(roleIds);
+        List<Permission> permissions = (List<Permission>) permissionRepository.findAllById(permissionIds);
+        Set<PermissionDto> permissionDtos = permissions.stream().map(permission -> {
+            PermissionDto permissionDto = new PermissionDto();
+            BeanUtils.copyProperties(permission, permissionDto);
+            return permissionDto;
+        }).collect(Collectors.toSet());
+        userDto.setPermissions(permissionDtos);
+
+        //组
+        Optional<Group> groupOptional = groupRepository.findByIdEnable(user.getGroupId());
+        if (!groupOptional.isPresent()) {
+            throw Exceptions.throwImpossibleException();
+        }
+        Group group = groupOptional.get();
+        GroupDto groupDto = new GroupDto();
+        BeanUtils.copyProperties(group, groupDto);
+        userDto.setGroup(groupDto);
+        return userDto;
+    }
+
+    @Override
     public Boolean hasPermission(String username, String uri) {
         //先通过session判断
         UserSessionDto userSessionDto = getUserSession(username);

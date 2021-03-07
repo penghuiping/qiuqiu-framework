@@ -111,16 +111,16 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'vue-property-decorator'
-import { BaseVue } from '@/BaseVue'
-import { RoleApi } from '@/api/role'
-import { ElementUiTreeVo, RoleDetailVo, RoleListVo } from '@/api/vo'
+import {Component} from 'vue-property-decorator'
+import {BaseVue} from '@/BaseVue'
+import {RoleApi} from '@/api/role'
+import {ElementUiTreeVo, RoleDetailVo, RoleListVo} from '@/api/vo'
 
 @Component
 export default class Role extends BaseVue {
   private tableData: RoleListVo[] = []
   private loading = false
-  private currentPage =1
+  private currentPage = 1
   private total = 1
   private pageSize = 5
   private hideOnSinglePage = false
@@ -143,7 +143,7 @@ export default class Role extends BaseVue {
     const loading = this.showLoading()
     console.log('row:', row)
     const res = await RoleApi.detail(row.id)
-    this.roleDetail = res.data.returnObject
+    this.roleDetail = res.data.data
     this.roleDetailDialogVisible = true
 
     const checkedPermissions = this.roleDetail.permissions
@@ -154,7 +154,7 @@ export default class Role extends BaseVue {
     }
 
     const res1 = await RoleApi.getAllSystemPermissions()
-    this.permissionTree = res1.data.returnObject
+    this.permissionTree = res1.data.data
     loading.close()
   }
 
@@ -166,7 +166,7 @@ export default class Role extends BaseVue {
     }).then(async () => {
       const role = rows[index]
       const res = await RoleApi.delete(role.id)
-      if (res && res.data.returnObject) {
+      if (res && res.data.data) {
         rows.splice(index, 1)
         this.$message({
           type: 'success',
@@ -209,9 +209,9 @@ export default class Role extends BaseVue {
     this.loading = true
     const res = await RoleApi.page(pageNum, pageSize)
     this.loading = false
-    this.tableData = res.data.returnObject.data
-    this.currentPage = res.data.returnObject.currentPage
-    this.total = res.data.returnObject.total
+    this.tableData = res.data.data.data
+    this.currentPage = res.data.data.currentPage
+    this.total = res.data.data.total
 
     if ((this.total / this.pageSize) === 0) {
       this.hideOnSinglePage = true
