@@ -1,14 +1,14 @@
-import {Vue, Watch} from 'vue-property-decorator'
-import {Loading} from 'element-ui'
-import {ElLoadingComponent} from 'element-ui/types/loading'
-import {Permission} from '@/permission'
+import { Vue, Watch } from 'vue-property-decorator'
+import { Loading } from 'element-ui'
+import { ElLoadingComponent } from 'element-ui/types/loading'
+import { Permission } from '@/permission'
 import Component from 'vue-class-component'
 
 @Component
 class BaseVue extends Vue {
   private permissions = Permission.permissions
 
-  get token() {
+  get token () {
     let token1 = this.$store.state.token
     if (this.$store.state.token !== '') {
       token1 = this.$store.state.token
@@ -22,7 +22,7 @@ class BaseVue extends Vue {
   @Watch('token', {
     immediate: true
   })
-  onChildChanged(val: string, oldVal: string) {
+  onChildChanged (val: string, oldVal: string) {
     console.log('oldToken:', oldVal)
     if (val === '' && this.$router.currentRoute.path !== '/') {
       this.$confirm('由于您长时间没有操作,请重新登入', '提示', {
@@ -37,7 +37,7 @@ class BaseVue extends Vue {
   }
 
   // 页面跳转
-  routePage(path: string) {
+  routePage (path: string) {
     if (path.length > 1) {
       path = path.endsWith('/') ? path.substr(0, path.length - 1) : path
     }

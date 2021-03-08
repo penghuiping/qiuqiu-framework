@@ -2,7 +2,7 @@ class TokenVo {
   expireTime: string
   token: string
 
-  constructor(expireTime: string, token: string) {
+  constructor (expireTime: string, token: string) {
     this.expireTime = expireTime
     this.token = token
   }
@@ -15,7 +15,7 @@ class UserCreateVo {
   groupId: number
   roleIds: number[]
 
-  constructor(username: string, nickname: string, password: string, groupId: number, roleIds: number[]) {
+  constructor (username: string, nickname: string, password: string, groupId: number, roleIds: number[]) {
     this.username = username
     this.nickname = nickname
     this.password = password
@@ -23,7 +23,7 @@ class UserCreateVo {
     this.roleIds = roleIds
   }
 
-  static newInstant(): UserCreateVo {
+  static newInstant (): UserCreateVo {
     return new UserCreateVo('', '', '', -1, [])
   }
 }
@@ -37,7 +37,7 @@ class UserUpdateVo {
   roleIds: number[]
   enable: boolean
 
-  constructor(
+  constructor (
     id: number,
     username: string,
     nickname: string,
@@ -54,7 +54,7 @@ class UserUpdateVo {
     this.enable = enable
   }
 
-  static newInstant(): UserUpdateVo {
+  static newInstant (): UserUpdateVo {
     return new UserUpdateVo(-1, '', '', '', -1, [], false)
   }
 }
@@ -67,7 +67,7 @@ class UserListVo {
   lastModifiedTime: string
   enable: number
 
-  constructor(
+  constructor (
     id: number,
     username: string,
     nickname: string,
@@ -82,7 +82,7 @@ class UserListVo {
     this.enable = enable
   }
 
-  static newInstant(): UserListVo {
+  static newInstant (): UserListVo {
     return new UserListVo(-1, '', '', '', '', -1)
   }
 }
@@ -100,7 +100,7 @@ class UserDetailVo {
   enable: number
   permissions: string[]
 
-  constructor(
+  constructor (
     id: number,
     username: string,
     nickname: string,
@@ -125,7 +125,7 @@ class UserDetailVo {
     this.permissions = permissions
   }
 
-  static newInstant(): UserDetailVo {
+  static newInstant (): UserDetailVo {
     return new UserDetailVo(-1, '', '', -1, '', [], [], '', '', -1, [])
   }
 }
@@ -135,15 +135,15 @@ class RoleVo {
   name: string
   description: string
 
-  constructor(id: number,
-              name: string,
-              description: string) {
+  constructor (id: number,
+    name: string,
+    description: string) {
     this.id = id
     this.name = name
     this.description = description
   }
 
-  static newInstant(): RoleVo {
+  static newInstant (): RoleVo {
     return new RoleVo(-1, '', '')
   }
 }
@@ -156,12 +156,12 @@ class RoleListVo {
   lastModifiedTime: string
   enable: number
 
-  constructor(id: number,
-              name: string,
-              description: string,
-              createTime: string,
-              lastModifiedTime: string,
-              enable: number) {
+  constructor (id: number,
+    name: string,
+    description: string,
+    createTime: string,
+    lastModifiedTime: string,
+    enable: number) {
     this.id = id
     this.name = name
     this.description = description
@@ -170,7 +170,7 @@ class RoleListVo {
     this.enable = enable
   }
 
-  static newInstant(): RoleListVo {
+  static newInstant (): RoleListVo {
     return new RoleListVo(-1, '', '', '', '', -1)
   }
 }
@@ -184,7 +184,7 @@ class RoleDetailVo {
   lastModifiedTime: string
   enable: number
 
-  constructor(
+  constructor (
     id: number,
     name: string,
     description: string,
@@ -201,7 +201,7 @@ class RoleDetailVo {
     this.enable = enable
   }
 
-  static newInstant(): RoleDetailVo {
+  static newInstant (): RoleDetailVo {
     return new RoleDetailVo(-1, '', '', [], '', '', -1)
   }
 }
@@ -211,9 +211,9 @@ class PermissionVo {
   name: string
   description: string
 
-  constructor(id: number,
-              name: string,
-              description: string) {
+  constructor (id: number,
+    name: string,
+    description: string) {
     this.id = id
     this.name = name
     this.description = description
@@ -226,10 +226,10 @@ class GroupVo {
   description: string
   parentId: number
 
-  constructor(id: number,
-              name: string,
-              description: string,
-              parentId: number) {
+  constructor (id: number,
+    name: string,
+    description: string,
+    parentId: number) {
     this.id = id
     this.name = name
     this.description = description

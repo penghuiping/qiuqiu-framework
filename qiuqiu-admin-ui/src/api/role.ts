@@ -1,20 +1,20 @@
-import axios, {AxiosResponse} from 'axios'
-import {ElementUiTreeVo, JsonResponse, PageVo} from '@/api/vo'
-import {ApiConstant} from '@/api/index'
-import {RoleDetailVo, RoleListVo, RoleVo} from '@/api/vo/user'
+import axios, { AxiosResponse } from 'axios'
+import { ElementUiTreeVo, JsonResponse, PageVo } from '@/api/vo'
+import { ApiConstant } from '@/api/index'
+import { RoleDetailVo, RoleListVo, RoleVo } from '@/api/vo/user'
 
 class RoleApi {
-  public static getAll(): Promise<AxiosResponse<JsonResponse<RoleVo[]>>> {
+  public static getAll (): Promise<AxiosResponse<JsonResponse<RoleVo[]>>> {
     return axios.post(ApiConstant.ROLE_GET_ALL)
   }
 
-  public static detail(id: number): Promise<AxiosResponse<JsonResponse<RoleDetailVo>>> {
+  public static detail (id: number): Promise<AxiosResponse<JsonResponse<RoleDetailVo>>> {
     return axios.post(ApiConstant.ROLE_DETAIL, {
       id: id
     })
   }
 
-  public static delete(id: number): Promise<AxiosResponse<JsonResponse<boolean>>> {
+  public static delete (id: number): Promise<AxiosResponse<JsonResponse<boolean>>> {
     return axios.post(ApiConstant.ROLE_DELETE, {
       id: id
     })

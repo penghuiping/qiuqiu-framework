@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
-import {JsonResponse} from '@/api/vo'
+import { JsonResponse } from '@/api/vo'
 
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {

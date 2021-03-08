@@ -29,7 +29,7 @@ class ElementUiTreeVo {
   children: ElementUiTreeVo[]
   disabled = true
 
-  constructor(id: number, value: string, label: string, children: ElementUiTreeVo[]) {
+  constructor (id: number, value: string, label: string, children: ElementUiTreeVo[]) {
     this.id = id
     this.value = value
     this.label = label
