@@ -16,6 +16,12 @@ import java.util.List;
 public class UserUpdateVo {
 
     /**
+     * 用户id
+     */
+    @NotNull(message = "用户id不能为空")
+    private Long id;
+
+    /**
      * 昵称
      */
     @NotBlank(message = "昵称不能为空")
@@ -24,7 +30,6 @@ public class UserUpdateVo {
     /**
      * 密码
      */
-    @NotBlank(message = "密码不能为空")
     private String password;
 
     /**

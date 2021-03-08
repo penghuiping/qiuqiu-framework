@@ -111,11 +111,11 @@
 </template>
 
 <script lang="ts">
-import {Component} from 'vue-property-decorator'
-import {BaseVue} from '@/BaseVue'
-import {RoleApi} from '@/api/role'
-import {ElementUiTreeVo} from '@/api/vo'
-import {RoleDetailVo, RoleListVo} from '@/api/vo/user'
+import { Component } from 'vue-property-decorator'
+import { BaseVue } from '@/BaseVue'
+import { RoleApi } from '@/api/role'
+import { ElementUiTreeVo } from '@/api/vo'
+import { RoleDetailVo, RoleListVo } from '@/api/vo/user'
 
 @Component
 export default class Role extends BaseVue {

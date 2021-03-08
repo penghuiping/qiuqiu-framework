@@ -41,6 +41,7 @@
         <core>2.3.2-SNAPSHOT</core>
         <redis>2.3.2-SNAPSHOT</redis>
         <db>2.3.2-SNAPSHOT</db>
+        <ws>2.3.2-SNAPSHOT</ws>
         <validation>2.3.2-SNAPSHOT</validation>
         <webflux>2.3.2-SNAPSHOT</webflux>
     </properties>
@@ -166,6 +167,12 @@
                 <groupId>com.php25</groupId>
                 <artifactId>redis</artifactId>
                 <version>${redis}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.php25</groupId>
+                <artifactId>ws</artifactId>
+                <version>${ws}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>

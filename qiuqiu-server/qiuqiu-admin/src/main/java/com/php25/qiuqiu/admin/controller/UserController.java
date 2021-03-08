@@ -1,6 +1,7 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.util.StringUtil;
 import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
@@ -151,6 +152,9 @@ public class UserController extends JSONController {
     public JSONResponse update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
         UserUpdateDto userUpdateDto = new UserUpdateDto();
         BeanUtils.copyProperties(userUpdateVo, userUpdateDto);
+        if(StringUtil.isBlank(userUpdateDto.getPassword())) {
+            userUpdateDto.setPassword(null);
+        }
         return succeed(userService.update(userUpdateDto));
     }
 

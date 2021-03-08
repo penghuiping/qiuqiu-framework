@@ -21,6 +21,7 @@
         <module>webflux</module>
         <module>redis</module>
         <module>validation</module>
+        <module>ws</module>
     </modules>
 
 </project>

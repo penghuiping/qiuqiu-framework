@@ -40,6 +40,10 @@
             <artifactId>validation</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.php25</groupId>
+            <artifactId>ws</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.github.yedaxia</groupId>
             <artifactId>japidocs</artifactId>
         </dependency>
