@@ -3,7 +3,6 @@ package com.php25.qiuqiu.admin.controller;
 import com.google.common.collect.Lists;
 import com.php25.common.core.tree.TreeNode;
 import com.php25.common.core.tree.Trees;
-import com.php25.common.core.tree.VisitHandler;
 import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;

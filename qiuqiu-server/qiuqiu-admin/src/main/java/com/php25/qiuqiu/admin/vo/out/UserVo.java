@@ -36,6 +36,11 @@ public class UserVo {
     private List<String> roles;
 
     /**
+     * 角色id
+     */
+    private List<Long> roleIds;
+
+    /**
      * 权限名列表
      */
     private List<String> permissions;
@@ -44,6 +49,11 @@ public class UserVo {
      * 组名
      */
     private String groupName;
+
+    /**
+     * 组id
+     */
+    private Long groupId;
 
     /**
      * 用户信息创建时间

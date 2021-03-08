@@ -26,7 +26,7 @@ public class DbConfig {
     @Bean
     public DataSource sqLiteDataSource() {
         SQLiteDataSource sqLiteDataSource = new SQLiteDataSource();
-        sqLiteDataSource.setUrl("jdbc:sqlite:/tmp/test.db");
+        sqLiteDataSource.setUrl("jdbc:sqlite:test.db");
         return sqLiteDataSource;
     }
 

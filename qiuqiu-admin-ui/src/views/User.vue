@@ -149,9 +149,11 @@
         </el-form-item>
         <el-form-item :label-width="dialogFormLabelWidth" label="用户组:" prop="groupId">
           <el-cascader
+            ref="groupCascader"
             v-model="userCreateVo.groupId"
             :options="groups"
             :show-all-levels="false"
+            :props="{ checkStrictly: true }"
             clearable>
           </el-cascader>
         </el-form-item>
@@ -164,21 +166,34 @@
 
     <!--更新用户信息表单-->
     <el-dialog title="用户更新" :visible.sync="userUpdateDialogVisible">
-      <el-form :model="userDetail" ref="userAddForm" :rules="rules">
+      <el-form ref="userUpdateForm" :model="userUpdateVo" :rules="rules">
+        <el-form-item :label-width="dialogFormLabelWidth" label="id:" prop="id">
+          <el-input v-model="userUpdateVo.id" disabled></el-input>
+        </el-form-item>
         <el-form-item label="用户名:" :label-width="dialogFormLabelWidth" prop="username">
-          <el-input v-model="userDetail.username"></el-input>
+          <el-input v-model="userUpdateVo.username"></el-input>
         </el-form-item>
         <el-form-item label="用户昵称:" :label-width="dialogFormLabelWidth" prop="nickname">
-          <el-input v-model="userDetail.nickname"></el-input>
+          <el-input v-model="userUpdateVo.nickname"></el-input>
         </el-form-item>
-        <el-form-item label="角色名:" :label-width="dialogFormLabelWidth" prop="roles">
-          <el-select v-model="userDetail.roles" multiple placeholder="请选择角色">
+        <el-form-item :label-width="dialogFormLabelWidth" label="角色名:" prop="roleIds">
+          <el-select v-model="userUpdateVo.roleIds" multiple placeholder="请选择角色">
             <el-option v-for="item in roles" :key=item.id :label=item.description :value=item.name></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item :label-width="dialogFormLabelWidth" label="用户组:" prop="groupId">
+          <el-cascader
+            ref="groupCascaderUpdate"
+            v-model="userUpdateVo.groupId"
+            :options="groups"
+            :props="{ checkStrictly: true }"
+            :show-all-levels="false"
+            clearable>
+          </el-cascader>
+        </el-form-item>
         <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth" prop="enable">
           <el-switch
-            v-model="userDetail.enable"
+            v-model="userUpdateVo.enable"
             active-color="#13ce66"
             inactive-color="#ff4949">
           </el-switch>
@@ -194,18 +209,18 @@
 
 <script lang="ts">
 
-import { Component } from 'vue-property-decorator'
-import { BaseVue } from '@/BaseVue'
-import { UserApi } from '@/api/user'
-import { ElementUiTreeVo, RoleVo, UserCreateVo, UserListVo } from '@/api/vo/'
-import { ElForm } from 'element-ui/types/form'
-import { RoleApi } from '@/api/role'
-import { GroupApi } from '@/api/group'
+import {Component} from 'vue-property-decorator'
+import {BaseVue} from '@/BaseVue'
+import {UserApi} from '@/api/user'
+import {ElementUiTreeVo} from '@/api/vo/'
+import {ElForm} from 'element-ui/types/form'
+import {RoleApi} from '@/api/role'
+import {GroupApi} from '@/api/group'
+import {RoleVo, UserCreateVo, UserDetailVo, UserListVo, UserUpdateVo} from '@/api/vo/user'
 
 @Component
 export default class User extends BaseVue {
   private username = ''
-  private mobile = ''
   private currentPage = 1
   private total = 1
   private pageSize = 5
@@ -217,40 +232,19 @@ export default class User extends BaseVue {
   private loading = true
   private dialogFormLabelWidth = '120px'
   private roles: RoleVo[] = []
-  private userDetail = {
-    id: '',
-    username: '',
-    nickname: '',
-    roles: [],
-    groupName: '',
-    createTime: '',
-    lastModifiedTime: '',
-    enable: ''
-  }
-
+  private userDetail: UserDetailVo = UserDetailVo.newInstant()
+  private userCreateVo: UserCreateVo = UserCreateVo.newInstant()
+  private userUpdateVo: UserUpdateVo = UserUpdateVo.newInstant()
   private groups: ElementUiTreeVo[] = []
-  private treeProps = {
-    children: 'children',
-    label: 'label'
-  }
-
-  private userCreateVo = {
-    username: '',
-    nickname: '',
-    password: '',
-    groupId: '',
-    roleIds: ''
-  }
-
   private rules = {
     username: [
-      { required: true, message: '请输入用户名', trigger: 'blur' }
+      {required: true, message: '请输入用户名', trigger: 'blur'}
     ],
     nickname: [
-      { required: true, message: '请输入昵称', trigger: 'blur' }
+      {required: true, message: '请输入昵称', trigger: 'blur'}
     ],
     password: [
-      { required: true, message: '请输入密码', trigger: 'blur' },
+      {required: true, message: '请输入密码', trigger: 'blur'},
       { min: 6, message: '买长度至少6位', trigger: 'blur' }
     ],
     roleIds: [
@@ -262,7 +256,7 @@ export default class User extends BaseVue {
   }
 
   mounted () {
-    this.goToPage('', '', this.currentPage, this.pageSize)
+    this.goToPage('', this.currentPage, this.pageSize)
     this.getRoles()
     this.getGroups()
   }
@@ -282,13 +276,14 @@ export default class User extends BaseVue {
   toggleEnable (index: number, rows: UserListVo[]) {
     const userDto = rows[index]
     let message = ''
-    let enable = ''
-    if (userDto.enable === '1') {
+    let enable = -1
+    console.log(userDto.enable)
+    if (userDto.enable === 1) {
       message = '失效'
-      enable = '0'
+      enable = 0
     } else {
       message = '生效'
-      enable = '1'
+      enable = 1
     }
 
     this.$confirm('使这条记录' + message + ', 是否继续?', '提示', {
@@ -319,7 +314,7 @@ export default class User extends BaseVue {
       const user = rows[index]
       const res = await UserApi.delete(user.id)
       if (res && res.data.data) {
-        rows.splice(index, 1)
+        this.goToPage(this.username, 1, this.pageSize)
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -339,14 +334,19 @@ export default class User extends BaseVue {
   }
 
   async updateRow (row: UserListVo) {
-    const res = await UserApi.detail(parseInt(row.id))
-    Object.assign(this.userDetail, res.data.data)
+    const res = await UserApi.detail(row.id)
+    this.userUpdateVo.id = res.data.data.id
+    this.userUpdateVo.username = res.data.data.username
+    this.userUpdateVo.nickname = res.data.data.nickname
+    this.userUpdateVo.groupId = res.data.data.groupId
+    this.userUpdateVo.roleIds = res.data.data.roleIds
+    this.userUpdateVo.enable = res.data.data.enable
     this.userUpdateDialogVisible = true
   }
 
   // 查看详情按钮操作
   async detailInfo (row: UserListVo) {
-    const res = await UserApi.detail(parseInt(row.id))
+    const res = await UserApi.detail(row.id)
     Object.assign(this.userDetail, res.data.data)
     this.userDetailDialogVisible = true
   }
@@ -354,19 +354,19 @@ export default class User extends BaseVue {
   // 分页器每页大小改变时候的回调方法
   handleSizeChange (pageSize: number) {
     this.pageSize = pageSize
-    this.goToPage(this.username, this.mobile, this.currentPage, this.pageSize)
+    this.goToPage(this.username, this.currentPage, this.pageSize)
   }
 
   // 分页器当前页改变时候的回调方法
   handleCurrentChange (pageNum: number) {
     this.currentPage = pageNum
-    this.goToPage(this.username, this.mobile, this.currentPage, this.pageSize)
+    this.goToPage(this.username, this.currentPage, this.pageSize)
   }
 
   // 处理搜索按钮
   handleSearch () {
     this.currentPage = 1
-    this.goToPage(this.username, this.mobile, this.currentPage, this.pageSize)
+    this.goToPage(this.username, this.currentPage, this.pageSize)
   }
 
   // 创建新用户
@@ -377,28 +377,64 @@ export default class User extends BaseVue {
   handleCreateUserConfirm () {
     (this.$refs.userAddForm as ElForm).validate(async valid => {
       if (valid) {
-        console.log('create user:', this.userCreateVo)
-        const userVo = new UserCreateVo('', '', '', -1, [])
-        Object.assign(userVo, this.userCreateVo)
-        console.log('create user:', userVo)
-        await UserApi.create(userVo)
+        const userVo = new UserCreateVo(
+          this.userCreateVo.username,
+          this.userCreateVo.nickname,
+          this.userCreateVo.password,
+          this.userCreateVo.groupId,
+          this.userCreateVo.roleIds)
+        const res = await UserApi.create(userVo)
+        if (res && res.data.data) {
+          this.goToPage(this.username, 1, this.pageSize)
+          this.$message({
+            type: 'success',
+            message: '新增成功!'
+          })
+        } else {
+          this.$message({
+            type: 'info',
+            message: '新增失败'
+          })
+        }
         this.userAddDialogVisible = false
       }
     })
   }
 
   handleUpdateUserConfirm () {
-    (this.$refs.userAddForm as ElForm).validate(async valid => {
+    (this.$refs.userUpdateForm as ElForm).validate(async valid => {
       if (valid) {
         this.userUpdateDialogVisible = false
+        const userVo = new UserUpdateVo(
+          this.userUpdateVo.id,
+          this.userUpdateVo.username,
+          this.userUpdateVo.nickname,
+          this.userUpdateVo.password,
+          this.userUpdateVo.groupId,
+          this.userUpdateVo.roleIds,
+          this.userUpdateVo.enable)
+        console.log('userUpdateVo:', userVo)
+        const res = await UserApi.update(userVo)
+        if (res && res.data.data) {
+          this.goToPage(this.username, 1, this.pageSize)
+          this.$message({
+            type: 'success',
+            message: '更新成功!'
+          })
+        } else {
+          this.$message({
+            type: 'info',
+            message: '更新失败'
+          })
+        }
       }
     })
   }
 
   // 跳去某页操作
-  async goToPage (username: string, mobile: string, pageNum: number, pageSize: number) {
+  async goToPage(username: string, pageNum: number, pageSize: number) {
     this.loading = true
-    const res = await UserApi.page(username, mobile, pageNum, pageSize)
+    const res = await UserApi.page(username, pageNum, pageSize)
     this.loading = false
     this.tableData = res.data.data.data
     this.currentPage = res.data.data.currentPage

@@ -1,5 +1,6 @@
 import Mock from 'better-mock'
-import { JsonResponse, UserDetailVo } from '@/api/vo'
+import { JsonResponse } from '@/api/vo'
+import { UserDetailVo } from '@/api/vo/user'
 import { ApiConstant } from '@/api'
 import { MockData } from '@/mock/data'
 

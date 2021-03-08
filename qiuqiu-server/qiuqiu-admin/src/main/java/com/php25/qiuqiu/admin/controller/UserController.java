@@ -23,7 +23,6 @@ import com.php25.qiuqiu.user.dto.user.UserPageDto;
 import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 import com.php25.qiuqiu.user.service.UserService;
 import io.github.yedaxia.apidocs.ApiDoc;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,9 +74,12 @@ public class UserController extends JSONController {
         BeanUtils.copyProperties(userDto, userVo);
         List<String> roleNames = userDto.getRoles().stream().map(RoleDto::getDescription).collect(Collectors.toList());
         userVo.setRoles(roleNames);
+        List<Long> roleIds = userDto.getRoles().stream().map(RoleDto::getId).collect(Collectors.toList());
+        userVo.setRoleIds(roleIds);
         List<String> permissionNames = userDto.getPermissions().stream().map(PermissionDto::getName).collect(Collectors.toList());
         userVo.setPermissions(permissionNames);
         userVo.setGroupName(userDto.getGroup().getDescription());
+        userVo.setGroupId(userDto.getGroup().getId());
         return succeed(userVo);
     }
 
@@ -93,9 +95,12 @@ public class UserController extends JSONController {
         BeanUtils.copyProperties(userDto, userVo);
         List<String> roleNames = userDto.getRoles().stream().map(RoleDto::getDescription).collect(Collectors.toList());
         userVo.setRoles(roleNames);
+        List<Long> roleIds = userDto.getRoles().stream().map(RoleDto::getId).collect(Collectors.toList());
+        userVo.setRoleIds(roleIds);
         List<String> permissionNames = userDto.getPermissions().stream().map(PermissionDto::getName).collect(Collectors.toList());
         userVo.setPermissions(permissionNames);
         userVo.setGroupName(userDto.getGroup().getDescription());
+        userVo.setGroupId(userDto.getGroup().getId());
         return succeed(userVo);
     }
 
@@ -110,7 +115,7 @@ public class UserController extends JSONController {
     public JSONResponse page(@RequestAttribute @NotBlank String username, @Valid @RequestBody UserPageVo userPageVo) {
         DataGridPageDto<UserPageDto> result = userService.page(userPageVo.getUsername(), userPageVo.getPageNum(), userPageVo.getPageSize());
         PageResultVo<UserPageOutVo> resultVo = new PageResultVo<>();
-        resultVo.setPageNum(userPageVo.getPageNum());
+        resultVo.setCurrentPage(userPageVo.getPageNum());
         resultVo.setTotal(result.getRecordsTotal());
         List<UserPageOutVo> list = result.getData().stream().map(userPageDto -> {
             UserPageOutVo userPageOutVo = new UserPageOutVo();

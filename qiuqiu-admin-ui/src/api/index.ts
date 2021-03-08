@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
+import {JsonResponse} from '@/api/vo'
 
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
@@ -18,6 +19,12 @@ axios.interceptors.response.use(
   function (response) {
     // 对响应数据做点什么
     console.log('response:', response)
+    const jsonResponse = new JsonResponse('', '', '')
+    Object.assign(jsonResponse, response.data)
+    const code = jsonResponse.code
+    if (code === '10001' || code === '10002') {
+      store.commit('logout')
+    }
     return response
   },
   function (error) {
@@ -33,6 +40,7 @@ class ApiConstant {
   static USER_PAGE = '/user/page'
   static USER_DELETE = '/user/delete'
   static USER_CREATE = '/user/create'
+  static USER_UPDATE = '/user/update'
   static ROLE_GET_ALL = '/role/getAll'
   static ROLE_DETAIL = '/role/detail'
   static ROLE_PAGE = '/role/list'

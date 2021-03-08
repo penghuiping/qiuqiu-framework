@@ -26,5 +26,5 @@ public class PageResultVo<T> {
     /**
      * 当前第几页
      */
-    private Integer pageNum;
+    private Integer currentPage;
 }

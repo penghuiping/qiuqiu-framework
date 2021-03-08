@@ -1,11 +1,12 @@
 import Mock from 'better-mock'
-import { ElementUiTreeVo, JsonResponse, PageVo, RoleDetailVo, RoleVo } from '@/api/vo'
+import { ElementUiTreeVo, JsonResponse, PageVo } from '@/api/vo'
+import { RoleDetailVo, RoleVo } from '@/api/vo/user'
 import { ApiConstant } from '@/api'
 import { MockData } from '@/mock/data'
 
 Mock.mock(ApiConstant.ROLE_GET_ALL, 'post', function () {
-  const role1 = Object.assign(new RoleVo(), MockData.roles.adminRole)
-  const role2 = Object.assign(new RoleVo(), MockData.roles.commonUserRole)
+  const role1 = Object.assign(RoleVo.newInstant(), MockData.roles.adminRole)
+  const role2 = Object.assign(RoleVo.newInstant(), MockData.roles.commonUserRole)
   return new JsonResponse(0, [role1, role2], null)
 })
 

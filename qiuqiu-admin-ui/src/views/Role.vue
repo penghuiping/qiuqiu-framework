@@ -111,10 +111,11 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'vue-property-decorator'
-import { BaseVue } from '@/BaseVue'
-import { RoleApi } from '@/api/role'
-import { ElementUiTreeVo, RoleDetailVo, RoleListVo } from '@/api/vo'
+import {Component} from 'vue-property-decorator'
+import {BaseVue} from '@/BaseVue'
+import {RoleApi} from '@/api/role'
+import {ElementUiTreeVo} from '@/api/vo'
+import {RoleDetailVo, RoleListVo} from '@/api/vo/user'
 
 @Component
 export default class Role extends BaseVue {
@@ -133,7 +134,7 @@ export default class Role extends BaseVue {
     label: 'label'
   }
 
-  private permissionChecked: string[] = []
+  private permissionChecked: number[] = []
 
   mounted () {
     this.goToPage(1, this.pageSize)
