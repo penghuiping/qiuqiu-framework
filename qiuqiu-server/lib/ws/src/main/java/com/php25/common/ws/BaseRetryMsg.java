@@ -47,7 +47,7 @@ public class BaseRetryMsg implements Delayed {
     /**
      * 消息id
      */
-    @JsonProperty("msgId")
+    @JsonProperty("msg_id")
     protected String msgId;
 
     /**
