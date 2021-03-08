@@ -148,9 +148,10 @@
           </el-select>
         </el-form-item>
         <el-form-item :label-width="dialogFormLabelWidth" label="用户组:" prop="groupId">
+          <el-input v-model="userCreateVo.groupId" hidden style="display: none"></el-input>
           <el-cascader
             ref="groupCascader"
-            v-model="userCreateVo.groupId"
+            v-model="groupsChecked"
             :options="groups"
             :show-all-levels="false"
             :props="{ checkStrictly: true }"
@@ -178,13 +179,14 @@
         </el-form-item>
         <el-form-item :label-width="dialogFormLabelWidth" label="角色名:" prop="roleIds">
           <el-select v-model="userUpdateVo.roleIds" multiple placeholder="请选择角色">
-            <el-option v-for="item in roles" :key=item.id :label=item.description :value=item.name></el-option>
+            <el-option v-for="item in roles" :key=item.id :label=item.description :value=item.id></el-option>
           </el-select>
         </el-form-item>
         <el-form-item :label-width="dialogFormLabelWidth" label="用户组:" prop="groupId">
+          <el-input v-model="userUpdateVo.groupId" hidden style="display: none"></el-input>
           <el-cascader
             ref="groupCascaderUpdate"
-            v-model="userUpdateVo.groupId"
+            v-model="groupsChecked"
             :options="groups"
             :props="{ checkStrictly: true }"
             :show-all-levels="false"
@@ -236,6 +238,7 @@ export default class User extends BaseVue {
   private userCreateVo: UserCreateVo = UserCreateVo.newInstant()
   private userUpdateVo: UserUpdateVo = UserUpdateVo.newInstant()
   private groups: ElementUiTreeVo[] = []
+  private groupsChecked: string[] = []
   private rules = {
     username: [
       {required: true, message: '请输入用户名', trigger: 'blur'}
@@ -245,7 +248,7 @@ export default class User extends BaseVue {
     ],
     password: [
       {required: true, message: '请输入密码', trigger: 'blur'},
-      { min: 6, message: '买长度至少6位', trigger: 'blur' }
+      {min: 6, message: '买长度至少6位', trigger: 'blur'}
     ],
     roleIds: [
       { required: true, message: '请选择角色', trigger: 'blur' }
@@ -263,7 +266,6 @@ export default class User extends BaseVue {
 
   async getRoles () {
     const res = await RoleApi.getAll()
-    console.log(res)
     this.roles = res.data.data
   }
 
@@ -339,20 +341,48 @@ export default class User extends BaseVue {
     this.userUpdateVo.username = res.data.data.username
     this.userUpdateVo.nickname = res.data.data.nickname
     this.userUpdateVo.groupId = res.data.data.groupId
+    this.groupsChecked = this.findGroupPath(this.userUpdateVo.groupId)
     this.userUpdateVo.roleIds = res.data.data.roleIds
-    this.userUpdateVo.enable = res.data.data.enable
+    this.userUpdateVo.enable = (res.data.data.enable === 1)
     this.userUpdateDialogVisible = true
   }
 
+  findGroupPath(groupId: number): string[] {
+    const path: string[] = []
+    const node = this.groups[0]
+    console.log('groups:', node)
+    this.findGroupPath0(groupId, node, path)
+    return path
+  }
+
+  findGroupPath0(nodeId: number, node: ElementUiTreeVo, path: string[]): boolean {
+    path.push(node.id + '')
+    if (node.id + '' === nodeId + '') {
+      return true
+    }
+
+    if (node.children && node.children.length > 0) {
+      for (let i = 0; i < node.children.length; i++) {
+        const childNode = node.children[i]
+        const res0 = this.findGroupPath0(nodeId, childNode, path)
+        if (res0) {
+          return true
+        }
+      }
+    }
+    path.pop()
+    return false
+  }
+
   // 查看详情按钮操作
-  async detailInfo (row: UserListVo) {
+  async detailInfo(row: UserListVo) {
     const res = await UserApi.detail(row.id)
     Object.assign(this.userDetail, res.data.data)
     this.userDetailDialogVisible = true
   }
 
   // 分页器每页大小改变时候的回调方法
-  handleSizeChange (pageSize: number) {
+  handleSizeChange(pageSize: number) {
     this.pageSize = pageSize
     this.goToPage(this.username, this.currentPage, this.pageSize)
   }
@@ -375,6 +405,7 @@ export default class User extends BaseVue {
   }
 
   handleCreateUserConfirm () {
+    this.userCreateVo.groupId = parseInt(this.groupsChecked[this.groupsChecked.length - 1]);
     (this.$refs.userAddForm as ElForm).validate(async valid => {
       if (valid) {
         const userVo = new UserCreateVo(
@@ -402,6 +433,7 @@ export default class User extends BaseVue {
   }
 
   handleUpdateUserConfirm () {
+    this.userUpdateVo.groupId = parseInt(this.groupsChecked[this.groupsChecked.length - 1]);
     (this.$refs.userUpdateForm as ElForm).validate(async valid => {
       if (valid) {
         this.userUpdateDialogVisible = false
@@ -413,7 +445,6 @@ export default class User extends BaseVue {
           this.userUpdateVo.groupId,
           this.userUpdateVo.roleIds,
           this.userUpdateVo.enable)
-        console.log('userUpdateVo:', userVo)
         const res = await UserApi.update(userVo)
         if (res && res.data.data) {
           this.goToPage(this.username, 1, this.pageSize)

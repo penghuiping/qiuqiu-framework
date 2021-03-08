@@ -35,7 +35,7 @@ class UserUpdateVo {
   password: string
   groupId: number
   roleIds: number[]
-  enable: number
+  enable: boolean
 
   constructor(
     id: number,
@@ -44,7 +44,7 @@ class UserUpdateVo {
     password: string,
     groupId: number,
     roleIds: number[],
-    enable: number) {
+    enable: boolean) {
     this.id = id
     this.username = username
     this.nickname = nickname
@@ -55,7 +55,7 @@ class UserUpdateVo {
   }
 
   static newInstant(): UserUpdateVo {
-    return new UserUpdateVo(-1, '', '', '', -1, [], -1)
+    return new UserUpdateVo(-1, '', '', '', -1, [], false)
   }
 }
 

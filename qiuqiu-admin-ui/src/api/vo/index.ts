@@ -23,13 +23,13 @@ class PageVo<T> {
 }
 
 class ElementUiTreeVo {
-  id: string
+  id: number
   value: string
   label: string
   children: ElementUiTreeVo[]
   disabled = true
 
-  constructor (id: string, value: string, label: string, children: ElementUiTreeVo[]) {
+  constructor(id: number, value: string, label: string, children: ElementUiTreeVo[]) {
     this.id = id
     this.value = value
     this.label = label
