@@ -52,7 +52,7 @@
         prop="enable"
         width="50">
         <template slot-scope="scope">
-          <span>{{ scope.row.enable === 1 ? '有效' : '无效' }}</span>
+          <span>{{ scope.row.enable? '有效' : '无效' }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -83,7 +83,7 @@
             type="text"
             v-if="permissionExists(permissions.USER_UPDATE)"
             @click.native.prevent="toggleEnable(scope.$index, tableData)">
-            {{ scope.row.enable === '1' ? '使无效' : '使有效' }}
+            {{ scope.row.enable ? '使无效' : '使有效' }}
           </el-button>
         </template>
       </el-table-column>
@@ -125,7 +125,7 @@
           {{ userDetail.lastModifiedTime }}
         </el-form-item>
         <el-form-item :label-width="dialogFormLabelWidth" label="是否有效:">
-          {{ userDetail.enable === 1 ? '有效' : '无效' }}
+          {{ userDetail.enable? '有效' : '无效' }}
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -278,14 +278,12 @@ export default class User extends BaseVue {
   toggleEnable (index: number, rows: UserListVo[]) {
     const userDto = rows[index]
     let message = ''
-    let enable = -1
-    console.log(userDto.enable)
-    if (userDto.enable === 1) {
+    if (userDto.enable) {
       message = '失效'
-      enable = 0
+      userDto.enable = false
     } else {
       message = '生效'
-      enable = 1
+      userDto.enable = true
     }
 
     this.$confirm('使这条记录' + message + ', 是否继续?', '提示', {
@@ -293,7 +291,6 @@ export default class User extends BaseVue {
       cancelButtonText: '取消',
       type: 'warning'
     }).then(() => {
-      userDto.enable = enable
       this.$message({
         type: 'success',
         message: '成功!'
@@ -343,7 +340,7 @@ export default class User extends BaseVue {
     this.userUpdateVo.groupId = res.data.data.groupId
     this.groupsChecked = this.findGroupPath(this.userUpdateVo.groupId)
     this.userUpdateVo.roleIds = res.data.data.roleIds
-    this.userUpdateVo.enable = (res.data.data.enable === 1)
+    this.userUpdateVo.enable = res.data.data.enable
     this.userUpdateDialogVisible = true
   }
 

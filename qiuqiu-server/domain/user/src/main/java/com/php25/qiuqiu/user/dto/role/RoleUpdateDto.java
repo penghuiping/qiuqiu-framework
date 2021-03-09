@@ -32,4 +32,9 @@ public class RoleUpdateDto {
      * 权限列表
      */
     private List<Long> permissionIds;
+
+    /**
+     * true:有效
+     */
+    private Boolean enable;
 }

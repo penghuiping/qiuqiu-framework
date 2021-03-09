@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.vo.out;
+package com.php25.qiuqiu.admin.vo.out.role;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -39,7 +39,7 @@ public class RoleDetailOutVo {
     private List<String> permissions;
 
     /**
-     * 0:无效 1:有效
+     * false:无效 true:有效
      */
-    private Integer enable;
+    private Boolean enable;
 }

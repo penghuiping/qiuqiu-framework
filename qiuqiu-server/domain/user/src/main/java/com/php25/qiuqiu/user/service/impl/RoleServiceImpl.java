@@ -136,7 +136,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
         List<RolePageDto> roleDtos = page.get().map(role -> {
             RolePageDto roleDto = new RolePageDto();
             BeanUtils.copyProperties(role, roleDto);
-            roleDto.setEnable(role.getEnable() ? 1 : 0);
+            roleDto.setEnable(role.getEnable());
             return roleDto;
         }).collect(Collectors.toList());
         res.setRecordsTotal(page.getTotalElements());
@@ -194,7 +194,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
         Role role = roleOptional.get();
         RoleDetailDto roleDetailDto = new RoleDetailDto();
         BeanUtils.copyProperties(role,roleDetailDto);
-        roleDetailDto.setEnable(role.getEnable()?1:0);
+        roleDetailDto.setEnable(role.getEnable());
 
         List<Long> permissionIds0 = roleRepository.getPermissionIdsByRoleId(roleId);
         List<Permission> permissions = (List<Permission>)permissionRepository.findAllById(permissionIds0);

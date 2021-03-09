@@ -31,15 +31,20 @@
         prop="enable"
         width="50">
         <template slot-scope="scope">
-          <span >{{ scope.row.enable===1?'有效':'无效' }}</span>
+          <span >{{ scope.row.enable?'有效':'无效' }}</span>
         </template>
       </el-table-column>
       <el-table-column
         fixed="right"
         label="操作"
-        width="150">
+        width="200">
         <template slot-scope="scope">
-          <el-button @click="detailInfo(scope.row)" type="text" size="small" v-if="permissionExists(permissions.ROLE_DETAIL)">查看</el-button>
+          <el-button @click="detailInfo(scope.row)" type="text" size="small" v-if="permissionExists(permissions.ROLE_DETAIL)">
+            查看
+          </el-button>
+          <el-button @click="update(scope.row)" type="text" size="small" v-if="permissionExists(permissions.ROLE_UPDATE)">
+            编辑
+          </el-button>
           <el-button
             size="small"
             type="text"
@@ -50,7 +55,7 @@
             size="small"
             type="text"
             @click.native.prevent="toggleEnable(scope.$index, tableData)" v-if="permissionExists(permissions.ROLE_UPDATE)">
-            {{scope.row.enable==='1'?'使无效':'使有效'}}
+            {{scope.row.enable?'使无效':'使有效'}}
           </el-button>
         </template>
       </el-table-column>
@@ -79,7 +84,7 @@
             {{roleDetail.description}}
           </el-form-item>
           <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth">
-            {{roleDetail.enable===1?'有效':'无效'}}
+            {{roleDetail.enable?'有效':'无效'}}
           </el-form-item>
         <el-form-item label="权限:" :label-width="dialogFormLabelWidth">
           <el-tree show-checkbox
@@ -87,9 +92,44 @@
                    :default-checked-keys="roleDetail.permissionIds"
                    :default-expand-all="true"
                    :props="treeProps"
+                   :data="permissionTree" disabled></el-tree>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
+    <!--更新角色信息表单-->
+    <el-dialog title="角色更新" :visible.sync="roleUpdateDialogVisible">
+      <el-form ref="roleUpdateForm" :model="roleUpdateVo" :rules="rules">
+        <el-form-item :label-width="dialogFormLabelWidth" label="id:" prop="id">
+          <el-input v-model="roleUpdateVo.id" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="角色名:" :label-width="dialogFormLabelWidth" prop="name">
+          <el-input v-model="roleUpdateVo.name"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述:" :label-width="dialogFormLabelWidth" prop="description">
+          <el-input v-model="roleUpdateVo.description"></el-input>
+        </el-form-item>
+        <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth" prop="enable">
+          <el-switch
+            v-model="roleUpdateVo.enable"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="权限:" :label-width="dialogFormLabelWidth">
+          <el-tree show-checkbox
+                   ref="permissionTree"
+                   node-key="id"
+                   :default-checked-keys="roleUpdateVo.permissionIds"
+                   :default-expand-all="true"
+                   :props="treeProps"
                    :data="permissionTree"></el-tree>
         </el-form-item>
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="roleUpdateDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="updateConfirm">确 定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -99,7 +139,9 @@ import { Component } from 'vue-property-decorator'
 import { BaseVue } from '@/BaseVue'
 import { RoleApi } from '@/api/role'
 import { ElementUiTreeVo } from '@/api/vo'
-import { RoleDetailVo, RoleListVo } from '@/api/vo/user'
+import { RoleDetailVo, RoleListVo, RoleUpdateVo } from '@/api/vo/user'
+import { ElForm } from 'element-ui/types/form'
+import { ElTree } from 'element-ui/types/tree'
 
 @Component
 export default class Role extends BaseVue {
@@ -110,12 +152,29 @@ export default class Role extends BaseVue {
   private pageSize = 5
   private hideOnSinglePage = false
   private roleDetailDialogVisible = false
+  private roleUpdateDialogVisible =false
   private dialogFormLabelWidth = '120px'
   private roleDetail = RoleDetailVo.newInstant()
   private permissionTree: ElementUiTreeVo[] = []
+  private roleUpdateVo = RoleUpdateVo.newInstant()
   private treeProps = {
     children: 'children',
     label: 'label'
+  }
+
+  private rules = {
+    name: [
+      { required: true, message: '请输入角色名', trigger: 'blur' }
+    ],
+    discription: [
+      { required: true, message: '请输入角色描述', trigger: 'blur' }
+    ],
+    enable: [
+      { required: true, message: '请输入角色是否有效', trigger: 'blur' }
+    ],
+    permissionIds: [
+      { required: true, message: '请选择权限', trigger: 'blur' }
+    ]
   }
 
   mounted () {
@@ -158,6 +217,35 @@ export default class Role extends BaseVue {
         type: 'info',
         message: '已取消删除'
       })
+    })
+  }
+
+  async update (row: RoleListVo) {
+    const loading = this.showLoading()
+    const res = await RoleApi.detail(row.id)
+    this.roleUpdateVo.id = res.data.data.id
+    this.roleUpdateVo.name = res.data.data.name
+    this.roleUpdateVo.description = res.data.data.description
+    this.roleUpdateVo.permissionIds = res.data.data.permissionIds
+    this.roleUpdateVo.enable = res.data.data.enable
+    this.roleUpdateDialogVisible = true
+
+    const res1 = await RoleApi.getAllSystemPermissions()
+    this.permissionTree = res1.data.data
+    loading.close()
+  }
+
+  async updateConfirm () {
+    const loading = this.showLoading()
+    this.roleUpdateVo.permissionIds = (this.$refs.permissionTree as ElTree<number, ElementUiTreeVo>).getCheckedKeys();
+    (this.$refs.roleUpdateForm as ElForm).validate(async valid => {
+      if (valid) {
+        const res = await RoleApi.update(this.roleUpdateVo)
+        if (res.data.data) {
+          loading.close()
+          this.roleUpdateDialogVisible = false
+        }
+      }
     })
   }
 

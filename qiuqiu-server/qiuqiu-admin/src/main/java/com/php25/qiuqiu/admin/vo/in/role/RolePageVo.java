@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.vo.in;
+package com.php25.qiuqiu.admin.vo.in.role;
 
 import lombok.Getter;
 import lombok.Setter;

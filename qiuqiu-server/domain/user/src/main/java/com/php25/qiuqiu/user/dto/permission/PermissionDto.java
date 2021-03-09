@@ -22,5 +22,5 @@ public class PermissionDto {
 
     private String uri;
 
-    private Integer enable;
+    private Boolean enable;
 }

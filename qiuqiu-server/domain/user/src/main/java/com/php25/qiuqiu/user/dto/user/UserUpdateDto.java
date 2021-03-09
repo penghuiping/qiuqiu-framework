@@ -22,5 +22,5 @@ public class UserUpdateDto {
 
     private Long groupId;
 
-    private Integer enable;
+    private Boolean enable;
 }

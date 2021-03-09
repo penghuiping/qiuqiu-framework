@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.vo.out;
+package com.php25.qiuqiu.admin.vo.out.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -68,7 +68,7 @@ public class UserVo {
     private LocalDateTime lastModifiedTime;
 
     /**
-     * 用户账号是否可用 1:可用 2:不可用
+     * 用户账号是否可用 true:可用 false:不可用
      */
-    private Integer enable;
+    private Boolean enable;
 }

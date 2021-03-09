@@ -28,8 +28,8 @@ const reportPageList = new PermissionVo(17, '_report_page_list', '报表列表')
 /**
  * 角色相关mock数据
  */
-const adminRole = new RoleListVo(1, 'admin', '超级管理员', 1)
-const commonUserRole = new RoleListVo(2, 'common_user', '普通用户', 2)
+const adminRole = new RoleListVo(1, 'admin', '超级管理员', true)
+const commonUserRole = new RoleListVo(2, 'common_user', '普通用户', true)
 
 /**
  * 部门相关mock数据
@@ -43,12 +43,12 @@ const xuHuiDepartment = new GroupVo(5, '上海徐汇分部', '上海徐汇分部
 /**
  * 用户相关mock数据
  */
-const admin = new UserListVo(1, 'Admin', '超级管理员', '2020-11-1 10:00:00', '2020-11-1 10:00:00', 1)
-const mary = new UserListVo(2, 'Mary', '玛丽', '2020-11-1 10:00:00', '2020-11-1 10:00:00', 1)
-const tom = new UserListVo(3, 'Tom', '汤姆', '2020-11-1 10:00:00', '2020-11-1 10:00:00', 1)
-const ted = new UserListVo(4, 'Ted', '泰德', '2020-11-1 10:00:00', '2020-11-1 10:00:00', 1)
-const jack = new UserListVo(5, 'Jack', '杰克', '2020-11-1 10:00:00', '2020-11-1 10:00:00', 1)
-const alice = new UserListVo(6, 'Alice', '爱丽丝', '2020-11-1 10:00:00', '2020-11-1 10:00:00', 1)
+const admin = new UserListVo(1, 'Admin', '超级管理员', '2020-11-1 10:00:00', '2020-11-1 10:00:00', true)
+const mary = new UserListVo(2, 'Mary', '玛丽', '2020-11-1 10:00:00', '2020-11-1 10:00:00', true)
+const tom = new UserListVo(3, 'Tom', '汤姆', '2020-11-1 10:00:00', '2020-11-1 10:00:00', true)
+const ted = new UserListVo(4, 'Ted', '泰德', '2020-11-1 10:00:00', '2020-11-1 10:00:00', true)
+const jack = new UserListVo(5, 'Jack', '杰克', '2020-11-1 10:00:00', '2020-11-1 10:00:00', true)
+const alice = new UserListVo(6, 'Alice', '爱丽丝', '2020-11-1 10:00:00', '2020-11-1 10:00:00', true)
 
 class MockData {
   static permissions = {

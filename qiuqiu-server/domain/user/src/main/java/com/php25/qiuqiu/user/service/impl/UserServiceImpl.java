@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
             return roleDto;
         }).collect(Collectors.toSet());
         userDto.setRoles(roleDtoSet);
-        userDto.setEnable(user.getEnable() ? 1 : 0);
+        userDto.setEnable(user.getEnable());
 
         //权限
         List<Long> permissionIds = roleRepository.getPermissionIdsByRoleIds(roleIds);
@@ -204,7 +204,7 @@ public class UserServiceImpl implements UserService {
             return roleDto;
         }).collect(Collectors.toSet());
         userDto.setRoles(roleDtoSet);
-        userDto.setEnable(user.getEnable() ? 1 : 0);
+        userDto.setEnable(user.getEnable());
 
         //权限
         List<Long> permissionIds = roleRepository.getPermissionIdsByRoleIds(roleIds);
@@ -261,7 +261,7 @@ public class UserServiceImpl implements UserService {
         List<UserPageDto> list = userPage.get().map(user -> {
             UserPageDto userPageDto = new UserPageDto();
             BeanUtils.copyProperties(user, userPageDto);
-            userPageDto.setEnable(user.getEnable() ? 1 : 0);
+            userPageDto.setEnable(user.getEnable());
             return userPageDto;
         }).collect(Collectors.toList());
         res.setData(list);

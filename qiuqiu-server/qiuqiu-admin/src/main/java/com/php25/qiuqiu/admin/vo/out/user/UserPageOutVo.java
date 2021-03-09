@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.vo.out;
+package com.php25.qiuqiu.admin.vo.out.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -42,7 +42,7 @@ public class UserPageOutVo {
     private LocalDateTime lastModifiedTime;
 
     /**
-     * 是否有效 0:无效 1:有效
+     * 是否有效 false:无效 true:有效
      */
-    private Integer enable;
+    private Boolean enable;
 }

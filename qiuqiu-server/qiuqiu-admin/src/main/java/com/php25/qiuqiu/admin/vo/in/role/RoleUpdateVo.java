@@ -1,6 +1,5 @@
-package com.php25.qiuqiu.user.dto.role;
+package com.php25.qiuqiu.admin.vo.in.role;
 
-import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,11 +7,11 @@ import java.util.List;
 
 /**
  * @author penghuiping
- * @date 2021/3/9 13:32
+ * @date 2021/3/9 15:01
  */
 @Setter
 @Getter
-public class RoleDetailDto {
+public class RoleUpdateVo {
 
     /**
      * 角色id
@@ -30,12 +29,12 @@ public class RoleDetailDto {
     private String description;
 
     /**
-     * 权限列表
+     * 权限id列表
      */
-    private List<PermissionDto> permissions;
+    private List<Long> permissionIds;
 
     /**
-     * 0:无效 1:有效
+     * false:无效 true:有效
      */
     private Boolean enable;
 }

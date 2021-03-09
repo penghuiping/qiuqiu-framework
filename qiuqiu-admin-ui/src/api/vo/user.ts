@@ -65,7 +65,7 @@ class UserListVo {
   nickname: string
   createTime: string
   lastModifiedTime: string
-  enable: number
+  enable: boolean
 
   constructor (
     id: number,
@@ -73,7 +73,7 @@ class UserListVo {
     nickname: string,
     createTime: string,
     lastModifiedTime: string,
-    enable: number) {
+    enable: boolean) {
     this.id = id
     this.username = username
     this.nickname = nickname
@@ -83,7 +83,7 @@ class UserListVo {
   }
 
   static newInstant (): UserListVo {
-    return new UserListVo(-1, '', '', '', '', -1)
+    return new UserListVo(-1, '', '', '', '', false)
   }
 }
 
@@ -97,7 +97,7 @@ class UserDetailVo {
   roleIds: number[]
   createTime: string
   lastModifiedTime: string
-  enable: number
+  enable: boolean
   permissions: string[]
 
   constructor (
@@ -110,7 +110,7 @@ class UserDetailVo {
     roleIds: number[],
     createTime: string,
     lastModifiedTime: string,
-    enable: number,
+    enable: boolean,
     permissions: string[]) {
     this.id = id
     this.username = username
@@ -126,7 +126,7 @@ class UserDetailVo {
   }
 
   static newInstant (): UserDetailVo {
-    return new UserDetailVo(-1, '', '', -1, '', [], [], '', '', -1, [])
+    return new UserDetailVo(-1, '', '', -1, '', [], [], '', '', false, [])
   }
 }
 
@@ -152,12 +152,12 @@ class RoleListVo {
   id: number
   name: string
   description: string
-  enable: number
+  enable: boolean
 
   constructor (id: number,
     name: string,
     description: string,
-    enable: number) {
+    enable: boolean) {
     this.id = id
     this.name = name
     this.description = description
@@ -165,7 +165,27 @@ class RoleListVo {
   }
 
   static newInstant (): RoleListVo {
-    return new RoleListVo(-1, '', '', -1)
+    return new RoleListVo(-1, '', '', false)
+  }
+}
+
+class RoleUpdateVo {
+  id: number
+  name: string
+  description: string
+  permissionIds: number[]
+  enable: boolean
+
+  constructor (id: number, name: string, description: string, permissionIds: number[], enable: boolean) {
+    this.id = id
+    this.name = name
+    this.description = description
+    this.permissionIds = permissionIds
+    this.enable = enable
+  }
+
+  static newInstant (): RoleUpdateVo {
+    return new RoleUpdateVo(-1, '', '', [], false)
   }
 }
 
@@ -175,9 +195,9 @@ class RoleDetailVo {
   description: string
   permissions: string[]
   permissionIds: number[]
-  enable: number
+  enable: boolean
 
-  constructor (id: number, name: string, description: string, permissions: string[], permissionIds: number[], enable: number) {
+  constructor (id: number, name: string, description: string, permissions: string[], permissionIds: number[], enable: boolean) {
     this.id = id
     this.name = name
     this.description = description
@@ -187,7 +207,7 @@ class RoleDetailVo {
   }
 
   static newInstant (): RoleDetailVo {
-    return new RoleDetailVo(-1, '', '', [], [], 0)
+    return new RoleDetailVo(-1, '', '', [], [], false)
   }
 }
 
@@ -232,5 +252,6 @@ export {
   RoleDetailVo,
   PermissionVo,
   GroupVo,
-  UserUpdateVo
+  UserUpdateVo,
+  RoleUpdateVo
 }

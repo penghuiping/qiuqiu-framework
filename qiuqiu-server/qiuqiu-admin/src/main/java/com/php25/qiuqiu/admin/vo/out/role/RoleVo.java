@@ -1,15 +1,15 @@
-package com.php25.qiuqiu.admin.vo.out;
+package com.php25.qiuqiu.admin.vo.out.role;
 
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * @author penghuiping
- * @date 2021/3/9 11:21
+ * @date 2021/3/6 17:28
  */
 @Setter
 @Getter
-public class RolePageOutVo {
+public class RoleVo {
 
     /**
      * 角色id
@@ -25,9 +25,4 @@ public class RolePageOutVo {
      * 角色描述
      */
     private String description;
-
-    /**
-     * 0:无效 1:有效
-     */
-    private Integer enable;
 }

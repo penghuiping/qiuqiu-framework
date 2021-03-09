@@ -35,5 +35,5 @@ public class UserDto {
 
     private LocalDateTime lastModifiedTime;
 
-    private Integer enable;
+    private Boolean enable;
 }

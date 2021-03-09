@@ -35,7 +35,7 @@ public class TreeVo {
     private List<TreeVo> children;
 
     /**
-     * 是否可用
+     * 是否可用 true:可用
      */
     private Boolean disabled;
 }

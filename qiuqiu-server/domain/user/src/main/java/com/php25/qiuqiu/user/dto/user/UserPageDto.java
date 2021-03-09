@@ -23,5 +23,5 @@ public class UserPageDto {
 
     private LocalDateTime lastModifiedTime;
 
-    private Integer enable;
+    private Boolean enable;
 }

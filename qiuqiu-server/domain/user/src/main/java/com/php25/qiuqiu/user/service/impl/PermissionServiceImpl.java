@@ -48,7 +48,7 @@ public class PermissionServiceImpl implements PermissionService {
         Permission permission0 = new Permission();
         BeanUtils.copyProperties(permission, permission0);
         permission0.setIsNew(false);
-        permission0.setEnable(permission.getEnable() == 1);
+        permission0.setEnable(permission.getEnable());
         permissionRepository.save(permission0);
         return true;
     }
