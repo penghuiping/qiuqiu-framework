@@ -97,6 +97,38 @@
       </el-form>
     </el-dialog>
 
+    <!--新增角色信息表单-->
+    <el-dialog title="角色创建" :visible.sync="roleCreateDialogVisible">
+      <el-form ref="roleCreateForm" :model="roleCreateVo" :rules="rules">
+        <el-form-item label="角色名:" :label-width="dialogFormLabelWidth" prop="name">
+          <el-input v-model="roleCreateVo.name"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述:" :label-width="dialogFormLabelWidth" prop="description">
+          <el-input v-model="roleCreateVo.description"></el-input>
+        </el-form-item>
+        <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth" prop="enable">
+          <el-switch
+            v-model="roleCreateVo.enable"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="权限:" :label-width="dialogFormLabelWidth" prop="permissionIds">
+          <el-tree show-checkbox
+                   ref="permissionTree"
+                   node-key="id"
+                   :default-checked-keys="roleCreateVo.permissionIds"
+                   :default-expand-all="true"
+                   :props="treeProps"
+                   :data="permissionTree"></el-tree>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="roleCreateDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="createConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
+
     <!--更新角色信息表单-->
     <el-dialog title="角色更新" :visible.sync="roleUpdateDialogVisible">
       <el-form ref="roleUpdateForm" :model="roleUpdateVo" :rules="rules">
@@ -116,7 +148,7 @@
             inactive-color="#ff4949">
           </el-switch>
         </el-form-item>
-        <el-form-item label="权限:" :label-width="dialogFormLabelWidth">
+        <el-form-item label="权限:" :label-width="dialogFormLabelWidth" prop="permissionIds">
           <el-tree show-checkbox
                    ref="permissionTree"
                    node-key="id"
@@ -139,7 +171,7 @@ import { Component } from 'vue-property-decorator'
 import { BaseVue } from '@/BaseVue'
 import { RoleApi } from '@/api/role'
 import { ElementUiTreeVo } from '@/api/vo'
-import { RoleDetailVo, RoleListVo, RoleUpdateVo } from '@/api/vo/user'
+import { RoleCreateVo, RoleDetailVo, RoleListVo, RoleUpdateVo } from '@/api/vo/role'
 import { ElForm } from 'element-ui/types/form'
 import { ElTree } from 'element-ui/types/tree'
 
@@ -153,10 +185,12 @@ export default class Role extends BaseVue {
   private hideOnSinglePage = false
   private roleDetailDialogVisible = false
   private roleUpdateDialogVisible =false
+  private roleCreateDialogVisible =false
   private dialogFormLabelWidth = '120px'
   private roleDetail = RoleDetailVo.newInstant()
   private permissionTree: ElementUiTreeVo[] = []
   private roleUpdateVo = RoleUpdateVo.newInstant()
+  private roleCreateVo = RoleCreateVo.newInstant()
   private treeProps = {
     children: 'children',
     label: 'label'
@@ -166,7 +200,7 @@ export default class Role extends BaseVue {
     name: [
       { required: true, message: '请输入角色名', trigger: 'blur' }
     ],
-    discription: [
+    description: [
       { required: true, message: '请输入角色描述', trigger: 'blur' }
     ],
     enable: [
@@ -221,7 +255,6 @@ export default class Role extends BaseVue {
   }
 
   async update (row: RoleListVo) {
-    const loading = this.showLoading()
     const res = await RoleApi.detail(row.id)
     this.roleUpdateVo.id = res.data.data.id
     this.roleUpdateVo.name = res.data.data.name
@@ -232,18 +265,29 @@ export default class Role extends BaseVue {
 
     const res1 = await RoleApi.getAllSystemPermissions()
     this.permissionTree = res1.data.data
-    loading.close()
   }
 
-  async updateConfirm () {
-    const loading = this.showLoading()
+  updateConfirm () {
     this.roleUpdateVo.permissionIds = (this.$refs.permissionTree as ElTree<number, ElementUiTreeVo>).getCheckedKeys();
     (this.$refs.roleUpdateForm as ElForm).validate(async valid => {
       if (valid) {
         const res = await RoleApi.update(this.roleUpdateVo)
         if (res.data.data) {
-          loading.close()
           this.roleUpdateDialogVisible = false
+          this.goToPage(1, this.pageSize)
+        }
+      }
+    })
+  }
+
+  createConfirm () {
+    this.roleCreateVo.permissionIds = (this.$refs.permissionTree as ElTree<number, ElementUiTreeVo>).getCheckedKeys();
+    (this.$refs.roleCreateForm as ElForm).validate(async valid => {
+      if (valid) {
+        const res = await RoleApi.create(this.roleCreateVo)
+        if (res.data.data) {
+          this.roleCreateDialogVisible = false
+          this.goToPage(1, this.pageSize)
         }
       }
     })
@@ -253,8 +297,10 @@ export default class Role extends BaseVue {
     console.log('.')
   }
 
-  handleCreateRole () {
-    console.log('.')
+  async handleCreateRole () {
+    const res1 = await RoleApi.getAllSystemPermissions()
+    this.permissionTree = res1.data.data
+    this.roleCreateDialogVisible = true
   }
 
   handleSizeChange (pageSize: number) {

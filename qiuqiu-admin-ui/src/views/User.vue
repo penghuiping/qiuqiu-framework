@@ -218,7 +218,8 @@ import { ElementUiTreeVo } from '@/api/vo/'
 import { ElForm } from 'element-ui/types/form'
 import { RoleApi } from '@/api/role'
 import { GroupApi } from '@/api/group'
-import { RoleVo, UserCreateVo, UserDetailVo, UserListVo, UserUpdateVo } from '@/api/vo/user'
+import { UserCreateVo, UserDetailVo, UserListVo, UserUpdateVo } from '@/api/vo/user'
+import { RoleVo } from '@/api/vo/role'
 
 @Component
 export default class User extends BaseVue {

@@ -111,7 +111,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
     @Transactional
     public Boolean delete(List<Long> roleIds) {
         List<Long> userIds = userRepository.findUserIdsByRoleIds(roleIds);
-        if (null != userIds && userIds.isEmpty()) {
+        if (null != userIds && !userIds.isEmpty()) {
             throw Exceptions.throwBusinessException(UserErrorCode.ROLE_HAS_BEEN_REFERENCED_BY_USER);
         }
         List<Role> roles = roleIds.stream().map(roleId -> {

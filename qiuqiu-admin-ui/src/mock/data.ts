@@ -1,7 +1,8 @@
 /**
  * 权限相关mock数据
  */
-import { GroupVo, PermissionVo, RoleListVo, UserListVo } from '@/api/vo/user'
+import { GroupVo, PermissionVo, UserListVo } from '@/api/vo/user'
+import { RoleListVo } from '@/api/vo/role'
 
 const home = new PermissionVo(1, '_home', '首页')
 const permissionManagement = new PermissionVo(2, '_permission_management', '权限管理')

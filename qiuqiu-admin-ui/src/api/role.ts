@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
 import { ElementUiTreeVo, JsonResponse, PageVo } from '@/api/vo'
 import { ApiConstant } from '@/api/index'
-import { RoleDetailVo, RoleListVo, RoleUpdateVo, RoleVo } from '@/api/vo/user'
+import { RoleCreateVo, RoleDetailVo, RoleListVo, RoleUpdateVo, RoleVo } from '@/api/vo/role'
 
 class RoleApi {
   public static getAll (): Promise<AxiosResponse<JsonResponse<RoleVo[]>>> {
@@ -16,12 +16,16 @@ class RoleApi {
 
   public static delete (id: number): Promise<AxiosResponse<JsonResponse<boolean>>> {
     return axios.post(ApiConstant.ROLE_DELETE, {
-      id: id
+      roleIds: [id]
     })
   }
 
   public static update (role: RoleUpdateVo): Promise<AxiosResponse<JsonResponse<boolean>>> {
     return axios.post(ApiConstant.ROLE_UPDATE, role)
+  }
+
+  public static create (role: RoleCreateVo): Promise<AxiosResponse<JsonResponse<boolean>>> {
+    return axios.post(ApiConstant.ROLE_CREATE, role)
   }
 
   public static page (pageNum: number, pageSize: number): Promise<AxiosResponse<JsonResponse<PageVo<RoleListVo>>>> {

@@ -1,6 +1,6 @@
 import Mock from 'better-mock'
 import { ElementUiTreeVo, JsonResponse, PageVo } from '@/api/vo'
-import { RoleDetailVo, RoleVo } from '@/api/vo/user'
+import { RoleDetailVo, RoleVo } from '@/api/vo/role'
 import { ApiConstant } from '@/api'
 import { MockData } from '@/mock/data'
 
