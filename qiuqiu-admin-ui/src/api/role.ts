@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
 import { ElementUiTreeVo, JsonResponse, PageVo } from '@/api/vo'
 import { ApiConstant } from '@/api/index'
-import { RoleDetailVo, RoleListVo, RoleVo } from '@/api/vo/user'
+import { PermissionVo, RoleDetailVo, RoleListVo, RoleVo } from '@/api/vo/user'
 
 class RoleApi {
   public static getAll (): Promise<AxiosResponse<JsonResponse<RoleVo[]>>> {
@@ -10,7 +10,7 @@ class RoleApi {
 
   public static detail (id: number): Promise<AxiosResponse<JsonResponse<RoleDetailVo>>> {
     return axios.post(ApiConstant.ROLE_DETAIL, {
-      id: id
+      roleId: id
     })
   }
 

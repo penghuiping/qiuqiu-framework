@@ -3,6 +3,7 @@ package com.php25.qiuqiu.user.service;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleCreateDto;
+import com.php25.qiuqiu.user.dto.role.RoleDetailDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.role.RolePageDto;
 import com.php25.qiuqiu.user.dto.role.RoleUpdateDto;
@@ -66,5 +67,13 @@ public interface RoleService {
      */
     Set<PermissionDto> getPermissionsByRoleName(String roleName);
 
+
+    /**
+     * 获取系统中所有角色详情
+     *
+     * @param roleId 角色id
+     * @return 角色详情信息
+     */
+    RoleDetailDto detail(Long roleId);
 
 }

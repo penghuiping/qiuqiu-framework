@@ -9,6 +9,7 @@ import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleCreateDto;
+import com.php25.qiuqiu.user.dto.role.RoleDetailDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.role.RolePageDto;
 import com.php25.qiuqiu.user.dto.role.RoleUpdateDto;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -181,5 +183,27 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
             }
         }
         return this.rolePermissionMap.get(roleName);
+    }
+
+    @Override
+    public RoleDetailDto detail(Long roleId) {
+        Optional<Role> roleOptional = roleRepository.findById(roleId);
+        if(!roleOptional.isPresent()) {
+            throw Exceptions.throwBusinessException(UserErrorCode.ROLE_DATA_NOT_EXISTS);
+        }
+        Role role = roleOptional.get();
+        RoleDetailDto roleDetailDto = new RoleDetailDto();
+        BeanUtils.copyProperties(role,roleDetailDto);
+        roleDetailDto.setEnable(role.getEnable()?1:0);
+
+        List<Long> permissionIds0 = roleRepository.getPermissionIdsByRoleId(roleId);
+        List<Permission> permissions = (List<Permission>)permissionRepository.findAllById(permissionIds0);
+        List<PermissionDto> permissionDtos = permissions.stream().map(permission -> {
+            PermissionDto permissionDto = new PermissionDto();
+            BeanUtils.copyProperties(permission,permissionDto);
+            return permissionDto;
+        }).collect(Collectors.toList());
+        roleDetailDto.setPermissions(permissionDtos);
+        return roleDetailDto;
     }
 }

@@ -14,7 +14,11 @@ public enum UserErrorCode implements BusinessErrorStatus {
     ROLE_HAS_BEEN_REFERENCED_BY_USER("10005", "角色被用户所关联,无法删除"),
     PERMISSION_HAS_BEEN_REFERENCED_BY_ROLE("10006", "权限被角色所关联,无法删除"),
     GROUP_HAS_BEEN_REFERENCED_BY_USER("10007", "组被用户所关联,无法删除"),
-    GROUP_HAS_BEEN_REFERENCED_BY_GROUP("10008", "组被其他组所关联,无法删除");
+    GROUP_HAS_BEEN_REFERENCED_BY_GROUP("10008", "组被其他组所关联,无法删除"),
+    USER_DATA_NOT_EXISTS("10009", "查询的用户数据不存在"),
+    ROLE_DATA_NOT_EXISTS("10010", "查询的角色数据不存在"),
+    GROUP_DATA_NOT_EXISTS("10011", "查询的组数据不存在"),
+    PERMISSION_DATA_NOT_EXISTS("10012", "查询的权限数据不存在");
 
 
     String code;

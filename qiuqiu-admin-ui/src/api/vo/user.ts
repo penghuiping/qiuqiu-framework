@@ -152,26 +152,20 @@ class RoleListVo {
   id: number
   name: string
   description: string
-  createTime: string
-  lastModifiedTime: string
   enable: number
 
   constructor (id: number,
     name: string,
     description: string,
-    createTime: string,
-    lastModifiedTime: string,
     enable: number) {
     this.id = id
     this.name = name
     this.description = description
-    this.createTime = createTime
-    this.lastModifiedTime = lastModifiedTime
     this.enable = enable
   }
 
   static newInstant (): RoleListVo {
-    return new RoleListVo(-1, '', '', '', '', -1)
+    return new RoleListVo(-1, '', '', -1)
   }
 }
 
@@ -179,30 +173,21 @@ class RoleDetailVo {
   id: number
   name: string
   description: string
-  permissions: PermissionVo[]
-  createTime: string
-  lastModifiedTime: string
+  permissions: string[]
+  permissionIds: number[]
   enable: number
 
-  constructor (
-    id: number,
-    name: string,
-    description: string,
-    permissions: PermissionVo[],
-    createTime: string,
-    lastModifiedTime: string,
-    enable: number) {
+  constructor (id: number, name: string, description: string, permissions: string[], permissionIds: number[], enable: number) {
     this.id = id
     this.name = name
     this.description = description
     this.permissions = permissions
-    this.createTime = createTime
-    this.lastModifiedTime = lastModifiedTime
+    this.permissionIds = permissionIds
     this.enable = enable
   }
 
   static newInstant (): RoleDetailVo {
-    return new RoleDetailVo(-1, '', '', [], '', '', -1)
+    return new RoleDetailVo(-1, '', '', [], [], 0)
   }
 }
 

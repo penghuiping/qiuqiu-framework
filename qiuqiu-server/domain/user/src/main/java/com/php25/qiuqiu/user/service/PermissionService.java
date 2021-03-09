@@ -47,4 +47,11 @@ public interface PermissionService {
      */
     DataGridPageDto<PermissionDto> page(String permissionName, Integer pageNum, Integer pageSize);
 
+    /**
+     * 获取系统中所有的权限信息
+     *
+     * @return 权限列表
+     */
+    List<PermissionDto> getAll();
+
 }

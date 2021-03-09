@@ -27,21 +27,11 @@
         width="150">
       </el-table-column>
       <el-table-column
-        label="创建时间"
-        prop="createTime"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        label="更新时间"
-        prop="lastModifiedTime"
-        width="180">
-      </el-table-column>
-      <el-table-column
         label="是否有效"
         prop="enable"
         width="50">
         <template slot-scope="scope">
-          <span >{{ scope.row.enable==='1'?'有效':'无效' }}</span>
+          <span >{{ scope.row.enable===1?'有效':'无效' }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -88,19 +78,13 @@
           <el-form-item label="角色描述:" :label-width="dialogFormLabelWidth">
             {{roleDetail.description}}
           </el-form-item>
-          <el-form-item label="创建时间:" :label-width="dialogFormLabelWidth">
-            {{roleDetail.createTime}}
-          </el-form-item>
-          <el-form-item label="修改时间:" :label-width="dialogFormLabelWidth">
-            {{roleDetail.lastModifiedTime}}
-          </el-form-item>
           <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth">
-            {{roleDetail.enable==='1'?'有效':'无效'}}
+            {{roleDetail.enable===1?'有效':'无效'}}
           </el-form-item>
         <el-form-item label="权限:" :label-width="dialogFormLabelWidth">
           <el-tree show-checkbox
                    node-key="id"
-                   :default-checked-keys="permissionChecked"
+                   :default-checked-keys="roleDetail.permissionIds"
                    :default-expand-all="true"
                    :props="treeProps"
                    :data="permissionTree"></el-tree>
@@ -134,25 +118,15 @@ export default class Role extends BaseVue {
     label: 'label'
   }
 
-  private permissionChecked: number[] = []
-
   mounted () {
     this.goToPage(1, this.pageSize)
   }
 
   async detailInfo (row: RoleListVo) {
     const loading = this.showLoading()
-    console.log('row:', row)
     const res = await RoleApi.detail(row.id)
     this.roleDetail = res.data.data
     this.roleDetailDialogVisible = true
-
-    const checkedPermissions = this.roleDetail.permissions
-    this.permissionChecked = []
-    for (let i = 0; i < checkedPermissions.length; i++) {
-      const permission = checkedPermissions[i]
-      this.permissionChecked.push(permission.id)
-    }
 
     const res1 = await RoleApi.getAllSystemPermissions()
     this.permissionTree = res1.data.data

@@ -110,7 +110,7 @@ public class UserController extends JSONController {
      *
      * @param userPageVo 分页请求信息
      */
-    @ApiDoc(result = UserVo.class, url = "/qiuqiu_admin/v1/user/page")
+    @ApiDoc(result = UserPageOutVo.class, url = "/qiuqiu_admin/v1/user/page")
     @APIVersion("v1")
     @PostMapping("/page")
     public JSONResponse page(@RequestAttribute @NotBlank String username, @Valid @RequestBody UserPageVo userPageVo) {

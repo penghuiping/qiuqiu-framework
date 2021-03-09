@@ -269,15 +269,11 @@ export default class Home extends BaseVue {
           reply_action: 'reply_auth_info',
           timestamp: new Date().getTime()
         }))
-      } else if (obj.action === 'notify_answer_info') {
-        ws.send(JSON.stringify({
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          msg_id: obj.msg_id,
-          action: 'ack',
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          reply_action: 'notify_answer_info',
-          timestamp: new Date().getTime()
-        }))
+      } else if (obj.action === 'notify_text') {
+        Home.prototype.$message({
+          type: 'success',
+          message: obj.content
+        })
       }
     }
 

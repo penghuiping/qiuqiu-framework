@@ -189,7 +189,7 @@ public class UserServiceImpl implements UserService {
     public UserDto detail(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         if (!userOptional.isPresent()) {
-            throw Exceptions.throwImpossibleException();
+            throw Exceptions.throwBusinessException(UserErrorCode.USER_DATA_NOT_EXISTS);
         }
         User user = userOptional.get();
 

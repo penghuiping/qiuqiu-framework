@@ -31,7 +31,7 @@ public class GroupController extends JSONController {
     /**
      * 获取系统中所有组列表
      */
-    @ApiDoc(stringResult = "返回jwt令牌", url = "/qiuqiu_admin/v1/group/getAll")
+    @ApiDoc(result = TreeVo.class, url = "/qiuqiu_admin/v1/group/getAll")
     @APIVersion("v1")
     @PostMapping("/getAll")
     public JSONResponse getAll() {

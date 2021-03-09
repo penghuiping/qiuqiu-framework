@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.user.service.impl;
 
+import com.google.common.collect.Lists;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.StringUtil;
@@ -84,5 +85,18 @@ public class PermissionServiceImpl implements PermissionService {
         }).collect(Collectors.toList());
         dataGridPageDto.setData(permissionDtos);
         return dataGridPageDto;
+    }
+
+    @Override
+    public List<PermissionDto> getAll() {
+        List<Permission> permissions = permissionRepository.findAllEnabled();
+        if(null != permissions && !permissions.isEmpty()) {
+            return permissions.stream().map(permission -> {
+                PermissionDto permissionDto = new PermissionDto();
+                BeanUtils.copyProperties(permission,permissionDto);
+                return permissionDto;
+            }).collect(Collectors.toList());
+        }
+        return Lists.newArrayList();
     }
 }

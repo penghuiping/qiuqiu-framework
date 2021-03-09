@@ -28,8 +28,8 @@ const reportPageList = new PermissionVo(17, '_report_page_list', '报表列表')
 /**
  * 角色相关mock数据
  */
-const adminRole = new RoleListVo(1, 'admin', '超级管理员', '2021-01-01 10:00:00', '2021-01-01 10:00:00', 1)
-const commonUserRole = new RoleListVo(2, 'common_user', '普通用户', '2021-01-01 10:00:00', '2021-01-01 10:00:00', 2)
+const adminRole = new RoleListVo(1, 'admin', '超级管理员', 1)
+const commonUserRole = new RoleListVo(2, 'common_user', '普通用户', 2)
 
 /**
  * 部门相关mock数据

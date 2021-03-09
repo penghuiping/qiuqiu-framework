@@ -1,18 +1,31 @@
 package com.php25.qiuqiu.admin.controller;
 
+import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.qiuqiu.admin.vo.in.RoleDetailVo;
+import com.php25.qiuqiu.admin.vo.in.RolePageVo;
+import com.php25.qiuqiu.admin.vo.out.PageResultVo;
+import com.php25.qiuqiu.admin.vo.out.RoleDetailOutVo;
+import com.php25.qiuqiu.admin.vo.out.RolePageOutVo;
 import com.php25.qiuqiu.admin.vo.out.RoleVo;
+import com.php25.qiuqiu.admin.vo.out.UserVo;
+import com.php25.qiuqiu.user.dto.permission.PermissionDto;
+import com.php25.qiuqiu.user.dto.role.RoleDetailDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
+import com.php25.qiuqiu.user.dto.role.RolePageDto;
 import com.php25.qiuqiu.user.service.RoleService;
 import io.github.yedaxia.apidocs.ApiDoc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +43,7 @@ public class RoleController extends JSONController {
     /**
      * 获取系统中所有角色列表
      */
-    @ApiDoc(stringResult = "返回jwt令牌", url = "/qiuqiu_admin/v1/role/getAll")
+    @ApiDoc(result = RoleVo.class, url = "/qiuqiu_admin/v1/role/getAll")
     @APIVersion("v1")
     @PostMapping("/getAll")
     public JSONResponse getAll() {
@@ -41,5 +54,45 @@ public class RoleController extends JSONController {
             return roleVo;
         }).collect(Collectors.toList());
         return succeed(roleVos);
+    }
+
+    /**
+     * 获取角色信息接口
+     */
+    @ApiDoc(result = RoleDetailOutVo.class, url = "/qiuqiu_admin/v1/role/detail")
+    @APIVersion("v1")
+    @PostMapping("/detail")
+    public JSONResponse detail(@Valid @RequestBody RoleDetailVo roleDetailVo) {
+        RoleDetailDto roleDetailDto = roleService.detail(roleDetailVo.getRoleId());
+        RoleDetailOutVo roleDetailOutVo =  new RoleDetailOutVo();
+        BeanUtils.copyProperties(roleDetailDto,roleDetailOutVo);
+        List<PermissionDto> permissionDtos  = roleDetailDto.getPermissions();
+        if(null != permissionDtos && !permissionDtos.isEmpty()) {
+            List<Long> permissionIds = permissionDtos.stream().map(PermissionDto::getId).collect(Collectors.toList());
+            List<String> permissions = permissionDtos.stream().map(PermissionDto::getDescription).collect(Collectors.toList());
+            roleDetailOutVo.setPermissions(permissions);
+            roleDetailOutVo.setPermissionIds(permissionIds);
+        }
+        return succeed(roleDetailOutVo);
+    }
+
+    /**
+     * 获取角色分页列表接口
+     */
+    @ApiDoc(result = RolePageOutVo.class, url = "/qiuqiu_admin/v1/role/page")
+    @APIVersion("v1")
+    @PostMapping("/page")
+    public JSONResponse page(@Valid  @RequestBody  RolePageVo rolePageVo) {
+        DataGridPageDto<RolePageDto> page = roleService.page(rolePageVo.getRoleName(),rolePageVo.getPageNum(),rolePageVo.getPageSize());
+        PageResultVo<RolePageOutVo> res = new PageResultVo<>();
+        List<RolePageOutVo> rolePageOutVos = page.getData().stream().map(rolePageDto -> {
+            RolePageOutVo rolePageOutVo = new RolePageOutVo();
+            BeanUtils.copyProperties(rolePageDto,rolePageOutVo);
+            return rolePageOutVo;
+        }).collect(Collectors.toList());
+        res.setCurrentPage(rolePageVo.getPageNum());
+        res.setTotal(page.getRecordsTotal());
+        res.setData(rolePageOutVos);
+        return succeed(res);
     }
 }

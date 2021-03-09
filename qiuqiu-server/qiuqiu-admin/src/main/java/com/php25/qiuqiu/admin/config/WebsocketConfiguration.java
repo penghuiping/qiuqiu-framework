@@ -62,7 +62,7 @@ public class WebsocketConfiguration implements WebSocketConfigurer {
     @Bean
     public RegisterHandlerConfig registerHandlerConfig() {
         RegisterHandlerConfig registerHandlerConfig = new RegisterHandlerConfig(msgDispatcher, applicationContext);
-        registerHandlerConfig.scanPackage("com.php25.common.ws");
+        registerHandlerConfig.scanPackage("com.php25.common.ws","com.php25.qiuqiu.notify.dto.ws");
         return registerHandlerConfig;
     }
 
