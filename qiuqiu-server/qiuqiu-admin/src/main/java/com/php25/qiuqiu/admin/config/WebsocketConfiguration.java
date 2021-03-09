@@ -2,8 +2,10 @@ package com.php25.qiuqiu.admin.config;
 
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.core.mess.IdGeneratorImpl;
+import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.ws.GlobalSession;
 import com.php25.common.ws.HeartBeatWorker;
@@ -13,11 +15,10 @@ import com.php25.common.ws.RedisQueueSubscriber;
 import com.php25.common.ws.RegisterHandlerConfig;
 import com.php25.common.ws.SecurityAuthentication;
 import com.php25.common.ws.WebsocketHandler;
+import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 @EnableWebSocket
 public class WebsocketConfiguration implements WebSocketConfigurer {
 
-    private  final  String serverId = UUID.randomUUID().toString().replace("-","") ;
+    private final String serverId = UUID.randomUUID().toString().replace("-", "");
 
     @Autowired
     private WebsocketHandler websocketHandler;
@@ -123,9 +124,13 @@ public class WebsocketConfiguration implements WebSocketConfigurer {
             @Override
             public String authenticate(String token) {
                 if (userService.isTokenValid(token)) {
-                    return userService.getUsernameFromJwt(token);
+                    String username =  userService.getUsernameFromJwt(token);
+                    if(!StringUtil.isBlank(username)) {
+                        log.info("ws握手认证成功,用户名:{}",username);
+                        return username;
+                    }
                 }
-                return null;
+                throw Exceptions.throwBusinessException(UserErrorCode.JWT_ILLEGAL);
             }
         };
     }

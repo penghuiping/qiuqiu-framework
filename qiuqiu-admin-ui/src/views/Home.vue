@@ -235,9 +235,11 @@ export default class Home extends BaseVue {
   }
 
   initWS () {
+    const token = this.$store.state.token
     const ws = new WebSocket('ws://localhost:8081/qiuqiu_admin/websocket')
     ws.onopen = function () {
       console.log('ws connection open')
+      // 发送ws心跳包 5秒一次
       setInterval(function () {
         ws.send(JSON.stringify({
           // eslint-disable-next-line @typescript-eslint/camelcase
@@ -248,41 +250,39 @@ export default class Home extends BaseVue {
     }
 
     ws.onmessage = function (e: MessageEvent) {
-      console.log('ws receive message')
       const obj = JSON.parse(e.data)
-      console.log('message:{}', obj)
+      console.log('ws receive message:{}', obj)
       if (obj.action === 'request_auth_info') {
-        console.log('发送submit_auth_info消息')
         ws.send(JSON.stringify({
           // eslint-disable-next-line @typescript-eslint/camelcase
           msg_id: obj.msg_id,
           action: 'submit_auth_info',
-          token: sessionStorage.getItem('token'),
+          token: token,
           timestamp: new Date().getTime()
         }))
       } else if (obj.action === 'reply_auth_info') {
-        console.log(e.data)
         ws.send(JSON.stringify({
           // eslint-disable-next-line @typescript-eslint/camelcase
           msg_id: obj.msg_id,
           action: 'ack',
-          replyAction: 'reply_auth_info',
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          reply_action: 'reply_auth_info',
           timestamp: new Date().getTime()
         }))
       } else if (obj.action === 'notify_answer_info') {
-        console.log(e.data)
         ws.send(JSON.stringify({
           // eslint-disable-next-line @typescript-eslint/camelcase
           msg_id: obj.msg_id,
           action: 'ack',
-          replyAction: 'notify_answer_info',
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          reply_action: 'notify_answer_info',
           timestamp: new Date().getTime()
         }))
       }
     }
 
     ws.onclose = function (e) {
-      console.log('ws connection close...')
+      console.log('ws connection close...', e)
     }
     ws.onerror = function (e) {
       console.log('ws connection error:', e)

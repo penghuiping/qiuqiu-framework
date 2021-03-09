@@ -24,7 +24,7 @@ public class GlobalSession {
     //此session缓存用于缓存原来的sessionId与WebSocket对应关系
     private final ConcurrentHashMap<String, ExpirationSocketSession> _sessions = new ConcurrentHashMap<>(1024);
 
-    private final DelayQueue<ExpirationSocketSession> expireSessionQueue = new DelayQueue<>();
+    private final DelayQueue<ExpirationSessionId> expireSessionQueue = new DelayQueue<>();
 
     private final InnerMsgRetryQueue msgRetry;
 
@@ -97,15 +97,17 @@ public class GlobalSession {
 
 
     protected void create(WebSocketSession webSocketSession) {
+        long now = System.currentTimeMillis();
         ExpirationSocketSession expirationSocketSession = new ExpirationSocketSession();
-        expirationSocketSession.setTimestamp(System.currentTimeMillis());
+        expirationSocketSession.setTimestamp(now);
         expirationSocketSession.setWebSocketSession(webSocketSession);
         expirationSocketSession.setSessionId(generateUUID());
         expirationSocketSession.setExecutorService(executorService);
         expirationSocketSession.setMsgDispatcher(msgDispatcher);
         sessions.put(expirationSocketSession.getSessionId(), expirationSocketSession);
         _sessions.put(webSocketSession.getId(), expirationSocketSession);
-        expireSessionQueue.put(expirationSocketSession);
+        ExpirationSessionId expirationSessionId = new ExpirationSessionId(expirationSocketSession.getSessionId(),now);
+        expireSessionQueue.put(expirationSessionId);
     }
 
 
@@ -113,7 +115,6 @@ public class GlobalSession {
         ExpirationSocketSession expirationSocketSession = sessions.remove(sid);
         expirationSocketSession.setSessionId(sid);
         expirationSocketSession.stop();
-        expireSessionQueue.remove(expirationSocketSession);
         _sessions.remove(expirationSocketSession.getWebSocketSession().getId());
     }
 
@@ -136,10 +137,11 @@ public class GlobalSession {
 
 
     protected void updateExpireTime(String sid) {
+        long now = System.currentTimeMillis();
         ExpirationSocketSession expirationSocketSession = sessions.get(sid);
-        expirationSocketSession.setTimestamp(System.currentTimeMillis());
-        expireSessionQueue.remove(expirationSocketSession);
-        expireSessionQueue.add(expirationSocketSession);
+        expirationSocketSession.setTimestamp(now);
+        ExpirationSessionId expirationSessionId = new ExpirationSessionId(expirationSocketSession.getSessionId(),now);
+        expireSessionQueue.add(expirationSessionId);
     }
 
     public String getSid(String uid) {
@@ -196,8 +198,12 @@ public class GlobalSession {
         return this.msgRetry.get(msgId, action);
     }
 
-    protected DelayQueue<ExpirationSocketSession> getAllExpirationSessions() {
+    protected DelayQueue<ExpirationSessionId> getAllExpirationSessionIds() {
         return this.expireSessionQueue;
+    }
+
+    protected ConcurrentHashMap<String, ExpirationSocketSession> getAllExpirationSessions() {
+        return this.sessions;
     }
 
     protected String generateUUID() {
