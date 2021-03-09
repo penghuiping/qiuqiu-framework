@@ -8,6 +8,7 @@ import Role from '@/views/Role.vue'
 import Department from '@/views/Department.vue'
 import Media from '@/views/Media.vue'
 import Report from '@/views/Report.vue'
+import Permission from '@/views/Permission.vue'
 
 Vue.use(VueRouter)
 
@@ -36,6 +37,11 @@ const routes: Array<RouteConfig> = [
         path: '/home/role',
         name: 'Role',
         component: Role
+      },
+      {
+        path: '/home/permission',
+        name: 'Permission',
+        component: Permission
       },
       {
         path: '/home/department',

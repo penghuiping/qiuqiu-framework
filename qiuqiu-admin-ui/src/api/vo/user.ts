@@ -142,6 +142,10 @@ class PermissionVo {
     this.name = name
     this.description = description
   }
+
+  static newInstant (): PermissionVo {
+    return new PermissionVo(-1, '', '')
+  }
 }
 
 class GroupVo {

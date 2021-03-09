@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.vo.out;
+package com.php25.qiuqiu.admin.vo.out.permission;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -32,4 +32,9 @@ public class PermissionVo {
      * 权限对应的接口uri地址
      */
     private String uri;
+
+    /**
+     * true:有效
+     */
+    private Boolean enable;
 }

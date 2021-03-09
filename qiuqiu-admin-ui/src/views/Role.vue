@@ -2,7 +2,7 @@
   <div>
     <!--操作栏-->
     <el-button-group>
-      <el-button type="primary" @click="handleCreateRole" v-if="permissionExists(permissions.USER_ADD)">新增</el-button>
+      <el-button type="primary" @click="handleCreateRole" v-if="permissionExists(permissions.ROLE_ADD)">新增</el-button>
     </el-button-group>
     <!--数据表格-->
     <el-table

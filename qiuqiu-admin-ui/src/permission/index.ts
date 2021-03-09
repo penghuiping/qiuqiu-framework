@@ -17,6 +17,10 @@ class Permission {
     ROLE_DETAIL: 'role_detail',
     ROLE_UPDATE: 'role_update',
     ROLE_DELETE: 'role_delete',
+    PERMISSION_LIST_SEARCH: 'permission_list_search',
+    PERMISSION_ADD: 'permission_add',
+    PERMISSION_UPDATE: 'permission_update',
+    PERMISSION_DELETE: 'permission_delete',
     DEPARTMENT_LIST_SEARCH: 'department_list_search',
     MEDIA_LIST_SEARCH: 'media_list_search',
     REPORT_LIST_SEARCH: 'report_list_search'
@@ -31,10 +35,14 @@ class Permission {
     remoteToLocalPermission.set('user_update', Permission.permissions.USER_UPDATE)
     remoteToLocalPermission.set('user_delete', Permission.permissions.USER_DELETE)
     remoteToLocalPermission.set('role_page', Permission.permissions.ROLE_LIST_SEARCH)
-    remoteToLocalPermission.set('role_add', Permission.permissions.ROLE_ADD)
+    remoteToLocalPermission.set('role_create', Permission.permissions.ROLE_ADD)
     remoteToLocalPermission.set('role_detail', Permission.permissions.ROLE_DETAIL)
     remoteToLocalPermission.set('role_update', Permission.permissions.ROLE_UPDATE)
     remoteToLocalPermission.set('role_delete', Permission.permissions.ROLE_DELETE)
+    remoteToLocalPermission.set('permission_page', Permission.permissions.PERMISSION_LIST_SEARCH)
+    remoteToLocalPermission.set('permission_create', Permission.permissions.PERMISSION_ADD)
+    remoteToLocalPermission.set('permission_update', Permission.permissions.PERMISSION_UPDATE)
+    remoteToLocalPermission.set('permission_delete', Permission.permissions.PERMISSION_DELETE)
     // remoteToLocalPermission.set('_department_page_list', Permission.permissions.DEPARTMENT_LIST_SEARCH)
     // remoteToLocalPermission.set('_media_page_list', Permission.permissions.MEDIA_LIST_SEARCH)
     // remoteToLocalPermission.set('_report_page_list', Permission.permissions.REPORT_LIST_SEARCH)

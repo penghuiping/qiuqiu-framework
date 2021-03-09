@@ -9,6 +9,7 @@
         </el-menu-item>
         <el-submenu index="2" v-if="permissionExists(permissions.USER_LIST_SEARCH)
         || permissionExists(permissions.ROLE_LIST_SEARCH)
+        || permissionExists(permissions.PERMISSION_LIST_SEARCH)
         || permissionExists(permissions.DEPARTMENT_LIST_SEARCH)">
           <template slot="title">
             <i class="el-icon-user"></i>
@@ -16,7 +17,8 @@
           </template>
           <el-menu-item index="2-1" @click="menuClick('user')" v-if="permissionExists(permissions.USER_LIST_SEARCH)">用户管理</el-menu-item>
           <el-menu-item index="2-2" @click="menuClick('role')" v-if="permissionExists(permissions.ROLE_LIST_SEARCH)">角色管理</el-menu-item>
-          <el-menu-item index="2-3" @click="menuClick('department')" v-if="permissionExists(permissions.DEPARTMENT_LIST_SEARCH)">部门管理</el-menu-item>
+          <el-menu-item index="2-3" @click="menuClick('permission')" v-if="permissionExists(permissions.PERMISSION_LIST_SEARCH)">权限管理</el-menu-item>
+          <el-menu-item index="2-4" @click="menuClick('department')" v-if="permissionExists(permissions.DEPARTMENT_LIST_SEARCH)">部门管理</el-menu-item>
         </el-submenu>
         <el-menu-item index="3" @click="menuClick('media')" v-if="permissionExists(permissions.MEDIA_LIST_SEARCH)">
           <i class="el-icon-menu"></i>
@@ -184,7 +186,10 @@ export default class Home extends BaseVue {
       }
       case 'role': {
         this.addTab('role', '角色管理')
-
+        break
+      }
+      case 'permission': {
+        this.addTab('permission', '权限管理')
         break
       }
       case 'department': {
