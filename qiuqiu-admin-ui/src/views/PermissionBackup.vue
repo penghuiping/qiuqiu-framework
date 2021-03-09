@@ -128,7 +128,7 @@
 import { Component } from 'vue-property-decorator'
 import { BaseVue } from '@/BaseVue'
 import { ElForm } from 'element-ui/types/form'
-import { PermissionVo } from '@/api/vo/user'
+import { PermissionVo } from '@/api/vo/permission'
 import { PermissionApi } from '@/api/permission'
 
 @Component

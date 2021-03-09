@@ -130,24 +130,6 @@ class UserDetailVo {
   }
 }
 
-class PermissionVo {
-  id: number
-  name: string
-  description: string
-
-  constructor (id: number,
-    name: string,
-    description: string) {
-    this.id = id
-    this.name = name
-    this.description = description
-  }
-
-  static newInstant (): PermissionVo {
-    return new PermissionVo(-1, '', '')
-  }
-}
-
 class GroupVo {
   id: number
   name: string
@@ -170,7 +152,6 @@ export {
   UserListVo,
   UserDetailVo,
   UserCreateVo,
-  PermissionVo,
   GroupVo,
   UserUpdateVo
 }

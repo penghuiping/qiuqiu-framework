@@ -1,30 +1,31 @@
 /**
  * 权限相关mock数据
  */
-import { GroupVo, PermissionVo, UserListVo } from '@/api/vo/user'
+import { GroupVo, UserListVo } from '@/api/vo/user'
 import { RoleListVo } from '@/api/vo/role'
+import { PermissionVo } from '@/api/vo/permission'
 
-const home = new PermissionVo(1, '_home', '首页')
-const permissionManagement = new PermissionVo(2, '_permission_management', '权限管理')
-const mediaManagement = new PermissionVo(3, '_media_management', '媒体管理')
-const reportManagement = new PermissionVo(4, '_report_management', '报表')
+const home = new PermissionVo(1, '_home', '', '首页', false)
+const permissionManagement = new PermissionVo(2, '_permission_management', '', '权限管理', false)
+const mediaManagement = new PermissionVo(3, '_media_management', '', '媒体管理', false)
+const reportManagement = new PermissionVo(4, '_report_management', '', '报表', false)
 
-const userPageList = new PermissionVo(5, '_user_page_list', '用户列表')
-const userDetail = new PermissionVo(6, '_user_detail', '用户详情')
-const userAdd = new PermissionVo(7, '_user_add', '用户新增')
-const userDelete = new PermissionVo(8, '_user_delete', '用户删除')
-const userUpdate = new PermissionVo(9, '_user_update', '用户更新')
+const userPageList = new PermissionVo(5, '_user_page_list', '', '用户列表', false)
+const userDetail = new PermissionVo(6, '_user_detail', '', '用户详情', false)
+const userAdd = new PermissionVo(7, '_user_add', '', '用户新增', false)
+const userDelete = new PermissionVo(8, '_user_delete', '', '用户删除', false)
+const userUpdate = new PermissionVo(9, '_user_update', '', '用户更新', false)
 
-const rolePageList = new PermissionVo(10, '_role_page_list', '角色列表')
-const roleDetail = new PermissionVo(11, '_role_detail', '角色详情')
-const roleDelete = new PermissionVo(12, '_role_delete', '角色删除')
-const roleAdd = new PermissionVo(13, '_role_add', '角色新增')
-const roleUpdate = new PermissionVo(14, '_role_update', '角色更新')
+const rolePageList = new PermissionVo(10, '_role_page_list', '', '角色列表', false)
+const roleDetail = new PermissionVo(11, '_role_detail', '', '角色详情', false)
+const roleDelete = new PermissionVo(12, '_role_delete', '', '角色删除', false)
+const roleAdd = new PermissionVo(13, '_role_add', '', '角色新增', false)
+const roleUpdate = new PermissionVo(14, '_role_update', '', '角色更新', false)
 
-const departmentPageList = new PermissionVo(15, '_department_page_list', '部门列表')
+const departmentPageList = new PermissionVo(15, '_department_page_list', '', '部门列表', false)
 
-const mediaPageList = new PermissionVo(16, '_media_page_list', '媒体列表')
-const reportPageList = new PermissionVo(17, '_report_page_list', '报表列表')
+const mediaPageList = new PermissionVo(16, '_media_page_list', '', '媒体列表', false)
+const reportPageList = new PermissionVo(17, '_report_page_list', '', '报表列表', false)
 
 /**
  * 角色相关mock数据

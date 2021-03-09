@@ -117,7 +117,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="roleUpdateDialogVisible = false">取 消</el-button>
+        <el-button @click="updateDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="updateConfirm">确 定</el-button>
       </div>
     </el-dialog>
@@ -128,7 +128,7 @@
 import { Component } from 'vue-property-decorator'
 import { BaseVue } from '@/BaseVue'
 import { ElForm } from 'element-ui/types/form'
-import { PermissionVo } from '@/api/vo/user'
+import { PermissionCreateVo, PermissionUpdateVo, PermissionVo } from '@/api/vo/permission'
 import { PermissionApi } from '@/api/permission'
 
 @Component
@@ -138,8 +138,8 @@ export default class Permission extends BaseVue {
   private updateDialogVisible = false
   private createDialogVisible = false
   private dialogFormLabelWidth = '120px'
-  private permissionUpdateVo = PermissionVo.newInstant()
-  private permissionCreateVo = PermissionVo.newInstant()
+  private permissionUpdateVo = PermissionUpdateVo.newInstant()
+  private permissionCreateVo = PermissionCreateVo.newInstant()
 
   private rules = {
     name: [
@@ -156,7 +156,11 @@ export default class Permission extends BaseVue {
     ]
   }
 
-  async mounted () {
+  mounted () {
+    this.goToPage()
+  }
+
+  async goToPage () {
     this.loading = true
     const res = await PermissionApi.page()
     this.tableData = res.data.data
@@ -192,26 +196,34 @@ export default class Permission extends BaseVue {
   }
 
   async update (row: PermissionVo) {
-    console.log('update:', row)
+    this.permissionUpdateVo = row
+    this.updateDialogVisible = true
   }
 
   updateConfirm () {
     (this.$refs.updateForm as ElForm).validate(async valid => {
       if (valid) {
-        console.log('update validate...')
+        const res = await PermissionApi.update(this.permissionUpdateVo)
+        if (res.data.data) {
+          this.updateDialogVisible = false
+          this.goToPage()
+        }
       }
     })
   }
 
   async create () {
     this.createDialogVisible = true
-    console.log('createPermission..')
   }
 
   createConfirm () {
     (this.$refs.createForm as ElForm).validate(async valid => {
       if (valid) {
-        console.log('create validate...')
+        const res = await PermissionApi.create(this.permissionCreateVo)
+        if (res.data.data) {
+          this.createDialogVisible = false
+          this.goToPage()
+        }
       }
     })
   }

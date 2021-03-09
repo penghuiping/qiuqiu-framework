@@ -75,7 +75,7 @@ public class PermissionServiceImpl implements PermissionService {
         if (!StringUtil.isBlank(permissionName)) {
             builder.append(SearchParam.of("name", Operator.EQ, permissionName));
         }
-        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.asc("id")));
+        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
         Page<Permission> page = permissionRepository.findAll(builder, pageRequest);
         DataGridPageDto<PermissionDto> dataGridPageDto = new DataGridPageDto<>();
         List<PermissionDto> permissionDtos = page.get().map(permission -> {
