@@ -4,3 +4,4 @@ target
 .DS_Store
 .ds_store
 logs
+test.db
