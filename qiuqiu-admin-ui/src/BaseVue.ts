@@ -10,21 +10,22 @@ class BaseVue extends Vue {
 
   get token () {
     let token1 = this.$store.state.token
-    if (this.$store.state.token !== '') {
-      token1 = this.$store.state.token
+    if (token1) {
+      return token1
     }
-    if (sessionStorage.getItem('token') !== '') {
-      token1 = sessionStorage.getItem('token')
+    token1 = sessionStorage.getItem('token')
+    if (token1) {
+      return token1
     }
-    return token1
+    return ''
   }
 
   @Watch('token', {
     immediate: true
   })
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onChildChanged (val: string, oldVal: string) {
-    console.log('oldToken:', oldVal)
-    if (val === '' && this.$router.currentRoute.path !== '/') {
+    if ((val === '' || val == null) && this.$router.currentRoute.path !== '/') {
       this.$confirm('由于您长时间没有操作,请重新登入', '提示', {
         confirmButtonText: '确定',
         type: 'warning'

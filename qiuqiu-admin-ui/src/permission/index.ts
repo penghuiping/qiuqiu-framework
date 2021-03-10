@@ -21,7 +21,10 @@ class Permission {
     PERMISSION_ADD: 'permission_add',
     PERMISSION_UPDATE: 'permission_update',
     PERMISSION_DELETE: 'permission_delete',
-    DEPARTMENT_LIST_SEARCH: 'department_list_search',
+    GROUP_LIST_SEARCH: 'group_list_search',
+    GROUP_ADD: 'group_add',
+    GROUP_UPDATE: 'group_update',
+    GROUP_DELETE: 'group_delete',
     MEDIA_LIST_SEARCH: 'media_list_search',
     REPORT_LIST_SEARCH: 'report_list_search'
   }
@@ -43,6 +46,10 @@ class Permission {
     remoteToLocalPermission.set('permission_create', Permission.permissions.PERMISSION_ADD)
     remoteToLocalPermission.set('permission_update', Permission.permissions.PERMISSION_UPDATE)
     remoteToLocalPermission.set('permission_delete', Permission.permissions.PERMISSION_DELETE)
+    remoteToLocalPermission.set('group_page', Permission.permissions.GROUP_LIST_SEARCH)
+    remoteToLocalPermission.set('group_create', Permission.permissions.GROUP_ADD)
+    remoteToLocalPermission.set('group_update', Permission.permissions.GROUP_UPDATE)
+    remoteToLocalPermission.set('group_delete', Permission.permissions.GROUP_DELETE)
     // remoteToLocalPermission.set('_department_page_list', Permission.permissions.DEPARTMENT_LIST_SEARCH)
     // remoteToLocalPermission.set('_media_page_list', Permission.permissions.MEDIA_LIST_SEARCH)
     // remoteToLocalPermission.set('_report_page_list', Permission.permissions.REPORT_LIST_SEARCH)

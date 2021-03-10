@@ -41,9 +41,19 @@ public class GroupController extends JSONController {
         return succeed(root);
     }
 
+    /**
+     * 创建用户组
+     */
+    @ApiDoc(stringResult = "true:创建成功", url = "/qiuqiu_admin/v1/group/create")
+    @APIVersion("v1")
+    @PostMapping("/create")
+    public JSONResponse create() {
+        return succeed(false);
+    }
+
     private void buildTree(TreeVo node, TreeNode<GroupDto> node0) {
         node.setId(node0.getData().getId() + "");
-        node.setValue(node0.getData().getId()+"");
+        node.setValue(node0.getData().getId() + "");
         node.setLabel(node0.getData().getDescription());
         node.setDisabled(false);
         node.setChildren(Lists.newArrayList());
@@ -54,7 +64,7 @@ public class GroupController extends JSONController {
                 buildTree(treeVo, child);
                 node.getChildren().add(treeVo);
             }
-        }else {
+        } else {
             node.setChildren(null);
         }
     }

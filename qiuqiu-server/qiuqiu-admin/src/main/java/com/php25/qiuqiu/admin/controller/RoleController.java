@@ -61,6 +61,7 @@ public class RoleController extends JSONController {
 
     /**
      * 新增角色
+     * @param roleCreateVo 新增角色信息
      */
     @ApiDoc(stringResult = "true:创建角色成功", url = "/qiuqiu_admin/v1/role/create")
     @APIVersion("v1")
@@ -73,6 +74,7 @@ public class RoleController extends JSONController {
 
     /**
      * 更新角色
+     * @param roleUpdateVo 更新角色信息
      */
     @ApiDoc(stringResult = "true:更新角色成功", url = "/qiuqiu_admin/v1/role/update")
     @APIVersion("v1")
@@ -85,6 +87,7 @@ public class RoleController extends JSONController {
 
     /**
      * 删除角色
+     * @param roleDeleteVo 删除角色ids列表
      */
     @ApiDoc(stringResult = "true:删除角色成功", url = "/qiuqiu_admin/v1/role/delete")
     @APIVersion("v1")
@@ -95,6 +98,7 @@ public class RoleController extends JSONController {
 
     /**
      * 获取角色信息接口
+     * @param roleDetailVo 角色详情id
      */
     @ApiDoc(result = RoleDetailOutVo.class, url = "/qiuqiu_admin/v1/role/detail")
     @APIVersion("v1")

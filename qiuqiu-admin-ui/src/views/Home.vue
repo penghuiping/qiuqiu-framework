@@ -10,7 +10,7 @@
         <el-submenu index="2" v-if="permissionExists(permissions.USER_LIST_SEARCH)
         || permissionExists(permissions.ROLE_LIST_SEARCH)
         || permissionExists(permissions.PERMISSION_LIST_SEARCH)
-        || permissionExists(permissions.DEPARTMENT_LIST_SEARCH)">
+        || permissionExists(permissions.GROUP_LIST_SEARCH)">
           <template slot="title">
             <i class="el-icon-user"></i>
             <span slot="title">权限管理</span>
@@ -18,7 +18,7 @@
           <el-menu-item index="2-1" @click="menuClick('user')" v-if="permissionExists(permissions.USER_LIST_SEARCH)">用户管理</el-menu-item>
           <el-menu-item index="2-2" @click="menuClick('role')" v-if="permissionExists(permissions.ROLE_LIST_SEARCH)">角色管理</el-menu-item>
           <el-menu-item index="2-3" @click="menuClick('permission')" v-if="permissionExists(permissions.PERMISSION_LIST_SEARCH)">权限管理</el-menu-item>
-          <el-menu-item index="2-4" @click="menuClick('department')" v-if="permissionExists(permissions.DEPARTMENT_LIST_SEARCH)">部门管理</el-menu-item>
+          <el-menu-item index="2-4" @click="menuClick('group')" v-if="permissionExists(permissions.GROUP_LIST_SEARCH)">用户组管理</el-menu-item>
         </el-submenu>
         <el-menu-item index="3" @click="menuClick('media')" v-if="permissionExists(permissions.MEDIA_LIST_SEARCH)">
           <i class="el-icon-menu"></i>
@@ -59,7 +59,11 @@
             :label="item.title"
             :name="item.name"
           >
-            <router-view/>
+            <IndexView v-if="item.key===''"/>
+            <UserView v-if="item.key==='user'"/>
+            <RoleView v-if="item.key==='role'"/>
+            <GroupView v-if="item.key==='group'"/>
+            <PermissionView v-if="item.key==='permission'"/>
           </el-tab-pane>
         </el-tabs>
       </el-main>
@@ -72,6 +76,14 @@ import { Component } from 'vue-property-decorator'
 import { BaseVue } from '@/BaseVue'
 import { UserApi } from '@/api/user'
 import { Permission } from '@/permission'
+import { WebSocket0 } from '@/utils/ws'
+import { NotifyTextHandler } from '@/ws'
+
+import IndexView from '@/components/Index.vue'
+import UserView from '@/components/User.vue'
+import RoleView from '@/components/Role.vue'
+import GroupView from '@/components/Group.vue'
+import PermissionView from '@/components/Permission.vue'
 
 class TabItem {
   title: string
@@ -85,13 +97,30 @@ class TabItem {
   }
 }
 
-@Component
+@Component({
+  components: {
+    IndexView,
+    UserView,
+    RoleView,
+    GroupView,
+    PermissionView
+  }
+})
 export default class Home extends BaseVue {
   private isCollapse = false;
   private editableTabsValue = '';
   private editableTabs: Array<TabItem>= new Array<TabItem>();
   private tabIndex = -1;
   private nickname = ''
+
+  async mounted () {
+    const res = await UserApi.info()
+    this.nickname = res.data.data.nickname
+    Permission.mapToLocalPermissions(res.data.data.permissions)
+    this.isCollapse = true
+    this.toggleCollapse()
+    this.initWS()
+  }
 
   data () {
     return {
@@ -104,38 +133,32 @@ export default class Home extends BaseVue {
   addTab (key: string, title: string) {
     // 判断是否已经有相同key的tab
     let isExist = false
-    let existTab: TabItem = new TabItem('', '', '')
+    let newTab: TabItem = new TabItem(title, '', key)
     const tabs = this.editableTabs
     for (let i = 0; i < tabs.length; i++) {
       const tab = tabs[i]
       if (key === tab.key) {
         isExist = true
-        existTab = tab
+        newTab = tab
         break
       }
     }
 
-    if (isExist && existTab) {
+    if (isExist) {
       // 已存在tab，这直接激活此tab
-      this.editableTabsValue = existTab.name
-      this.refreshTabContent()
+      this.editableTabsValue = newTab.name
       return
     }
 
     // 不存在的相同key的tab就可以新增
     const newTabName = ++this.tabIndex + ''
-    this.editableTabs.push({
-      title: title,
-      name: newTabName,
-      key: key
-    })
+    newTab.name = newTabName
+    this.editableTabs.push(newTab)
     this.editableTabsValue = newTabName
-    this.routePage('/home' + '/' + key)
   }
 
   clickTab (targetName: TabItem) {
     this.editableTabsValue = targetName.name
-    this.refreshTabContent()
   }
 
   removeTab (targetName: string) {
@@ -153,29 +176,6 @@ export default class Home extends BaseVue {
     }
     this.editableTabsValue = activeName
     this.editableTabs = tabs.filter(tab => tab.name !== targetName)
-    this.refreshTabContent()
-  }
-
-  refreshTabContent () {
-    const tabs = this.editableTabs
-    const activeName = this.editableTabsValue
-    tabs.forEach((tab, index) => {
-      if (tab.name === activeName) {
-        const key = tabs[index].key
-        this.routePage('/home' + '/' + key)
-      }
-    })
-  }
-
-  async mounted () {
-    const res = await UserApi.info()
-    this.nickname = res.data.data.nickname
-    Permission.mapToLocalPermissions(res.data.data.permissions)
-    this.isCollapse = true
-    this.refreshTabContent()
-    this.toggleCollapse()
-
-    this.initWS()
   }
 
   menuClick (key: string) {
@@ -192,8 +192,8 @@ export default class Home extends BaseVue {
         this.addTab('permission', '权限管理')
         break
       }
-      case 'department': {
-        this.addTab('department', '部门管理')
+      case 'group': {
+        this.addTab('group', '用户组管理')
         break
       }
       case 'media': {
@@ -241,67 +241,10 @@ export default class Home extends BaseVue {
 
   initWS () {
     const token = this.$store.state.token
-    const ws = new WebSocket('ws://localhost:8081/qiuqiu_admin/websocket')
-    ws.onopen = function () {
-      console.log('ws connection open')
-      // 发送ws心跳包 5秒一次
-      setInterval(function () {
-        ws.send(JSON.stringify({
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          msg_id: Home.uuid(),
-          action: 'ping'
-        }))
-      }, 5000)
-    }
-
-    ws.onmessage = function (e: MessageEvent) {
-      const obj = JSON.parse(e.data)
-      console.log('ws receive message:{}', obj)
-      if (obj.action === 'request_auth_info') {
-        ws.send(JSON.stringify({
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          msg_id: obj.msg_id,
-          action: 'submit_auth_info',
-          token: token,
-          timestamp: new Date().getTime()
-        }))
-      } else if (obj.action === 'reply_auth_info') {
-        ws.send(JSON.stringify({
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          msg_id: obj.msg_id,
-          action: 'ack',
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          reply_action: 'reply_auth_info',
-          timestamp: new Date().getTime()
-        }))
-      } else if (obj.action === 'notify_text') {
-        Home.prototype.$message({
-          type: 'success',
-          message: obj.content
-        })
-      }
-    }
-
-    ws.onclose = function (e) {
-      console.log('ws connection close...', e)
-    }
-    ws.onerror = function (e) {
-      console.log('ws connection error:', e)
-    }
-  }
-
-  static uuid () {
-    const s: string[] = []
-    const hexDigits = '0123456789abcdef'
-    for (let i = 0; i < 36; i++) {
-      s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
-    }
-    s[14] = '4' // bits 12-15 of the time_hi_and_version field to 0010
-    s[19] = hexDigits.substr((parseInt(s[19]) & 0x3) | 0x8, 1) // bits 6-7 of the clock_seq_hi_and_reserved to 01
-    s[8] = s[13] = s[18] = s[23] = '-'
-
-    const uuid = s.join('')
-    return uuid
+    const url = 'ws://localhost:8081/qiuqiu_admin/websocket'
+    const ws0 = new WebSocket0(token, url, 5000)
+    ws0.registerHandler(new NotifyTextHandler(this))
+    this.$store.state.ws = ws0
   }
 }
 </script>

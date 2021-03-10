@@ -73,6 +73,7 @@ public class PermissionController extends JSONController {
 
     /**
      * 更新权限信息
+     * @param permissionVo 权限更新数据
      */
     @ApiDoc(stringResult = "true: 更新权限成功", url = "/qiuqiu_admin/v1/permission/update")
     @APIVersion("v1")
@@ -85,6 +86,7 @@ public class PermissionController extends JSONController {
 
     /**
      * 创建权限信息
+     * @param permissionVo 权限创建数据
      */
     @ApiDoc(stringResult = "true: 创建权限成功", url = "/qiuqiu_admin/v1/permission/create")
     @APIVersion("v1")
@@ -97,6 +99,7 @@ public class PermissionController extends JSONController {
 
     /**
      * 删除权限信息
+     * @param permissionVo 权限删除数据
      */
     @ApiDoc(stringResult = "true: 删除权限成功", url = "/qiuqiu_admin/v1/permission/delete")
     @APIVersion("v1")

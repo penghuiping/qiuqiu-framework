@@ -79,13 +79,6 @@
         <el-form-item label="uri:" :label-width="dialogFormLabelWidth" prop="uri">
           <el-input v-model="permissionCreateVo.uri"></el-input>
         </el-form-item>
-        <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth" prop="enable">
-          <el-switch
-            v-model="permissionCreateVo.enable"
-            active-color="#13ce66"
-            inactive-color="#ff4949">
-          </el-switch>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="createDialogVisible = false">取 消</el-button>
@@ -213,6 +206,7 @@ export default class Permission extends BaseVue {
   }
 
   async create () {
+    this.permissionCreateVo = PermissionCreateVo.newInstant()
     this.createDialogVisible = true
   }
 

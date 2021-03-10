@@ -214,12 +214,12 @@
 import { Component } from 'vue-property-decorator'
 import { BaseVue } from '@/BaseVue'
 import { UserApi } from '@/api/user'
-import { ElementUiTreeVo } from '@/api/vo/'
 import { ElForm } from 'element-ui/types/form'
 import { RoleApi } from '@/api/role'
 import { GroupApi } from '@/api/group'
 import { UserCreateVo, UserDetailVo, UserListVo, UserUpdateVo } from '@/api/vo/user'
 import { RoleVo } from '@/api/vo/role'
+import { ElementUiTreeVo } from '@/api/vo'
 
 @Component
 export default class User extends BaseVue {
