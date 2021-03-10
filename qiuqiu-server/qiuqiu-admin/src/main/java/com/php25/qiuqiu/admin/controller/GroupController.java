@@ -6,15 +6,22 @@ import com.php25.common.core.tree.Trees;
 import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.qiuqiu.admin.vo.in.group.GroupCreateVo;
+import com.php25.qiuqiu.admin.vo.in.group.GroupDeleteVo;
 import com.php25.qiuqiu.admin.vo.out.TreeVo;
+import com.php25.qiuqiu.user.dto.group.GroupCreateDto;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
 import com.php25.qiuqiu.user.service.GroupService;
 import io.github.yedaxia.apidocs.ApiDoc;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -43,12 +50,28 @@ public class GroupController extends JSONController {
 
     /**
      * 创建用户组
+     *
+     * @param groupCreateVo
      */
     @ApiDoc(stringResult = "true:创建成功", url = "/qiuqiu_admin/v1/group/create")
     @APIVersion("v1")
     @PostMapping("/create")
-    public JSONResponse create() {
-        return succeed(false);
+    public JSONResponse create(@Valid @RequestBody GroupCreateVo groupCreateVo) {
+        GroupCreateDto groupCreateDto = new GroupCreateDto();
+        BeanUtils.copyProperties(groupCreateVo, groupCreateDto);
+        return succeed(groupService.create(groupCreateDto));
+    }
+
+    /**
+     * 删除用户组
+     *
+     * @param groupDeleteVo
+     */
+    @ApiDoc(stringResult = "true:创建成功", url = "/qiuqiu_admin/v1/group/delete")
+    @APIVersion("v1")
+    @PostMapping("/delete")
+    public JSONResponse delete(@Valid @RequestBody GroupDeleteVo groupDeleteVo) {
+        return succeed(groupService.delete(groupDeleteVo.getGroupId()));
     }
 
     private void buildTree(TreeVo node, TreeNode<GroupDto> node0) {

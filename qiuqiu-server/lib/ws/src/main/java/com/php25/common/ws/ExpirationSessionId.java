@@ -1,5 +1,6 @@
 package com.php25.common.ws;
 
+import com.google.common.base.Objects;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +21,19 @@ public class ExpirationSessionId implements Delayed {
     public ExpirationSessionId(String sessionId, long timestamp) {
         this.sessionId = sessionId;
         this.timestamp = timestamp;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
+        ExpirationSessionId that = (ExpirationSessionId) o;
+        return timestamp == that.timestamp && Objects.equal(sessionId, that.sessionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(sessionId, timestamp);
     }
 
     /**

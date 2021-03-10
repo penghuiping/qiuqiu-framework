@@ -22,7 +22,7 @@ class NotifyTextHandler implements WsMessageHandler {
     return 'notify_text'
   }
 
-  handle (ws: WebSocket, msg: WsMsg, token: string): void {
+  handle (ws: WebSocket, msg: WsMsg): void {
     const msg0 = msg as NotifyTextMsg
     this.context.$message({
       type: 'success',

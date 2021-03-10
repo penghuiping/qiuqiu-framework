@@ -138,11 +138,14 @@ public class GlobalSession {
 
 
     protected void updateExpireTime(String sid) {
-        long now = System.currentTimeMillis();
         ExpirationSocketSession expirationSocketSession = sessions.get(sid);
+        long now = System.currentTimeMillis();
+        long before = expirationSocketSession.getTimestamp();
         expirationSocketSession.setTimestamp(now);
         ExpirationSessionId expirationSessionId = new ExpirationSessionId(expirationSocketSession.getSessionId(),now);
-        expireSessionQueue.add(expirationSessionId);
+        ExpirationSessionId beforeExpirationSessionId = new ExpirationSessionId(expirationSocketSession.getSessionId(),before);
+        expireSessionQueue.remove(expirationSessionId);
+        expireSessionQueue.remove(beforeExpirationSessionId);
     }
 
     public String getSid(String uid) {

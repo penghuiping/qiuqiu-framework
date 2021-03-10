@@ -32,7 +32,21 @@
         </el-tree>
       </div>
     </div>
-
+    <!--新增用户组信息表单-->
+    <el-dialog title="用户组创建" :visible.sync="createDialogVisible">
+      <el-form ref="createForm" :model="groupCreateVo" :rules="rules">
+        <el-form-item label="组名:" :label-width="dialogFormLabelWidth" prop="name">
+          <el-input v-model="groupCreateVo.name"></el-input>
+        </el-form-item>
+        <el-form-item label="描述:" :label-width="dialogFormLabelWidth" prop="description">
+          <el-input v-model="groupCreateVo.description"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="createDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="createConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -43,31 +57,57 @@ import { BaseVue } from '@/BaseVue'
 import { ElementUiTreeVo } from '@/api/vo'
 import { GroupApi } from '@/api/group'
 import { TreeNode } from 'element-ui/types/tree'
+import { GroupCreateVo } from '@/api/vo/group'
 
 @Component
 export default class Department extends BaseVue {
   private groupTree: ElementUiTreeVo[] = []
+  private createDialogVisible = false
+  private dialogFormLabelWidth = '120px'
+  private groupCreateVo = GroupCreateVo.newInstant()
   private treeProps = {
     children: 'children',
     label: 'label'
   }
 
+  private parentNode = new ElementUiTreeVo(-1, '', '', [])
+
+  private rules = {
+    name: [
+      { required: true, message: '请输入组名', trigger: 'blur' }
+    ],
+    description: [
+      { required: true, message: '请输入组描述', trigger: 'blur' }
+    ]
+  }
+
   private id = 1000
 
-  async mounted () {
+  mounted () {
+    this.reload()
+  }
+
+  async reload () {
     const loading = this.showLoading()
     const res = await GroupApi.getAll()
+    this.groupTree = []
     this.groupTree.push(res.data.data)
     loading.close()
   }
 
-  append (data: ElementUiTreeVo) {
-    const newChild = new ElementUiTreeVo(++this.id, this.id + '', 'test' + this.id, [])
-    if (!data.children) {
-      // 不存在子节点情况
-      this.$set(data, 'children', [])
+  async createConfirm () {
+    this.groupCreateVo.parentId = this.parentNode.id
+    console.log('groupCreateVo:', this.groupCreateVo)
+    const res0 = await GroupApi.create(this.groupCreateVo)
+    if (res0.data.data) {
+      this.createDialogVisible = false
+      this.reload()
     }
-    data.children.push(newChild)
+  }
+
+  append (data: ElementUiTreeVo) {
+    this.parentNode = data
+    this.createDialogVisible = true
   }
 
   update (data: ElementUiTreeVo) {
@@ -75,12 +115,30 @@ export default class Department extends BaseVue {
   }
 
   remove (node: TreeNode<number, ElementUiTreeVo>, data: ElementUiTreeVo) {
-    const parent = node.parent
-    if (parent) {
-      const children = parent.data.children || parent.data
-      const index = children.findIndex((d: ElementUiTreeVo) => d.id === data.id)
-      children.splice(index, 1)
-    }
+    this.$confirm('此操作将永久删除该条数据, 是否继续?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async () => {
+      const res = await GroupApi.delete(data.id)
+      if (res && res.data.data) {
+        this.reload()
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      } else {
+        this.$message({
+          type: 'info',
+          message: '删除失败'
+        })
+      }
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消删除'
+      })
+    })
   }
 }
 

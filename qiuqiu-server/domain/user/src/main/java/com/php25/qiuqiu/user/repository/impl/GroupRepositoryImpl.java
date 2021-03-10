@@ -27,7 +27,7 @@ public class GroupRepositoryImpl extends BaseDbRepositoryImpl<Group, Long> imple
     @Override
     public List<Group> findDirectGroupByParentId(Long parentId) {
         SqlParams sqlParams = Queries.of(dbType).from(Group.class).whereEq("parentId", parentId).select();
-        List<Group> groups = QueriesExecute.of(dbType).singleJdbc().select(sqlParams);
+        List<Group> groups = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
         if (null != groups && !groups.isEmpty()) {
             return groups;
         }
@@ -37,6 +37,10 @@ public class GroupRepositoryImpl extends BaseDbRepositoryImpl<Group, Long> imple
     @Override
     public Long countByParentId(Long parentId) {
         SqlParams sqlParams = Queries.of(dbType).from(Group.class).whereEq("parentId", parentId).count();
-        return QueriesExecute.of(dbType).singleJdbc().count(sqlParams);
+        Long res =  QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).count(sqlParams);
+        if(null != res) {
+            return res;
+        }
+        return -1L;
     }
 }
