@@ -2,6 +2,7 @@ package com.php25.qiuqiu.monitor.aop;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.util.JsonUtil;
+import com.php25.common.mq.MessageQueueManager;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,7 @@ public class AuditLogAspect {
         auditLogDto.setUri(className+"."+methodName);
         auditLogDto.setUsername(username);
         auditLogDto.setCreateTime(LocalDateTime.now());
+
         auditLogService.create(auditLogDto);
         return obj;
     }
