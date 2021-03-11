@@ -115,7 +115,7 @@
         <el-form-item :label-width="dialogFormLabelWidth" label="角色名:">
           {{ userDetail.roles }}
         </el-form-item>
-        <el-form-item :label-width="dialogFormLabelWidth" label="部门名:">
+        <el-form-item :label-width="dialogFormLabelWidth" label="用户组名:">
           {{ userDetail.groupName }}
         </el-form-item>
         <el-form-item :label-width="dialogFormLabelWidth" label="创建时间:">

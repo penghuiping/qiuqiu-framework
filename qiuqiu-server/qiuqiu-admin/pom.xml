@@ -40,8 +40,16 @@
             <artifactId>validation</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.php25</groupId>
+            <artifactId>mq</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.php25.qiuqiu</groupId>
             <artifactId>notify</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.php25.qiuqiu</groupId>
+            <artifactId>monitor</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yedaxia</groupId>

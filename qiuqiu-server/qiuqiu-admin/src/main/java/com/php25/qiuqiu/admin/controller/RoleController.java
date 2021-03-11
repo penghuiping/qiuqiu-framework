@@ -13,6 +13,7 @@ import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.role.RoleDetailOutVo;
 import com.php25.qiuqiu.admin.vo.out.role.RolePageOutVo;
 import com.php25.qiuqiu.admin.vo.out.role.RoleVo;
+import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleCreateDto;
 import com.php25.qiuqiu.user.dto.role.RoleDetailDto;
@@ -63,6 +64,7 @@ public class RoleController extends JSONController {
      * 新增角色
      * @param roleCreateVo 新增角色信息
      */
+    @AuditLog
     @ApiDoc(stringResult = "true:创建角色成功", url = "/qiuqiu_admin/v1/role/create")
     @APIVersion("v1")
     @PostMapping("/create")
@@ -76,6 +78,7 @@ public class RoleController extends JSONController {
      * 更新角色
      * @param roleUpdateVo 更新角色信息
      */
+    @AuditLog
     @ApiDoc(stringResult = "true:更新角色成功", url = "/qiuqiu_admin/v1/role/update")
     @APIVersion("v1")
     @PostMapping("/update")
@@ -89,6 +92,7 @@ public class RoleController extends JSONController {
      * 删除角色
      * @param roleDeleteVo 删除角色ids列表
      */
+    @AuditLog
     @ApiDoc(stringResult = "true:删除角色成功", url = "/qiuqiu_admin/v1/role/delete")
     @APIVersion("v1")
     @PostMapping("/delete")

@@ -42,6 +42,7 @@
         <redis>2.3.2-SNAPSHOT</redis>
         <db>2.3.2-SNAPSHOT</db>
         <ws>2.3.2-SNAPSHOT</ws>
+        <mq>2.3.2-SNAPSHOT</mq>
         <validation>2.3.2-SNAPSHOT</validation>
         <webflux>2.3.2-SNAPSHOT</webflux>
     </properties>
@@ -182,6 +183,12 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
+                <groupId>com.php25</groupId>
+                <artifactId>mq</artifactId>
+                <version>${mq}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-api</artifactId>
                 <version>${jjwt}</version>
@@ -286,6 +293,12 @@
             <dependency>
                 <groupId>com.php25.qiuqiu</groupId>
                 <artifactId>notify</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.php25.qiuqiu</groupId>
+                <artifactId>monitor</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>

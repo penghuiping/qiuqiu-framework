@@ -9,6 +9,7 @@ import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.group.GroupCreateVo;
 import com.php25.qiuqiu.admin.vo.in.group.GroupDeleteVo;
 import com.php25.qiuqiu.admin.vo.out.TreeVo;
+import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.group.GroupCreateDto;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
 import com.php25.qiuqiu.user.service.GroupService;
@@ -18,7 +19,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -53,6 +53,7 @@ public class GroupController extends JSONController {
      *
      * @param groupCreateVo
      */
+    @AuditLog
     @ApiDoc(stringResult = "true:创建成功", url = "/qiuqiu_admin/v1/group/create")
     @APIVersion("v1")
     @PostMapping("/create")
@@ -67,6 +68,7 @@ public class GroupController extends JSONController {
      *
      * @param groupDeleteVo
      */
+    @AuditLog
     @ApiDoc(stringResult = "true:创建成功", url = "/qiuqiu_admin/v1/group/delete")
     @APIVersion("v1")
     @PostMapping("/delete")

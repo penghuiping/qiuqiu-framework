@@ -15,6 +15,7 @@ import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.TokenVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserVo;
+import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.user.TokenDto;
@@ -53,6 +54,7 @@ public class UserController extends JSONController {
      *
      * @param loginVo 登入信息
      */
+    @AuditLog
     @ApiDoc(stringResult = "返回jwt令牌", url = "/qiuqiu_admin/v1/user/login")
     @APIVersion("v1")
     @PostMapping("/login")
@@ -132,6 +134,7 @@ public class UserController extends JSONController {
      *
      * @param userCreateVo 创建用户信息
      */
+    @AuditLog
     @ApiDoc(stringResult = "true:创建成功", url = "/qiuqiu_admin/v1/user/create")
     @APIVersion("v1")
     @PostMapping("/create")
@@ -146,6 +149,7 @@ public class UserController extends JSONController {
      *
      * @param userUpdateVo 更新用户信息
      */
+    @AuditLog
     @ApiDoc(stringResult = "true:更新成功", url = "/qiuqiu_admin/v1/user/update")
     @APIVersion("v1")
     @PostMapping("/update")
@@ -163,6 +167,7 @@ public class UserController extends JSONController {
      * @param userDeleteVo 删除用户信息
      *
      */
+    @AuditLog
     @ApiDoc(stringResult = "true:删除成功", url = "/qiuqiu_admin/v1/user/delete")
     @APIVersion("v1")
     @PostMapping("/delete")
@@ -176,6 +181,7 @@ public class UserController extends JSONController {
     /**
      * 登出接口
      */
+    @AuditLog
     @ApiDoc(stringResult = "是否成功登出", url = "/qiuqiu_admin/v1/user/logout")
     @APIVersion("v1")
     @PostMapping("/logout")
