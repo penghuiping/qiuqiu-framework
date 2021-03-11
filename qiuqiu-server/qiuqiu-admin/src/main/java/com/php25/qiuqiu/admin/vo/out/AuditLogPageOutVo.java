@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.admin.vo.out;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.php25.common.db.core.annotation.GeneratedValue;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,5 +37,6 @@ public class AuditLogPageOutVo {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createTime;
 }

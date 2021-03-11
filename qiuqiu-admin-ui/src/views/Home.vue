@@ -20,13 +20,21 @@
           <el-menu-item index="2-3" @click="menuClick('permission')" v-if="permissionExists(permissions.PERMISSION_LIST_SEARCH)">权限管理</el-menu-item>
           <el-menu-item index="2-4" @click="menuClick('group')" v-if="permissionExists(permissions.GROUP_LIST_SEARCH)">用户组管理</el-menu-item>
         </el-submenu>
-        <el-menu-item index="3" @click="menuClick('media')" v-if="permissionExists(permissions.MEDIA_LIST_SEARCH)">
+
+        <el-submenu index="3" v-if="permissionExists(permissions.AUDIT_LOG_LIST_SEARCH)
+        || permissionExists(permissions.REPORT_LIST_SEARCH)
+        || permissionExists(permissions.DICT_LIST_SEARCH)">
+          <template slot="title">
+            <i class="el-icon-s-tools"></i>
+            <span slot="title">系统监控</span>
+          </template>
+          <el-menu-item index="3-1" @click="menuClick('auditLog')" v-if="permissionExists(permissions.AUDIT_LOG_LIST_SEARCH)">审计日志</el-menu-item>
+          <el-menu-item index="3-2" @click="menuClick('dict')" v-if="permissionExists(permissions.DICT_LIST_SEARCH)">数据字典</el-menu-item>
+          <el-menu-item index="3-3" @click="menuClick('report')" v-if="permissionExists(permissions.REPORT_LIST_SEARCH)">表报</el-menu-item>
+        </el-submenu>
+        <el-menu-item index="4" @click="menuClick('media')" v-if="permissionExists(permissions.MEDIA_LIST_SEARCH)">
           <i class="el-icon-menu"></i>
           <span slot="title">媒体管理</span>
-        </el-menu-item>
-        <el-menu-item index="4" @click="menuClick('report')" v-if="permissionExists(permissions.REPORT_LIST_SEARCH)">
-          <i class="el-icon-document"></i>
-          <span slot="title">报表</span>
         </el-menu-item>
         <el-menu-item index="5" disabled>
           <i class="el-icon-setting"></i>
@@ -64,6 +72,7 @@
             <RoleView v-if="item.key==='role'"/>
             <GroupView v-if="item.key==='group'"/>
             <PermissionView v-if="item.key==='permission'"/>
+            <AuditLogView v-if="item.key==='auditLog'"/>
           </el-tab-pane>
         </el-tabs>
       </el-main>
@@ -84,6 +93,8 @@ import UserView from '@/components/User.vue'
 import RoleView from '@/components/Role.vue'
 import GroupView from '@/components/Group.vue'
 import PermissionView from '@/components/Permission.vue'
+import AuditLogView from '@/components/AuditLog.vue'
+import DictView from '@/components/Dict.vue'
 
 class TabItem {
   title: string
@@ -103,7 +114,9 @@ class TabItem {
     UserView,
     RoleView,
     GroupView,
-    PermissionView
+    PermissionView,
+    AuditLogView,
+    DictView
   }
 })
 export default class Home extends BaseVue {
@@ -194,6 +207,14 @@ export default class Home extends BaseVue {
       }
       case 'group': {
         this.addTab('group', '用户组管理')
+        break
+      }
+      case 'auditLog': {
+        this.addTab('auditLog', '审计日志')
+        break
+      }
+      case 'dict': {
+        this.addTab('dict', '数据字典')
         break
       }
       case 'media': {

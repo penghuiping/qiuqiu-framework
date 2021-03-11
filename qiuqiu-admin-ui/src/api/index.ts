@@ -56,6 +56,7 @@ class ApiConstant {
   static GROUP_GET_ALL = '/group/getAll'
   static GROUP_CREATE = '/group/create'
   static GROUP_DELETE = '/group/delete'
+  static AUDIT_LOG_PAGE = '/audit_log/page'
 }
 
 export { ApiConstant }
