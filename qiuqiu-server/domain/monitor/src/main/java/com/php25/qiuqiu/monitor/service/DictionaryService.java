@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.monitor.service;
 
+import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.qiuqiu.monitor.dto.DictDto;
 
 /**
@@ -31,7 +32,15 @@ public interface DictionaryService {
     Boolean update(DictDto dictDto);
 
     /**
-     * 新增字典记录
+     * 删除数据字典记录(注: 此操作只会操作数据库，不会更新缓存)
+     *
+     * @param key 键
+     * @return true:删除成功
+     */
+    Boolean delete(String key);
+
+    /**
+     * 新增字典记录(注: 此操作只会操作数据库，不会更新缓存)
      *
      * @param key         字典键
      * @param value       字典值
@@ -47,4 +56,14 @@ public interface DictionaryService {
      * @return true: 移除成功
      */
     Boolean removeCache(String key);
+
+    /**
+     * 分页查询
+     *
+     * @param key      通过key搜索
+     * @param pageNum  页码
+     * @param pageSize 每页几条记录
+     * @return 分页信息
+     */
+    DataGridPageDto<DictDto> page(String key, Integer pageNum, Integer pageSize);
 }

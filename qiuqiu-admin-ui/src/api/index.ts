@@ -35,6 +35,7 @@ axios.interceptors.response.use(
 
 class ApiConstant {
   static LOGIN = '/user/login'
+  static LOGOUT = '/user/logout'
   static USER_INFO = '/user/info'
   static USER_DETAIL = '/user/detail'
   static USER_PAGE = '/user/page'

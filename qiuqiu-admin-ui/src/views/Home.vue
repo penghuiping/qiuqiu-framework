@@ -240,9 +240,12 @@ export default class Home extends BaseVue {
     console.log('onClose')
   }
 
-  logout () {
-    this.$store.commit('logout')
-    this.$router.push('/')
+  async logout () {
+    const res = await UserApi.logout()
+    if (res.data.data) {
+      this.$store.commit('logout')
+      this.$router.push('/')
+    }
   }
 
   toggleCollapse () {

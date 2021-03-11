@@ -33,6 +33,11 @@ public class AuditLogController extends JSONController {
 
     private final AuditLogService auditLogService;
 
+    /**
+     * 审计日志分页查询
+     *
+     * @param auditLogPageVo 分页信息
+     */
     @ApiDoc(result = RolePageOutVo.class, url = "/qiuqiu_admin/v1/audit_log/page")
     @APIVersion("v1")
     @PostMapping("/page")

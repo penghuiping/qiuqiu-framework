@@ -11,6 +11,10 @@ class UserApi {
     })
   }
 
+  public static logout (): Promise<AxiosResponse<JsonResponse<boolean>>> {
+    return axios.post(ApiConstant.LOGOUT)
+  }
+
   public static info (): Promise<AxiosResponse<JsonResponse<UserDetailVo>>> {
     return axios.post(ApiConstant.USER_INFO)
   }
