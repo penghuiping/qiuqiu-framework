@@ -73,6 +73,7 @@
             <GroupView v-if="item.key==='group'"/>
             <PermissionView v-if="item.key==='permission'"/>
             <AuditLogView v-if="item.key==='auditLog'"/>
+            <DictView v-if="item.key==='dict'"/>
           </el-tab-pane>
         </el-tabs>
       </el-main>

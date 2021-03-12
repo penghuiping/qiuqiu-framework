@@ -74,6 +74,15 @@ public class RedisMessageQueueManager implements MessageQueueManager {
         return this.send(queue, null, message);
     }
 
+    @Override
+    public Boolean delete(String queue, String group) {
+        if (StringUtil.isBlank(group)) {
+            return this.helper.remove(queue);
+        } else {
+            return this.helper.remove(queue, group);
+        }
+    }
+
     private void startWorker() {
         this.singleThreadPool.submit(() -> {
             while (true) {

@@ -117,7 +117,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="roleUpdateDialogVisible = false">取 消</el-button>
+        <el-button @click="updateDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="updateConfirm">确 定</el-button>
       </div>
     </el-dialog>
@@ -162,8 +162,8 @@ export default class Permission extends BaseVue {
       cancelButtonText: '取消',
       type: 'warning'
     }).then(async () => {
-      const permission = rows[index]
-      const res = await PermissionApi.delete(permission.id)
+      const permissionVo = rows[index]
+      const res = await PermissionApi.delete(permissionVo.id)
       if (res && res.data.data) {
         rows.splice(index, 1)
         this.$message({

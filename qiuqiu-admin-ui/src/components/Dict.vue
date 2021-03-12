@@ -2,7 +2,7 @@
   <div>
     <!--操作栏-->
     <el-button-group>
-      <el-button type="primary" @click="create" v-if="permissionExists(permissions.PERMISSION_ADD)">新增
+      <el-button type="primary" @click="create" v-if="permissionExists(permissions.DICT_ADD)">新增
       </el-button>
     </el-button-group>
     <!--数据表格-->
@@ -18,18 +18,18 @@
         width="50">
       </el-table-column>
       <el-table-column
-        label="权限名"
-        prop="name"
+        label="键"
+        prop="key"
+        width="150">
+      </el-table-column>
+      <el-table-column
+        label="值"
+        prop="value"
         width="150">
       </el-table-column>
       <el-table-column
         label="描述"
         prop="description"
-        width="150">
-      </el-table-column>
-      <el-table-column
-        label="权限接口地址"
-        prop="uri"
         width="150">
       </el-table-column>
       <el-table-column
@@ -46,45 +46,60 @@
         width="200">
         <template slot-scope="scope">
           <el-button @click="update(scope.row)" type="text" size="small"
-                     v-if="permissionExists(permissions.PERMISSION_UPDATE)">
+                     v-if="permissionExists(permissions.DICT_UPDATE)">
             编辑
           </el-button>
           <el-button
             size="small"
             type="text"
             @click.native.prevent="deleteConfirm(scope.$index, tableData)"
-            v-if="permissionExists(permissions.PERMISSION_DELETE)">
+            v-if="permissionExists(permissions.DICT_DELETE)">
             删除
           </el-button>
           <el-button
             size="small"
             type="text"
+            @click.native.prevent="refreshConfirm(scope.$index, tableData)"
+            v-if="permissionExists(permissions.DICT_REFRESH)">
+            刷新
+          </el-button>
+          <el-button
+            size="small"
+            type="text"
             @click.native.prevent="toggleEnable(scope.$index, tableData)"
-            v-if="permissionExists(permissions.PERMISSION_UPDATE)">
+            v-if="permissionExists(permissions.DICT_UPDATE)">
             {{ scope.row.enable ? '使无效' : '使有效' }}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <!--新增权限信息表单-->
-    <el-dialog title="权限创建" :visible.sync="createDialogVisible">
-      <el-form ref="createForm" :model="permissionCreateVo" :rules="rules">
-        <el-form-item label="权限名:" :label-width="dialogFormLabelWidth" prop="name">
-          <el-input v-model="permissionCreateVo.name"></el-input>
+    <!---分页--->
+    <el-row justify="end" type="flex" id="pagination">
+      <el-pagination
+        background
+        :hide-on-single-page="hideOnSinglePage"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[5, 10, 20, 50]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+      </el-pagination>
+    </el-row>
+
+    <!--新增字典记录表单-->
+    <el-dialog title="字典记录创建" :visible.sync="createDialogVisible">
+      <el-form ref="createForm" :model="dictCreateVo" :rules="rules">
+        <el-form-item label="键:" :label-width="dialogFormLabelWidth" prop="key">
+          <el-input v-model="dictCreateVo.key"></el-input>
+        </el-form-item>
+        <el-form-item label="值:" :label-width="dialogFormLabelWidth" prop="value">
+          <el-input v-model="dictCreateVo.value"></el-input>
         </el-form-item>
         <el-form-item label="描述:" :label-width="dialogFormLabelWidth" prop="description">
-          <el-input v-model="permissionCreateVo.description"></el-input>
-        </el-form-item>
-        <el-form-item label="uri:" :label-width="dialogFormLabelWidth" prop="uri">
-          <el-input v-model="permissionCreateVo.uri"></el-input>
-        </el-form-item>
-        <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth" prop="enable">
-          <el-switch
-            v-model="permissionCreateVo.enable"
-            active-color="#13ce66"
-            inactive-color="#ff4949">
-          </el-switch>
+          <el-input v-model="dictCreateVo.description"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -93,31 +108,31 @@
       </div>
     </el-dialog>
 
-    <!--更新权限信息表单-->
-    <el-dialog title="权限更新" :visible.sync="updateDialogVisible">
-      <el-form ref="updateForm" :model="permissionUpdateVo" :rules="rules">
+    <!--更新字典记录表单-->
+    <el-dialog title="字典记录更新" :visible.sync="updateDialogVisible">
+      <el-form ref="updateForm" :model="dictUpdateVo" :rules="rules">
         <el-form-item :label-width="dialogFormLabelWidth" label="id:" prop="id">
-          <el-input v-model="permissionUpdateVo.id" disabled></el-input>
+          <el-input v-model="dictUpdateVo.id" disabled></el-input>
         </el-form-item>
-        <el-form-item label="权限名:" :label-width="dialogFormLabelWidth" prop="name">
-          <el-input v-model="permissionUpdateVo.name"></el-input>
+        <el-form-item label="键:" :label-width="dialogFormLabelWidth" prop="key">
+          <el-input v-model="dictUpdateVo.key"></el-input>
+        </el-form-item>
+        <el-form-item label="值:" :label-width="dialogFormLabelWidth" prop="value">
+          <el-input v-model="dictUpdateVo.value"></el-input>
         </el-form-item>
         <el-form-item label="描述:" :label-width="dialogFormLabelWidth" prop="description">
-          <el-input v-model="permissionUpdateVo.description"></el-input>
-        </el-form-item>
-        <el-form-item label="接口地址:" :label-width="dialogFormLabelWidth" prop="uri">
-          <el-input v-model="permissionUpdateVo.uri"></el-input>
+          <el-input v-model="dictUpdateVo.description"></el-input>
         </el-form-item>
         <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth" prop="enable">
           <el-switch
-            v-model="permissionUpdateVo.enable"
+            v-model="dictUpdateVo.enable"
             active-color="#13ce66"
             inactive-color="#ff4949">
           </el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="roleUpdateDialogVisible = false">取 消</el-button>
+        <el-button @click="updateDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="updateConfirm">确 定</el-button>
       </div>
     </el-dialog>
@@ -128,42 +143,78 @@
 import { Component } from 'vue-property-decorator'
 import { BaseVue } from '@/BaseVue'
 import { ElForm } from 'element-ui/types/form'
-import { PermissionVo } from '@/api/vo/permission'
-import { PermissionApi } from '@/api/permission'
+import { DictCreateVo, DictVo } from '@/api/vo/dict'
+import { DictApi } from '@/api/dict'
 
 @Component
-export default class Permission extends BaseVue {
-  private tableData: PermissionVo[] = []
+export default class Dict extends BaseVue {
+  private tableData: DictVo[] = []
   private loading = false
   private updateDialogVisible = false
   private createDialogVisible = false
   private dialogFormLabelWidth = '120px'
-  private permissionUpdateVo = PermissionVo.newInstant()
-  private permissionCreateVo = PermissionVo.newInstant()
+  private dictUpdateVo = DictVo.newInstant()
+  private dictCreateVo = DictCreateVo.newInstant()
+
+  private hideOnSinglePage = false
+  private currentPage = 1
+  private pageSize = 5
+  private total = 1
+  private searchKey = ''
 
   private rules = {
-    name: [
-      { required: true, message: '请输入权限名', trigger: 'blur' }
+    key: [
+      { required: true, message: '请输入键', trigger: 'blur' }
+    ],
+    value: [
+      { required: true, message: '请输入值', trigger: 'blur' }
     ],
     description: [
-      { required: true, message: '请输入权限描述', trigger: 'blur' }
-    ],
-    uri: [
-      { required: true, message: '请输入权限接口地址', trigger: 'blur' }
+      { required: true, message: '请输入描述', trigger: 'blur' }
     ],
     enable: [
-      { required: true, message: '请输入权限是否有效', trigger: 'blur' }
+      { required: true, message: '请输入字典记录是否有效', trigger: 'blur' }
     ]
   }
 
-  deleteConfirm (index: number, rows: PermissionVo[]) {
+  mounted () {
+    this.goToPage('', this.currentPage, this.pageSize)
+  }
+
+  // 跳去某页操作
+  async goToPage (key: string, pageNum: number, pageSize: number) {
+    this.loading = true
+    const res = await DictApi.page(key, pageNum, pageSize)
+    this.loading = false
+    this.tableData = res.data.data.data
+    this.currentPage = res.data.data.currentPage
+    this.total = res.data.data.total
+
+    if ((this.total / this.pageSize) === 0) {
+      this.hideOnSinglePage = true
+    }
+  }
+
+  // 分页器每页大小改变时候的回调方法
+  handleSizeChange (pageSize: number) {
+    this.pageSize = pageSize
+    this.goToPage(this.searchKey, this.currentPage, this.pageSize)
+  }
+
+  // 分页器当前页改变时候的回调方法
+  handleCurrentChange (pageNum: number) {
+    this.currentPage = pageNum
+    this.goToPage(this.searchKey, this.currentPage, this.pageSize)
+  }
+
+  deleteConfirm (index: number, rows: DictVo[]) {
     this.$confirm('此操作将永久删除该条数据, 是否继续?', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
     }).then(async () => {
-      const permission = rows[index]
-      const res = await PermissionApi.delete(permission.id)
+      const dict = rows[index]
+      const res = await DictApi.delete(dict.key)
       if (res && res.data.data) {
         rows.splice(index, 1)
         this.$message({
@@ -184,26 +235,81 @@ export default class Permission extends BaseVue {
     })
   }
 
-  async update (row: PermissionVo) {
-    console.log('update:', row)
+  refreshConfirm (index: number, rows: DictVo[]) {
+    this.$confirm('刷新此条数据, 是否继续?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async () => {
+      const dict = rows[index]
+      const res = await DictApi.refresh(dict.key)
+      if (res && res.data.data) {
+        this.$message({
+          type: 'success',
+          message: '刷新成功!'
+        })
+      } else {
+        this.$message({
+          type: 'info',
+          message: '刷新失败'
+        })
+      }
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消刷新'
+      })
+    })
+  }
+
+  update (row: DictVo) {
+    this.dictUpdateVo = row
+    this.updateDialogVisible = true
   }
 
   updateConfirm () {
     (this.$refs.updateForm as ElForm).validate(async valid => {
       if (valid) {
-        console.log('update validate...')
+        const res = await DictApi.update(this.dictUpdateVo)
+        if (res && res.data.data) {
+          this.goToPage(this.searchKey, 1, this.pageSize)
+          this.$message({
+            type: 'success',
+            message: '更新成功!'
+          })
+        } else {
+          this.$message({
+            type: 'info',
+            message: '更新失败'
+          })
+        }
+        this.updateDialogVisible = false
       }
     })
   }
 
-  async create () {
-    console.log('createPermission..')
+  create () {
+    this.dictCreateVo = DictCreateVo.newInstant()
+    this.createDialogVisible = true
   }
 
   createConfirm () {
     (this.$refs.createForm as ElForm).validate(async valid => {
       if (valid) {
-        console.log('create validate...')
+        const res = await DictApi.create(this.dictCreateVo)
+        if (res && res.data.data) {
+          this.goToPage(this.searchKey, 1, this.pageSize)
+          this.$message({
+            type: 'success',
+            message: '新增成功!'
+          })
+        } else {
+          this.$message({
+            type: 'info',
+            message: '新增失败'
+          })
+        }
+        this.createDialogVisible = false
       }
     })
   }

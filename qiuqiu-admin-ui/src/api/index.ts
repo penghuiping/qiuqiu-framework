@@ -58,6 +58,11 @@ class ApiConstant {
   static GROUP_CREATE = '/group/create'
   static GROUP_DELETE = '/group/delete'
   static AUDIT_LOG_PAGE = '/audit_log/page'
+  static DICT_PAGE = '/dict/page'
+  static DICT_CREATE = '/dict/create'
+  static DICT_UPDATE = '/dict/update'
+  static DICT_DELETE = '/dict/delete'
+  static DICT_REFRESH = '/dict/refresh'
 }
 
 export { ApiConstant }

@@ -51,6 +51,15 @@ public interface MessageQueueManager {
     Boolean send(String queue, String group, Message message);
 
     /**
+     * 删除指定队列与组
+     *
+     * @param queue 队列名
+     * @param group 组名
+     * @return true: 表示删除成功
+     */
+    Boolean delete(String queue, String group);
+
+    /**
      * 主动从队列中拉取消息
      *
      * @param queue 队列名

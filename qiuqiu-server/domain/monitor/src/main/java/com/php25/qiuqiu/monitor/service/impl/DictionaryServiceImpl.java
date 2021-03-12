@@ -2,6 +2,7 @@ package com.php25.qiuqiu.monitor.service.impl;
 
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.mess.IdGenerator;
+import com.php25.common.core.util.JsonUtil;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.db.specification.Operator;
 import com.php25.common.db.specification.SearchParam;
@@ -16,8 +17,15 @@ import com.php25.qiuqiu.monitor.model.Dict;
 import com.php25.qiuqiu.monitor.repository.DictRepository;
 import com.php25.qiuqiu.monitor.service.DictionaryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.PropertySources;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -34,9 +42,10 @@ import java.util.stream.Collectors;
  * @author penghuiping
  * @date 2021/3/11 16:22
  */
+@Log4j2
 @Service
 @RequiredArgsConstructor
-public class DictionaryServiceImpl implements DictionaryService, InitializingBean {
+public class DictionaryServiceImpl implements DictionaryService, InitializingBean, DisposableBean {
 
     private final DictRepository dictRepository;
 
@@ -48,14 +57,23 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
     private final ExecutorService executorService;
     private final RedisManager redisManager;
 
+    @Value("${server.id}")
+    private String serverId;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         MessageSubscriber messageSubscriber = new RedisMessageSubscriber(executorService, redisManager);
         messageSubscriber.setHandler(message -> {
+            log.info("刷新缓存:{}", JsonUtil.toJson(message));
             String key = message.getBody().toString();
             this.removeCache0(key);
         });
-        messageQueueManager.subscribe("dict", messageSubscriber);
+        messageQueueManager.subscribe("dict",serverId, messageSubscriber);
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        this.messageQueueManager.delete("dict",serverId);
     }
 
     @Override

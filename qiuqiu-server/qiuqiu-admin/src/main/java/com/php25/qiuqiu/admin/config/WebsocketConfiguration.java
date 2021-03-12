@@ -19,6 +19,7 @@ import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +42,8 @@ import java.util.concurrent.TimeUnit;
 @EnableWebSocket
 public class WebsocketConfiguration implements WebSocketConfigurer {
 
-    private final String serverId = UUID.randomUUID().toString().replace("-", "");
+    @Value("${server.id}")
+    private String serverId;
 
     @Autowired
     private WebsocketHandler websocketHandler;
@@ -62,7 +64,7 @@ public class WebsocketConfiguration implements WebSocketConfigurer {
     @Bean
     public RegisterHandlerConfig registerHandlerConfig() {
         RegisterHandlerConfig registerHandlerConfig = new RegisterHandlerConfig(msgDispatcher, applicationContext);
-        registerHandlerConfig.scanPackage("com.php25.common.ws","com.php25.qiuqiu.notify.dto.ws");
+        registerHandlerConfig.scanPackage("com.php25.common.ws", "com.php25.qiuqiu.notify.dto.ws");
         return registerHandlerConfig;
     }
 
@@ -92,10 +94,10 @@ public class WebsocketConfiguration implements WebSocketConfigurer {
     }
 
     @Bean
-    public GlobalSession globalSession(@Autowired RedisManager redisManager,
-                                       @Autowired MsgDispatcher msgDispatcher,
-                                       @Autowired SecurityAuthentication securityAuthentication,
-                                       @Autowired InnerMsgRetryQueue innerMsgRetryQueue
+    public GlobalSession globalSession(RedisManager redisManager,
+                                       MsgDispatcher msgDispatcher,
+                                       SecurityAuthentication securityAuthentication,
+                                       InnerMsgRetryQueue innerMsgRetryQueue
     ) {
         GlobalSession globalSession = new GlobalSession(innerMsgRetryQueue,
                 redisManager,
@@ -109,24 +111,24 @@ public class WebsocketConfiguration implements WebSocketConfigurer {
     }
 
     @Bean
-    public RedisQueueSubscriber redisQueueSubscriber(@Autowired RedisManager redisManager, @Autowired InnerMsgRetryQueue innerMsgRetryQueue) {
+    public RedisQueueSubscriber redisQueueSubscriber(RedisManager redisManager, InnerMsgRetryQueue innerMsgRetryQueue) {
         return new RedisQueueSubscriber(redisManager, serverId, innerMsgRetryQueue);
     }
 
     @Bean
-    public WebsocketHandler websocketHandler(@Autowired GlobalSession globalSession, @Autowired InnerMsgRetryQueue innerMsgRetryQueue) {
+    public WebsocketHandler websocketHandler(GlobalSession globalSession, InnerMsgRetryQueue innerMsgRetryQueue) {
         return new WebsocketHandler(globalSession, innerMsgRetryQueue);
     }
 
     @Bean
-    public SecurityAuthentication securityAuthentication(@Autowired UserService userService) {
+    public SecurityAuthentication securityAuthentication(UserService userService) {
         return new SecurityAuthentication() {
             @Override
             public String authenticate(String token) {
                 if (userService.isTokenValid(token)) {
-                    String username =  userService.getUsernameFromJwt(token);
-                    if(!StringUtil.isBlank(username)) {
-                        log.info("ws握手认证成功,用户名:{}",username);
+                    String username = userService.getUsernameFromJwt(token);
+                    if (!StringUtil.isBlank(username)) {
+                        log.info("ws握手认证成功,用户名:{}", username);
                         return username;
                     }
                 }
@@ -136,7 +138,7 @@ public class WebsocketConfiguration implements WebSocketConfigurer {
     }
 
     @Bean
-    public HeartBeatWorker heartBeatWorker(@Autowired GlobalSession globalSession) {
+    public HeartBeatWorker heartBeatWorker(GlobalSession globalSession) {
         return new HeartBeatWorker(1000L, globalSession);
     }
 

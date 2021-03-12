@@ -27,6 +27,10 @@ class Permission {
     GROUP_DELETE: 'group_delete',
     AUDIT_LOG_LIST_SEARCH: 'audit_log_list_search',
     DICT_LIST_SEARCH: 'dict_list_search',
+    DICT_ADD: 'dict_add',
+    DICT_UPDATE: 'dict_update',
+    DICT_DELETE: 'dict_delete',
+    DICT_REFRESH: 'dict_refresh',
     MEDIA_LIST_SEARCH: 'media_list_search',
     REPORT_LIST_SEARCH: 'report_list_search'
   }
@@ -53,6 +57,11 @@ class Permission {
     remoteToLocalPermission.set('group_update', Permission.permissions.GROUP_UPDATE)
     remoteToLocalPermission.set('group_delete', Permission.permissions.GROUP_DELETE)
     remoteToLocalPermission.set('audit_log_page', Permission.permissions.AUDIT_LOG_LIST_SEARCH)
+    remoteToLocalPermission.set('dict_page', Permission.permissions.DICT_LIST_SEARCH)
+    remoteToLocalPermission.set('dict_create', Permission.permissions.DICT_ADD)
+    remoteToLocalPermission.set('dict_update', Permission.permissions.DICT_UPDATE)
+    remoteToLocalPermission.set('dict_delete', Permission.permissions.DICT_DELETE)
+    remoteToLocalPermission.set('dict_refresh', Permission.permissions.DICT_REFRESH)
     // remoteToLocalPermission.set('_department_page_list', Permission.permissions.DEPARTMENT_LIST_SEARCH)
     // remoteToLocalPermission.set('_media_page_list', Permission.permissions.MEDIA_LIST_SEARCH)
     // remoteToLocalPermission.set('_report_page_list', Permission.permissions.REPORT_LIST_SEARCH)
