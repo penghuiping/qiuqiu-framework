@@ -12,7 +12,7 @@
               <el-button
                 type="text"
                 size="mini"
-                @click="() => append(data)" v-if="permissionExists(permissions.GROUP_ADD)">
+                @click="() => create(data)" v-if="permissionExists(permissions.GROUP_ADD)">
                 添加
               </el-button>
                <el-button
@@ -47,6 +47,18 @@
         <el-button type="primary" @click="createConfirm">确 定</el-button>
       </div>
     </el-dialog>
+    <!--更新用户组信息表单-->
+    <el-dialog title="用户组更新" :visible.sync="createDialogVisible">
+      <el-form ref="createForm" :model="groupUpdateVo" :rules="rules">
+        <el-form-item label="描述:" :label-width="dialogFormLabelWidth" prop="description">
+          <el-input v-model="groupUpdateVo.description"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="updateDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="createConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -63,8 +75,10 @@ import { GroupCreateVo } from '@/api/vo/group'
 export default class Department extends BaseVue {
   private groupTree: ElementUiTreeVo[] = []
   private createDialogVisible = false
+  private updateDialogVisible = false
   private dialogFormLabelWidth = '120px'
   private groupCreateVo = GroupCreateVo.newInstant()
+  private groupUpdateVo = GroupCreateVo.newInstant()
   private treeProps = {
     children: 'children',
     label: 'label'
@@ -95,6 +109,11 @@ export default class Department extends BaseVue {
     loading.close()
   }
 
+  create (data: ElementUiTreeVo) {
+    this.parentNode = data
+    this.createDialogVisible = true
+  }
+
   async createConfirm () {
     this.groupCreateVo.parentId = this.parentNode.id
     console.log('groupCreateVo:', this.groupCreateVo)
@@ -105,12 +124,8 @@ export default class Department extends BaseVue {
     }
   }
 
-  append (data: ElementUiTreeVo) {
-    this.parentNode = data
-    this.createDialogVisible = true
-  }
-
   update (data: ElementUiTreeVo) {
+    this.createDialogVisible = true
     console.log('update:', data)
   }
 

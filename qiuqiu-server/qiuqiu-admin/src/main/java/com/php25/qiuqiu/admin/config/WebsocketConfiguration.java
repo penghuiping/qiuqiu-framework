@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Configuration
-@ConditionalOnProperty("ws.enable")
+@ConditionalOnProperty({"ws.enable","server.id"})
 @EnableWebSocket
 public class WebsocketConfiguration implements WebSocketConfigurer {
 

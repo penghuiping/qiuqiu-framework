@@ -23,6 +23,7 @@
         <module>validation</module>
         <module>ws</module>
         <module>mq</module>
+        <module>timer</module>
     </modules>
 
 </project>

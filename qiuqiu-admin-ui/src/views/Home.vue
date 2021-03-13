@@ -3,7 +3,7 @@
     <el-aside>
       <el-menu :collapse="isCollapse" class="el-menu-vertical" default-active="1-4-1" @close="handleClose"
                @open="handleOpen">
-        <el-menu-item index="1" @click="menuClick('')" v-if="permissionExists(permissions.HOME)">
+        <el-menu-item index="1" @click="menuClick('index')" v-if="permissionExists(permissions.HOME)">
           <i class="el-icon-s-home"></i>
           <span slot="title">首页</span>
         </el-menu-item>
@@ -67,7 +67,7 @@
             :label="item.title"
             :name="item.name"
           >
-            <IndexView v-if="item.key===''"/>
+            <IndexView v-if="item.key==='index'"/>
             <UserView v-if="item.key==='user'"/>
             <RoleView v-if="item.key==='role'"/>
             <GroupView v-if="item.key==='group'"/>
@@ -132,47 +132,47 @@ export default class Home extends BaseVue {
     this.nickname = res.data.data.nickname
     Permission.mapToLocalPermissions(res.data.data.permissions)
     this.isCollapse = true
+    this.addTab('index', '首页')
     this.toggleCollapse()
     this.initWS()
   }
 
-  data () {
-    return {
-      editableTabsValue: '1',
-      editableTabs: [new TabItem('首页', '1', '')],
-      tabIndex: 1
-    }
-  }
-
   addTab (key: string, title: string) {
     // 判断是否已经有相同key的tab
-    let isExist = false
-    let newTab: TabItem = new TabItem(title, '', key)
+    let newTab: TabItem
     const tabs = this.editableTabs
+    let index
     for (let i = 0; i < tabs.length; i++) {
       const tab = tabs[i]
       if (key === tab.key) {
-        isExist = true
         newTab = tab
+        index = i
         break
       }
     }
 
-    if (isExist) {
-      // 已存在tab，这直接激活此tab
-      this.editableTabsValue = newTab.name
-      return
-    }
-
     // 不存在的相同key的tab就可以新增
+    newTab = new TabItem(title, '', key)
     const newTabName = ++this.tabIndex + ''
     newTab.name = newTabName
-    this.editableTabs.push(newTab)
+    if (index !== undefined && index > -1) {
+      // 存在值,说明已经存在相同tab,直接替换
+      this.editableTabs[index] = newTab
+    } else {
+      this.editableTabs.push(newTab)
+    }
     this.editableTabsValue = newTabName
   }
 
-  clickTab (targetName: TabItem) {
-    this.editableTabsValue = targetName.name
+  clickTab (target: TabItem) {
+    const tabs = this.editableTabs
+    let tab0: TabItem = new TabItem('', '', '')
+    tabs.forEach((tab) => {
+      if (tab.name === target.name) {
+        tab0 = tab
+      }
+    })
+    this.addTab(tab0.key, tab0.title)
   }
 
   removeTab (targetName: string) {
@@ -194,6 +194,10 @@ export default class Home extends BaseVue {
 
   menuClick (key: string) {
     switch (key) {
+      case 'index': {
+        this.addTab('index', '首页')
+        break
+      }
       case 'user': {
         this.addTab('user', '用户管理')
         break
@@ -227,7 +231,7 @@ export default class Home extends BaseVue {
         break
       }
       default: {
-        this.addTab('', '首页')
+        // this.addTab('index', '首页')
         break
       }
     }
