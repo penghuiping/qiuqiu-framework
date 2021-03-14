@@ -38,6 +38,6 @@ public class JobDto {
     /**
      * 0:无效 1:有效
      */
-    private Integer enable;
+    private Boolean enable;
 
 }

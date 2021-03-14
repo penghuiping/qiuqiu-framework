@@ -47,13 +47,11 @@ public class AuditLogServiceImpl implements AuditLogService, InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        MessageSubscriber subscriber = new RedisMessageSubscriber(executorService, redisManager);
-        subscriber.setHandler(message -> {
+        messageQueueManager.subscribe("audit_log", message -> {
             log.info("msg body:{}", JsonUtil.toJson(message.getBody()));
             AuditLogDto auditLogDto = (AuditLogDto) message.getBody();
             this.create0(auditLogDto);
         });
-        messageQueueManager.subscribe("audit_log", subscriber);
     }
 
     @Override

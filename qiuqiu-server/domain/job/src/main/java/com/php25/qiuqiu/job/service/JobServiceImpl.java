@@ -1,6 +1,7 @@
 package com.php25.qiuqiu.job.service;
 
 import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.mess.SpringContextHolder;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.db.specification.Operator;
@@ -8,9 +9,7 @@ import com.php25.common.db.specification.SearchParam;
 import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.common.mq.Message;
 import com.php25.common.mq.MessageQueueManager;
-import com.php25.common.mq.MessageSubscriber;
-import com.php25.common.mq.redis.RedisMessageSubscriber;
-import com.php25.common.redis.RedisManager;
+import com.php25.common.timer.CronExpression;
 import com.php25.common.timer.Job;
 import com.php25.common.timer.Timer;
 import com.php25.qiuqiu.job.dto.JobCreateDto;
@@ -28,9 +27,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 /**
@@ -51,14 +51,9 @@ public class JobServiceImpl implements JobService, InitializingBean {
     @Value("${server.id}")
     private String serverId;
 
-    private final RedisManager redisManager;
-
-    private final ExecutorService pool;
-
     @Override
     public void afterPropertiesSet() throws Exception {
-        MessageSubscriber messageSubscriber = new RedisMessageSubscriber(pool, redisManager);
-        messageSubscriber.setHandler(message -> {
+        messageQueueManager.subscribe("timer_job_enabled", message -> {
             String jobId = (String) message.getBody();
             this.timer.stop(jobId);
 
@@ -75,16 +70,28 @@ public class JobServiceImpl implements JobService, InitializingBean {
             String className = jobModel.getClassName();
             Runnable task = null;
             try {
-                task = (Runnable) Class.forName(className).getDeclaredConstructor().newInstance();
+                Class<?> cls = Class.forName(className);
+                task = (Runnable) SpringContextHolder.getBean0(cls);
             } catch (Exception e) {
                 log.error("定时任务对应的执行代码类加载出错", e);
                 return;
             }
-            Job job = new Job(jobModel.getId(), jobModel.getCron(), task);
-            this.timer.add(job);
+            try {
+                Date date = new CronExpression(jobModel.getCron()).getNextValidTimeAfter(new Date());
+                if (null == date) {
+                    return;
+                }
+                Job job = new Job(jobModel.getId(), jobModel.getCron(), task);
+                this.timer.add(job);
+            } catch (ParseException e) {
+                log.error("定时任务cron表达式出错", e);
+            }
         });
-        messageQueueManager.subscribe("timer_job", this.serverId, messageSubscriber);
 
+        messageQueueManager.subscribe("timer_job_disabled", serverId, message -> {
+            String jobId = (String) message.getBody();
+            this.timer.stop(jobId);
+        });
     }
 
     @Override
@@ -135,8 +142,18 @@ public class JobServiceImpl implements JobService, InitializingBean {
 
     @Override
     public Boolean refresh(String jobId) {
-        Message message = new Message(jobId, "timer_job", this.serverId, jobId);
-        messageQueueManager.send("timer_job", message);
+        Optional<JobModel> jobModelOptional = this.jobModelRepository.findById(jobId);
+        if (!jobModelOptional.isPresent()) {
+            return false;
+        }
+        JobModel jobModel = jobModelOptional.get();
+        if (jobModel.getEnable()) {
+            Message message = new Message(jobId, "timer_job_enabled", jobId);
+            messageQueueManager.send("timer_job_enabled", message);
+        } else {
+            Message message = new Message(jobId, "timer_job_disabled", this.serverId, jobId);
+            messageQueueManager.send("timer_job_disabled", message);
+        }
         return true;
     }
 }

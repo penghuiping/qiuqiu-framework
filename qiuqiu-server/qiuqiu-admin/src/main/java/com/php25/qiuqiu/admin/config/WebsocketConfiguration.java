@@ -7,8 +7,8 @@ import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.core.mess.IdGeneratorImpl;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RedisManager;
+import com.php25.common.timer.Timer;
 import com.php25.common.ws.GlobalSession;
-import com.php25.common.ws.HeartBeatWorker;
 import com.php25.common.ws.InnerMsgRetryQueue;
 import com.php25.common.ws.MsgDispatcher;
 import com.php25.common.ws.RedisQueueSubscriber;
@@ -29,7 +29,6 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -38,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Configuration
-@ConditionalOnProperty({"ws.enable","server.id"})
+@ConditionalOnProperty({"ws.enable", "server.id"})
 @EnableWebSocket
 public class WebsocketConfiguration implements WebSocketConfigurer {
 
@@ -97,17 +96,15 @@ public class WebsocketConfiguration implements WebSocketConfigurer {
     public GlobalSession globalSession(RedisManager redisManager,
                                        MsgDispatcher msgDispatcher,
                                        SecurityAuthentication securityAuthentication,
-                                       InnerMsgRetryQueue innerMsgRetryQueue
+                                       InnerMsgRetryQueue innerMsgRetryQueue,
+                                       Timer timer
     ) {
-        GlobalSession globalSession = new GlobalSession(innerMsgRetryQueue,
+        return new GlobalSession(innerMsgRetryQueue,
                 redisManager,
                 securityAuthentication,
                 serverId,
                 executorService(),
-                msgDispatcher);
-        msgDispatcher.setSession(globalSession);
-        innerMsgRetryQueue.setGlobalSession(globalSession);
-        return globalSession;
+                msgDispatcher, timer);
     }
 
     @Bean
@@ -135,11 +132,6 @@ public class WebsocketConfiguration implements WebSocketConfigurer {
                 throw Exceptions.throwBusinessException(UserErrorCode.JWT_ILLEGAL);
             }
         };
-    }
-
-    @Bean
-    public HeartBeatWorker heartBeatWorker(GlobalSession globalSession) {
-        return new HeartBeatWorker(1000L, globalSession);
     }
 
     @Bean

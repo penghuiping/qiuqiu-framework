@@ -54,26 +54,22 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
     private final MessageQueueManager messageQueueManager;
 
     private final IdGenerator idGenerator;
-    private final ExecutorService executorService;
-    private final RedisManager redisManager;
 
     @Value("${server.id}")
     private String serverId;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        MessageSubscriber messageSubscriber = new RedisMessageSubscriber(executorService, redisManager);
-        messageSubscriber.setHandler(message -> {
+        messageQueueManager.subscribe("dict", serverId, message -> {
             log.info("刷新缓存:{}", JsonUtil.toJson(message));
             String key = message.getBody().toString();
             this.removeCache0(key);
         });
-        messageQueueManager.subscribe("dict",serverId, messageSubscriber);
     }
 
     @Override
     public void destroy() throws Exception {
-        this.messageQueueManager.delete("dict",serverId);
+        this.messageQueueManager.delete("dict", serverId);
     }
 
     @Override

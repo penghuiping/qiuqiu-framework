@@ -35,7 +35,7 @@ class RedisQueueGroupHelper {
      * @return 队列
      */
     public RList<Message> queue(String queue) {
-        AssertUtil.hasText(queue,"queue不能为空");
+        AssertUtil.hasText(queue, "queue不能为空");
         return this.redisManager.list(RedisConstant.QUEUE_PREFIX + queue, Message.class);
     }
 
@@ -46,7 +46,7 @@ class RedisQueueGroupHelper {
      * @return 组
      */
     public RList<Message> group(String group) {
-        AssertUtil.hasText(group,"group不能为空");
+        AssertUtil.hasText(group, "group不能为空");
         return this.redisManager.list(RedisConstant.GROUP_PREFIX + group, Message.class);
     }
 
@@ -57,7 +57,7 @@ class RedisQueueGroupHelper {
      * @return 队列与组关系
      */
     public RSet<String> groups(String queue) {
-        AssertUtil.hasText(queue,"queue不能为空");
+        AssertUtil.hasText(queue, "queue不能为空");
         return this.redisManager.set(RedisConstant.QUEUE_GROUPS_PREFIX + queue, String.class);
     }
 
@@ -67,7 +67,7 @@ class RedisQueueGroupHelper {
     }
 
     public Boolean remove(String queue, String group) {
-        AssertUtil.hasText(queue,"queue不能为空");
+        AssertUtil.hasText(queue, "queue不能为空");
         if (!StringUtil.isBlank(group)) {
             this.redisManager.remove(RedisConstant.GROUP_PREFIX + group);
             RSet<String> rSet = this.groups(queue);
@@ -93,7 +93,7 @@ class RedisQueueGroupHelper {
      * @return 死信队列
      */
     public RList<Message> dlq(String queue) {
-        AssertUtil.hasText(queue,"queue不能为空");
+        AssertUtil.hasText(queue, "queue不能为空");
         String dlq = this.redisManager.string().get(RedisConstant.QUEUE_DLQ_PREFIX + queue, String.class);
         if (StringUtil.isBlank(dlq)) {
             return this.redisManager.list(RedisConstant.DLQ_DEFAULT, Message.class);
@@ -109,8 +109,8 @@ class RedisQueueGroupHelper {
      * @return true: 绑定成功
      */
     public Boolean bindDlq(String queue, String dlq) {
-        AssertUtil.hasText(queue,"queue不能为空");
-        AssertUtil.hasText(dlq,"dlq不能为空");
+        AssertUtil.hasText(queue, "queue不能为空");
+        AssertUtil.hasText(dlq, "dlq不能为空");
         return this.redisManager.string().set(RedisConstant.QUEUE_DLQ_PREFIX + queue, dlq);
     }
 }

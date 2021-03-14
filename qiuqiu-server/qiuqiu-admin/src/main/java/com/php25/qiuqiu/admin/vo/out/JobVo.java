@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.vo.in.job;
+package com.php25.qiuqiu.admin.vo.out;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,5 +38,5 @@ public class JobVo {
     /**
      * 0:无效 1:有效
      */
-    private Integer enable;
+    private Boolean enable;
 }

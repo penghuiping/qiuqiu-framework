@@ -1,15 +1,14 @@
 package com.php25.common.ws;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.php25.common.core.mess.SpringContextHolder;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RList;
 import com.php25.common.redis.RedisManager;
-import com.php25.common.redis.impl.RedisManagerImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.concurrent.ExecutorService;
@@ -105,8 +104,8 @@ public class RedisQueueSubscriber implements InitializingBean, DisposableBean {
      */
     @Scheduled(cron = "0 * * * * ? ")
     public void logStatus() {
-        innerMsgRetryQueue.stats();
-        innerMsgRetryQueue.getGlobalSession().stats();
+        SpringContextHolder.getBean0(InnerMsgRetryQueue.class).stats();
+        SpringContextHolder.getBean0(GlobalSession.class).stats();
     }
 
 }

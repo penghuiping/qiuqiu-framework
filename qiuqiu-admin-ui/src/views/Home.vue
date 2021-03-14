@@ -23,14 +23,16 @@
 
         <el-submenu index="3" v-if="permissionExists(permissions.AUDIT_LOG_LIST_SEARCH)
         || permissionExists(permissions.REPORT_LIST_SEARCH)
+        || permissionExists(permissions.JOB_LIST_SEARCH)
         || permissionExists(permissions.DICT_LIST_SEARCH)">
           <template slot="title">
             <i class="el-icon-s-tools"></i>
-            <span slot="title">系统监控</span>
+            <span slot="title">系统管理</span>
           </template>
           <el-menu-item index="3-1" @click="menuClick('auditLog')" v-if="permissionExists(permissions.AUDIT_LOG_LIST_SEARCH)">审计日志</el-menu-item>
           <el-menu-item index="3-2" @click="menuClick('dict')" v-if="permissionExists(permissions.DICT_LIST_SEARCH)">数据字典</el-menu-item>
-          <el-menu-item index="3-3" @click="menuClick('report')" v-if="permissionExists(permissions.REPORT_LIST_SEARCH)">表报</el-menu-item>
+          <el-menu-item index="3-3" @click="menuClick('job')" v-if="permissionExists(permissions.JOB_LIST_SEARCH)">定时任务</el-menu-item>
+          <el-menu-item index="3-4" @click="menuClick('report')" v-if="permissionExists(permissions.REPORT_LIST_SEARCH)">表报</el-menu-item>
         </el-submenu>
         <el-menu-item index="4" @click="menuClick('media')" v-if="permissionExists(permissions.MEDIA_LIST_SEARCH)">
           <i class="el-icon-menu"></i>
@@ -74,6 +76,7 @@
             <PermissionView v-if="item.key==='permission'"/>
             <AuditLogView v-if="item.key==='auditLog'"/>
             <DictView v-if="item.key==='dict'"/>
+            <JobView v-if="item.key==='job'"/>
           </el-tab-pane>
         </el-tabs>
       </el-main>
@@ -96,6 +99,7 @@ import GroupView from '@/components/Group.vue'
 import PermissionView from '@/components/Permission.vue'
 import AuditLogView from '@/components/AuditLog.vue'
 import DictView from '@/components/Dict.vue'
+import JobView from '@/components/Job.vue'
 
 class TabItem {
   title: string
@@ -117,7 +121,8 @@ class TabItem {
     GroupView,
     PermissionView,
     AuditLogView,
-    DictView
+    DictView,
+    JobView
   }
 })
 export default class Home extends BaseVue {
@@ -220,6 +225,10 @@ export default class Home extends BaseVue {
       }
       case 'dict': {
         this.addTab('dict', '数据字典')
+        break
+      }
+      case 'job': {
+        this.addTab('job', '定时任务')
         break
       }
       case 'media': {

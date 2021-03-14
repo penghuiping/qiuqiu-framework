@@ -31,6 +31,11 @@ class Permission {
     DICT_UPDATE: 'dict_update',
     DICT_DELETE: 'dict_delete',
     DICT_REFRESH: 'dict_refresh',
+    JOB_LIST_SEARCH: 'job_list_search',
+    JOB_ADD: 'job_add',
+    JOB_UPDATE: 'job_update',
+    JOB_DELETE: 'job_delete',
+    JOB_REFRESH: 'job_refresh',
     MEDIA_LIST_SEARCH: 'media_list_search',
     REPORT_LIST_SEARCH: 'report_list_search'
   }
@@ -62,6 +67,11 @@ class Permission {
     remoteToLocalPermission.set('dict_update', Permission.permissions.DICT_UPDATE)
     remoteToLocalPermission.set('dict_delete', Permission.permissions.DICT_DELETE)
     remoteToLocalPermission.set('dict_refresh', Permission.permissions.DICT_REFRESH)
+    remoteToLocalPermission.set('job_page', Permission.permissions.JOB_LIST_SEARCH)
+    remoteToLocalPermission.set('job_create', Permission.permissions.JOB_ADD)
+    remoteToLocalPermission.set('job_update', Permission.permissions.JOB_UPDATE)
+    remoteToLocalPermission.set('job_delete', Permission.permissions.JOB_DELETE)
+    remoteToLocalPermission.set('job_refresh', Permission.permissions.JOB_REFRESH)
     // remoteToLocalPermission.set('_department_page_list', Permission.permissions.DEPARTMENT_LIST_SEARCH)
     // remoteToLocalPermission.set('_media_page_list', Permission.permissions.MEDIA_LIST_SEARCH)
     // remoteToLocalPermission.set('_report_page_list', Permission.permissions.REPORT_LIST_SEARCH)

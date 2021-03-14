@@ -26,9 +26,18 @@ public class JobUpdateVo {
      */
     private String description;
 
+    /**
+     * cron表达是
+     */
+    private String cron;
+
+    /**
+     * job对应的类名
+     */
+    private String className;
 
     /**
      * 0:无效 1:有效
      */
-    private Integer enable;
+    private Boolean enable;
 }
