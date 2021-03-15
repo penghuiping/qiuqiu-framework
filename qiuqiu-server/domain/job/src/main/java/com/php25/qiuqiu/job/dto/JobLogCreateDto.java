@@ -13,9 +13,9 @@ import java.util.Date;
 @Getter
 public class JobLogCreateDto {
     /**
-     * 任务id
+     * 任务名
      */
-    private String jobId;
+    private String jobName;
 
     /**
      * 任务执行时间

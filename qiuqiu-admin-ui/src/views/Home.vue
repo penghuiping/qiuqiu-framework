@@ -34,12 +34,14 @@
         </el-submenu>
 
         <el-submenu index="4" v-if="permissionExists(permissions.JOB_LIST_SEARCH)
+                || permissionExists(permissions.JOB_LOG_LIST_SEARCH)
        ">
           <template slot="title">
             <i class="el-icon-s-tools"></i>
             <span slot="title">任务管理</span>
           </template>
           <el-menu-item index="4-1" @click="menuClick('job')" v-if="permissionExists(permissions.JOB_LIST_SEARCH)">定时任务</el-menu-item>
+          <el-menu-item index="4-2" @click="menuClick('jobLog')" v-if="permissionExists(permissions.JOB_LOG_LIST_SEARCH)">任务日志</el-menu-item>
         </el-submenu>
 
         <el-menu-item index="5" @click="menuClick('media')" v-if="permissionExists(permissions.MEDIA_LIST_SEARCH)">
@@ -85,6 +87,7 @@
             <AuditLogView v-if="item.key==='auditLog'"/>
             <DictView v-if="item.key==='dict'"/>
             <JobView v-if="item.key==='job'"/>
+            <JobLogView v-if="item.key==='jobLog'"/>
           </el-tab-pane>
         </el-tabs>
       </el-main>
@@ -108,6 +111,7 @@ import PermissionView from '@/components/Permission.vue'
 import AuditLogView from '@/components/AuditLog.vue'
 import DictView from '@/components/Dict.vue'
 import JobView from '@/components/Job.vue'
+import JobLogView from '@/components/JobLog.vue'
 
 class TabItem {
   title: string
@@ -130,7 +134,8 @@ class TabItem {
     PermissionView,
     AuditLogView,
     DictView,
-    JobView
+    JobView,
+    JobLogView
   }
 })
 export default class Home extends BaseVue {
@@ -237,6 +242,10 @@ export default class Home extends BaseVue {
       }
       case 'job': {
         this.addTab('job', '定时任务')
+        break
+      }
+      case 'jobLog': {
+        this.addTab('jobLog', '任务日志')
         break
       }
       case 'media': {

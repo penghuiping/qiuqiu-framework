@@ -79,7 +79,8 @@ public class DbConfig {
     public void init() {
         new EntitiesScan().scanPackage(
                 "com.php25.qiuqiu.user.model",
-                "com.php25.qiuqiu.monitor.model"
+                "com.php25.qiuqiu.monitor.model",
+                "com.php25.qiuqiu.job.model"
         );
     }
 }

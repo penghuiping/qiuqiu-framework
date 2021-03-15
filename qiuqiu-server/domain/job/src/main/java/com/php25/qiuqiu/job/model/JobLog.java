@@ -32,8 +32,8 @@ public class JobLog implements Persistable<Long> {
     /**
      * 任务id
      */
-    @Column("job_id")
-    private String jobId;
+    @Column("job_name")
+    private String jobName;
 
     /**
      * 任务执行时间

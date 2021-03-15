@@ -19,9 +19,9 @@ public class JobLogDto {
     private Long id;
 
     /**
-     * 任务id
+     * 任务名
      */
-    private String jobId;
+    private String jobName;
 
     /**
      * 任务执行时间

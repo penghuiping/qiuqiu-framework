@@ -64,10 +64,12 @@ class ApiConstant {
   static DICT_DELETE = '/dict/delete'
   static DICT_REFRESH = '/dict/refresh'
   static JOB_PAGE = '/job/page'
+  static JOB_LOG_PAGE = '/job/log/page'
   static JOB_CREATE = '/job/create'
   static JOB_UPDATE = '/job/update'
   static JOB_DELETE = '/job/delete'
   static JOB_REFRESH = '/job/refresh'
+  static JOB_REFRESH_ALL = '/job/refresh_all'
 }
 
 export { ApiConstant }

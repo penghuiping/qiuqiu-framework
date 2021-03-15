@@ -56,16 +56,23 @@ public interface JobService {
      */
     Boolean refresh(String jobId);
 
+    /**
+     * 通知timer,刷新所有的任务状态
+     *
+     * @return
+     */
+    Boolean refreshAll();
+
 
     /**
      * 任务日志分页查询
      *
-     * @param jobId    任务id搜索
+     * @param jobName    任务名搜索
      * @param pageNum  页码
      * @param pageSize 每页大小
      * @return 任务日志分页结果
      */
-    DataGridPageDto<JobLogDto> pageJobLog(String jobId, Integer pageNum, Integer pageSize);
+    DataGridPageDto<JobLogDto> pageJobLog(String jobName, Integer pageNum, Integer pageSize);
 
 
     /**

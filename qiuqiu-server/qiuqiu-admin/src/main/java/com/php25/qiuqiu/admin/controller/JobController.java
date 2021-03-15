@@ -7,7 +7,7 @@ import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.job.JobCreateVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobIdVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobLogPageVo;
-import com.php25.qiuqiu.admin.vo.in.job.JobLogVo;
+import com.php25.qiuqiu.admin.vo.out.JobLogVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobPageVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobUpdateVo;
 import com.php25.qiuqiu.admin.vo.out.JobVo;
@@ -90,15 +90,22 @@ public class JobController extends JSONController {
         return succeed(jobService.refresh(jobIdVo.getJobId()));
     }
 
+    @AuditLog
+    @APIVersion("v1")
+    @PostMapping("/refresh_all")
+    public JSONResponse refreshAll() {
+        return succeed(jobService.refreshAll());
+    }
+
     @APIVersion("v1")
     @PostMapping("/log/page")
     public JSONResponse pageJobLog(@Valid @RequestBody JobLogPageVo jobLogPageVo) {
-        DataGridPageDto<JobLogDto> dataGrid = jobService.pageJobLog(jobLogPageVo.getJobId(),jobLogPageVo.getPageNum(),jobLogPageVo.getPageSize());
+        DataGridPageDto<JobLogDto> dataGrid = jobService.pageJobLog(jobLogPageVo.getJobId(), jobLogPageVo.getPageNum(), jobLogPageVo.getPageSize());
         PageResultVo<JobLogVo> result = new PageResultVo<>();
         List<JobLogDto> list = dataGrid.getData();
         List<JobLogVo> list0 = list.stream().map(jobLogDto -> {
             JobLogVo jobLogVo = new JobLogVo();
-            BeanUtils.copyProperties(jobLogDto,jobLogVo);
+            BeanUtils.copyProperties(jobLogDto, jobLogVo);
             return jobLogVo;
         }).collect(Collectors.toList());
         result.setData(list0);

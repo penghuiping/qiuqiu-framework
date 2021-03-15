@@ -1,12 +1,20 @@
 import axios, { AxiosResponse } from 'axios'
 import { JsonResponse, PageVo } from '@/api/vo'
 import { ApiConstant } from '@/api/index'
-import { JobCreateVo, JobVo } from '@/api/vo/job'
+import { JobCreateVo, JobLogVo, JobVo } from '@/api/vo/job'
 
 class JobApi {
   public static page (key: string, pageNum: number, pageSize: number): Promise<AxiosResponse<JsonResponse<PageVo<JobVo>>>> {
     return axios.post(ApiConstant.JOB_PAGE, {
       jobName: key,
+      pageNum: pageNum,
+      pageSize: pageSize
+    })
+  }
+
+  public static logPage (key: string, pageNum: number, pageSize: number): Promise<AxiosResponse<JsonResponse<PageVo<JobLogVo>>>> {
+    return axios.post(ApiConstant.JOB_LOG_PAGE, {
+      jobId: key,
       pageNum: pageNum,
       pageSize: pageSize
     })
@@ -30,6 +38,10 @@ class JobApi {
     return axios.post(ApiConstant.JOB_REFRESH, {
       jobId: id
     })
+  }
+
+  public static refreshAll (): Promise<AxiosResponse<JsonResponse<boolean>>> {
+    return axios.post(ApiConstant.JOB_REFRESH_ALL)
   }
 }
 

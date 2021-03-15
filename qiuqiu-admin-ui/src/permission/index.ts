@@ -36,6 +36,8 @@ class Permission {
     JOB_UPDATE: 'job_update',
     JOB_DELETE: 'job_delete',
     JOB_REFRESH: 'job_refresh',
+    JOB_REFRESH_ALL: 'job_refresh_all',
+    JOB_LOG_LIST_SEARCH: 'job_log_page',
     MEDIA_LIST_SEARCH: 'media_list_search',
     REPORT_LIST_SEARCH: 'report_list_search'
   }
@@ -72,6 +74,8 @@ class Permission {
     remoteToLocalPermission.set('job_update', Permission.permissions.JOB_UPDATE)
     remoteToLocalPermission.set('job_delete', Permission.permissions.JOB_DELETE)
     remoteToLocalPermission.set('job_refresh', Permission.permissions.JOB_REFRESH)
+    remoteToLocalPermission.set('job_refresh_all', Permission.permissions.JOB_REFRESH_ALL)
+    remoteToLocalPermission.set('job_log_page', Permission.permissions.JOB_LOG_LIST_SEARCH)
     // remoteToLocalPermission.set('_department_page_list', Permission.permissions.DEPARTMENT_LIST_SEARCH)
     // remoteToLocalPermission.set('_media_page_list', Permission.permissions.MEDIA_LIST_SEARCH)
     // remoteToLocalPermission.set('_report_page_list', Permission.permissions.REPORT_LIST_SEARCH)

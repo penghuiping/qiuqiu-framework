@@ -1,7 +1,6 @@
 package com.php25.qiuqiu.job.service;
 
 import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.common.core.mess.SpringContextHolder;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.db.specification.Operator;
@@ -12,6 +11,7 @@ import com.php25.common.mq.MessageQueueManager;
 import com.php25.common.timer.CronExpression;
 import com.php25.common.timer.Job;
 import com.php25.common.timer.Timer;
+import com.php25.qiuqiu.job.dto.BaseRunnable;
 import com.php25.qiuqiu.job.dto.JobCreateDto;
 import com.php25.qiuqiu.job.dto.JobDto;
 import com.php25.qiuqiu.job.dto.JobLogCreateDto;
@@ -59,45 +59,8 @@ public class JobServiceImpl implements JobService, InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        messageQueueManager.subscribe("timer_job_enabled", message -> {
-            String jobId = (String) message.getBody();
-            this.timer.stop(jobId);
-
-            Optional<JobModel> jobModelOptional = this.jobModelRepository.findById(jobId);
-            if (!jobModelOptional.isPresent()) {
-                return;
-            }
-
-            JobModel jobModel = jobModelOptional.get();
-            if (!jobModel.getEnable()) {
-                return;
-            }
-
-            String className = jobModel.getClassName();
-            Runnable task = null;
-            try {
-                Class<?> cls = Class.forName(className);
-                task = (Runnable) SpringContextHolder.getBean0(cls);
-            } catch (Exception e) {
-                log.error("定时任务对应的执行代码类加载出错", e);
-                return;
-            }
-            try {
-                Date date = new CronExpression(jobModel.getCron()).getNextValidTimeAfter(new Date());
-                if (null == date) {
-                    return;
-                }
-                Job job = new Job(jobModel.getId(), jobModel.getCron(), task);
-                this.timer.add(job);
-            } catch (ParseException e) {
-                log.error("定时任务cron表达式出错", e);
-            }
-        });
-
-        messageQueueManager.subscribe("timer_job_disabled", serverId, message -> {
-            String jobId = (String) message.getBody();
-            this.timer.stop(jobId);
-        });
+        this.subscribeRefreshJobDisabled();
+        this.subscribeRefreshJobEnabled();
     }
 
     @Override
@@ -147,10 +110,10 @@ public class JobServiceImpl implements JobService, InitializingBean {
     }
 
     @Override
-    public DataGridPageDto<JobLogDto> pageJobLog(String jobId, Integer pageNum, Integer pageSize) {
+    public DataGridPageDto<JobLogDto> pageJobLog(String jobName, Integer pageNum, Integer pageSize) {
         SearchParamBuilder builder = SearchParamBuilder.builder();
-        if (!StringUtil.isBlank(jobId)) {
-            builder.append(SearchParam.of("jobId", Operator.EQ, jobId));
+        if (!StringUtil.isBlank(jobName)) {
+            builder.append(SearchParam.of("jobName", Operator.EQ, jobName));
         }
         PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
         Page<JobLog> page = jobLogRepository.findAll(builder, pageRequest);
@@ -189,5 +152,60 @@ public class JobServiceImpl implements JobService, InitializingBean {
             messageQueueManager.send("timer_job_disabled", message);
         }
         return true;
+    }
+
+    @Override
+    public Boolean refreshAll() {
+        List<JobModel> jobModels = this.jobModelRepository.findAllEnabled();
+        if (null != jobModels && !jobModels.isEmpty()) {
+            for (JobModel jobModel : jobModels) {
+                this.refresh(jobModel.getId());
+            }
+        }
+        return true;
+    }
+
+    private void subscribeRefreshJobEnabled() {
+        messageQueueManager.subscribe("timer_job_enabled", message -> {
+            String jobId = (String) message.getBody();
+            this.timer.stop(jobId);
+
+            Optional<JobModel> jobModelOptional = this.jobModelRepository.findById(jobId);
+            if (!jobModelOptional.isPresent()) {
+                return;
+            }
+
+            JobModel jobModel = jobModelOptional.get();
+            if (!jobModel.getEnable()) {
+                return;
+            }
+
+            String className = jobModel.getClassName();
+            Runnable task = null;
+            try {
+                Class<?> cls = Class.forName(className);
+                task = (BaseRunnable) cls.getDeclaredConstructor(String.class).newInstance(jobModel.getName());
+            } catch (Exception e) {
+                log.error("定时任务对应的执行代码类加载出错", e);
+                return;
+            }
+            try {
+                Date date = new CronExpression(jobModel.getCron()).getNextValidTimeAfter(new Date());
+                if (null == date) {
+                    return;
+                }
+                Job job = new Job(jobModel.getId(), jobModel.getCron(), task);
+                this.timer.add(job);
+            } catch (ParseException e) {
+                log.error("定时任务cron表达式出错", e);
+            }
+        });
+    }
+
+    public void subscribeRefreshJobDisabled() {
+        messageQueueManager.subscribe("timer_job_disabled", serverId, message -> {
+            String jobId = (String) message.getBody();
+            this.timer.stop(jobId);
+        });
     }
 }

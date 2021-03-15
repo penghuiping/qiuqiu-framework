@@ -13,8 +13,8 @@
     </el-row>
     <!--操作栏-->
     <el-button-group>
-      <el-button type="primary" @click="create" v-if="permissionExists(permissions.JOB_ADD)">新增
-      </el-button>
+      <el-button type="primary" @click="create" v-if="permissionExists(permissions.JOB_ADD)">新增</el-button>
+      <el-button type="primary" @click="refreshAll" v-if="permissionExists(permissions.JOB_REFRESH_ALL)">整体刷新</el-button>
     </el-button-group>
     <!--数据表格-->
     <el-table
@@ -249,6 +249,32 @@ export default class Job extends BaseVue {
       this.$message({
         type: 'info',
         message: '已取消删除'
+      })
+    })
+  }
+
+  refreshAll () {
+    this.$confirm('刷新全部任务状态, 是否继续?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async () => {
+      const res = await JobApi.refreshAll()
+      if (res && res.data.data) {
+        this.$message({
+          type: 'success',
+          message: '刷新成功!'
+        })
+      } else {
+        this.$message({
+          type: 'info',
+          message: '刷新失败'
+        })
+      }
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消刷新'
       })
     })
   }
