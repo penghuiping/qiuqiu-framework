@@ -22,9 +22,10 @@ public interface AuditLogService {
     /**
      * 审计日志分页查询
      *
+     * @param username 用户名搜索
      * @param pageNum  页码
      * @param pageSize 每页条数
      * @return 分页列表
      */
-    DataGridPageDto<AuditLogDto> page(Integer pageNum, Integer pageSize);
+    DataGridPageDto<AuditLogDto> page(String username,Integer pageNum, Integer pageSize);
 }

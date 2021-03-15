@@ -6,7 +6,7 @@ import { JobCreateVo, JobVo } from '@/api/vo/job'
 class JobApi {
   public static page (key: string, pageNum: number, pageSize: number): Promise<AxiosResponse<JsonResponse<PageVo<JobVo>>>> {
     return axios.post(ApiConstant.JOB_PAGE, {
-      key: key,
+      jobName: key,
       pageNum: pageNum,
       pageSize: pageSize
     })

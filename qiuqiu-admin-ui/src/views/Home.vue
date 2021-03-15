@@ -23,7 +23,6 @@
 
         <el-submenu index="3" v-if="permissionExists(permissions.AUDIT_LOG_LIST_SEARCH)
         || permissionExists(permissions.REPORT_LIST_SEARCH)
-        || permissionExists(permissions.JOB_LIST_SEARCH)
         || permissionExists(permissions.DICT_LIST_SEARCH)">
           <template slot="title">
             <i class="el-icon-s-tools"></i>
@@ -31,14 +30,23 @@
           </template>
           <el-menu-item index="3-1" @click="menuClick('auditLog')" v-if="permissionExists(permissions.AUDIT_LOG_LIST_SEARCH)">审计日志</el-menu-item>
           <el-menu-item index="3-2" @click="menuClick('dict')" v-if="permissionExists(permissions.DICT_LIST_SEARCH)">数据字典</el-menu-item>
-          <el-menu-item index="3-3" @click="menuClick('job')" v-if="permissionExists(permissions.JOB_LIST_SEARCH)">定时任务</el-menu-item>
-          <el-menu-item index="3-4" @click="menuClick('report')" v-if="permissionExists(permissions.REPORT_LIST_SEARCH)">表报</el-menu-item>
+          <el-menu-item index="3-3" @click="menuClick('report')" v-if="permissionExists(permissions.REPORT_LIST_SEARCH)">表报</el-menu-item>
         </el-submenu>
-        <el-menu-item index="4" @click="menuClick('media')" v-if="permissionExists(permissions.MEDIA_LIST_SEARCH)">
+
+        <el-submenu index="4" v-if="permissionExists(permissions.JOB_LIST_SEARCH)
+       ">
+          <template slot="title">
+            <i class="el-icon-s-tools"></i>
+            <span slot="title">任务管理</span>
+          </template>
+          <el-menu-item index="4-1" @click="menuClick('job')" v-if="permissionExists(permissions.JOB_LIST_SEARCH)">定时任务</el-menu-item>
+        </el-submenu>
+
+        <el-menu-item index="5" @click="menuClick('media')" v-if="permissionExists(permissions.MEDIA_LIST_SEARCH)">
           <i class="el-icon-menu"></i>
           <span slot="title">媒体管理</span>
         </el-menu-item>
-        <el-menu-item index="5" disabled>
+        <el-menu-item index="6" disabled>
           <i class="el-icon-setting"></i>
           <span slot="title">其他</span>
         </el-menu-item>

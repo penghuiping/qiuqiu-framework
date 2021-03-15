@@ -14,8 +14,12 @@ import com.php25.common.timer.Job;
 import com.php25.common.timer.Timer;
 import com.php25.qiuqiu.job.dto.JobCreateDto;
 import com.php25.qiuqiu.job.dto.JobDto;
+import com.php25.qiuqiu.job.dto.JobLogCreateDto;
+import com.php25.qiuqiu.job.dto.JobLogDto;
 import com.php25.qiuqiu.job.dto.JobUpdateDto;
+import com.php25.qiuqiu.job.model.JobLog;
 import com.php25.qiuqiu.job.model.JobModel;
+import com.php25.qiuqiu.job.repository.JobLogRepository;
 import com.php25.qiuqiu.job.repository.JobModelRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -43,6 +47,8 @@ import java.util.stream.Collectors;
 public class JobServiceImpl implements JobService, InitializingBean {
 
     private final JobModelRepository jobModelRepository;
+
+    private final JobLogRepository jobLogRepository;
 
     private final Timer timer;
 
@@ -137,6 +143,34 @@ public class JobServiceImpl implements JobService, InitializingBean {
     @Override
     public Boolean delete(String jobId) {
         jobModelRepository.deleteById(jobId);
+        return true;
+    }
+
+    @Override
+    public DataGridPageDto<JobLogDto> pageJobLog(String jobId, Integer pageNum, Integer pageSize) {
+        SearchParamBuilder builder = SearchParamBuilder.builder();
+        if (!StringUtil.isBlank(jobId)) {
+            builder.append(SearchParam.of("jobId", Operator.EQ, jobId));
+        }
+        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
+        Page<JobLog> page = jobLogRepository.findAll(builder, pageRequest);
+        DataGridPageDto<JobLogDto> dataGrid = new DataGridPageDto<>();
+        List<JobLogDto> jobLogDtoList = page.get().map(jobLog -> {
+            JobLogDto jobLogDto = new JobLogDto();
+            BeanUtils.copyProperties(jobLog, jobLogDto);
+            return jobLogDto;
+        }).collect(Collectors.toList());
+        dataGrid.setData(jobLogDtoList);
+        dataGrid.setRecordsTotal(page.getTotalElements());
+        return dataGrid;
+    }
+
+    @Override
+    public Boolean createJobLog(JobLogCreateDto jobLog) {
+        JobLog jobLog0 = new JobLog();
+        BeanUtils.copyProperties(jobLog, jobLog0);
+        jobLog0.setIsNew(true);
+        jobLogRepository.save(jobLog0);
         return true;
     }
 

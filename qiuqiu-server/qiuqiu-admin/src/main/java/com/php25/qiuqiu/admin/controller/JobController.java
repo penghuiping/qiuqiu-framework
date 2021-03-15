@@ -6,12 +6,15 @@ import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.job.JobCreateVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobIdVo;
+import com.php25.qiuqiu.admin.vo.in.job.JobLogPageVo;
+import com.php25.qiuqiu.admin.vo.in.job.JobLogVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobPageVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobUpdateVo;
 import com.php25.qiuqiu.admin.vo.out.JobVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.job.dto.JobCreateDto;
 import com.php25.qiuqiu.job.dto.JobDto;
+import com.php25.qiuqiu.job.dto.JobLogDto;
 import com.php25.qiuqiu.job.dto.JobUpdateDto;
 import com.php25.qiuqiu.job.service.JobService;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
@@ -85,5 +88,22 @@ public class JobController extends JSONController {
     @PostMapping("/refresh")
     public JSONResponse refresh(@Valid @RequestBody JobIdVo jobIdVo) {
         return succeed(jobService.refresh(jobIdVo.getJobId()));
+    }
+
+    @APIVersion("v1")
+    @PostMapping("/log/page")
+    public JSONResponse pageJobLog(@Valid @RequestBody JobLogPageVo jobLogPageVo) {
+        DataGridPageDto<JobLogDto> dataGrid = jobService.pageJobLog(jobLogPageVo.getJobId(),jobLogPageVo.getPageNum(),jobLogPageVo.getPageSize());
+        PageResultVo<JobLogVo> result = new PageResultVo<>();
+        List<JobLogDto> list = dataGrid.getData();
+        List<JobLogVo> list0 = list.stream().map(jobLogDto -> {
+            JobLogVo jobLogVo = new JobLogVo();
+            BeanUtils.copyProperties(jobLogDto,jobLogVo);
+            return jobLogVo;
+        }).collect(Collectors.toList());
+        result.setData(list0);
+        result.setTotal(dataGrid.getRecordsTotal());
+        result.setCurrentPage(jobLogPageVo.getPageNum());
+        return succeed(result);
     }
 }

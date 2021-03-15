@@ -1,5 +1,16 @@
 <template>
   <div>
+    <!--搜索框-->
+    <el-row justify="start" type="flex">
+      <div class="searchInput">
+        <el-input
+          v-model="searchKey"
+          clearable
+          placeholder="请输入key">
+        </el-input>
+      </div>
+      <el-button id="searchBtn" icon="el-icon-search" type="primary" @click="handleSearch">搜索</el-button>
+    </el-row>
     <!--操作栏-->
     <el-button-group>
       <el-button type="primary" @click="create" v-if="permissionExists(permissions.DICT_ADD)">新增
@@ -317,6 +328,12 @@ export default class Dict extends BaseVue {
   toggleEnable () {
     console.log('.')
   }
+
+  // 处理搜索按钮
+  handleSearch () {
+    this.currentPage = 1
+    this.goToPage(this.searchKey, this.currentPage, this.pageSize)
+  }
 }
 </script>
 
@@ -324,5 +341,13 @@ export default class Dict extends BaseVue {
 #content {
   font-size: 2em;
   height: 80vh;
+}
+
+#searchBtn {
+  margin-left: 1em;
+}
+
+.el-button-group {
+  margin-top: 1em;
 }
 </style>

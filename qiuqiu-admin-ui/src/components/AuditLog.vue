@@ -1,5 +1,16 @@
 <template>
   <div>
+    <!--搜索框-->
+    <el-row justify="start" type="flex">
+      <div class="searchInput">
+        <el-input
+          v-model="searchKey"
+          clearable
+          placeholder="请输入用户名">
+        </el-input>
+      </div>
+      <el-button id="searchBtn" icon="el-icon-search" type="primary" @click="handleSearch">搜索</el-button>
+    </el-row>
     <!--数据表格-->
     <el-table
       v-loading="loading"
@@ -64,15 +75,16 @@ export default class AuditLog extends BaseVue {
   private currentPage = 1
   private pageSize = 5
   private total = 1
+  private searchKey = ''
 
   mounted () {
-    this.goToPage(this.currentPage, this.pageSize)
+    this.goToPage(this.searchKey, this.currentPage, this.pageSize)
   }
 
   // 跳去某页操作
-  async goToPage (pageNum: number, pageSize: number) {
+  async goToPage (searchKey: string, pageNum: number, pageSize: number) {
     this.loading = true
-    const res = await AuditLogApi.page(pageNum, pageSize)
+    const res = await AuditLogApi.page(searchKey, pageNum, pageSize)
     this.loading = false
     this.tableData = res.data.data.data
     this.currentPage = res.data.data.currentPage
@@ -86,13 +98,19 @@ export default class AuditLog extends BaseVue {
   // 分页器每页大小改变时候的回调方法
   handleSizeChange (pageSize: number) {
     this.pageSize = pageSize
-    this.goToPage(this.currentPage, this.pageSize)
+    this.goToPage(this.searchKey, this.currentPage, this.pageSize)
   }
 
   // 分页器当前页改变时候的回调方法
   handleCurrentChange (pageNum: number) {
     this.currentPage = pageNum
-    this.goToPage(this.currentPage, this.pageSize)
+    this.goToPage(this.searchKey, this.currentPage, this.pageSize)
+  }
+
+  // 处理搜索按钮
+  handleSearch () {
+    this.currentPage = 1
+    this.goToPage(this.searchKey, this.currentPage, this.pageSize)
   }
 }
 </script>
@@ -101,5 +119,9 @@ export default class AuditLog extends BaseVue {
 #content {
   font-size: 2em;
   height: 80vh;
+}
+
+#searchBtn {
+  margin-left: 1em;
 }
 </style>

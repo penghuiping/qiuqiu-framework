@@ -3,12 +3,12 @@ package com.php25.qiuqiu.monitor.service.impl;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.core.util.JsonUtil;
+import com.php25.common.core.util.StringUtil;
+import com.php25.common.db.specification.Operator;
+import com.php25.common.db.specification.SearchParam;
 import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.common.mq.Message;
 import com.php25.common.mq.MessageQueueManager;
-import com.php25.common.mq.MessageSubscriber;
-import com.php25.common.mq.redis.RedisMessageSubscriber;
-import com.php25.common.redis.RedisManager;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.model.AuditLog;
 import com.php25.qiuqiu.monitor.repository.AuditLogRepository;
@@ -23,7 +23,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 /**
@@ -38,10 +37,6 @@ public class AuditLogServiceImpl implements AuditLogService, InitializingBean {
     private final MessageQueueManager messageQueueManager;
 
     private final IdGenerator idGenerator;
-
-    private final ExecutorService executorService;
-
-    private final RedisManager redisManager;
 
     private final AuditLogRepository auditLogRepository;
 
@@ -69,9 +64,13 @@ public class AuditLogServiceImpl implements AuditLogService, InitializingBean {
     }
 
     @Override
-    public DataGridPageDto<AuditLogDto> page(Integer pageNum, Integer pageSize) {
+    public DataGridPageDto<AuditLogDto> page(String username,Integer pageNum, Integer pageSize) {
+        SearchParamBuilder builder = SearchParamBuilder.builder();
+        if(!StringUtil.isBlank(username)) {
+            builder.append(SearchParam.of("username", Operator.EQ,username));
+        }
         PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
-        Page<AuditLog> page = auditLogRepository.findAll(SearchParamBuilder.builder(), pageRequest);
+        Page<AuditLog> page = auditLogRepository.findAll(builder, pageRequest);
         DataGridPageDto<AuditLogDto> dataGrid = new DataGridPageDto<>();
         List<AuditLogDto> data = page.get().map(auditLog -> {
             AuditLogDto auditLogDto = new AuditLogDto();

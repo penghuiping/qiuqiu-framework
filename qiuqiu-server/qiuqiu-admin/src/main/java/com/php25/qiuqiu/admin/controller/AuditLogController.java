@@ -42,7 +42,7 @@ public class AuditLogController extends JSONController {
     @APIVersion("v1")
     @PostMapping("/page")
     public JSONResponse page(@Valid @RequestBody AuditLogPageVo auditLogPageVo) {
-        DataGridPageDto<AuditLogDto> dataGrid = auditLogService.page(auditLogPageVo.getPageNum(), auditLogPageVo.getPageSize());
+        DataGridPageDto<AuditLogDto> dataGrid = auditLogService.page(auditLogPageVo.getUsername(),auditLogPageVo.getPageNum(), auditLogPageVo.getPageSize());
         List<AuditLogDto> list = dataGrid.getData();
         PageResultVo<AuditLogPageOutVo> res = new PageResultVo<>();
         res.setData(list.stream().map(auditLogDto -> {

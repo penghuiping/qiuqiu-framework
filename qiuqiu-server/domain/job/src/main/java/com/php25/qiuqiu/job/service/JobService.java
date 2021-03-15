@@ -3,6 +3,8 @@ package com.php25.qiuqiu.job.service;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.qiuqiu.job.dto.JobCreateDto;
 import com.php25.qiuqiu.job.dto.JobDto;
+import com.php25.qiuqiu.job.dto.JobLogCreateDto;
+import com.php25.qiuqiu.job.dto.JobLogDto;
 import com.php25.qiuqiu.job.dto.JobUpdateDto;
 
 /**
@@ -53,5 +55,25 @@ public interface JobService {
      * @return true:刷新成功
      */
     Boolean refresh(String jobId);
+
+
+    /**
+     * 任务日志分页查询
+     *
+     * @param jobId    任务id搜索
+     * @param pageNum  页码
+     * @param pageSize 每页大小
+     * @return 任务日志分页结果
+     */
+    DataGridPageDto<JobLogDto> pageJobLog(String jobId, Integer pageNum, Integer pageSize);
+
+
+    /**
+     * 新增任务日志
+     *
+     * @param jobLog 任务日志
+     * @return true:新增成功
+     */
+    Boolean createJobLog(JobLogCreateDto jobLog);
 
 }

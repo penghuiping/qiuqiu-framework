@@ -4,8 +4,9 @@ import { ApiConstant } from '@/api/index'
 import { AuditLogVo } from '@/api/vo/AuditLog'
 
 class AuditLogApi {
-  public static page (pageNum: number, pageSize: number): Promise<AxiosResponse<JsonResponse<PageVo<AuditLogVo>>>> {
+  public static page (searchKey: string, pageNum: number, pageSize: number): Promise<AxiosResponse<JsonResponse<PageVo<AuditLogVo>>>> {
     return axios.post(ApiConstant.AUDIT_LOG_PAGE, {
+      username: searchKey,
       pageNum: pageNum,
       pageSize: pageSize
     })
