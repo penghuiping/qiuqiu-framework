@@ -40,8 +40,10 @@
             <i class="el-icon-s-tools"></i>
             <span slot="title">任务管理</span>
           </template>
-          <el-menu-item index="4-1" @click="menuClick('job')" v-if="permissionExists(permissions.JOB_LIST_SEARCH)">定时任务</el-menu-item>
-          <el-menu-item index="4-2" @click="menuClick('jobLog')" v-if="permissionExists(permissions.JOB_LOG_LIST_SEARCH)">任务日志</el-menu-item>
+          <el-menu-item index="4-1" @click="menuClick('job')" v-if="permissionExists(permissions.JOB_LIST_SEARCH)">任务列表</el-menu-item>
+          <el-menu-item index="4-2" @click="menuClick('jobExecution')" v-if="permissionExists(permissions.JOB_LOG_LIST_SEARCH)">执行列表</el-menu-item>
+          <el-menu-item index="4-3" @click="menuClick('jobLog')" v-if="permissionExists(permissions.JOB_LOG_LIST_SEARCH)">执行日志</el-menu-item>
+
         </el-submenu>
 
         <el-menu-item index="5" @click="menuClick('media')" v-if="permissionExists(permissions.MEDIA_LIST_SEARCH)">
@@ -88,6 +90,7 @@
             <DictView v-if="item.key==='dict'"/>
             <JobView v-if="item.key==='job'"/>
             <JobLogView v-if="item.key==='jobLog'"/>
+            <JobExecutionView v-if="item.key==='jobExecution'"/>
           </el-tab-pane>
         </el-tabs>
       </el-main>
@@ -112,6 +115,7 @@ import AuditLogView from '@/components/AuditLog.vue'
 import DictView from '@/components/Dict.vue'
 import JobView from '@/components/Job.vue'
 import JobLogView from '@/components/JobLog.vue'
+import JobExecutionView from '@/components/JobExeuction.vue'
 
 class TabItem {
   title: string
@@ -135,7 +139,8 @@ class TabItem {
     AuditLogView,
     DictView,
     JobView,
-    JobLogView
+    JobLogView,
+    JobExecutionView
   }
 })
 export default class Home extends BaseVue {
@@ -241,11 +246,15 @@ export default class Home extends BaseVue {
         break
       }
       case 'job': {
-        this.addTab('job', '定时任务')
+        this.addTab('job', '任务列表')
         break
       }
       case 'jobLog': {
-        this.addTab('jobLog', '任务日志')
+        this.addTab('jobLog', '执行日志')
+        break
+      }
+      case 'jobExecution': {
+        this.addTab('jobExecution', '执行列表')
         break
       }
       case 'media': {

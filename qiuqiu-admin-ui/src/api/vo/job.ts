@@ -3,20 +3,16 @@ class JobVo {
   name: string
   description: string
   className: string
-  cron: string
-  enable: boolean
 
-  constructor (id: string, name: string, description: string, className: string, cron: string, enable: boolean) {
+  constructor (id: string, name: string, description: string, className: string) {
     this.id = id
     this.name = name
     this.description = description
     this.className = className
-    this.cron = cron
-    this.enable = enable
   }
 
   static newInstant (): JobVo {
-    return new JobVo('', '', '', '', '', false)
+    return new JobVo('', '', '', '')
   }
 }
 
@@ -24,17 +20,15 @@ class JobCreateVo {
   className: string
   name: string
   description: string
-  cron: string
 
-  constructor (className: string, name: string, description: string, cron: string) {
+  constructor (className: string, name: string, description: string) {
     this.className = className
     this.name = name
     this.description = description
-    this.cron = cron
   }
 
   static newInstant (): JobCreateVo {
-    return new JobCreateVo('', '', '', '')
+    return new JobCreateVo('', '', '')
   }
 }
 
@@ -58,8 +52,65 @@ class JobLogVo {
   }
 }
 
+class JobExecutionVo {
+  id: string
+  cron: string
+  jobId: string
+  jobName: string
+  status: number
+  enable: boolean
+
+  constructor (id: string, cron: string, jobId: string, jobName: string, status: number, enable: boolean) {
+    this.id = id
+    this.cron = cron
+    this.jobId = jobId
+    this.jobName = jobName
+    this.status = status
+    this.enable = enable
+  }
+
+  static newInstant (): JobExecutionVo {
+    return new JobExecutionVo('', '', '', '', 0, false)
+  }
+}
+
+class JobExecutionCreateVo {
+  cron: string
+  jobId: string
+
+  constructor (cron: string, jobId: string) {
+    this.cron = cron
+    this.jobId = jobId
+  }
+
+  static newInstant (): JobExecutionCreateVo {
+    return new JobExecutionCreateVo('', '')
+  }
+}
+
+class JobExecutionUpdateVo {
+  id: string
+  cron: string
+  jobId: string
+  enable: boolean
+
+  constructor (id: string, cron: string, jobId: string, enable: boolean) {
+    this.id = id
+    this.cron = cron
+    this.jobId = jobId
+    this.enable = enable
+  }
+
+  static newInstant (): JobExecutionUpdateVo {
+    return new JobExecutionUpdateVo('', '', '', false)
+  }
+}
+
 export {
   JobVo,
   JobCreateVo,
-  JobLogVo
+  JobLogVo,
+  JobExecutionVo,
+  JobExecutionCreateVo,
+  JobExecutionUpdateVo
 }

@@ -35,8 +35,12 @@ class Permission {
     JOB_ADD: 'job_add',
     JOB_UPDATE: 'job_update',
     JOB_DELETE: 'job_delete',
-    JOB_REFRESH: 'job_refresh',
-    JOB_REFRESH_ALL: 'job_refresh_all',
+    JOB_EXECUTION_LIST_SEARCH: 'job_execution_list_search',
+    JOB_EXECUTION_ADD: 'job_execution_add',
+    JOB_EXECUTION_UPDATE: 'job_execution_update',
+    JOB_EXECUTION_DELETE: 'job_execution_delete',
+    JOB_EXECUTION_REFRESH: 'job_execution_refresh',
+    JOB_EXECUTION_REFRESH_ALL: 'job_execution_refresh_all',
     JOB_LOG_LIST_SEARCH: 'job_log_page',
     MEDIA_LIST_SEARCH: 'media_list_search',
     REPORT_LIST_SEARCH: 'report_list_search'
@@ -73,9 +77,15 @@ class Permission {
     remoteToLocalPermission.set('job_create', Permission.permissions.JOB_ADD)
     remoteToLocalPermission.set('job_update', Permission.permissions.JOB_UPDATE)
     remoteToLocalPermission.set('job_delete', Permission.permissions.JOB_DELETE)
-    remoteToLocalPermission.set('job_refresh', Permission.permissions.JOB_REFRESH)
-    remoteToLocalPermission.set('job_refresh_all', Permission.permissions.JOB_REFRESH_ALL)
     remoteToLocalPermission.set('job_log_page', Permission.permissions.JOB_LOG_LIST_SEARCH)
+
+    remoteToLocalPermission.set('job_execution_page', Permission.permissions.JOB_EXECUTION_LIST_SEARCH)
+    remoteToLocalPermission.set('job_execution_create', Permission.permissions.JOB_EXECUTION_ADD)
+    remoteToLocalPermission.set('job_execution_update', Permission.permissions.JOB_EXECUTION_UPDATE)
+    remoteToLocalPermission.set('job_execution_delete', Permission.permissions.JOB_EXECUTION_DELETE)
+    remoteToLocalPermission.set('job_execution_refresh', Permission.permissions.JOB_EXECUTION_REFRESH)
+    remoteToLocalPermission.set('job_execution_refresh_all', Permission.permissions.JOB_EXECUTION_REFRESH_ALL)
+
     // remoteToLocalPermission.set('_department_page_list', Permission.permissions.DEPARTMENT_LIST_SEARCH)
     // remoteToLocalPermission.set('_media_page_list', Permission.permissions.MEDIA_LIST_SEARCH)
     // remoteToLocalPermission.set('_report_page_list', Permission.permissions.REPORT_LIST_SEARCH)

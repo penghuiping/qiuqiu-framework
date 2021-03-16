@@ -10,36 +10,24 @@ import org.springframework.data.domain.Persistable;
 
 /**
  * @author penghuiping
- * @date 2020/8/24 13:52
+ * @date 2021/3/15 20:23
  */
-@Table("t_timer_job")
-@Getter
 @Setter
-public class JobModel implements Persistable<String> {
+@Getter
+@Table("t_timer_job_execution")
+public class JobExecution implements Persistable<String> {
 
     /**
-     * 任务id
+     * 任务执行id
      */
     @Id
     private String id;
 
     /**
-     * job名字可以用于搜索
+     * 任务的cron表达式
      */
     @Column
-    private String name;
-
-    /**
-     * job描述
-     */
-    @Column
-    private String description;
-
-    /**
-     * 任务对应的java执行代码
-     */
-    @Column("class_name")
-    private String className;
+    private String cron;
 
     /**
      * 用户组id
@@ -47,6 +35,30 @@ public class JobModel implements Persistable<String> {
     @Column("group_id")
     private Long groupId;
 
+    /**
+     * 任务名
+     */
+    @Column("job_id")
+    private String jobId;
+
+    /**
+     * 任务名字
+     */
+    @Column("job_name")
+    private String jobName;
+
+    /**
+     * 0:无效 1:有效
+     */
+    @Column
+    private Boolean enable;
+
+    /**
+     * 0: 没载入定时器
+     * 1: 已载入定时器
+     */
+    @Column
+    private Integer status;
 
     @Transient
     private Boolean isNew;

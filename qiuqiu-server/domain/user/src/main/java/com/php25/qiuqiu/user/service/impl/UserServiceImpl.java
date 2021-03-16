@@ -333,6 +333,7 @@ public class UserServiceImpl implements UserService {
         UserDto userDto = this.getUserInfo(username);
         //角色
         userSessionDto.setRoles(userDto.getRoles());
+        userSessionDto.setGroupId(userDto.getGroup().getId());
         redisManager.string().set(getRedisSessionKey(username), userSessionDto, expireTime);
         return userSessionDto;
     }

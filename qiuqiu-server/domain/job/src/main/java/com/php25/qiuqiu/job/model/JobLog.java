@@ -10,7 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 任务执行日志
@@ -32,6 +32,12 @@ public class JobLog implements Persistable<Long> {
     /**
      * 任务id
      */
+    @Column("job_id")
+    private String jobId;
+
+    /**
+     * 任务名字
+     */
     @Column("job_name")
     private String jobName;
 
@@ -39,7 +45,7 @@ public class JobLog implements Persistable<Long> {
      * 任务执行时间
      */
     @Column("execute_time")
-    private Date executeTime;
+    private LocalDateTime executeTime;
 
     /**
      * 任务执行 0:失败 1:成功
@@ -52,6 +58,12 @@ public class JobLog implements Persistable<Long> {
      */
     @Column("result_message")
     private String resultMessage;
+
+    /**
+     * 用户组id
+     */
+    @Column("group_id")
+    private Long groupId;
 
     @Transient
     private Boolean isNew;

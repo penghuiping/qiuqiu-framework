@@ -14,11 +14,21 @@ public abstract class StringUtil {
     /**
      * 如果字符串为null或者""或者"  "都返回true
      *
-     * @param str
+     * @param str 字符串
      * @return
      */
     public static boolean isBlank(String str) {
         return (str == null || str.trim().length() == 0);
+    }
+
+    /**
+     * 如果字符串不为为null或者""或者"  "都返回true
+     *
+     * @param str 字符串
+     * @return
+     */
+    public static boolean isNotBlank(String str) {
+        return !isBlank(str);
     }
 
     /**

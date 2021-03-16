@@ -22,8 +22,8 @@ public class SystemMonitorInfoPrintJob extends BaseRunnable {
     private final SystemMonitorService systemMonitorService;
 
 
-    public SystemMonitorInfoPrintJob(String jobId) {
-        super(jobId);
+    public SystemMonitorInfoPrintJob(String jobId,String jobName) {
+        super(jobId,jobName);
         this.dictionaryService = SpringContextHolder.getBean0(DictionaryService.class);
         this.systemMonitorService = SpringContextHolder.getBean0(SystemMonitorService.class);
     }

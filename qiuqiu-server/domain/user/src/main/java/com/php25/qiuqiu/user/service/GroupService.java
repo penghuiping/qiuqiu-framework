@@ -27,6 +27,23 @@ public interface GroupService {
      */
     List<GroupDto> childGroups(Long groupId);
 
+
+    /**
+     * 通过username获取用户对应组及子组id列表
+     *
+     * @param username 用户名
+     * @return 用户对应组及子组id列表
+     */
+    List<Long> findGroupsId(String username);
+
+    /**
+     * 通过username获取用户对应组id
+     *
+     * @param username 用户名
+     * @return 组id
+     */
+    Long findGroupId(String username);
+
     /**
      * 新增组织
      *

@@ -29,15 +29,4 @@ public class JobDto {
      * 任务对应的java执行代码
      */
     private String className;
-
-    /**
-     * 任务的cron表达式
-     */
-    private String cron;
-
-    /**
-     * 0:无效 1:有效
-     */
-    private Boolean enable;
-
 }

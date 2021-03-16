@@ -28,4 +28,9 @@ public class UserSessionDto {
      * 此用户具有的角色
      */
     private Set<RoleDto> roles;
+
+    /**
+     * 此用户对应的组id
+     */
+    private Long groupId;
 }

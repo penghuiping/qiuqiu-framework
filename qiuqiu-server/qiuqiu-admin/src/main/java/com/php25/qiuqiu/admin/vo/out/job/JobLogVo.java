@@ -1,10 +1,10 @@
-package com.php25.qiuqiu.admin.vo.out;
+package com.php25.qiuqiu.admin.vo.out.job;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author penghuiping
@@ -27,7 +27,7 @@ public class JobLogVo {
      * 任务执行时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date executeTime;
+    private LocalDateTime executeTime;
 
     /**
      * 任务执行 0:失败 1:成功
