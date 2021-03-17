@@ -91,7 +91,6 @@ public class JobController extends JSONController {
         return succeed(jobService.delete(username, jobIdVo.getJobId()));
     }
 
-    @AuditLog
     @APIVersion("v1")
     @PostMapping("/find_all")
     public JSONResponse findAll(@RequestAttribute String username) {

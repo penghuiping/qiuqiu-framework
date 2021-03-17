@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: qiuqiu-admin
+  name: qiuqiu-admin
+spec:
+  selector:
+    matchLabels:
+      app: qiuqiu-admin
+  template:
+    spec:
+      volumes:
+        - name: qiuqiu-admin-config
+          configMap:
+            name: qiuqiu-admin-config-map
+      containers:
+        - name:  qiuqiu-admin
+          args:
+            - --spring.config.location=/etc/config/application.yml,/etc/config/application-dev.yml
+          volumeMounts:
+            - mountPath: /etc/config
+              name: qiuqiu-admin-config

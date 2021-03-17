@@ -43,8 +43,9 @@ public class AuditLogServiceImpl implements AuditLogService, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         messageQueueManager.subscribe("audit_log", message -> {
-            log.info("msg body:{}", JsonUtil.toJson(message.getBody()));
-            AuditLogDto auditLogDto = (AuditLogDto) message.getBody();
+            String body = JsonUtil.toJson(message.getBody());
+            log.info("msg body:{}", body);
+            AuditLogDto auditLogDto =  JsonUtil.fromJson(body,AuditLogDto.class);
             this.create0(auditLogDto);
         });
     }

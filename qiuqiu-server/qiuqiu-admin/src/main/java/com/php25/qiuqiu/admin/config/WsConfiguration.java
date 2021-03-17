@@ -1,7 +1,6 @@
 package com.php25.qiuqiu.admin.config;
 
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.core.mess.IdGeneratorImpl;
@@ -29,17 +28,12 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 
 @Slf4j
 @Configuration
 @ConditionalOnProperty({"ws.enable", "server.id"})
 @EnableWebSocket
-public class WebsocketConfiguration implements WebSocketConfigurer {
+public class WsConfiguration implements WebSocketConfigurer {
 
     @Value("${server.id}")
     private String serverId;
@@ -52,7 +46,6 @@ public class WebsocketConfiguration implements WebSocketConfigurer {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
@@ -76,13 +69,6 @@ public class WebsocketConfiguration implements WebSocketConfigurer {
     }
 
     @Bean
-    public ExecutorService executorService() {
-        return new ThreadPoolExecutor(1, 512,
-                60L, TimeUnit.SECONDS,
-                new SynchronousQueue<>(), new ThreadFactoryBuilder().setNameFormat("ws-worker-thread-%d").build(), new ThreadPoolExecutor.AbortPolicy());
-    }
-
-    @Bean
     public MsgDispatcher msgDispatcher() {
         return new MsgDispatcher();
     }
@@ -103,7 +89,6 @@ public class WebsocketConfiguration implements WebSocketConfigurer {
                 redisManager,
                 securityAuthentication,
                 serverId,
-                executorService(),
                 msgDispatcher, timer);
     }
 

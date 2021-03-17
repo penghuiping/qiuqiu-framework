@@ -1,5 +1,6 @@
 package com.php25.common.ws;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RList;
@@ -8,6 +9,8 @@ import com.php25.common.redis.impl.RedisManagerImpl;
 import com.php25.common.timer.Job;
 import com.php25.common.timer.Timer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -19,9 +22,12 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class GlobalSession {
+public class GlobalSession implements InitializingBean, DisposableBean {
     //此session缓存用于缓存自定义的sessionId与WebSocket对应关系,全局应用sessionId
     private final ConcurrentHashMap<String, ExpirationSocketSession> sessions = new ConcurrentHashMap<>(1024);
 
@@ -38,7 +44,7 @@ public class GlobalSession {
 
     private final SecurityAuthentication securityAuthentication;
 
-    private final ExecutorService executorService;
+    private ExecutorService executorService;
 
     private final MsgDispatcher msgDispatcher;
 
@@ -54,18 +60,37 @@ public class GlobalSession {
                          RedisManager redisService,
                          SecurityAuthentication securityAuthentication,
                          String serverId,
-                         ExecutorService executorService,
                          MsgDispatcher msgDispatcher,
                          Timer timer) {
         this.msgRetry = msgRetry;
         this.redisService = redisService;
         this.serverId = serverId;
         this.securityAuthentication = securityAuthentication;
-        this.executorService = executorService;
         this.msgDispatcher = msgDispatcher;
         this.timer = timer;
     }
 
+    @Override
+    public void destroy() throws Exception {
+        cleanAll();
+        try {
+            boolean res = this.executorService.awaitTermination(1,TimeUnit.SECONDS);
+            if (res) {
+                log.info("关闭ws:ws-worker-thread-pool成功");
+            }
+        } catch (Exception e) {
+            log.error("关闭ws:ws-worker-thread-pool出错", e);
+        }
+
+
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.executorService =  new ThreadPoolExecutor(1, 512,
+                60L, TimeUnit.SECONDS,
+                new SynchronousQueue<>(), new ThreadFactoryBuilder().setNameFormat("ws-worker-thread-%d").build(), new ThreadPoolExecutor.AbortPolicy());
+    }
 
     public void dispatchAck(String action, BaseRetryMsg srcMsg) {
         msgDispatcher.dispatchAck(action, srcMsg);
@@ -90,7 +115,6 @@ public class GlobalSession {
         redisService.remove(Constants.prefix + sid);
     }
 
-    @PreDestroy
     public void cleanAll() {
         log.info("GlobalSession clean all...");
         Iterator<Map.Entry<String, ExpirationSocketSession>> iterator = sessions.entrySet().iterator();
@@ -98,6 +122,7 @@ public class GlobalSession {
             Map.Entry<String, ExpirationSocketSession> entry = iterator.next();
             ExpirationSocketSession socketSession = entry.getValue();
             clean(socketSession.getSessionId());
+            socketSession.stop();
         }
     }
 

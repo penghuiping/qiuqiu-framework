@@ -16,12 +16,6 @@ app:
     host: localhost
     port: 36379
     database: 0
-  rabbitmq:
-    ip: localhost
-    port: 5672
-    username: guest
-    password: guest
-    virtualHost: /
 ########################################################
 ### static resources and upload load file
 ########################################################
@@ -79,15 +73,6 @@ spring:
         max-wait: -1s
         min-idle: 0
     timeout: 5s
-  ########################################################
-  ### rabbitmq
-  ########################################################
-  rabbitmq:
-    addresses: ${app.rabbitmq.ip}
-    port: ${app.rabbitmq.port}
-    username: ${app.rabbitmq.username}
-    password: ${app.rabbitmq.password}
-    virtual-host: ${app.rabbitmq.virtualHost}
   ########################################################
   ### servlet
   ########################################################
