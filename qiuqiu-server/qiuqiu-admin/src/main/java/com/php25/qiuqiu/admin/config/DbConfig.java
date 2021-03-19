@@ -30,7 +30,7 @@ public class DbConfig {
         return sqLiteDataSource;
     }
 
-    @Profile(value = {"dev", "test"})
+    @Profile(value = {"dev","dev1", "test"})
     @Bean
     public DataSource hikariDataSource(DbProperties dbProperties) {
         HikariDataSource hikariDataSource = new HikariDataSource();
@@ -69,7 +69,7 @@ public class DbConfig {
         return DbType.SQLITE;
     }
 
-    @Profile(value = {"dev", "test"})
+    @Profile(value = {"dev", "dev1","test"})
     @Bean
     public DbType dbType1() {
         return DbType.MYSQL;
@@ -80,7 +80,8 @@ public class DbConfig {
         new EntitiesScan().scanPackage(
                 "com.php25.qiuqiu.user.model",
                 "com.php25.qiuqiu.monitor.model",
-                "com.php25.qiuqiu.job.model"
+                "com.php25.qiuqiu.job.model",
+                "com.php25.common.timer.model"
         );
     }
 }

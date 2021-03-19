@@ -1,6 +1,7 @@
 package com.php25.qiuqiu.job.service;
 
 import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.util.JsonUtil;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.db.specification.Operator;
@@ -83,6 +84,8 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             return jobExecution;
         }).collect(Collectors.toList());
         this.jobExecutionRepository.saveAll(jobExecutions1);
+        this.messageQueueManager.delete("timer_job_disabled",serverId);
+        this.messageQueueManager.delete("timer_job_enabled",serverId);
     }
 
     @Override
@@ -279,7 +282,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             Message message = new Message(RandomUtil.randomUUID(), "timer_job_enabled", executionId);
             messageQueueManager.send("timer_job_enabled", message);
         } else {
-            Message message = new Message(RandomUtil.randomUUID(), "timer_job_disabled", this.serverId, executionId);
+            Message message = new Message(RandomUtil.randomUUID(), "timer_job_disabled", executionId);
             messageQueueManager.send("timer_job_disabled", message);
         }
         return true;
@@ -296,60 +299,65 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         return true;
     }
 
+    private void loadExecution(String executionId) {
+        Optional<JobExecution> jobExecutionOptional = this.jobExecutionRepository.findById(executionId);
+        if (!jobExecutionOptional.isPresent()) {
+            return;
+        }
+
+        JobExecution jobExecution = jobExecutionOptional.get();
+        if (!jobExecution.getEnable()) {
+            return;
+        }
+
+        String jobId = jobExecution.getJobId();
+        Optional<JobModel> jobModelOptional = this.jobModelRepository.findById(jobId);
+        if (!jobModelOptional.isPresent()) {
+            return;
+        }
+        JobModel jobModel = jobModelOptional.get();
+        String className = jobModel.getClassName();
+        Runnable task = null;
+        try {
+            Class<?> cls = Class.forName(className);
+            task = (BaseRunnable) cls.getDeclaredConstructor(String.class, String.class)
+                    .newInstance(jobModel.getId(), jobModel.getName());
+        } catch (Exception e) {
+            log.error("定时任务对应的执行代码类加载出错", e);
+            return;
+        }
+        try {
+            Date date = new CronExpression(jobExecution.getCron()).getNextValidTimeAfter(new Date());
+            if (null == date) {
+                return;
+            }
+            Job job = new Job(executionId, jobExecution.getCron(), task);
+            this.timer.add(job,true);
+            JobExecution jobExecution0 = new JobExecution();
+            jobExecution0.setId(jobExecution.getId());
+            jobExecution0.setStatus(1);
+            jobExecution0.setIsNew(false);
+            jobExecutionRepository.save(jobExecution0);
+        } catch (ParseException e) {
+            log.error("定时任务cron表达式出错", e);
+        }
+    }
+
     private void subscribeRefreshJobEnabled() {
-        messageQueueManager.subscribe("timer_job_enabled", message -> {
+        messageQueueManager.subscribe("timer_job_enabled",serverId, message -> {
+            log.info("timer_job_enabled:{}", JsonUtil.toJson(message));
             String executionId = (String) message.getBody();
             this.timer.stop(executionId);
-
-            Optional<JobExecution> jobExecutionOptional = this.jobExecutionRepository.findById(executionId);
-            if (!jobExecutionOptional.isPresent()) {
-                return;
-            }
-
-            JobExecution jobExecution = jobExecutionOptional.get();
-            if (!jobExecution.getEnable()) {
-                return;
-            }
-
-            String jobId = jobExecution.getJobId();
-            Optional<JobModel> jobModelOptional = this.jobModelRepository.findById(jobId);
-            if (!jobModelOptional.isPresent()) {
-                return;
-            }
-            JobModel jobModel = jobModelOptional.get();
-            String className = jobModel.getClassName();
-            Runnable task = null;
-            try {
-                Class<?> cls = Class.forName(className);
-                task = (BaseRunnable) cls.getDeclaredConstructor(String.class, String.class)
-                        .newInstance(jobModel.getId(), jobModel.getName());
-            } catch (Exception e) {
-                log.error("定时任务对应的执行代码类加载出错", e);
-                return;
-            }
-            try {
-                Date date = new CronExpression(jobExecution.getCron()).getNextValidTimeAfter(new Date());
-                if (null == date) {
-                    return;
-                }
-                Job job = new Job(executionId, jobExecution.getCron(), task);
-                this.timer.add(job);
-                JobExecution jobExecution0 = new JobExecution();
-                jobExecution0.setId(jobExecution.getId());
-                jobExecution0.setStatus(1);
-                jobExecution0.setIsNew(false);
-                jobExecutionRepository.save(jobExecution0);
-            } catch (ParseException e) {
-                log.error("定时任务cron表达式出错", e);
-            }
+            loadExecution(executionId);
         });
     }
 
     private void subscribeRefreshJobDisabled() {
         messageQueueManager.subscribe("timer_job_disabled", serverId, message -> {
-            String jobId = (String) message.getBody();
-            this.timer.stop(jobId);
-            Optional<JobExecution> jobExecutionOptional = jobExecutionRepository.findById(jobId);
+            log.info("timer_job_disabled:{}",JsonUtil.toJson(message));
+            String executionId = (String) message.getBody();
+            this.timer.stop(executionId);
+            Optional<JobExecution> jobExecutionOptional = jobExecutionRepository.findById(executionId);
             if (jobExecutionOptional.isPresent()) {
                 JobExecution jobExecution = jobExecutionOptional.get();
                 JobExecution jobExecution0 = new JobExecution();

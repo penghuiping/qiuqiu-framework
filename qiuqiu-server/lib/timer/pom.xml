@@ -24,10 +24,6 @@
         </dependency>
         <dependency>
             <groupId>com.php25</groupId>
-            <artifactId>mq</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.php25</groupId>
             <artifactId>db</artifactId>
         </dependency>
         <dependency>
@@ -41,6 +37,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

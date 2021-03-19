@@ -6,7 +6,6 @@ import com.php25.common.core.util.StringUtil;
 import com.php25.common.mq.Message;
 import com.php25.common.mq.MessageHandler;
 import com.php25.common.mq.MessageQueueManager;
-import com.php25.common.mq.MessageSubscriber;
 import com.php25.common.redis.RList;
 import com.php25.common.redis.RSet;
 import com.php25.common.redis.RedisManager;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -113,13 +111,18 @@ public class RedisMessageQueueManager implements MessageQueueManager, Initializi
             return true;
         } else {
             RSet<String> groups = this.helper.groups(queue);
-            groups.add(group);
+            String group0 = this.groupName(queue,group);
+            groups.add(group0);
             RedisMessageSubscriber subscriber = new RedisMessageSubscriber(subscriberThreadPool, redisManager);
-            subscriber.subscribe(queue, group);
+            subscriber.subscribe(queue, group0);
             subscriber.setHandler(handler);
             this.subscribers.add(subscriber);
             return true;
         }
+    }
+
+    private String groupName(String queue, String group) {
+        return queue + ":" + group;
     }
 
     @Override
@@ -132,7 +135,7 @@ public class RedisMessageQueueManager implements MessageQueueManager, Initializi
         if (StringUtil.isBlank(group)) {
             return this.helper.remove(queue);
         } else {
-            return this.helper.remove(queue, group);
+            return this.helper.remove(queue, this.groupName(queue,group));
         }
     }
 
@@ -179,7 +182,7 @@ public class RedisMessageQueueManager implements MessageQueueManager, Initializi
     @Override
     public Boolean send(String queue, String group, Message message) {
         if (!StringUtil.isBlank(group)) {
-            RList<Message> messages = this.helper.group(group);
+            RList<Message> messages = this.helper.group(this.groupName(queue,group));
             messages.leftPush(message);
             return true;
         } else {

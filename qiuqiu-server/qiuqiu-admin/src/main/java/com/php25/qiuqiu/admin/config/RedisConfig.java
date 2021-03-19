@@ -26,7 +26,7 @@ public class RedisConfig {
         return new LocalRedisManager(1024);
     }
 
-    @Profile(value = {"dev", "test"})
+    @Profile(value = {"dev", "dev1","test"})
     @Bean
     public RedisManager redisManager(@Autowired StringRedisTemplate stringRedisTemplate) {
         return new RedisManagerImpl(stringRedisTemplate);
@@ -46,7 +46,7 @@ public class RedisConfig {
         return new LettuceConnectionFactory(config);
     }
 
-    @Profile(value = {"dev"})
+    @Profile(value = {"dev","dev1"})
     @Bean
     public LettuceConnectionFactory redisConnectionFactory1(RedisProperties redisProperties) {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
