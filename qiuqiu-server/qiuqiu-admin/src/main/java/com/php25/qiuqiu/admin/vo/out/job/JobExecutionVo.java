@@ -32,10 +32,9 @@ public class JobExecutionVo {
     private String jobName;
 
     /**
-     * 0: 没载入定时器
-     * 1: 已载入定时器
+     * 已被多少定时器加载
      */
-    private Integer status;
+    private Integer timerLoadedNumber;
 
     /**
      * 0:无效 1:有效

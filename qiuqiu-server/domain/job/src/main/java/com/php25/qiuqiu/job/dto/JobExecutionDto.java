@@ -37,8 +37,7 @@ public class JobExecutionDto {
     private Boolean enable;
 
     /**
-     * 0: 没载入定时器
-     * 1: 已载入定时器
+     * 已被多少定时器加载
      */
-    private Integer status;
+    private Integer timerLoadedNumber;
 }

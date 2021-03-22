@@ -43,6 +43,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -77,13 +78,8 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
 
     @Override
     public void destroy() throws Exception {
-        List<JobExecution> jobExecutions = (List<JobExecution>) this.jobExecutionRepository.findAll();
-        List<JobExecution> jobExecutions1 = jobExecutions.stream().map(jobExecution -> {
-            jobExecution.setStatus(0);
-            jobExecution.setIsNew(false);
-            return jobExecution;
-        }).collect(Collectors.toList());
-        this.jobExecutionRepository.saveAll(jobExecutions1);
+        Set<String> executionIds = timer.getAllLoadedExecutionIds();
+        executionIds.forEach(this.jobExecutionRepository::minusTimerLoadedNumber);
     }
 
     @Override
@@ -205,7 +201,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         BeanUtils.copyProperties(jobExecution, jobExecution0);
         jobExecution0.setGroupId(groupId);
         jobExecution0.setEnable(true);
-        jobExecution0.setStatus(0);
+        jobExecution0.setTimerLoadedNumber(0);
         jobExecution0.setJobName(jobModelOptional.get().getName());
         jobExecution0.setId(RandomUtil.randomUUID());
         jobExecution0.setIsNew(true);
@@ -330,19 +326,16 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
                 return;
             }
             Job job = new Job(executionId, jobExecution.getCron(), task);
-            this.timer.add(job,true);
-            JobExecution jobExecution0 = new JobExecution();
-            jobExecution0.setId(jobExecution.getId());
-            jobExecution0.setStatus(1);
-            jobExecution0.setIsNew(false);
-            jobExecutionRepository.save(jobExecution0);
+            this.timer.add(job, true);
+
+            jobExecutionRepository.addTimerLoadedNumber(jobExecution.getId());
         } catch (ParseException e) {
             log.error("定时任务cron表达式出错", e);
         }
     }
 
     private void subscribeRefreshJobEnabled() {
-        messageQueueManager.subscribe("timer_job_enabled",serverId,true, message -> {
+        messageQueueManager.subscribe("timer_job_enabled", serverId, true, message -> {
             log.info("timer_job_enabled:{}", JsonUtil.toJson(message));
             String executionId = (String) message.getBody();
             this.timer.stop(executionId);
@@ -351,18 +344,14 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     }
 
     private void subscribeRefreshJobDisabled() {
-        messageQueueManager.subscribe("timer_job_disabled", serverId,true, message -> {
-            log.info("timer_job_disabled:{}",JsonUtil.toJson(message));
+        messageQueueManager.subscribe("timer_job_disabled", serverId, true, message -> {
+            log.info("timer_job_disabled:{}", JsonUtil.toJson(message));
             String executionId = (String) message.getBody();
             this.timer.stop(executionId);
             Optional<JobExecution> jobExecutionOptional = jobExecutionRepository.findById(executionId);
             if (jobExecutionOptional.isPresent()) {
                 JobExecution jobExecution = jobExecutionOptional.get();
-                JobExecution jobExecution0 = new JobExecution();
-                jobExecution0.setId(jobExecution.getId());
-                jobExecution0.setStatus(0);
-                jobExecution0.setIsNew(false);
-                jobExecutionRepository.save(jobExecution0);
+                jobExecutionRepository.minusTimerLoadedNumber(jobExecution.getId());
             }
         });
     }

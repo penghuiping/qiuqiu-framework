@@ -6,7 +6,9 @@ import com.php25.common.timer.model.TimerInnerLog;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -37,14 +39,14 @@ public class Timer {
     }
 
     public void add(Job job) {
-        add(job,false);
+        add(job, false);
     }
 
-    public void add(Job job,Boolean isHighAvailable) {
+    public void add(Job job, Boolean isHighAvailable) {
         Timeout timeout = this.wheelTimer.newTimeout(job, job.getDelay(), TimeUnit.MILLISECONDS);
         Job job0 = (Job) timeout.task();
         cache.put(job0.getJobExecutionId(), timeout);
-        if(isHighAvailable) {
+        if (isHighAvailable) {
             TimerInnerLogManager jobExecutionLogManager = SpringContextHolder.getBean0(TimerInnerLogManager.class);
             TimerInnerLog jobExecutionLog = new TimerInnerLog();
             jobExecutionLog.setId(job.getJobExecutionId());
@@ -60,6 +62,10 @@ public class Timer {
             return timeout.cancel();
         }
         return true;
+    }
+
+    public Set<String> getAllLoadedExecutionIds() {
+        return cache.keySet();
     }
 
     void removeCache(String jobId) {

@@ -8,6 +8,7 @@ import com.php25.common.db.repository.BaseDbRepositoryImpl;
 import com.php25.qiuqiu.job.model.JobExecution;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,5 +28,29 @@ public class JobExecutionRepositoryImpl extends BaseDbRepositoryImpl<JobExecutio
         SqlParams sqlParams = Queries.of(dbType).from(JobExecution.class).whereEq("jobId", jobId).single();
         JobExecution jobExecution = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).single(sqlParams);
         return Optional.ofNullable(jobExecution);
+    }
+
+    @Override
+    @Transactional
+    public Boolean addTimerLoadedNumber(String executionId) {
+        SqlParams sqlParams = Queries.of(dbType).from(JobExecution.class).whereEq("id", executionId).single();
+        sqlParams.setSql(sqlParams.getSql() + " for update");
+        JobExecution jobExecution = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).single(sqlParams);
+        jobExecution.setTimerLoadedNumber(jobExecution.getTimerLoadedNumber() + 1);
+        jobExecution.setIsNew(false);
+        this.save(jobExecution);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public Boolean minusTimerLoadedNumber(String executionId) {
+        SqlParams sqlParams = Queries.of(dbType).from(JobExecution.class).whereEq("id", executionId).single();
+        sqlParams.setSql(sqlParams.getSql() + " for update");
+        JobExecution jobExecution = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).single(sqlParams);
+        jobExecution.setTimerLoadedNumber(jobExecution.getTimerLoadedNumber() - 1);
+        jobExecution.setIsNew(false);
+        this.save(jobExecution);
+        return true;
     }
 }

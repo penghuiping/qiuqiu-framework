@@ -57,15 +57,15 @@ class JobExecutionVo {
   cron: string
   jobId: string
   jobName: string
-  status: number
+  timerLoadedNumber: number
   enable: boolean
 
-  constructor (id: string, cron: string, jobId: string, jobName: string, status: number, enable: boolean) {
+  constructor (id: string, cron: string, jobId: string, jobName: string, timerLoadedNumber: number, enable: boolean) {
     this.id = id
     this.cron = cron
     this.jobId = jobId
     this.jobName = jobName
-    this.status = status
+    this.timerLoadedNumber = timerLoadedNumber
     this.enable = enable
   }
 

@@ -38,12 +38,9 @@
         width="150">
       </el-table-column>
       <el-table-column
-        label="状态"
-        prop="status"
+        label="载入定时器数"
+        prop="timerLoadedNumber"
         width="150">
-        <template slot-scope="scope">
-          <span>{{ scope.row.status ===1 ? '已载入定时器' : '未载入定时器' }}</span>
-        </template>
       </el-table-column>
       <el-table-column
         label="是否有效"

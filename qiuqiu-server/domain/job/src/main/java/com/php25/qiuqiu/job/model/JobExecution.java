@@ -54,11 +54,10 @@ public class JobExecution implements Persistable<String> {
     private Boolean enable;
 
     /**
-     * 0: 没载入定时器
-     * 1: 已载入定时器
+     * 已被多少定时器加载
      */
-    @Column
-    private Integer status;
+    @Column("timer_loaded_number")
+    private Integer timerLoadedNumber;
 
     @Transient
     private Boolean isNew;
