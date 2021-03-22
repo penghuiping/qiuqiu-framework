@@ -84,8 +84,6 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             return jobExecution;
         }).collect(Collectors.toList());
         this.jobExecutionRepository.saveAll(jobExecutions1);
-        this.messageQueueManager.delete("timer_job_disabled",serverId);
-        this.messageQueueManager.delete("timer_job_enabled",serverId);
     }
 
     @Override
@@ -344,7 +342,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     }
 
     private void subscribeRefreshJobEnabled() {
-        messageQueueManager.subscribe("timer_job_enabled",serverId, message -> {
+        messageQueueManager.subscribe("timer_job_enabled",serverId,true, message -> {
             log.info("timer_job_enabled:{}", JsonUtil.toJson(message));
             String executionId = (String) message.getBody();
             this.timer.stop(executionId);
@@ -353,7 +351,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     }
 
     private void subscribeRefreshJobDisabled() {
-        messageQueueManager.subscribe("timer_job_disabled", serverId, message -> {
+        messageQueueManager.subscribe("timer_job_disabled", serverId,true, message -> {
             log.info("timer_job_disabled:{}",JsonUtil.toJson(message));
             String executionId = (String) message.getBody();
             this.timer.stop(executionId);

@@ -60,7 +60,7 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        messageQueueManager.subscribe("dict", serverId, message -> {
+        messageQueueManager.subscribe("dict", serverId,true, message -> {
             log.info("刷新缓存:{}", JsonUtil.toJson(message));
             String key = message.getBody().toString();
             this.removeCache0(key);
@@ -69,7 +69,7 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
 
     @Override
     public void destroy() throws Exception {
-        this.messageQueueManager.delete("dict", serverId);
+
     }
 
     @Override

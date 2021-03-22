@@ -62,13 +62,18 @@ public class RabbitMessageQueueManager implements MessageQueueManager, Initializ
 
     @Override
     public Boolean subscribe(String queue, String group, MessageHandler handler) {
+        return this.subscribe(queue, group, false, handler);
+    }
+
+    @Override
+    public Boolean subscribe(String queue, String group, Boolean autoDelete, MessageHandler handler) {
         String directQueue = RabbitQueueGroupHelper.getDirectQueueName(queue);
         String fanoutQueue = RabbitQueueGroupHelper.getFanoutQueueName(queue);
-        String group0 = RabbitQueueGroupHelper.getGroupName(groupName(queue,group));
+        String group0 = RabbitQueueGroupHelper.getGroupName(groupName(queue, group));
 
         this.rabbitAdmin.declareExchange(new DirectExchange(directQueue));
         this.rabbitAdmin.declareExchange(new FanoutExchange(fanoutQueue));
-        this.rabbitAdmin.declareQueue(new Queue(group0));
+        this.rabbitAdmin.declareQueue(new Queue(group0, true, false, autoDelete));
         this.rabbitAdmin.declareBinding(new Binding(group0,
                 Binding.DestinationType.QUEUE,
                 directQueue,
@@ -107,7 +112,7 @@ public class RabbitMessageQueueManager implements MessageQueueManager, Initializ
         } else {
             rabbitTemplate.convertAndSend(
                     RabbitQueueGroupHelper.getDirectQueueName(queue),
-                    RabbitQueueGroupHelper.getGroupName(groupName(queue,group)),
+                    RabbitQueueGroupHelper.getGroupName(groupName(queue, group)),
                     JsonUtil.toJson(message));
         }
         return true;
@@ -127,7 +132,7 @@ public class RabbitMessageQueueManager implements MessageQueueManager, Initializ
     public Boolean delete(String queue, String group) {
         AssertUtil.hasText(queue, "queue不能为空");
         AssertUtil.hasText(group, "group不能为空");
-        rabbitAdmin.deleteQueue(RabbitQueueGroupHelper.getGroupName(groupName(queue,group)));
+        rabbitAdmin.deleteQueue(RabbitQueueGroupHelper.getGroupName(groupName(queue, group)));
         return true;
     }
 
