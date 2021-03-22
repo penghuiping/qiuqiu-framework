@@ -13,6 +13,7 @@ import com.php25.qiuqiu.monitor.service.AuditLogService;
 import io.github.yedaxia.apidocs.ApiDoc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

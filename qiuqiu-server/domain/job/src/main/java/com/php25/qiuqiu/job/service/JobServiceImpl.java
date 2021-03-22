@@ -279,10 +279,10 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         }
         JobExecution jobExecution = jobExecutionOptional.get();
         if (jobExecution.getEnable()) {
-            Message message = new Message(RandomUtil.randomUUID(), "timer_job_enabled", executionId);
+            Message message = new Message(RandomUtil.randomUUID(), executionId);
             messageQueueManager.send("timer_job_enabled", message);
         } else {
-            Message message = new Message(RandomUtil.randomUUID(), "timer_job_disabled", executionId);
+            Message message = new Message(RandomUtil.randomUUID(), executionId);
             messageQueueManager.send("timer_job_disabled", message);
         }
         return true;

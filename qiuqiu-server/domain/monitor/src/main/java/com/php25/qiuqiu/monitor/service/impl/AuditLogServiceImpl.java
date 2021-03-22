@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -52,7 +54,7 @@ public class AuditLogServiceImpl implements AuditLogService, InitializingBean {
 
     @Override
     public Boolean create(AuditLogDto auditLogDto) {
-        Message message = new Message(idGenerator.getUUID(), "audit_log", auditLogDto);
+        Message message = new Message(idGenerator.getUUID(), auditLogDto);
         return messageQueueManager.send("audit_log", message);
     }
 

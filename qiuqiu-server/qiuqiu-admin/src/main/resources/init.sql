@@ -21,7 +21,7 @@ create table t_dict
 );
 
 create unique index t_dict_key_uindex
-    on t_dict (key);
+    on t_dict (key0);
 
 create table t_group
 (

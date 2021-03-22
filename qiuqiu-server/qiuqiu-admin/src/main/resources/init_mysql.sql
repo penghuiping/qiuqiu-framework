@@ -16,7 +16,7 @@ create table t_dict
     enable int
 );
 
-create unique index t_dict_key_uindex on t_dict (`key`);
+create unique index t_dict_key_uindex on t_dict (key0);
 
 create table t_group
 (

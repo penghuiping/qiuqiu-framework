@@ -1,6 +1,5 @@
 package com.php25.common.mq.redis;
 
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.mq.Message;
@@ -98,7 +97,7 @@ public class RedisMessageQueueManager implements MessageQueueManager, Initializi
 
     @Override
     public Boolean subscribe(String queue, MessageHandler handler) {
-        return this.subscribe(queue, null, handler);
+        return this.subscribe(queue, queue, handler);
     }
 
     @Override
@@ -111,7 +110,7 @@ public class RedisMessageQueueManager implements MessageQueueManager, Initializi
             return true;
         } else {
             RSet<String> groups = this.helper.groups(queue);
-            String group0 = this.groupName(queue,group);
+            String group0 = this.groupName(queue, group);
             groups.add(group0);
             RedisMessageSubscriber subscriber = new RedisMessageSubscriber(subscriberThreadPool, redisManager);
             subscriber.subscribe(queue, group0);
@@ -130,12 +129,18 @@ public class RedisMessageQueueManager implements MessageQueueManager, Initializi
         return this.send(queue, null, message);
     }
 
+
+    @Override
+    public Boolean delete(String queue) {
+        return this.delete(queue, null);
+    }
+
     @Override
     public Boolean delete(String queue, String group) {
         if (StringUtil.isBlank(group)) {
             return this.helper.remove(queue);
         } else {
-            return this.helper.remove(queue, this.groupName(queue,group));
+            return this.helper.remove(queue, this.groupName(queue, group));
         }
     }
 
@@ -164,25 +169,26 @@ public class RedisMessageQueueManager implements MessageQueueManager, Initializi
         });
     }
 
-    @Override
-    public Message pull(String queue) {
+    private Message pull(String queue) {
         return this.helper.queue(queue).rightPop();
     }
 
     @Override
-    public Boolean bindDeadLetterQueue(String queue, String dlq) {
-        return this.helper.bindDlq(queue, dlq);
+    public Message pullDlq(String queue, Long timeout) {
+        return this.helper.dlq(queue).blockRightPop(timeout, TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public List<String> queues() {
-        return Lists.newArrayList(this.helper.queues().members());
+    public Boolean bindDeadLetterQueue(String queue) {
+        return this.helper.bindDlq(queue, queue + "_dlq");
     }
 
     @Override
     public Boolean send(String queue, String group, Message message) {
+        message.setQueue(queue);
+        message.setGroup(group);
         if (!StringUtil.isBlank(group)) {
-            RList<Message> messages = this.helper.group(this.groupName(queue,group));
+            RList<Message> messages = this.helper.group(this.groupName(queue, group));
             messages.leftPush(message);
             return true;
         } else {

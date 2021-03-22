@@ -116,7 +116,7 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
 
     @Override
     public Boolean removeCache(String key) {
-        Message message = new Message(idGenerator.getUUID(), "dict", key);
+        Message message = new Message(idGenerator.getUUID(), key);
         return messageQueueManager.send("dict", message);
     }
 
