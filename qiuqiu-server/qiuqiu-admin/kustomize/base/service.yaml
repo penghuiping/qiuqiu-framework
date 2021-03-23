@@ -10,6 +10,10 @@ spec:
     port: 8081
     protocol: TCP
     targetPort: 8081
+  - name: 9091-9091
+    port: 9091
+    protocol: TCP
+    targetPort: 9091
   selector:
     app: qiuqiu-admin
   type: ClusterIP
