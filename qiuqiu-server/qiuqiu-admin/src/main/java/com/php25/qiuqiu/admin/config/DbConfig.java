@@ -30,7 +30,7 @@ public class DbConfig {
         return sqLiteDataSource;
     }
 
-    @Profile(value = {"dev","dev1", "test"})
+    @Profile(value = {"dev", "test"})
     @Bean
     public DataSource hikariDataSource(DbProperties dbProperties) {
         HikariDataSource hikariDataSource = new HikariDataSource();
@@ -69,7 +69,7 @@ public class DbConfig {
         return DbType.SQLITE;
     }
 
-    @Profile(value = {"dev", "dev1","test"})
+    @Profile(value = {"dev","test"})
     @Bean
     public DbType dbType1() {
         return DbType.MYSQL;

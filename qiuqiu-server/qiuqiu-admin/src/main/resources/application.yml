@@ -16,9 +16,5 @@ spring:
     redis:
       repositories:
         enabled: false
-server:
-  servlet:
-    context-path: /qiuqiu_admin
-  id: ${random.uuid}
-ws.enable: true
+
 

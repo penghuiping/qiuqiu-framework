@@ -294,6 +294,10 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     }
 
     private void loadExecution(String executionId) {
+        if (this.timer.getAllLoadedExecutionIds().contains(executionId)) {
+            return;
+        }
+
         Optional<JobExecution> jobExecutionOptional = this.jobExecutionRepository.findById(executionId);
         if (!jobExecutionOptional.isPresent()) {
             return;
@@ -338,7 +342,6 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         messageQueueManager.subscribe("timer_job_enabled", serverId, true, message -> {
             log.info("timer_job_enabled:{}", JsonUtil.toJson(message));
             String executionId = (String) message.getBody();
-            this.timer.stop(executionId);
             loadExecution(executionId);
         });
     }

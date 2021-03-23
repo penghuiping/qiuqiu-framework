@@ -1,19 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
     app: qiuqiu-admin
   name: qiuqiu-admin
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: qiuqiu-admin
   strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: qiuqiu-admin
     spec:
@@ -25,16 +23,17 @@ spec:
             memory: 256M #内存256M
             cpu: 1000m #1个cpu
           limits:
-            memory: 512M
+            memory: 2048M
             cpu: 2000m
         livenessProbe: ## 健康检查，重启可以解决
           initialDelaySeconds: 60 #第一次健康检查的时间，需要晚于容器启动时间
           httpGet:
             port: 9091
-              path: /actuator/liveness
+            path: /actuator/health
+#            path: /actuator/health/liveness
         readinessProbe: ## 启动以后，什么时候容器准备好可以处理外部请求
           httpGet:
             port: 9091
-            path: /actuator/readiness
-status: {}
+            path: /actuator/health
+#            path: /actuator/health/readiness
 

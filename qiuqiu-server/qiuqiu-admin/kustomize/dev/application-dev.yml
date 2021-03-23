@@ -3,19 +3,26 @@
 ########################################################
 app:
   db:
-    ip: localhost
-    port: 33306
+    ip: mysql.default.svc.cluster.local
+    port: 3306
     username: root
-    password:
+    password: G7bnF83jFt
     name: test
   filesever:
     host: localhost
-    path: /tmp
-    thumbPath: /tmp/testUpload/image
+    path: /tmp/upload/
+    thumbPath: /tmp/upload/thumb
   redis:
-    host: localhost
-    port: 36379
+    host: redis-master.default.svc.cluster.local
+    port: 6379
     database: 0
+    password: 0nPV6BhZQb
+  rabbitmq:
+    ip: rabbitmq.default.svc.cluster.local
+    port: 5672
+    username: user
+    password: F5gWSJxLv7
+    virtualHost: /
 ########################################################
 ### static resources and upload load file
 ########################################################
@@ -40,7 +47,7 @@ logging:
     com.php25: INFO
     org.springframework.security: INFO
   file:
-    name: logs/wxcompany-admin.log
+    name: /tmp/logs/qiuqiu-admin.log
 spring:
   ########################################################
   ###datasource
@@ -64,15 +71,24 @@ spring:
     host: ${app.redis.host}
     port: ${app.redis.port}
     database: ${app.redis.database}
-    #    password: ${app.redis.password}
+    password: ${app.redis.password}
     ssl: false
     lettuce:
       pool:
         max-active: 8
         max-idle: 8
-        max-wait: -1s
+        max-wait: 5s
         min-idle: 0
     timeout: 5s
+  ########################################################
+  ### rabbitmq
+  ########################################################
+  rabbitmq:
+    addresses: ${app.rabbitmq.ip}
+    port: ${app.rabbitmq.port}
+    username: ${app.rabbitmq.username}
+    password: ${app.rabbitmq.password}
+    virtual-host: ${app.rabbitmq.virtualHost}
   ########################################################
   ### servlet
   ########################################################
@@ -93,3 +109,9 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+server:
+  port: 8081
+  servlet:
+    context-path: /qiuqiu_admin
+  id: ${random.uuid}
+ws.enable: true

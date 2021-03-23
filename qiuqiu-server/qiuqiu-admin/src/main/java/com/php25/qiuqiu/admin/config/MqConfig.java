@@ -18,13 +18,13 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class MqConfig {
 
-//    @Profile(value = {"local"})
-//    @Bean
-//    MessageQueueManager messageQueueManager(RedisManager redisManager) {
-//        return new RedisMessageQueueManager(redisManager);
-//    }
+    @Profile(value = {"local"})
+    @Bean
+    MessageQueueManager messageQueueManager0(RedisManager redisManager) {
+        return new RedisMessageQueueManager(redisManager);
+    }
 
-    @Profile(value = {"dev", "dev1","test"})
+    @Profile(value = {"dev","test"})
     @Bean
     MessageQueueManager messageQueueManager(RabbitTemplate rabbitTemplate) {
         return new RabbitMessageQueueManager(rabbitTemplate, new RabbitMessageListener(rabbitTemplate));

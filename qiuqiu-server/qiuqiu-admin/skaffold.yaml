@@ -1,18 +1,19 @@
-apiVersion: skaffold/v1
+apiVersion: skaffold/v2beta7
 kind: Config
 build:
   artifacts:
-    - image: penghuiping/qiuqiu-admin
-      jib:
-        args: ['-DskipTests']
-
+  - image: penghuiping/qiuqiu-admin
+    jib:
+      args: ['-DskipTests']
 
 deploy:
   kustomize:
-    path: kustomize/base
+    paths:
+    - kustomize/base
 
 profiles:
   - name: dev
     deploy:
       kustomize:
-        path: kustomize/dev
+        paths:
+        - kustomize/dev
