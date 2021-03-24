@@ -31,26 +31,10 @@ public class JobExecutionRepositoryImpl extends BaseDbRepositoryImpl<JobExecutio
     }
 
     @Override
-    @Transactional
-    public Boolean addTimerLoadedNumber(String executionId) {
-        SqlParams sqlParams = Queries.of(dbType).from(JobExecution.class).whereEq("id", executionId).single();
-        sqlParams.setSql(sqlParams.getSql() + " for update");
-        JobExecution jobExecution = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).single(sqlParams);
-        jobExecution.setTimerLoadedNumber(jobExecution.getTimerLoadedNumber() + 1);
-        jobExecution.setIsNew(false);
-        this.save(jobExecution);
-        return true;
-    }
-
-    @Override
-    @Transactional
-    public Boolean minusTimerLoadedNumber(String executionId) {
-        SqlParams sqlParams = Queries.of(dbType).from(JobExecution.class).whereEq("id", executionId).single();
-        sqlParams.setSql(sqlParams.getSql() + " for update");
-        JobExecution jobExecution = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).single(sqlParams);
-        jobExecution.setTimerLoadedNumber(jobExecution.getTimerLoadedNumber() - 1);
-        jobExecution.setIsNew(false);
-        this.save(jobExecution);
+    public Boolean resetTimerLoadedNumber() {
+        JobExecution jobExecution = new JobExecution();
+        jobExecution.setTimerLoadedNumber(0);
+        this.jdbcTemplate.update("update t_timer_job_execution set timer_loaded_number=0 where 1=1");
         return true;
     }
 }

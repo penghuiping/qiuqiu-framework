@@ -26,7 +26,6 @@ public class JobLogVo {
     /**
      * 任务执行时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime executeTime;
 
     /**

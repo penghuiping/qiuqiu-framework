@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.job.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.core.util.RandomUtil;
@@ -17,6 +18,8 @@ import com.php25.qiuqiu.job.dto.JobCreateDto;
 import com.php25.qiuqiu.job.dto.JobDto;
 import com.php25.qiuqiu.job.dto.JobExecutionCreateDto;
 import com.php25.qiuqiu.job.dto.JobExecutionDto;
+import com.php25.qiuqiu.job.dto.JobExecutionStatisticReqDto;
+import com.php25.qiuqiu.job.dto.JobExecutionStatisticResDto;
 import com.php25.qiuqiu.job.dto.JobExecutionUpdateDto;
 import com.php25.qiuqiu.job.dto.JobLogCreateDto;
 import com.php25.qiuqiu.job.dto.JobLogDto;
@@ -41,7 +44,9 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -74,12 +79,14 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     public void afterPropertiesSet() throws Exception {
         this.subscribeRefreshJobDisabled();
         this.subscribeRefreshJobEnabled();
+
+        this.statisticLoadedJobExecutionSubscribe();
+        this.mergeStatisticLoadedJobExecutionSubscribe();
     }
 
     @Override
     public void destroy() throws Exception {
-        Set<String> executionIds = timer.getAllLoadedExecutionIds();
-        executionIds.forEach(this.jobExecutionRepository::minusTimerLoadedNumber);
+
     }
 
     @Override
@@ -293,6 +300,50 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         return true;
     }
 
+    private void statisticLoadedJobExecutionSubscribe() {
+        messageQueueManager.subscribe("statistic_loaded_job_execution", serverId, true, message -> {
+            String tmp = JsonUtil.toJson(message.getBody());
+            log.info("JobExecutionStatisticReqDto为:{}", tmp);
+            JobExecutionStatisticReqDto reqDto = JsonUtil.fromJson(tmp, JobExecutionStatisticReqDto.class);
+            Set<String> executionIds = timer.getAllLoadedExecutionIds();
+            Map<String,Integer> res = new HashMap<>();
+            for(String executionId: executionIds) {
+                res.put(executionId,1);
+            }
+            JobExecutionStatisticResDto resDto = new JobExecutionStatisticResDto();
+            resDto.setEntries(res);
+            Message message0 = new Message(RandomUtil.randomUUID(), resDto);
+            messageQueueManager.send(reqDto.getQueue(), reqDto.getGroup(), message0);
+        });
+    }
+
+    private void mergeStatisticLoadedJobExecutionSubscribe() {
+        messageQueueManager.subscribe("merge_statistic_loaded_job_execution", serverId, true, message -> {
+            JobExecutionStatisticResDto res = JsonUtil.fromJson(JsonUtil.toJson(message.getBody()),JobExecutionStatisticResDto.class );
+            res.getEntries().forEach((key, value) -> {
+                Optional<JobExecution> jobExecutionOptional = jobExecutionRepository.findById(key);
+                if (jobExecutionOptional.isPresent()) {
+                    JobExecution jobExecution = jobExecutionOptional.get();
+                    JobExecution jobExecution0 = new JobExecution();
+                    jobExecution0.setId(jobExecution.getId());
+                    jobExecution0.setTimerLoadedNumber(jobExecution.getTimerLoadedNumber() + value);
+                    jobExecution0.setIsNew(false);
+                    jobExecutionRepository.save(jobExecution0);
+                }
+            });
+        });
+    }
+
+    @Override
+    public void statisticLoadedJobExecutionInfo() {
+        JobExecutionStatisticReqDto reqDto = new JobExecutionStatisticReqDto();
+        reqDto.setGroup(serverId);
+        reqDto.setQueue("merge_statistic_loaded_job_execution");
+        Message message = new Message(RandomUtil.randomUUID(), reqDto);
+        jobExecutionRepository.resetTimerLoadedNumber();
+        messageQueueManager.send("statistic_loaded_job_execution", message);
+    }
+
     private void loadExecution(String executionId) {
         if (this.timer.getAllLoadedExecutionIds().contains(executionId)) {
             return;
@@ -331,8 +382,6 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             }
             Job job = new Job(executionId, jobExecution.getCron(), task);
             this.timer.add(job, true);
-
-            jobExecutionRepository.addTimerLoadedNumber(jobExecution.getId());
         } catch (ParseException e) {
             log.error("定时任务cron表达式出错", e);
         }
@@ -351,11 +400,6 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             log.info("timer_job_disabled:{}", JsonUtil.toJson(message));
             String executionId = (String) message.getBody();
             this.timer.stop(executionId);
-            Optional<JobExecution> jobExecutionOptional = jobExecutionRepository.findById(executionId);
-            if (jobExecutionOptional.isPresent()) {
-                JobExecution jobExecution = jobExecutionOptional.get();
-                jobExecutionRepository.minusTimerLoadedNumber(jobExecution.getId());
-            }
         });
     }
 }

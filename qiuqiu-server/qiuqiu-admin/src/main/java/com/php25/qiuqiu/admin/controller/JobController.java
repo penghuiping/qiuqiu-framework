@@ -173,4 +173,12 @@ public class JobController extends JSONController {
     public JSONResponse refreshAllExecution(@RequestAttribute String username) {
         return succeed(jobService.refreshAll(username));
     }
+
+    @AuditLog
+    @APIVersion("v1")
+    @PostMapping("/execution/statistic")
+    public JSONResponse statistic(@RequestAttribute String username) {
+        jobService.statisticLoadedJobExecutionInfo();
+        return succeed(true);
+    }
 }

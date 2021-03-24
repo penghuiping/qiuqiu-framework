@@ -5,6 +5,7 @@ import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.core.mess.IdGeneratorImpl;
 import com.php25.common.core.util.StringUtil;
+import com.php25.common.mq.MessageQueueManager;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.timer.Timer;
 import com.php25.common.ws.GlobalSession;
@@ -83,13 +84,16 @@ public class WsConfiguration implements WebSocketConfigurer {
                                        MsgDispatcher msgDispatcher,
                                        SecurityAuthentication securityAuthentication,
                                        InnerMsgRetryQueue innerMsgRetryQueue,
-                                       Timer timer
+                                       Timer timer,
+                                       MessageQueueManager messageQueueManager
     ) {
         return new GlobalSession(innerMsgRetryQueue,
                 redisManager,
                 securityAuthentication,
                 serverId,
-                msgDispatcher, timer);
+                msgDispatcher,
+                timer,
+                messageQueueManager);
     }
 
     @Bean

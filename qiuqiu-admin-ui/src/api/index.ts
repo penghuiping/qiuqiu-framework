@@ -75,6 +75,7 @@ class ApiConstant {
   static JOB_EXECUTION_DELETE = '/job/execution/delete'
   static JOB_EXECUTION_REFRESH = '/job/execution/refresh'
   static JOB_EXECUTION_REFRESH_ALL = '/job/execution/refresh_all'
+  static JOB_EXECUTION_STATISTIC = '/job/execution/statistic'
 }
 
 export { ApiConstant }

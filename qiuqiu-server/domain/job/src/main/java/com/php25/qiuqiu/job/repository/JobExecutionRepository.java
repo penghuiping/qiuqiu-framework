@@ -20,18 +20,10 @@ public interface JobExecutionRepository extends BaseDbRepository<JobExecution, S
     Optional<JobExecution> findByJobId(String jobId);
 
     /**
-     * 把TimerLoadedNumber字段加一
+     * 把所有的执行计划timer加载数重置为0
      *
-     * @param executionId 任务执行id
-     * @return true:成功
+     * @return
      */
-    Boolean addTimerLoadedNumber(String executionId);
+    Boolean resetTimerLoadedNumber();
 
-    /**
-     * 把TimerLoadedNumber字段减一
-     *
-     * @param executionId 任务执行id
-     * @return true:成功
-     */
-    Boolean minusTimerLoadedNumber(String executionId);
 }

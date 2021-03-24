@@ -69,6 +69,10 @@ class JobApi {
   public static refreshAll (): Promise<AxiosResponse<JsonResponse<boolean>>> {
     return axios.post(ApiConstant.JOB_EXECUTION_REFRESH_ALL)
   }
+
+  public static statistic (): Promise<AxiosResponse<JsonResponse<boolean>>> {
+    return axios.post(ApiConstant.JOB_EXECUTION_STATISTIC)
+  }
 }
 
 export {

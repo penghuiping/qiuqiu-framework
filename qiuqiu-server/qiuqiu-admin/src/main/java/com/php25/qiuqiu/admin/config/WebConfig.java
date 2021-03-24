@@ -1,12 +1,14 @@
 package com.php25.qiuqiu.admin.config;
 
 import com.google.common.collect.Lists;
+import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.APIVersionHandlerMapping;
 import com.php25.common.flux.web.XssRequestBodyAdvice;
 import com.php25.common.flux.web.XssSafeHtml;
 import com.php25.qiuqiu.admin.interceptor.JwtAuthInterceptor;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.hibernate.validator.internal.constraintvalidators.hv.SafeHtmlValidator;
+import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,7 +47,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(new MappingJackson2HttpMessageConverter());
+        converters.add(new MappingJackson2HttpMessageConverter(JsonUtil.getObjectMapper()));
         converters.add(new StringHttpMessageConverter());
     }
 
@@ -54,10 +56,8 @@ public class WebConfig extends WebMvcConfigurationSupport {
         RequestMappingHandlerAdapter requestMappingHandlerAdapter = super.createRequestMappingHandlerAdapter();
         requestMappingHandlerAdapter.setRequestBodyAdvice(Lists.newArrayList(new XssRequestBodyAdvice() {
             @Override
-            public SafeHtmlValidator initializeValidator() {
-                SafeHtmlValidator safeHtmlValidator = new SafeHtmlValidator();
-                safeHtmlValidator.initialize(new XssSafeHtml(SafeHtml.WhiteListType.BASIC, new String[]{}));
-                return safeHtmlValidator;
+            public Whitelist configWhiteList() {
+                return Whitelist.basicWithImages();
             }
         }));
         return requestMappingHandlerAdapter;

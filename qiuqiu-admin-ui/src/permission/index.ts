@@ -41,6 +41,7 @@ class Permission {
     JOB_EXECUTION_DELETE: 'job_execution_delete',
     JOB_EXECUTION_REFRESH: 'job_execution_refresh',
     JOB_EXECUTION_REFRESH_ALL: 'job_execution_refresh_all',
+    JOB_EXECUTION_STATISTIC: 'job_execution_statistic',
     JOB_LOG_LIST_SEARCH: 'job_log_page',
     MEDIA_LIST_SEARCH: 'media_list_search',
     REPORT_LIST_SEARCH: 'report_list_search'
@@ -85,6 +86,7 @@ class Permission {
     remoteToLocalPermission.set('job_execution_delete', Permission.permissions.JOB_EXECUTION_DELETE)
     remoteToLocalPermission.set('job_execution_refresh', Permission.permissions.JOB_EXECUTION_REFRESH)
     remoteToLocalPermission.set('job_execution_refresh_all', Permission.permissions.JOB_EXECUTION_REFRESH_ALL)
+    remoteToLocalPermission.set('job_execution_statistic', Permission.permissions.JOB_EXECUTION_STATISTIC)
 
     // remoteToLocalPermission.set('_department_page_list', Permission.permissions.DEPARTMENT_LIST_SEARCH)
     // remoteToLocalPermission.set('_media_page_list', Permission.permissions.MEDIA_LIST_SEARCH)

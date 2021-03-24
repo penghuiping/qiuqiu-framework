@@ -43,6 +43,7 @@ INSERT INTO t_permission (id, name, description, uri, enable) VALUES (39, 'job_e
 INSERT INTO t_permission (id, name, description, uri, enable) VALUES (40, 'job_execution_update', '更新任务执行计划', '/job/execution/update', 1);
 INSERT INTO t_permission (id, name, description, uri, enable) VALUES (41, 'job_execution_delete', '删除任务执行计划', '/job/execution/delete', 1);
 INSERT INTO t_permission (id, name, description, uri, enable) VALUES (42, 'job_find_all', '获取系统中所有可执行计划', '/job/find_all', 1);
+INSERT INTO t_permission (id, name, description, uri, enable) VALUES (43, 'job_execution_statistic', '任务执行计划加载统计情况', '/job/execution/statistic', 1);
 
 
 
@@ -89,6 +90,7 @@ INSERT INTO t_role_permission (role_id, permission_id) VALUES (1, 42);
 
 
 INSERT INTO t_dict (id, key0, value, description, enable) VALUES (1, 'test', 'test_value', '这是用于测试', 1);
+INSERT INTO t_dict (id, key0, value, description, enable) VALUES (2, 'test_msg', '这是测试消息', '这是测试消息', 1);
 INSERT INTO t_dict (id, key0, value, description, enable) VALUES (3, 'sys_notify_enable', 'true', '系统通知', 0);
 INSERT INTO t_dict (id, key0, value, description, enable) VALUES (4, '127.0.0.1:9091', 'http://127.0.0.1:9091/actuator/prometheus', '本机状态监控信息', 1);
 INSERT INTO t_dict (id, key0, value, description, enable) VALUES (5, 'apps_ip_port', '["127.0.0.1:9091"]', '应用服务器监控端口列表', 1);

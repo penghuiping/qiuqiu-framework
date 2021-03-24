@@ -107,11 +107,11 @@ public interface JobService {
     /**
      * 删除任务执行计划(注意此操作只会更新数据库,不会影响timer)
      *
-     * @param username     登入用户名
-     * @param id 执行任务id
+     * @param username 登入用户名
+     * @param id       执行任务id
      * @return true: 删除成功
      */
-    Boolean deleteJobExecution(String username,String id);
+    Boolean deleteJobExecution(String username, String id);
 
     /**
      * 分页查询任务执行计划(注意此操作只会更新数据库,不会影响timer)
@@ -141,5 +141,11 @@ public interface JobService {
      * @return true: 成功
      */
     Boolean refreshAll(String username);
+
+
+    /**
+     * 全量统计执行任务加载情况
+     */
+    void statisticLoadedJobExecutionInfo();
 
 }

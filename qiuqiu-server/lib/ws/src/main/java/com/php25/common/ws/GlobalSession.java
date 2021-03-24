@@ -3,24 +3,21 @@ package com.php25.common.ws;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.core.util.StringUtil;
+import com.php25.common.mq.Message;
+import com.php25.common.mq.MessageQueueManager;
 import com.php25.common.redis.RList;
 import com.php25.common.redis.RedisManager;
-import com.php25.common.redis.impl.RedisManagerImpl;
 import com.php25.common.timer.Job;
 import com.php25.common.timer.Timer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import javax.annotation.PreDestroy;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.DelayQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -39,6 +36,8 @@ public class GlobalSession implements InitializingBean, DisposableBean {
     private final InnerMsgRetryQueue msgRetry;
 
     private final RedisManager redisService;
+
+    private final MessageQueueManager messageQueueManager;
 
     private final String serverId;
 
@@ -61,20 +60,22 @@ public class GlobalSession implements InitializingBean, DisposableBean {
                          SecurityAuthentication securityAuthentication,
                          String serverId,
                          MsgDispatcher msgDispatcher,
-                         Timer timer) {
+                         Timer timer,
+                         MessageQueueManager messageQueueManager) {
         this.msgRetry = msgRetry;
         this.redisService = redisService;
         this.serverId = serverId;
         this.securityAuthentication = securityAuthentication;
         this.msgDispatcher = msgDispatcher;
         this.timer = timer;
+        this.messageQueueManager = messageQueueManager;
     }
 
     @Override
     public void destroy() throws Exception {
         cleanAll();
         try {
-            boolean res = this.executorService.awaitTermination(1,TimeUnit.SECONDS);
+            boolean res = this.executorService.awaitTermination(1, TimeUnit.SECONDS);
             if (res) {
                 log.info("关闭ws:ws-worker-thread-pool成功");
             }
@@ -87,9 +88,20 @@ public class GlobalSession implements InitializingBean, DisposableBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.executorService =  new ThreadPoolExecutor(1, 512,
+        this.executorService = new ThreadPoolExecutor(1, 512,
                 60L, TimeUnit.SECONDS,
                 new SynchronousQueue<>(), new ThreadFactoryBuilder().setNameFormat("ws-worker-thread-%d").build(), new ThreadPoolExecutor.AbortPolicy());
+
+        this.messageQueueManager.subscribe("ws_session", serverId, true, message -> {
+            for (String key : sessions.keySet()) {
+                try {
+                    WebSocketSession socketSession = sessions.get(key).getWebSocketSession();
+                    socketSession.sendMessage(new TextMessage(message.getBody().toString()));
+                } catch (Exception e) {
+                    log.info("通过websocket发送消息失败,消息为:{}", message.getBody().toString(), e);
+                }
+            }
+        });
     }
 
     public void dispatchAck(String action, BaseRetryMsg srcMsg) {
@@ -139,8 +151,8 @@ public class GlobalSession implements InitializingBean, DisposableBean {
         _sessions.put(webSocketSession.getId(), expirationSocketSession);
 
         ExpirationSessionCallback callback = new ExpirationSessionCallback(expirationSocketSession.getSessionId());
-        long executeTime= System.currentTimeMillis()+30000L;
-        Job expirationSessionId =  new Job(expirationSocketSession.getSessionId(),executeTime,callback);
+        long executeTime = System.currentTimeMillis() + 30000L;
+        Job expirationSessionId = new Job(expirationSocketSession.getSessionId(), executeTime, callback);
         timer.add(expirationSessionId);
     }
 
@@ -178,8 +190,8 @@ public class GlobalSession implements InitializingBean, DisposableBean {
 
         timer.stop(sid);
         ExpirationSessionCallback callback = new ExpirationSessionCallback(sid);
-        long executeTime= System.currentTimeMillis()+30000L;
-        Job expirationSessionId = new Job(expirationSocketSession.getSessionId(),executeTime,callback);
+        long executeTime = System.currentTimeMillis() + 30000L;
+        Job expirationSessionId = new Job(expirationSocketSession.getSessionId(), executeTime, callback);
         timer.add(expirationSessionId);
 
 
@@ -193,6 +205,7 @@ public class GlobalSession implements InitializingBean, DisposableBean {
         return null;
     }
 
+
     public void send(BaseRetryMsg baseRetryMsg) {
         this.send(baseRetryMsg, true);
     }
@@ -205,16 +218,11 @@ public class GlobalSession implements InitializingBean, DisposableBean {
 
         String sid = baseRetryMsg.getSessionId();
         try {
-            if(StringUtil.isBlank(sid)) {
-                //没有指定sid,则认为进行全局广播 todo 目前只实现单机全局广播
-                for(String key:sessions.keySet()) {
-                    WebSocketSession socketSession = sessions.get(key).getWebSocketSession();
-                    socketSession.sendMessage(new TextMessage(vueMsgSerializer.from(baseRetryMsg)));
-                    if (retry) {
-                        msgRetry.put(baseRetryMsg);
-                    }
-                }
-            }else {
+            if (StringUtil.isBlank(sid)) {
+                //没有指定sid,则认为进行全局广播，并且广播消息不会重试
+                Message message = new Message(RandomUtil.randomUUID(), vueMsgSerializer.from(baseRetryMsg));
+                messageQueueManager.send("ws_session", message);
+            } else {
                 //现看看sid是否本地存在
                 if (this.sessions.containsKey(sid)) {
                     //本地存在,直接通过本地session发送
@@ -227,7 +235,7 @@ public class GlobalSession implements InitializingBean, DisposableBean {
                     //获取远程session
                     SidUid sidUid = redisService.string().get(Constants.prefix + sid, SidUid.class);
                     String serverId = sidUid.getServerId();
-                    RList<String> rList = redisService.list(Constants.prefix + serverId,String.class);
+                    RList<String> rList = redisService.list(Constants.prefix + serverId, String.class);
                     rList.leftPush(internalMsgSerializer.from(baseRetryMsg));
                 }
             }
@@ -244,7 +252,7 @@ public class GlobalSession implements InitializingBean, DisposableBean {
         //这里interval必须要大于0才能从重试队列中移除
         baseRetryMsg.setInterval(1);
         msgRetry.remove(baseRetryMsg);
-        timer.stop(baseRetryMsg.msgId+baseRetryMsg.getAction());
+        timer.stop(baseRetryMsg.msgId + baseRetryMsg.getAction());
     }
 
     public BaseRetryMsg getMsg(String msgId, String action) {
@@ -257,7 +265,7 @@ public class GlobalSession implements InitializingBean, DisposableBean {
     }
 
     protected String generateUUID() {
-        return RandomUtil.randomUUID().replace("_","");
+        return RandomUtil.randomUUID().replace("_", "");
     }
 
     public void stats() {

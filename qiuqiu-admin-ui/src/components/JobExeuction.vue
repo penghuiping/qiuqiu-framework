@@ -15,6 +15,7 @@
     <el-button-group>
       <el-button type="primary" @click="create" v-if="permissionExists(permissions.JOB_EXECUTION_ADD)">新增</el-button>
       <el-button type="primary" @click="refreshAll" v-if="permissionExists(permissions.JOB_EXECUTION_REFRESH_ALL)">整体刷新</el-button>
+      <el-button type="primary" @click="statistic" v-if="permissionExists(permissions.JOB_EXECUTION_STATISTIC)">统计执行任务加载情况</el-button>
     </el-button-group>
     <!--数据表格-->
     <el-table
@@ -236,6 +237,33 @@ export default class JobExecution extends BaseVue {
       this.$message({
         type: 'info',
         message: '已取消删除'
+      })
+    })
+  }
+
+  statistic () {
+    this.$confirm('统计执行任务加载情况, 是否继续?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async () => {
+      const res = await JobApi.statistic()
+      if (res && res.data.data) {
+        this.goToPage(this.searchKey, this.currentPage, this.pageSize)
+        this.$message({
+          type: 'success',
+          message: '刷新成功!'
+        })
+      } else {
+        this.$message({
+          type: 'info',
+          message: '刷新失败'
+        })
+      }
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消刷新'
       })
     })
   }
