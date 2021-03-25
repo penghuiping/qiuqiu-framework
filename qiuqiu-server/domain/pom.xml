@@ -21,6 +21,7 @@
         <module>monitor</module>
         <module>media</module>
         <module>job</module>
+        <module>workflow</module>
     </modules>
 
 </project>

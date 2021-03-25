@@ -14,7 +14,7 @@ create table t_dict
     id integer
         constraint t_dict_pk
         primary key autoincrement,
-    key varchar,
+    key0 varchar,
     value varchar,
     description varchar,
     enable int
@@ -82,7 +82,7 @@ create table t_timer_job_execution
     job_id varchar,
     job_name varchar,
     enable int,
-    status int
+    timer_loaded_number int
 );
 
 create table t_timer_job_log
@@ -96,6 +96,13 @@ create table t_timer_job_log
     result_message varchar,
     job_id varchar,
     group_id int
+);
+
+create table t_timer_inner_log
+(
+    id varchar,
+    execution_time datetime,
+    status int
 );
 
 create table t_user

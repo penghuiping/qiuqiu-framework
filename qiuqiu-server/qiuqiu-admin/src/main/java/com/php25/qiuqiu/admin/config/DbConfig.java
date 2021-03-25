@@ -5,6 +5,7 @@ import com.php25.common.db.EntitiesScan;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -23,6 +24,7 @@ import javax.sql.DataSource;
 public class DbConfig {
 
     @Profile(value = {"local"})
+    @Primary
     @Bean
     public DataSource sqLiteDataSource() {
         SQLiteDataSource sqLiteDataSource = new SQLiteDataSource();
@@ -31,6 +33,7 @@ public class DbConfig {
     }
 
     @Profile(value = {"dev", "test"})
+    @Primary
     @Bean
     public DataSource hikariDataSource(DbProperties dbProperties) {
         HikariDataSource hikariDataSource = new HikariDataSource();
@@ -48,16 +51,19 @@ public class DbConfig {
         return hikariDataSource;
     }
 
+    @Primary
     @Bean
     public PlatformTransactionManager transactionManager(DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
+    @Primary
     @Bean
     public TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
         return new TransactionTemplate(transactionManager);
     }
 
+    @Primary
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);

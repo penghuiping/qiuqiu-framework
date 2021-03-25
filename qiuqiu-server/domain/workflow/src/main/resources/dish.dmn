@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dish_decision" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <decision id="dish" name="dish">
+    <decisionTable id="DecisionTable_084zoas">
+      <input id="Input_1" label="季节" camunda:inputVariable="季节">
+        <inputExpression id="InputExpression_1" typeRef="string" expressionLanguage="javascript">
+          <text>季节</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_1yw8vwy" label="顾客数" camunda:inputVariable="顾客数">
+        <inputExpression id="LiteralExpression_0voeh7x" typeRef="integer" expressionLanguage="javascript">
+          <text>顾客数</text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="菜" name="season" typeRef="string" />
+      <rule id="DecisionRule_1pn6tty">
+        <inputEntry id="UnaryTests_1g6zw4s">
+          <text>"秋天"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_10r1gr3">
+          <text>&lt;=8</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0y64hbr">
+          <text>"排骨"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1dg2mum">
+        <inputEntry id="UnaryTests_1554x1x">
+          <text>"冬天"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_170sz9m">
+          <text>&lt;=8</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_02wtu2b">
+          <text>"烤牛肉"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_03h3cri">
+        <inputEntry id="UnaryTests_04umwcn">
+          <text>"春天"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1lj4rfq">
+          <text>&lt;=4</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0zfsjg6">
+          <text>"干熟美食牛排"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0gctzwo">
+        <inputEntry id="UnaryTests_1idjpu0">
+          <text>"春天"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1sxml4w">
+          <text>[5..8]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1s82b27">
+          <text>"牛排"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0uv0l2d">
+        <inputEntry id="UnaryTests_05lx877">
+          <text>"秋天","冬天","春天"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0kfw89d">
+          <text>&gt;8</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_093pl7d">
+          <text>"炖汤"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0rjtt5t">
+        <inputEntry id="UnaryTests_12zihxw">
+          <text>"夏天"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0btnp4n">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0kldf94">
+          <text></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="dish">
+        <dc:Bounds height="80" width="180" x="160" y="80" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

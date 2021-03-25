@@ -21,6 +21,7 @@
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <spring.boot.version>2.3.2.RELEASE</spring.boot.version>
         <spring-cloud-dependencies>Hoxton.SR6</spring-cloud-dependencies>
+        <camunda.version>7.14.0</camunda.version>
         <guava.version>29.0-jre</guava.version>
         <jackson.version>2.11.1</jackson.version>
         <okhttp.version>4.8.0</okhttp.version>
@@ -50,6 +51,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.camunda.bpm</groupId>
+                <artifactId>camunda-bom</artifactId>
+                <version>${camunda.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
             <dependency>
                 <!-- Import dependency management from Spring Boot -->
                 <groupId>org.springframework.boot</groupId>
@@ -310,6 +318,11 @@
                 <artifactId>job</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
+            <dependency>
+                <groupId>com.php25.qiuqiu</groupId>
+                <artifactId>workflow</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -348,10 +361,10 @@
                             </tags>
                         </to>
                         <container>
-<!--                            <jvmFlags>-->
-<!--                                <jvmFlag>-Xms2g</jvmFlag>-->
-<!--                                <jvmFlag>-Xmx2g</jvmFlag>-->
-<!--                            </jvmFlags>-->
+                            <!--                            <jvmFlags>-->
+                            <!--                                <jvmFlag>-Xms2g</jvmFlag>-->
+                            <!--                                <jvmFlag>-Xmx2g</jvmFlag>-->
+                            <!--                            </jvmFlags>-->
                             <!--非root用户启动容器-->
                             <user>nobody:nogroup</user>
                         </container>
