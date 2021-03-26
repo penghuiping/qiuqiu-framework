@@ -6,8 +6,8 @@ import com.php25.common.db.Queries;
 import com.php25.common.db.QueriesExecute;
 import com.php25.common.db.core.sql.SqlParams;
 import com.php25.common.db.repository.BaseDbRepositoryImpl;
-import com.php25.qiuqiu.user.model.RoleRef;
 import com.php25.qiuqiu.user.model.User;
+import com.php25.qiuqiu.user.model.UserRole;
 import com.php25.qiuqiu.user.repository.UserRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -52,19 +52,19 @@ public class UserRepositoryImpl extends BaseDbRepositoryImpl<User, Long> impleme
 
     @Override
     public List<Long> findRoleIdsByUserId(Long userId) {
-        SqlParams sqlParams = Queries.of(dbType).from(RoleRef.class)
+        SqlParams sqlParams = Queries.of(dbType).from(UserRole.class)
                 .whereEq("userId", userId)
                 .select();
-        List<RoleRef> roleRefs = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
+        List<UserRole> roleRefs = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
         if (null != roleRefs && !roleRefs.isEmpty()) {
-            return roleRefs.stream().map(RoleRef::getRoleId).collect(Collectors.toList());
+            return roleRefs.stream().map(UserRole::getRoleId).collect(Collectors.toList());
         }
         return Lists.newArrayList();
     }
 
     @Override
-    public boolean createRoleRefs(List<RoleRef> roleRefs) {
-        SqlParams sqlParams = Queries.of(dbType).from(RoleRef.class)
+    public boolean createRoleRefs(List<UserRole> roleRefs) {
+        SqlParams sqlParams = Queries.of(dbType).from(UserRole.class)
                 .insertBatch(roleRefs);
         QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).insertBatch(sqlParams);
         return true;
@@ -72,7 +72,7 @@ public class UserRepositoryImpl extends BaseDbRepositoryImpl<User, Long> impleme
 
     @Override
     public boolean deleteRoleRefsByUserId(Long userId) {
-        SqlParams sqlParams = Queries.of(dbType).from(RoleRef.class)
+        SqlParams sqlParams = Queries.of(dbType).from(UserRole.class)
                 .whereEq("userId", userId)
                 .delete();
         QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).delete(sqlParams);
@@ -81,12 +81,12 @@ public class UserRepositoryImpl extends BaseDbRepositoryImpl<User, Long> impleme
 
     @Override
     public List<Long> findUserIdsByRoleIds(List<Long> roleIds) {
-        SqlParams sqlParams = Queries.of(dbType).from(RoleRef.class)
+        SqlParams sqlParams = Queries.of(dbType).from(UserRole.class)
                 .whereIn("roleId", roleIds)
                 .select();
-        List<RoleRef> roleRefs = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
+        List<UserRole> roleRefs = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
         if (null != roleRefs && !roleRefs.isEmpty()) {
-            return roleRefs.stream().map(RoleRef::getUserId).distinct().collect(Collectors.toList());
+            return roleRefs.stream().map(UserRole::getUserId).distinct().collect(Collectors.toList());
         }
         return Lists.newArrayList();
     }
@@ -95,7 +95,7 @@ public class UserRepositoryImpl extends BaseDbRepositoryImpl<User, Long> impleme
     public Long countByGroupId(Long groupId) {
         SqlParams sqlParams = Queries.of(dbType).from(User.class)
                 .whereEq("groupId", groupId)
-                .select();
+                .count();
         return QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).count(sqlParams);
     }
 }

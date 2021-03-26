@@ -12,19 +12,19 @@
               <el-button
                 type="text"
                 size="mini"
-                @click="() => create(data)" v-if="permissionExists(permissions.GROUP_ADD)">
+                @click="() => create(data)" v-if="permissionExists(resources.GROUP,permissions.ADD)">
                 添加
               </el-button>
                <el-button
                  type="text"
                  size="mini"
-                 @click="() => update(data)" v-if="permissionExists(permissions.GROUP_UPDATE) && node.value !== 'root'">
+                 @click="() => update(data)" v-if="permissionExists(resources.GROUP,permissions.UPDATE) && node.value !== 'root'">
                 修改
               </el-button>
               <el-button
                 type="text"
                 size="mini"
-                @click="() => remove(node, data)" v-if="permissionExists(permissions.GROUP_DELETE)">
+                @click="() => remove(node, data)" v-if="permissionExists(resources.GROUP,permissions.DELETE)">
                 删除
               </el-button>
             </span>

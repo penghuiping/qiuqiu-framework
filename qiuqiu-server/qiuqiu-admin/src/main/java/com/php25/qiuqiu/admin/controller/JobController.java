@@ -92,7 +92,7 @@ public class JobController extends JSONController {
     }
 
     @APIVersion("v1")
-    @PostMapping("/find_all")
+    @PostMapping("/get_all")
     public JSONResponse findAll(@RequestAttribute String username) {
         List<JobDto> jobDtoList = jobService.findAll(username);
         if (null != jobDtoList && !jobDtoList.isEmpty()) {

@@ -2,7 +2,7 @@
   <div>
     <!--操作栏-->
     <el-button-group>
-      <el-button type="primary" @click="handleCreateRole" v-if="permissionExists(permissions.ROLE_ADD)">新增</el-button>
+      <el-button type="primary" @click="handleCreateRole" v-if="permissionExists(resources.ROLE,permissions.ADD)">新增</el-button>
     </el-button-group>
     <!--数据表格-->
     <el-table
@@ -39,22 +39,22 @@
         label="操作"
         width="200">
         <template slot-scope="scope">
-          <el-button @click="detailInfo(scope.row)" type="text" size="small" v-if="permissionExists(permissions.ROLE_DETAIL)">
+          <el-button @click="detailInfo(scope.row)" type="text" size="small" v-if="permissionExists(resources.ROLE,permissions.DETAIL)">
             查看
           </el-button>
-          <el-button @click="update(scope.row)" type="text" size="small" v-if="permissionExists(permissions.ROLE_UPDATE)">
+          <el-button @click="update(scope.row)" type="text" size="small" v-if="permissionExists(resources.ROLE,permissions.UPDATE)">
             编辑
           </el-button>
           <el-button
             size="small"
             type="text"
-            @click.native.prevent="deleteRow(scope.$index, tableData)" v-if="permissionExists(permissions.ROLE_DELETE)">
+            @click.native.prevent="deleteRow(scope.$index, tableData)" v-if="permissionExists(resources.ROLE,permissions.DELETE)">
             删除
           </el-button>
           <el-button
             size="small"
             type="text"
-            @click.native.prevent="toggleEnable(scope.$index, tableData)" v-if="permissionExists(permissions.ROLE_UPDATE)">
+            @click.native.prevent="toggleEnable(scope.$index, tableData)" v-if="permissionExists(resources.ROLE,permissions.UPDATE)">
             {{scope.row.enable?'使无效':'使有效'}}
           </el-button>
         </template>

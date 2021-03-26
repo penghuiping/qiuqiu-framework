@@ -1,8 +1,6 @@
 package com.php25.qiuqiu.user.model;
 
-import com.php25.common.db.core.GenerationType;
 import com.php25.common.db.core.annotation.Column;
-import com.php25.common.db.core.annotation.GeneratedValue;
 import com.php25.common.db.core.annotation.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,19 +17,12 @@ import org.springframework.data.domain.Persistable;
 @Setter
 @Getter
 @Table("t_permission")
-public class Permission implements Persistable<Long> {
-
-    /**
-     * id,自增
-     */
-    @Id
-    @Column
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Permission implements Persistable<String> {
 
     /**
      * 权限名
      */
+    @Id
     @Column
     private String name;
 
@@ -42,12 +33,6 @@ public class Permission implements Persistable<Long> {
     private String description;
 
     /**
-     * 此权限对应的后台接口地址
-     */
-    @Column
-    private String uri;
-
-    /**
      * 是否有效 0:无效 1:有效
      */
     @Column
@@ -55,6 +40,11 @@ public class Permission implements Persistable<Long> {
 
     @Transient
     private Boolean isNew;
+
+    @Override
+    public String getId() {
+        return this.name;
+    }
 
     @Override
     public boolean isNew() {

@@ -6,19 +6,25 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 角色与权限关系
+ * 用户与角色关系
  *
  * @author penghuiping
- * @date 2021/3/2 09:15
+ * @date 2021/3/2 09:06
  */
 @Setter
 @Getter
-@Table("t_role_permission")
-public class PermissionRef {
+@Table("t_user_role")
+public class UserRole {
 
+    /**
+     * 用户id
+     */
+    @Column("user_id")
+    private Long userId;
+
+    /**
+     * 角色id
+     */
     @Column("role_id")
     private Long roleId;
-
-    @Column("permission_id")
-    private Long permissionId;
 }

@@ -15,11 +15,13 @@ import com.php25.qiuqiu.admin.vo.out.role.RolePageOutVo;
 import com.php25.qiuqiu.admin.vo.out.role.RoleVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
+import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleCreateDto;
 import com.php25.qiuqiu.user.dto.role.RoleDetailDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.role.RolePageDto;
 import com.php25.qiuqiu.user.dto.role.RoleUpdateDto;
+import com.php25.qiuqiu.user.model.ResourcePermission;
 import com.php25.qiuqiu.user.service.RoleService;
 import io.github.yedaxia.apidocs.ApiDoc;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +49,7 @@ public class RoleController extends JSONController {
     /**
      * 获取系统中所有角色列表
      */
-    @ApiDoc(result = RoleVo.class, url = "/qiuqiu_admin/v1/role/getAll")
+    @ApiDoc(result = RoleVo.class, url = "/qiuqiu_admin/v1/role/get_all")
     @APIVersion("v1")
     @PostMapping("/getAll")
     public JSONResponse getAll() {
@@ -111,12 +113,14 @@ public class RoleController extends JSONController {
         RoleDetailDto roleDetailDto = roleService.detail(roleDetailVo.getRoleId());
         RoleDetailOutVo roleDetailOutVo = new RoleDetailOutVo();
         BeanUtils.copyProperties(roleDetailDto, roleDetailOutVo);
-        List<PermissionDto> permissionDtos = roleDetailDto.getPermissions();
+        List<ResourcePermissionDto> permissionDtos = roleDetailDto.getResourcePermissions();
         if (null != permissionDtos && !permissionDtos.isEmpty()) {
-            List<Long> permissionIds = permissionDtos.stream().map(PermissionDto::getId).collect(Collectors.toList());
-            List<String> permissions = permissionDtos.stream().map(PermissionDto::getDescription).collect(Collectors.toList());
+            List<String> resources = permissionDtos.stream().map(ResourcePermissionDto::getResource)
+                    .collect(Collectors.toList());
+            List<String> permissions = permissionDtos.stream().map(ResourcePermissionDto::getPermission)
+                    .collect(Collectors.toList());
             roleDetailOutVo.setPermissions(permissions);
-            roleDetailOutVo.setPermissionIds(permissionIds);
+            roleDetailOutVo.setResources(resources);
         }
         return succeed(roleDetailOutVo);
     }

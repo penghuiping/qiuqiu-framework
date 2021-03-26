@@ -16,7 +16,8 @@ import com.php25.common.redis.RedisManager;
 import com.php25.qiuqiu.user.constant.UserConstants;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
-import com.php25.qiuqiu.user.dto.permission.PermissionDto;
+import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
+import com.php25.qiuqiu.user.dto.role.ResourcePermission0Dto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.user.TokenDto;
 import com.php25.qiuqiu.user.dto.user.UserCreateDto;
@@ -25,12 +26,11 @@ import com.php25.qiuqiu.user.dto.user.UserPageDto;
 import com.php25.qiuqiu.user.dto.user.UserSessionDto;
 import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 import com.php25.qiuqiu.user.model.Group;
-import com.php25.qiuqiu.user.model.Permission;
 import com.php25.qiuqiu.user.model.Role;
-import com.php25.qiuqiu.user.model.RoleRef;
+import com.php25.qiuqiu.user.model.RoleResourcePermission;
 import com.php25.qiuqiu.user.model.User;
+import com.php25.qiuqiu.user.model.UserRole;
 import com.php25.qiuqiu.user.repository.GroupRepository;
-import com.php25.qiuqiu.user.repository.PermissionRepository;
 import com.php25.qiuqiu.user.repository.RoleRepository;
 import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.service.RoleService;
@@ -67,8 +67,6 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     private final GroupRepository groupRepository;
-
-    private final PermissionRepository permissionRepository;
 
     private final RedisManager redisManager;
 
@@ -164,24 +162,22 @@ public class UserServiceImpl implements UserService {
         userDto.setEnable(user.getEnable());
 
         //权限
-        List<Long> permissionIds = roleRepository.getPermissionIdsByRoleIds(roleIds);
-        List<Permission> permissions = (List<Permission>) permissionRepository.findAllById(permissionIds);
-        Set<PermissionDto> permissionDtos = permissions.stream().map(permission -> {
-            PermissionDto permissionDto = new PermissionDto();
+        List<RoleResourcePermission> permissions = roleRepository.getPermissionsByRoleIds(roleIds);
+        Set<ResourcePermission0Dto> permissionDtos = permissions.stream().map(permission -> {
+            ResourcePermission0Dto permissionDto = new ResourcePermission0Dto();
             BeanUtils.copyProperties(permission, permissionDto);
             return permissionDto;
         }).collect(Collectors.toSet());
         userDto.setPermissions(permissionDtos);
 
         //组
-        Optional<Group> groupOptional = groupRepository.findByIdEnable(user.getGroupId());
-        if (!groupOptional.isPresent()) {
-            throw Exceptions.throwImpossibleException();
+        Optional<Group> groupOptional = groupRepository.findById(user.getGroupId());
+        if(groupOptional.isPresent()) {
+            Group group = groupOptional.get();
+            GroupDto groupDto = new GroupDto();
+            BeanUtils.copyProperties(group,groupDto);
+            userDto.setGroup(groupDto);
         }
-        Group group = groupOptional.get();
-        GroupDto groupDto = new GroupDto();
-        BeanUtils.copyProperties(group, groupDto);
-        userDto.setGroup(groupDto);
         return userDto;
     }
 
@@ -207,24 +203,23 @@ public class UserServiceImpl implements UserService {
         userDto.setEnable(user.getEnable());
 
         //权限
-        List<Long> permissionIds = roleRepository.getPermissionIdsByRoleIds(roleIds);
-        List<Permission> permissions = (List<Permission>) permissionRepository.findAllById(permissionIds);
-        Set<PermissionDto> permissionDtos = permissions.stream().map(permission -> {
-            PermissionDto permissionDto = new PermissionDto();
+        List<RoleResourcePermission> permissions = roleRepository.getPermissionsByRoleIds(roleIds);
+        Set<ResourcePermission0Dto> permissionDtos = permissions.stream().map(permission -> {
+            ResourcePermission0Dto permissionDto = new ResourcePermission0Dto();
             BeanUtils.copyProperties(permission, permissionDto);
             return permissionDto;
         }).collect(Collectors.toSet());
         userDto.setPermissions(permissionDtos);
 
         //组
-        Optional<Group> groupOptional = groupRepository.findByIdEnable(user.getGroupId());
-        if (!groupOptional.isPresent()) {
-            throw Exceptions.throwImpossibleException();
+        //组
+        Optional<Group> groupOptional = groupRepository.findById(user.getGroupId());
+        if(groupOptional.isPresent()) {
+            Group group = groupOptional.get();
+            GroupDto groupDto = new GroupDto();
+            BeanUtils.copyProperties(group,groupDto);
+            userDto.setGroup(groupDto);
         }
-        Group group = groupOptional.get();
-        GroupDto groupDto = new GroupDto();
-        BeanUtils.copyProperties(group, groupDto);
-        userDto.setGroup(groupDto);
         return userDto;
     }
 
@@ -239,8 +234,8 @@ public class UserServiceImpl implements UserService {
         Set<RoleDto> roles = userSessionDto.getRoles();
         for (RoleDto roleDto : roles) {
             String roleName = roleDto.getName();
-            Set<PermissionDto> permissions = roleService.getPermissionsByRoleName(roleName);
-            for (PermissionDto permissionDto : permissions) {
+            Set<ResourcePermissionDto> permissions = roleService.getPermissionsByRoleName(roleName);
+            for (ResourcePermissionDto permissionDto : permissions) {
                 if (antPathMatcher.match("/**" + permissionDto.getUri(), uri)) {
                     return true;
                 }
@@ -280,8 +275,8 @@ public class UserServiceImpl implements UserService {
         user.setIsNew(true);
         userRepository.save(user);
 
-        List<RoleRef> roleRefs = userCreateDto.getRoleIds().stream().map(roleId -> {
-            RoleRef roleRef = new RoleRef();
+        List<UserRole> roleRefs = userCreateDto.getRoleIds().stream().map(roleId -> {
+            UserRole roleRef = new UserRole();
             roleRef.setRoleId(roleId);
             roleRef.setUserId(user.getId());
             return roleRef;
@@ -300,8 +295,8 @@ public class UserServiceImpl implements UserService {
         user.setIsNew(false);
         userRepository.save(user);
         if (null != userUpdateDto.getRoleIds() && !userUpdateDto.getRoleIds().isEmpty()) {
-            List<RoleRef> roleRefs = userUpdateDto.getRoleIds().stream().map(roleId -> {
-                RoleRef roleRef = new RoleRef();
+            List<UserRole> roleRefs = userUpdateDto.getRoleIds().stream().map(roleId -> {
+                UserRole roleRef = new UserRole();
                 roleRef.setRoleId(roleId);
                 roleRef.setUserId(user.getId());
                 return roleRef;
@@ -329,11 +324,11 @@ public class UserServiceImpl implements UserService {
         UserSessionDto userSessionDto = new UserSessionDto();
         userSessionDto.setUsername(username);
         userSessionDto.setJti(jti);
-
         UserDto userDto = this.getUserInfo(username);
         //角色
         userSessionDto.setRoles(userDto.getRoles());
-        userSessionDto.setGroupId(userDto.getGroup().getId());
+        GroupDto groupDto = userDto.getGroup();
+        userSessionDto.setGroupId(groupDto.getId());
         redisManager.string().set(getRedisSessionKey(username), userSessionDto, expireTime);
         return userSessionDto;
     }

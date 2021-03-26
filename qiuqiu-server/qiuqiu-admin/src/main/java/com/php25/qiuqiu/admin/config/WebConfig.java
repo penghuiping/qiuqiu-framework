@@ -6,6 +6,7 @@ import com.php25.common.flux.web.APIVersionHandlerMapping;
 import com.php25.common.flux.web.XssRequestBodyAdvice;
 import com.php25.common.flux.web.XssSafeHtml;
 import com.php25.qiuqiu.admin.interceptor.JwtAuthInterceptor;
+import com.php25.qiuqiu.admin.interceptor.LogInterceptor;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.hibernate.validator.internal.constraintvalidators.hv.SafeHtmlValidator;
 import org.jsoup.safety.Whitelist;
@@ -33,8 +34,12 @@ public class WebConfig extends WebMvcConfigurationSupport {
     @Autowired
     JwtAuthInterceptor jwtAuthInterceptor;
 
+    @Autowired
+    LogInterceptor logInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(logInterceptor).addPathPatterns("/v1/**/**");
         registry.addInterceptor(jwtAuthInterceptor).addPathPatterns("/v1/**/**").excludePathPatterns("/v1/user/login","/v1/loan/**");
 
     }

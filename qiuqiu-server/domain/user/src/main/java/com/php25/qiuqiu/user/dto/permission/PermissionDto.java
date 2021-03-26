@@ -12,15 +12,10 @@ import lombok.Setter;
 @Getter
 @EqualsAndHashCode
 public class PermissionDto {
-
-    private Long id;
-
     private String name;
 
     @EqualsAndHashCode.Exclude
     private String description;
-
-    private String uri;
 
     private Boolean enable;
 }

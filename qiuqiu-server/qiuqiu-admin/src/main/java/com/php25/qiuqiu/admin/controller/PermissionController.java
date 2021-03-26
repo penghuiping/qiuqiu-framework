@@ -41,15 +41,15 @@ public class PermissionController extends JSONController {
     /**
      * 获取系统中所有内置权限
      */
-    @ApiDoc(result = TreeVo.class, url = "/qiuqiu_admin/v1/permission/getAll")
+    @ApiDoc(result = TreeVo.class, url = "/qiuqiu_admin/v1/permission/get_all")
     @APIVersion("v1")
-    @PostMapping("/getAll")
+    @PostMapping("/get_all")
     public JSONResponse getAll(@RequestAttribute @NotBlank String username) {
         List<PermissionDto> permissions = permissionService.getAll();
         List<TreeVo> permissionVos = permissions.stream().map(permissionDto -> {
             TreeVo permissionVo = new TreeVo();
-            permissionVo.setId(permissionDto.getId() + "");
-            permissionVo.setValue(permissionDto.getId() + "");
+            permissionVo.setId(permissionDto.getName());
+            permissionVo.setValue(permissionDto.getName());
             permissionVo.setLabel(permissionDto.getDescription());
             return permissionVo;
         }).collect(Collectors.toList());
@@ -63,7 +63,7 @@ public class PermissionController extends JSONController {
     @APIVersion("v1")
     @PostMapping("/page")
     public JSONResponse page(@RequestAttribute @NotBlank String username) {
-        DataGridPageDto<PermissionDto> page = permissionService.page("", 1, 1000);
+        DataGridPageDto<PermissionDto> page = permissionService.page("", 1, 100);
         List<PermissionVo> permissionVos = page.getData().stream().map(permissionDto -> {
             PermissionVo permissionVo = new PermissionVo();
             BeanUtils.copyProperties(permissionDto, permissionVo);
@@ -109,6 +109,6 @@ public class PermissionController extends JSONController {
     @APIVersion("v1")
     @PostMapping("/delete")
     public JSONResponse delete(@Valid @RequestBody PermissionDeleteVo permissionVo) {
-        return succeed(permissionService.delete(permissionVo.getPermissionIds()));
+        return succeed(permissionService.delete(permissionVo.getPermission()));
     }
 }

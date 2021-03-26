@@ -7,6 +7,7 @@ import Component from 'vue-class-component'
 @Component
 class BaseVue extends Vue {
   private permissions = Permission.permissions
+  private resources = Permission.resources
 
   get token () {
     let token1 = this.$store.state.token
@@ -61,8 +62,8 @@ class BaseVue extends Vue {
     loading.close()
   }
 
-  permissionExists (permission: string): boolean {
-    return Permission.exists(permission)
+  permissionExists (resource: string, permission: string): boolean {
+    return Permission.exists(resource, permission)
   }
 }
 

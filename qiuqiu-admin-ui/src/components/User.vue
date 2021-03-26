@@ -13,7 +13,7 @@
     </el-row>
     <!--操作栏-->
     <el-button-group>
-      <el-button type="primary" @click="handleCreateUser" v-if="permissionExists(permissions.USER_ADD)">新增</el-button>
+      <el-button type="primary" @click="handleCreateUser" v-if="permissionExists(resources.USER,permissions.ADD)">新增</el-button>
     </el-button-group>
     <!--数据表格-->
     <el-table
@@ -75,7 +75,7 @@
           <el-button
             size="small"
             type="text"
-            @click.native.prevent="deleteRow(scope.$index, tableData)" v-if="permissionExists(permissions.USER_DELETE)">
+            @click.native.prevent="deleteRow(scope.$index, tableData)" v-if="permissionExists(resources.USER,permissions.DELETE)">
             删除
           </el-button>
           <el-button

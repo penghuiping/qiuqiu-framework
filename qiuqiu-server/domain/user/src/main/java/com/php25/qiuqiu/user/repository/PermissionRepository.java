@@ -9,13 +9,14 @@ import java.util.List;
  * @author penghuiping
  * @date 2021/3/5 17:40
  */
-public interface PermissionRepository extends BaseDbRepository<Permission, Long> {
+public interface PermissionRepository extends BaseDbRepository<Permission, String> {
+
 
     /**
-     * 根据权限id列表获取角色列表
+     * 判断权限是否被资源所引用
      *
-     * @param permissionIds 权限id列表
-     * @return 角色id列表
+     * @param permissionName 权限名
+     * @return true:被引用
      */
-    List<Long> getRoleIdsByPermissionIds(List<Long> permissionIds);
+    Boolean hasReferencedByResource(String permissionName);
 }

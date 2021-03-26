@@ -1,8 +1,9 @@
 package com.php25.qiuqiu.user.repository;
 
 import com.php25.common.db.repository.BaseDbRepository;
-import com.php25.qiuqiu.user.model.PermissionRef;
+import com.php25.qiuqiu.user.model.ResourcePermission;
 import com.php25.qiuqiu.user.model.Role;
+import com.php25.qiuqiu.user.model.RoleResourcePermission;
 
 import java.util.List;
 
@@ -13,20 +14,19 @@ import java.util.List;
 public interface RoleRepository extends BaseDbRepository<Role, Long> {
 
     /**
-     * 根据角色id获取对应的权限ids
-     *
-     * @param roleIds 角色ids
-     * @return 权限ids
-     */
-    List<Long> getPermissionIdsByRoleIds(List<Long> roleIds);
-
-    /**
-     * 根据角色id获取对应的权限ids
+     * 角色权限关系
      *
      * @param roleId 角色id
-     * @return 权限ids;
      */
-    List<Long> getPermissionIdsByRoleId(Long roleId);
+    List<RoleResourcePermission> getPermissionsByRoleId(Long roleId);
+
+    /**
+     * 角色权限关系(可能有重复)
+     *
+     * @param roleIds 角色id列表
+     * @return 角色权限关系
+     */
+    List<RoleResourcePermission> getPermissionsByRoleIds(List<Long> roleIds);
 
     /**
      * 创建角色与权限关系
@@ -34,7 +34,7 @@ public interface RoleRepository extends BaseDbRepository<Role, Long> {
      * @param permissionRefs 角色与权限关系
      * @return true:成功
      */
-    boolean createPermissionRefs(List<PermissionRef> permissionRefs);
+    boolean createPermissionRefs(List<RoleResourcePermission> permissionRefs);
 
 
     /**

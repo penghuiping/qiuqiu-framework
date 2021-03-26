@@ -29,9 +29,9 @@ public class RoleDetailOutVo {
     private String description;
 
     /**
-     * 权限id列表
+     * 资源名列表
      */
-    private List<Long> permissionIds;
+    private List<String> resources;
 
     /**
      * 权限名列表

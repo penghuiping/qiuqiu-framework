@@ -2,7 +2,7 @@
   <div>
     <!--操作栏-->
     <el-button-group>
-      <el-button type="primary" @click="create" v-if="permissionExists(permissions.PERMISSION_ADD)">新增
+      <el-button type="primary" @click="create" v-if="permissionExists(resources.PERMISSION,permissions.ADD)">新增
       </el-button>
     </el-button-group>
     <!--数据表格-->
@@ -46,21 +46,21 @@
         width="200">
         <template slot-scope="scope">
           <el-button @click="update(scope.row)" type="text" size="small"
-                     v-if="permissionExists(permissions.PERMISSION_UPDATE)">
+                     v-if="permissionExists(resources.PERMISSION,permissions.UPDATE)">
             编辑
           </el-button>
           <el-button
             size="small"
             type="text"
             @click.native.prevent="deleteConfirm(scope.$index, tableData)"
-            v-if="permissionExists(permissions.PERMISSION_DELETE)">
+            v-if="permissionExists(resources.PERMISSION,permissions.DELETE)">
             删除
           </el-button>
           <el-button
             size="small"
             type="text"
             @click.native.prevent="toggleEnable(scope.$index, tableData)"
-            v-if="permissionExists(permissions.PERMISSION_UPDATE)">
+            v-if="permissionExists(resources.PERMISSION,permissions.UPDATE)">
             {{ scope.row.enable ? '使无效' : '使有效' }}
           </el-button>
         </template>
@@ -167,7 +167,7 @@ export default class Permission extends BaseVue {
       type: 'warning'
     }).then(async () => {
       const permission = rows[index]
-      const res = await PermissionApi.delete(permission.id)
+      const res = await PermissionApi.delete(permission.name)
       if (res && res.data.data) {
         rows.splice(index, 1)
         this.$message({

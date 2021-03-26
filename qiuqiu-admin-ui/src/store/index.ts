@@ -8,7 +8,7 @@ export default new Vuex.Store({
   state: {
     token: '',
     user: {},
-    userPermissions: new Set<string>(),
+    userPermissions: new Map<string, Set<string>>(),
     ws: {}
   },
   mutations: {

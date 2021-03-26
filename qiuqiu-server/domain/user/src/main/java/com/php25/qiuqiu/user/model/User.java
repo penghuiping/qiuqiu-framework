@@ -61,9 +61,6 @@ public class User implements Persistable<Long> {
     @Column("last_modified_time")
     private LocalDateTime lastModifiedTime;
 
-    /**
-     * 组织机构部门
-     */
     @Column("group_id")
     private Long groupId;
 

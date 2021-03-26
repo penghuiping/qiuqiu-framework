@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.user.dto.role;
 
-import com.php25.qiuqiu.user.dto.permission.PermissionDto;
+import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,9 +30,9 @@ public class RoleDetailDto {
     private String description;
 
     /**
-     * 权限列表
+     * (资源+权限)列表
      */
-    private List<PermissionDto> permissions;
+    private List<ResourcePermissionDto> resourcePermissions;
 
     /**
      * 0:无效 1:有效

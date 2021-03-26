@@ -13,6 +13,4 @@ public class PermissionCreateDto {
     private String name;
 
     private String description;
-
-    private String uri;
 }

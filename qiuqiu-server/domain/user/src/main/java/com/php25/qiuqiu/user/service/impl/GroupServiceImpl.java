@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.user.service.impl;
 
+import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.tree.TreeNode;
 import com.php25.common.core.tree.Trees;
@@ -16,8 +17,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -53,12 +57,22 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<Long> findGroupsId(String username) {
-        UserSessionDto userSession = userService.getUserSession(username);
-        Long groupId = userSession.getGroupId();
-        GroupDto groupDto = this.findById(groupId);
+        Long groupId = findGroupId(username);
+        List<Group> groups = groupRepository.findEnabledGroupsByIds(Lists.newArrayList(groupId));
+        List<GroupDto> groupDtos = groups.stream().map(group -> {
+            GroupDto groupDto = new GroupDto();
+            BeanUtils.copyProperties(group,groupDto);
+            return groupDto;
+        }).collect(Collectors.toList());
         TreeNode<GroupDto> groupTree = this.getAllGroupTree();
-        List<GroupDto> groups = Trees.getAllSuccessorNodes(groupTree, groupDto);
-        return groups.stream().map(GroupDto::getId).collect(Collectors.toList());
+
+        Set<Long> res  = new HashSet<>();
+        for(GroupDto groupDto:groupDtos) {
+            List<GroupDto> group0s = Trees.getAllSuccessorNodes(groupTree, groupDto);
+            List<Long> tmp = group0s.stream().map(GroupDto::getId).collect(Collectors.toList());
+            res.addAll(tmp);
+        }
+        return new ArrayList<>(res);
     }
 
     @Override

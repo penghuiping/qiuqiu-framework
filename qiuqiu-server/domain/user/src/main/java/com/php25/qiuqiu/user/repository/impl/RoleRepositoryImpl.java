@@ -1,19 +1,17 @@
 package com.php25.qiuqiu.user.repository.impl;
 
-import com.google.common.collect.Lists;
 import com.php25.common.db.DbType;
 import com.php25.common.db.Queries;
 import com.php25.common.db.QueriesExecute;
 import com.php25.common.db.core.sql.SqlParams;
 import com.php25.common.db.repository.BaseDbRepositoryImpl;
-import com.php25.qiuqiu.user.model.PermissionRef;
 import com.php25.qiuqiu.user.model.Role;
+import com.php25.qiuqiu.user.model.RoleResourcePermission;
 import com.php25.qiuqiu.user.repository.RoleRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author penghuiping
@@ -26,51 +24,35 @@ public class RoleRepositoryImpl extends BaseDbRepositoryImpl<Role, Long> impleme
         super(jdbcTemplate, dbType);
     }
 
-
     @Override
-    public List<Long> getPermissionIdsByRoleIds(List<Long> roleIds) {
-        SqlParams sqlParams = Queries.of(dbType).from(PermissionRef.class)
-                .whereIn("roleId", roleIds)
-                .select();
-        List<PermissionRef> list = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
-        if (null != list && !list.isEmpty()) {
-            return list.stream().map(PermissionRef::getPermissionId).distinct().collect(Collectors.toList());
-        } else {
-            return Lists.newArrayList();
-        }
-    }
-
-
-    @Override
-    public List<Long> getPermissionIdsByRoleId(Long roleId) {
-        SqlParams sqlParams = Queries.of(dbType).from(PermissionRef.class)
-                .whereEq("roleId", roleId)
-                .select();
-        List<PermissionRef> list = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
-        if (null != list && !list.isEmpty()) {
-            return list.stream().map(PermissionRef::getPermissionId).distinct().collect(Collectors.toList());
-        } else {
-            return Lists.newArrayList();
-        }
+    public List<RoleResourcePermission> getPermissionsByRoleId(Long roleId) {
+        SqlParams sqlParams = Queries.of(dbType).from(RoleResourcePermission.class).whereEq("roleId", roleId).select();
+        return QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
     }
 
     @Override
-    public boolean createPermissionRefs(List<PermissionRef> permissionRefs) {
-        SqlParams sqlParams = Queries.of(dbType).from(PermissionRef.class).insertBatch(permissionRefs);
+    public List<RoleResourcePermission> getPermissionsByRoleIds(List<Long> roleIds) {
+        SqlParams sqlParams = Queries.of(dbType).from(RoleResourcePermission.class).whereIn("roleId", roleIds).select();
+        return QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
+    }
+
+    @Override
+    public boolean createPermissionRefs(List<RoleResourcePermission> permissionRefs) {
+        SqlParams sqlParams = Queries.of(dbType).from(RoleResourcePermission.class).insertBatch(permissionRefs);
         QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).insertBatch(sqlParams);
         return true;
     }
 
     @Override
     public boolean deletePermissionRefsByRoleId(Long roleId) {
-        SqlParams sqlParams = Queries.of(dbType).from(PermissionRef.class).whereEq("roleId", roleId).delete();
+        SqlParams sqlParams = Queries.of(dbType).from(RoleResourcePermission.class).whereEq("roleId", roleId).delete();
         QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).delete(sqlParams);
         return true;
     }
 
     @Override
     public boolean deletePermissionRefsByRoleIds(List<Long> roleIds) {
-        SqlParams sqlParams = Queries.of(dbType).from(PermissionRef.class).whereIn("roleId", roleIds).delete();
+        SqlParams sqlParams = Queries.of(dbType).from(RoleResourcePermission.class).whereIn("roleId", roleIds).delete();
         QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).delete(sqlParams);
         return true;
     }

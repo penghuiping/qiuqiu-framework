@@ -7,16 +7,17 @@ import com.php25.common.db.specification.Operator;
 import com.php25.common.db.specification.SearchParam;
 import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
-import com.php25.qiuqiu.user.dto.permission.PermissionDto;
+import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
+import com.php25.qiuqiu.user.dto.role.ResourcePermission0Dto;
 import com.php25.qiuqiu.user.dto.role.RoleCreateDto;
 import com.php25.qiuqiu.user.dto.role.RoleDetailDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.role.RolePageDto;
 import com.php25.qiuqiu.user.dto.role.RoleUpdateDto;
-import com.php25.qiuqiu.user.model.Permission;
-import com.php25.qiuqiu.user.model.PermissionRef;
+import com.php25.qiuqiu.user.model.ResourcePermission;
 import com.php25.qiuqiu.user.model.Role;
-import com.php25.qiuqiu.user.repository.PermissionRepository;
+import com.php25.qiuqiu.user.model.RoleResourcePermission;
+import com.php25.qiuqiu.user.repository.ResourceRepository;
 import com.php25.qiuqiu.user.repository.RoleRepository;
 import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.service.RoleService;
@@ -29,7 +30,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,9 +51,9 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
 
     private final UserRepository userRepository;
 
-    private final PermissionRepository permissionRepository;
+    private final ResourceRepository resourceRepository;
 
-    private Map<String, Set<PermissionDto>> rolePermissionMap;
+    private Map<String, Set<ResourcePermissionDto>> rolePermissionMap;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -67,17 +70,17 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
         roleRepository.save(role0);
 
         //role与permission关系
-        List<Long> permissionIds = role.getPermissionIds();
-        if (null != permissionIds && !permissionIds.isEmpty()) {
-            List<PermissionRef> permissionRefs = permissionIds.stream().map(permissionId -> {
-                PermissionRef permissionRef = new PermissionRef();
-                permissionRef.setPermissionId(permissionId);
-                permissionRef.setRoleId(role0.getId());
-                return permissionRef;
+        List<ResourcePermission0Dto> permissions = role.getResourcePermissions();
+        if (null != permissions && !permissions.isEmpty()) {
+            List<RoleResourcePermission> permissionRefs = permissions.stream().map(resourcePermission -> {
+                RoleResourcePermission roleResourcePermission = new RoleResourcePermission();
+                roleResourcePermission.setPermission(resourcePermission.getPermission());
+                roleResourcePermission.setResource(resourcePermission.getResource());
+                roleResourcePermission.setRoleId(role0.getId());
+                return roleResourcePermission;
             }).collect(Collectors.toList());
             roleRepository.createPermissionRefs(permissionRefs);
         }
-
         this.clearPermissionRelation();
         return true;
     }
@@ -91,15 +94,16 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
         roleRepository.save(role0);
 
         //role与permission关系
-        List<Long> permissionIds = role.getPermissionIds();
-        if (null != permissionIds && !permissionIds.isEmpty()) {
+        List<ResourcePermission0Dto> permissions = role.getResourcePermissions();
+        if (null != permissions && !permissions.isEmpty()) {
             //先删除
             roleRepository.deletePermissionRefsByRoleId(role0.getId());
-            List<PermissionRef> permissionRefs = permissionIds.stream().map(permissionId -> {
-                PermissionRef permissionRef = new PermissionRef();
-                permissionRef.setPermissionId(permissionId);
-                permissionRef.setRoleId(role0.getId());
-                return permissionRef;
+            List<RoleResourcePermission> permissionRefs = permissions.stream().map(resourcePermission -> {
+                RoleResourcePermission roleResourcePermission = new RoleResourcePermission();
+                roleResourcePermission.setPermission(resourcePermission.getPermission());
+                roleResourcePermission.setResource(resourcePermission.getResource());
+                roleResourcePermission.setRoleId(role0.getId());
+                return roleResourcePermission;
             }).collect(Collectors.toList());
             roleRepository.createPermissionRefs(permissionRefs);
         }
@@ -158,14 +162,21 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
         this.rolePermissionMap = new HashMap<>(256);
         List<Role> roles = roleRepository.findAllEnabled();
         for (Role role : roles) {
-            List<Long> permissionIds = roleRepository.getPermissionIdsByRoleId(role.getId());
-            List<Permission> permissions = (List<Permission>) permissionRepository.findAllById(permissionIds);
-            Set<PermissionDto> permissionDtos = permissions.stream().map(permission -> {
-                PermissionDto permissionDto = new PermissionDto();
-                BeanUtils.copyProperties(permission, permissionDto);
-                return permissionDto;
-            }).collect(Collectors.toSet());
-            this.rolePermissionMap.put(role.getName(), permissionDtos);
+            List<RoleResourcePermission> roleResourcePermissions = roleRepository.getPermissionsByRoleId(role.getId());
+            List<ResourcePermission> resourcePermissions = resourceRepository.getAllResourcePermissions();
+            Set<ResourcePermissionDto> set = new HashSet<>();
+            for (ResourcePermission resourcePermission : resourcePermissions) {
+                for (RoleResourcePermission permission : roleResourcePermissions) {
+                    if (resourcePermission.getPermission().equals(permission.getPermission())
+                            && resourcePermission.getResource().equals(permission.getResource())
+                    ) {
+                        ResourcePermissionDto resourcePermissionDto = new ResourcePermissionDto();
+                        BeanUtils.copyProperties(resourcePermission, resourcePermissionDto);
+                        set.add(resourcePermissionDto);
+                    }
+                }
+            }
+            this.rolePermissionMap.put(role.getName(), set);
         }
     }
 
@@ -176,7 +187,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
     }
 
     @Override
-    public Set<PermissionDto> getPermissionsByRoleName(String roleName) {
+    public Set<ResourcePermissionDto> getPermissionsByRoleName(String roleName) {
         synchronized (this) {
             if (null == this.rolePermissionMap || this.rolePermissionMap.isEmpty()) {
                 this.loadPermissionRelation();
@@ -188,22 +199,15 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
     @Override
     public RoleDetailDto detail(Long roleId) {
         Optional<Role> roleOptional = roleRepository.findById(roleId);
-        if(!roleOptional.isPresent()) {
+        if (!roleOptional.isPresent()) {
             throw Exceptions.throwBusinessException(UserErrorCode.ROLE_DATA_NOT_EXISTS);
         }
         Role role = roleOptional.get();
         RoleDetailDto roleDetailDto = new RoleDetailDto();
-        BeanUtils.copyProperties(role,roleDetailDto);
+        BeanUtils.copyProperties(role, roleDetailDto);
         roleDetailDto.setEnable(role.getEnable());
-
-        List<Long> permissionIds0 = roleRepository.getPermissionIdsByRoleId(roleId);
-        List<Permission> permissions = (List<Permission>)permissionRepository.findAllById(permissionIds0);
-        List<PermissionDto> permissionDtos = permissions.stream().map(permission -> {
-            PermissionDto permissionDto = new PermissionDto();
-            BeanUtils.copyProperties(permission,permissionDto);
-            return permissionDto;
-        }).collect(Collectors.toList());
-        roleDetailDto.setPermissions(permissionDtos);
+        Set<ResourcePermissionDto> resourcePermissionDtos = getPermissionsByRoleName(role.getName());
+        roleDetailDto.setResourcePermissions(new ArrayList<>(resourcePermissionDtos));
         return roleDetailDto;
     }
 }

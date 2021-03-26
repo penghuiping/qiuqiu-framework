@@ -1,3 +1,5 @@
+import { ResourcePermissionsVo } from '@/api/vo/resouce'
+
 class TokenVo {
   expireTime: string
   token: string
@@ -98,7 +100,7 @@ class UserDetailVo {
   createTime: string
   lastModifiedTime: string
   enable: boolean
-  permissions: string[]
+  resourcePermissions: ResourcePermissionsVo[]
 
   constructor (
     id: number,
@@ -111,7 +113,7 @@ class UserDetailVo {
     createTime: string,
     lastModifiedTime: string,
     enable: boolean,
-    permissions: string[]) {
+    resourcePermissions: ResourcePermissionsVo[]) {
     this.id = id
     this.username = username
     this.nickname = nickname
@@ -122,7 +124,7 @@ class UserDetailVo {
     this.createTime = createTime
     this.lastModifiedTime = lastModifiedTime
     this.enable = enable
-    this.permissions = permissions
+    this.resourcePermissions = resourcePermissions
   }
 
   static newInstant (): UserDetailVo {

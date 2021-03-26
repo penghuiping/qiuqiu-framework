@@ -1,7 +1,9 @@
 package com.php25.qiuqiu.user.dto.role;
 
+import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class RoleCreateDto {
     private String description;
 
     /**
-     * 权限列表
+     * (资源+权限)列表
      */
-    private List<Long> permissionIds;
+    private List<ResourcePermission0Dto> resourcePermissions;
 }

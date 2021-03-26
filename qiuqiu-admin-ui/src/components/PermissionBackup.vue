@@ -163,7 +163,7 @@ export default class Permission extends BaseVue {
       type: 'warning'
     }).then(async () => {
       const permissionVo = rows[index]
-      const res = await PermissionApi.delete(permissionVo.id)
+      const res = await PermissionApi.delete(permissionVo.name)
       if (res && res.data.data) {
         rows.splice(index, 1)
         this.$message({

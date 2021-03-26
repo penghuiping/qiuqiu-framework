@@ -26,4 +26,12 @@ public interface GroupRepository extends BaseDbRepository<Group, Long> {
      * @return 子节点数量
      */
     Long countByParentId(Long parentId);
+
+    /**
+     * 通过组id列表获取有效的组信息
+     *
+     * @param groupIds 组id列表
+     * @return 组列表信息
+     */
+    List<Group> findEnabledGroupsByIds(List<Long> groupIds);
 }

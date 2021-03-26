@@ -19,9 +19,4 @@ public class PermissionCreateVo {
      * 权限描述
      */
     private String description;
-
-    /**
-     * 权限对应的接口uri地址
-     */
-    private String uri;
 }

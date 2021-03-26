@@ -13,7 +13,7 @@ class JobApi {
   }
 
   public static findAll (): Promise<AxiosResponse<JsonResponse<JobVo[]>>> {
-    return axios.post(ApiConstant.JOB_find_all)
+    return axios.post(ApiConstant.JOB_FIND_ALL)
   }
 
   public static create (job: JobCreateVo): Promise<AxiosResponse<JsonResponse<boolean>>> {

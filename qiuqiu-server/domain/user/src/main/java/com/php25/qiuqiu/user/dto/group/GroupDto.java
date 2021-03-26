@@ -1,6 +1,7 @@
 package com.php25.qiuqiu.user.dto.group;
 
 import com.php25.common.core.tree.TreeAble;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
+@EqualsAndHashCode
 public class GroupDto implements TreeAble<Long> {
 
     /**
@@ -25,11 +27,13 @@ public class GroupDto implements TreeAble<Long> {
     /**
      * 组织描述
      */
+    @EqualsAndHashCode.Exclude
     private String description;
 
     /**
      * 父组织id
      */
+    @EqualsAndHashCode.Exclude
     private Long parentId;
 
 }

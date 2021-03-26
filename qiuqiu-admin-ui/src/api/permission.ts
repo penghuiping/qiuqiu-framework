@@ -12,9 +12,9 @@ class PermissionApi {
     return axios.post(ApiConstant.PERMISSION_UPDATE, permission)
   }
 
-  public static delete (id: number): Promise<AxiosResponse<JsonResponse<boolean>>> {
+  public static delete (name: string): Promise<AxiosResponse<JsonResponse<boolean>>> {
     return axios.post(ApiConstant.PERMISSION_DELETE, {
-      permissionIds: [id]
+      permissionIds: [name]
     })
   }
 

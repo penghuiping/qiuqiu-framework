@@ -3,50 +3,47 @@
     <el-aside>
       <el-menu :collapse="isCollapse" class="el-menu-vertical" default-active="1-4-1" @close="handleClose"
                @open="handleOpen">
-        <el-menu-item index="1" @click="menuClick('index')" v-if="permissionExists(permissions.HOME)">
+        <el-menu-item index="1" @click="menuClick('index')">
           <i class="el-icon-s-home"></i>
           <span slot="title">首页</span>
         </el-menu-item>
-        <el-submenu index="2" v-if="permissionExists(permissions.USER_LIST_SEARCH)
-        || permissionExists(permissions.ROLE_LIST_SEARCH)
-        || permissionExists(permissions.PERMISSION_LIST_SEARCH)
-        || permissionExists(permissions.GROUP_LIST_SEARCH)">
+        <el-submenu index="2" v-if="permissionExists(resources.USER,permissions.PAGE)
+        || permissionExists(resources.ROLE,permissions.PAGE)
+        || permissionExists(resources.PERMISSION,permissions.PAGE)
+        || permissionExists(resources.GROUP,permissions.PAGE)">
           <template slot="title">
             <i class="el-icon-user"></i>
             <span slot="title">权限管理</span>
           </template>
-          <el-menu-item index="2-1" @click="menuClick('user')" v-if="permissionExists(permissions.USER_LIST_SEARCH)">用户管理</el-menu-item>
-          <el-menu-item index="2-2" @click="menuClick('role')" v-if="permissionExists(permissions.ROLE_LIST_SEARCH)">角色管理</el-menu-item>
-          <el-menu-item index="2-3" @click="menuClick('permission')" v-if="permissionExists(permissions.PERMISSION_LIST_SEARCH)">权限管理</el-menu-item>
-          <el-menu-item index="2-4" @click="menuClick('group')" v-if="permissionExists(permissions.GROUP_LIST_SEARCH)">用户组管理</el-menu-item>
+          <el-menu-item index="2-1" @click="menuClick('user')" v-if="permissionExists(resources.USER,permissions.PAGE)">用户管理</el-menu-item>
+          <el-menu-item index="2-2" @click="menuClick('role')" v-if="permissionExists(resources.ROLE,permissions.PAGE)">角色管理</el-menu-item>
+          <el-menu-item index="2-3" @click="menuClick('permission')" v-if="permissionExists(resources.PERMISSION,permissions.PAGE)">权限管理</el-menu-item>
+          <el-menu-item index="2-4" @click="menuClick('group')" v-if="permissionExists(resources.GROUP,permissions.PAGE)">用户组管理</el-menu-item>
         </el-submenu>
 
-        <el-submenu index="3" v-if="permissionExists(permissions.AUDIT_LOG_LIST_SEARCH)
-        || permissionExists(permissions.REPORT_LIST_SEARCH)
-        || permissionExists(permissions.DICT_LIST_SEARCH)">
+        <el-submenu index="3" v-if="permissionExists(resources.AUDIT_LOG,permissions.PAGE)
+        || permissionExists(resources.DICT,permissions.PAGE)">
           <template slot="title">
             <i class="el-icon-s-tools"></i>
             <span slot="title">系统管理</span>
           </template>
-          <el-menu-item index="3-1" @click="menuClick('auditLog')" v-if="permissionExists(permissions.AUDIT_LOG_LIST_SEARCH)">审计日志</el-menu-item>
-          <el-menu-item index="3-2" @click="menuClick('dict')" v-if="permissionExists(permissions.DICT_LIST_SEARCH)">数据字典</el-menu-item>
-          <el-menu-item index="3-3" @click="menuClick('report')" v-if="permissionExists(permissions.REPORT_LIST_SEARCH)">表报</el-menu-item>
+          <el-menu-item index="3-1" @click="menuClick('auditLog')" v-if="permissionExists(resources.AUDIT_LOG,permissions.PAGE)">审计日志</el-menu-item>
+          <el-menu-item index="3-2" @click="menuClick('dict')" v-if="permissionExists(resources.DICT,permissions.PAGE)">数据字典</el-menu-item>
         </el-submenu>
 
-        <el-submenu index="4" v-if="permissionExists(permissions.JOB_LIST_SEARCH)
-                || permissionExists(permissions.JOB_LOG_LIST_SEARCH)
+        <el-submenu index="4" v-if="permissionExists(resources.JOB,permissions.PAGE)
+                || permissionExists(resources.JOB_EXECUTION,permissions.PAGE)
+                || permissionExists(resources.JOB_LOG,permissions.PAGE)
        ">
           <template slot="title">
             <i class="el-icon-s-tools"></i>
             <span slot="title">任务管理</span>
           </template>
-          <el-menu-item index="4-1" @click="menuClick('job')" v-if="permissionExists(permissions.JOB_LIST_SEARCH)">任务列表</el-menu-item>
-          <el-menu-item index="4-2" @click="menuClick('jobExecution')" v-if="permissionExists(permissions.JOB_LOG_LIST_SEARCH)">执行列表</el-menu-item>
-          <el-menu-item index="4-3" @click="menuClick('jobLog')" v-if="permissionExists(permissions.JOB_LOG_LIST_SEARCH)">执行日志</el-menu-item>
-
+          <el-menu-item index="4-1" @click="menuClick('job')" v-if="permissionExists(resources.JOB,permissions.PAGE)">任务列表</el-menu-item>
+          <el-menu-item index="4-2" @click="menuClick('jobExecution')" v-if="permissionExists(resources.JOB_EXECUTION,permissions.PAGE)">执行列表</el-menu-item>
+          <el-menu-item index="4-3" @click="menuClick('jobLog')" v-if="permissionExists(resources.JOB_LOG,permissions.PAGE)">执行日志</el-menu-item>
         </el-submenu>
-
-        <el-menu-item index="5" @click="menuClick('media')" v-if="permissionExists(permissions.MEDIA_LIST_SEARCH)">
+        <el-menu-item index="5" @click="menuClick('media')" v-if="permissionExists(resources.MEDIA,permissions.PAGE)">
           <i class="el-icon-menu"></i>
           <span slot="title">媒体管理</span>
         </el-menu-item>
@@ -153,7 +150,7 @@ export default class Home extends BaseVue {
   async mounted () {
     const res = await UserApi.info()
     this.nickname = res.data.data.nickname
-    Permission.mapToLocalPermissions(res.data.data.permissions)
+    Permission.mapToLocalPermissions(res.data.data.resourcePermissions)
     this.isCollapse = true
     this.addTab('index', '首页')
     this.toggleCollapse()

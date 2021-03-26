@@ -54,18 +54,15 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Boolean delete(List<Long> permissionIds) {
+    public Boolean delete(String permissionName) {
         //删除前判断是否有关联关系
-        List<Long> roleIds = permissionRepository.getRoleIdsByPermissionIds(permissionIds);
-        if (null != roleIds && !roleIds.isEmpty()) {
-            throw Exceptions.throwBusinessException(UserErrorCode.PERMISSION_HAS_BEEN_REFERENCED_BY_ROLE);
+        Boolean res = permissionRepository.hasReferencedByResource(permissionName);
+        if (res) {
+            throw Exceptions.throwBusinessException(UserErrorCode.PERMISSION_HAS_BEEN_REFERENCED_BY_RESOURCE);
         }
-        List<Permission> permissions = permissionIds.stream().map(permissionId -> {
-            Permission permission = new Permission();
-            permission.setId(permissionId);
-            return permission;
-        }).collect(Collectors.toList());
-        permissionRepository.deleteAll(permissions);
+        Permission permission = new Permission();
+        permission.setName(permissionName);
+        permissionRepository.delete(permission);
         return true;
     }
 
@@ -90,10 +87,10 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public List<PermissionDto> getAll() {
         List<Permission> permissions = permissionRepository.findAllEnabled();
-        if(null != permissions && !permissions.isEmpty()) {
+        if (null != permissions && !permissions.isEmpty()) {
             return permissions.stream().map(permission -> {
                 PermissionDto permissionDto = new PermissionDto();
-                BeanUtils.copyProperties(permission,permissionDto);
+                BeanUtils.copyProperties(permission, permissionDto);
                 return permissionDto;
             }).collect(Collectors.toList());
         }

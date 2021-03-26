@@ -7,7 +7,7 @@ import com.php25.common.db.QueriesExecute;
 import com.php25.common.db.core.sql.SqlParams;
 import com.php25.common.db.repository.BaseDbRepositoryImpl;
 import com.php25.qiuqiu.user.model.Permission;
-import com.php25.qiuqiu.user.model.PermissionRef;
+import com.php25.qiuqiu.user.model.ResourcePermission;
 import com.php25.qiuqiu.user.repository.PermissionRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -20,22 +20,15 @@ import java.util.stream.Collectors;
  * @date 2021/3/5 17:41
  */
 @Component
-public class PermissionRepositoryImpl extends BaseDbRepositoryImpl<Permission, Long> implements PermissionRepository {
+public class PermissionRepositoryImpl extends BaseDbRepositoryImpl<Permission, String> implements PermissionRepository {
 
     public PermissionRepositoryImpl(JdbcTemplate jdbcTemplate, DbType dbType) {
         super(jdbcTemplate, dbType);
     }
 
     @Override
-    public List<Long> getRoleIdsByPermissionIds(List<Long> permissionIds) {
-        SqlParams sqlParams = Queries.of(dbType).from(PermissionRef.class)
-                .whereIn("permissionId", permissionIds)
-                .select();
-        List<PermissionRef> list = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
-        if (null != list && !list.isEmpty()) {
-            return list.stream().map(PermissionRef::getRoleId).distinct().collect(Collectors.toList());
-        } else {
-            return Lists.newArrayList();
-        }
+    public Boolean hasReferencedByResource(String permissionName) {
+        SqlParams sqlParams = Queries.of(dbType).from(ResourcePermission.class).whereEq("permission", permissionName).count();
+        return QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).count(sqlParams) > 0;
     }
 }

@@ -32,10 +32,10 @@ public interface PermissionService {
     /**
      * 物理删除权限
      *
-     * @param permissionIds 权限id列表
+     * @param permissionName 权限名
      * @return true:删除成功
      */
-    Boolean delete(List<Long> permissionIds);
+    Boolean delete(String permissionName);
 
     /**
      * 权限列表分页查询

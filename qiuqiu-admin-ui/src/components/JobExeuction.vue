@@ -13,9 +13,9 @@
     </el-row>
     <!--操作栏-->
     <el-button-group>
-      <el-button type="primary" @click="create" v-if="permissionExists(permissions.JOB_EXECUTION_ADD)">新增</el-button>
-      <el-button type="primary" @click="refreshAll" v-if="permissionExists(permissions.JOB_EXECUTION_REFRESH_ALL)">整体刷新</el-button>
-      <el-button type="primary" @click="statistic" v-if="permissionExists(permissions.JOB_EXECUTION_STATISTIC)">统计执行任务加载情况</el-button>
+      <el-button type="primary" @click="create" v-if="permissionExists(resources.JOB_EXECUTION,permissions.ADD)">新增</el-button>
+      <el-button type="primary" @click="refreshAll" v-if="permissionExists(resources.JOB_EXECUTION,permissions.REFRESH_ALL)">整体刷新</el-button>
+      <el-button type="primary" @click="statistic" v-if="permissionExists(resources.JOB_EXECUTION,permissions.STATISTIC)">统计执行任务加载情况</el-button>
     </el-button-group>
     <!--数据表格-->
     <el-table
@@ -57,28 +57,28 @@
         width="200">
         <template slot-scope="scope">
           <el-button @click="update(scope.row)" type="text" size="small"
-                     v-if="permissionExists(permissions.JOB_EXECUTION_UPDATE)">
+                     v-if="permissionExists(resources.JOB_EXECUTION,permissions.UPDATE)">
             编辑
           </el-button>
           <el-button
             size="small"
             type="text"
             @click.native.prevent="deleteConfirm(scope.$index, tableData)"
-            v-if="permissionExists(permissions.JOB_EXECUTION_DELETE)">
+            v-if="permissionExists(resources.JOB_EXECUTION,permissions.DELETE)">
             删除
           </el-button>
           <el-button
             size="small"
             type="text"
             @click.native.prevent="refreshConfirm(scope.$index, tableData)"
-            v-if="permissionExists(permissions.JOB_EXECUTION_REFRESH)">
+            v-if="permissionExists(resources.JOB_EXECUTION,permissions.REFRESH)">
             刷新
           </el-button>
           <el-button
             size="small"
             type="text"
             @click.native.prevent="toggleEnable(scope.$index, tableData)"
-            v-if="permissionExists(permissions.JOB_EXECUTION_UPDATE)">
+            v-if="permissionExists(resources.JOB_EXECUTION,permissions.UPDATE)">
             {{ scope.row.enable ? '使无效' : '使有效' }}
           </el-button>
         </template>

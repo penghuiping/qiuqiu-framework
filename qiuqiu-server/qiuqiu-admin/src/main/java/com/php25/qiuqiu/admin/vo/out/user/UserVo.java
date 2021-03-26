@@ -1,6 +1,7 @@
 package com.php25.qiuqiu.admin.vo.out.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.php25.qiuqiu.admin.vo.out.ResourcePermissionVo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,9 +42,9 @@ public class UserVo {
     private List<Long> roleIds;
 
     /**
-     * 权限名列表
+     * 资源名列表
      */
-    private List<String> permissions;
+    private List<ResourcePermissionVo> resourcePermissions;
 
     /**
      * 组名

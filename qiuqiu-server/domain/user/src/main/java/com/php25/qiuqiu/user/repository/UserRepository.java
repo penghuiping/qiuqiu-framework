@@ -1,8 +1,8 @@
 package com.php25.qiuqiu.user.repository;
 
 import com.php25.common.db.repository.BaseDbRepository;
-import com.php25.qiuqiu.user.model.RoleRef;
 import com.php25.qiuqiu.user.model.User;
+import com.php25.qiuqiu.user.model.UserRole;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +42,7 @@ public interface UserRepository extends BaseDbRepository<User, Long> {
      * @param roleRefs 用户与角色关系
      * @return true:成功
      */
-    boolean createRoleRefs(List<RoleRef> roleRefs);
+    boolean createRoleRefs(List<UserRole> roleRefs);
 
     /**
      * 根据userId删除对应角色关系
@@ -67,6 +67,5 @@ public interface UserRepository extends BaseDbRepository<User, Long> {
      * @return 在组中的用户数
      */
     Long countByGroupId(Long groupId);
-
 
 }

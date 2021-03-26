@@ -13,7 +13,7 @@
     </el-row>
     <!--操作栏-->
     <el-button-group>
-      <el-button type="primary" @click="create" v-if="permissionExists(permissions.JOB_ADD)">新增</el-button>
+      <el-button type="primary" @click="create" v-if="permissionExists(resources.JOB,permissions.ADD)">新增</el-button>
     </el-button-group>
     <!--数据表格-->
     <el-table
@@ -47,14 +47,14 @@
         width="200">
         <template slot-scope="scope">
           <el-button @click="update(scope.row)" type="text" size="small"
-                     v-if="permissionExists(permissions.JOB_UPDATE)">
+                     v-if="permissionExists(resources.JOB,permissions.UPDATE)">
             编辑
           </el-button>
           <el-button
             size="small"
             type="text"
             @click.native.prevent="deleteConfirm(scope.$index, tableData)"
-            v-if="permissionExists(permissions.JOB_DELETE)">
+            v-if="permissionExists(resources.JOB,permissions.DELETE)">
             删除
           </el-button>
         </template>

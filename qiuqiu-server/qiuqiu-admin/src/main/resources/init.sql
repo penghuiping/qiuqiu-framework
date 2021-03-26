@@ -34,16 +34,27 @@ create table t_group
     enable int
 );
 
-create table t_permission
+create table t_resource
 (
-    id integer
-        constraint t_permission_pk
-        primary key autoincrement,
     name varchar,
     description varchar,
-    uri varchar,
     enable int
 );
+
+create table t_permission
+(
+    name varchar,
+    description varchar,
+    enable int
+);
+
+create table t_resource_permission
+(
+    resource varchar,
+    permission varchar,
+    uri varchar
+);
+
 
 create table t_role
 (
@@ -55,10 +66,11 @@ create table t_role
     enable int
 );
 
-create table t_role_permission
+create table t_role_resource_permission
 (
     role_id integer,
-    permission_id integer
+    resource varchar,
+    permission varchar
 );
 
 create table t_timer_job

@@ -38,9 +38,9 @@ public class GroupController extends JSONController {
     /**
      * 获取系统中所有组列表
      */
-    @ApiDoc(result = TreeVo.class, url = "/qiuqiu_admin/v1/group/getAll")
+    @ApiDoc(result = TreeVo.class, url = "/qiuqiu_admin/v1/group/get_all")
     @APIVersion("v1")
-    @PostMapping("/getAll")
+    @PostMapping("/get_all")
     public JSONResponse getAll() {
         TreeNode<GroupDto> res = groupService.getAllGroupTree();
         TreeVo root = new TreeVo();
