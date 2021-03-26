@@ -33,7 +33,7 @@ public class RoleUpdateDto {
     /**
      * (资源+权限)列表
      */
-    private List<ResourcePermission0Dto> resourcePermissions;
+    private List<ResourcePermissionDto> resourcePermissions;
 
     /**
      * true:有效

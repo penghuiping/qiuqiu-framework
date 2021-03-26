@@ -38,23 +38,6 @@ public class PermissionController extends JSONController {
 
     private final PermissionService permissionService;
 
-    /**
-     * 获取系统中所有内置权限
-     */
-    @ApiDoc(result = TreeVo.class, url = "/qiuqiu_admin/v1/permission/get_all")
-    @APIVersion("v1")
-    @PostMapping("/get_all")
-    public JSONResponse getAll(@RequestAttribute @NotBlank String username) {
-        List<PermissionDto> permissions = permissionService.getAll();
-        List<TreeVo> permissionVos = permissions.stream().map(permissionDto -> {
-            TreeVo permissionVo = new TreeVo();
-            permissionVo.setId(permissionDto.getName());
-            permissionVo.setValue(permissionDto.getName());
-            permissionVo.setLabel(permissionDto.getDescription());
-            return permissionVo;
-        }).collect(Collectors.toList());
-        return succeed(permissionVos);
-    }
 
     /**
      * 获取权限列表，用于table页面展示

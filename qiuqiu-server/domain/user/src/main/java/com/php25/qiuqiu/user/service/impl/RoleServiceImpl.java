@@ -8,7 +8,6 @@ import com.php25.common.db.specification.SearchParam;
 import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
-import com.php25.qiuqiu.user.dto.role.ResourcePermission0Dto;
 import com.php25.qiuqiu.user.dto.role.RoleCreateDto;
 import com.php25.qiuqiu.user.dto.role.RoleDetailDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
@@ -70,7 +69,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
         roleRepository.save(role0);
 
         //role与permission关系
-        List<ResourcePermission0Dto> permissions = role.getResourcePermissions();
+        List<ResourcePermissionDto> permissions = role.getResourcePermissions();
         if (null != permissions && !permissions.isEmpty()) {
             List<RoleResourcePermission> permissionRefs = permissions.stream().map(resourcePermission -> {
                 RoleResourcePermission roleResourcePermission = new RoleResourcePermission();
@@ -94,7 +93,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
         roleRepository.save(role0);
 
         //role与permission关系
-        List<ResourcePermission0Dto> permissions = role.getResourcePermissions();
+        List<ResourcePermissionDto> permissions = role.getResourcePermissions();
         if (null != permissions && !permissions.isEmpty()) {
             //先删除
             roleRepository.deletePermissionRefsByRoleId(role0.getId());

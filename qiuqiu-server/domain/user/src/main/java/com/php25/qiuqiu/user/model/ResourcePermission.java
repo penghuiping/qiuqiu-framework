@@ -27,10 +27,4 @@ public class ResourcePermission {
      */
     @Column("permission")
     private String permission;
-
-    /**
-     * (资源+权限)地址
-     */
-    @Column
-    private String uri;
 }

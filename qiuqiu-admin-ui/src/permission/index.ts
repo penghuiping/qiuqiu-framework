@@ -11,6 +11,7 @@ class Permission {
     USER: 'user',
     ROLE: 'role',
     PERMISSION: 'permission',
+    RESOURCE: 'resource',
     GROUP: 'group',
     DICT: 'dict',
     AUDIT_LOG: 'audit_log',
@@ -23,7 +24,7 @@ class Permission {
 
   // 下为系统内置权限
   static permissions = {
-    ADD: 'add',
+    ADD: 'create',
     DETAIL: 'detail',
     UPDATE: 'update',
     DELETE: 'delete',

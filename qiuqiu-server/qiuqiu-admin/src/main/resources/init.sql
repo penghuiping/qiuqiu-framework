@@ -51,8 +51,7 @@ create table t_permission
 create table t_resource_permission
 (
     resource varchar,
-    permission varchar,
-    uri varchar
+    permission varchar
 );
 
 

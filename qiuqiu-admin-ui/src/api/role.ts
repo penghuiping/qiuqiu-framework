@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 import { ElementUiTreeVo, JsonResponse, PageVo } from '@/api/vo'
 import { ApiConstant } from '@/api/index'
 import { RoleCreateVo, RoleDetailVo, RoleListVo, RoleUpdateVo, RoleVo } from '@/api/vo/role'
+import { ResourcePermissionsVo } from '@/api/vo/resouce'
 
 class RoleApi {
   public static getAll (): Promise<AxiosResponse<JsonResponse<RoleVo[]>>> {
@@ -35,8 +36,8 @@ class RoleApi {
     })
   }
 
-  public static getAllSystemPermissions (): Promise<AxiosResponse<JsonResponse<ElementUiTreeVo[]>>> {
-    return axios.post(ApiConstant.PERMISSION_GET_ALL)
+  public static getAllSystemPermissions (): Promise<AxiosResponse<JsonResponse<ResourcePermissionsVo[]>>> {
+    return axios.post(ApiConstant.RESOURCE_GET_ALL)
   }
 
   public static getPermissionsByRoleID (roleId: string): Promise<AxiosResponse<JsonResponse<ElementUiTreeVo[]>>> {

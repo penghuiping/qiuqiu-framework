@@ -1,7 +1,7 @@
 package com.php25.qiuqiu.user.dto.user;
 
 import com.php25.qiuqiu.user.dto.group.GroupDto;
-import com.php25.qiuqiu.user.dto.role.ResourcePermission0Dto;
+import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +27,7 @@ public class UserDto {
 
     private Set<RoleDto> roles;
 
-    private Set<ResourcePermission0Dto> permissions;
+    private Set<ResourcePermissionDto> permissions;
 
     private GroupDto group;
 

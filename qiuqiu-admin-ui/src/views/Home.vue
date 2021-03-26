@@ -9,6 +9,7 @@
         </el-menu-item>
         <el-submenu index="2" v-if="permissionExists(resources.USER,permissions.PAGE)
         || permissionExists(resources.ROLE,permissions.PAGE)
+        || permissionExists(resources.RESOURCE,permissions.PAGE)
         || permissionExists(resources.PERMISSION,permissions.PAGE)
         || permissionExists(resources.GROUP,permissions.PAGE)">
           <template slot="title">
@@ -17,8 +18,9 @@
           </template>
           <el-menu-item index="2-1" @click="menuClick('user')" v-if="permissionExists(resources.USER,permissions.PAGE)">用户管理</el-menu-item>
           <el-menu-item index="2-2" @click="menuClick('role')" v-if="permissionExists(resources.ROLE,permissions.PAGE)">角色管理</el-menu-item>
-          <el-menu-item index="2-3" @click="menuClick('permission')" v-if="permissionExists(resources.PERMISSION,permissions.PAGE)">权限管理</el-menu-item>
-          <el-menu-item index="2-4" @click="menuClick('group')" v-if="permissionExists(resources.GROUP,permissions.PAGE)">用户组管理</el-menu-item>
+          <el-menu-item index="2-3" @click="menuClick('resource')" v-if="permissionExists(resources.RESOURCE,permissions.PAGE)">资源管理</el-menu-item>
+          <el-menu-item index="2-4" @click="menuClick('permission')" v-if="permissionExists(resources.PERMISSION,permissions.PAGE)">权限管理</el-menu-item>
+          <el-menu-item index="2-5" @click="menuClick('group')" v-if="permissionExists(resources.GROUP,permissions.PAGE)">用户组管理</el-menu-item>
         </el-submenu>
 
         <el-submenu index="3" v-if="permissionExists(resources.AUDIT_LOG,permissions.PAGE)
@@ -82,6 +84,7 @@
             <UserView v-if="item.key==='user'"/>
             <RoleView v-if="item.key==='role'"/>
             <GroupView v-if="item.key==='group'"/>
+            <ResourceView v-if="item.key==='resource'"/>
             <PermissionView v-if="item.key==='permission'"/>
             <AuditLogView v-if="item.key==='auditLog'"/>
             <DictView v-if="item.key==='dict'"/>
@@ -107,6 +110,7 @@ import IndexView from '@/components/Index.vue'
 import UserView from '@/components/User.vue'
 import RoleView from '@/components/Role.vue'
 import GroupView from '@/components/Group.vue'
+import ResourceView from '@/components/Resource.vue'
 import PermissionView from '@/components/Permission.vue'
 import AuditLogView from '@/components/AuditLog.vue'
 import DictView from '@/components/Dict.vue'
@@ -132,6 +136,7 @@ class TabItem {
     UserView,
     RoleView,
     GroupView,
+    ResourceView,
     PermissionView,
     AuditLogView,
     DictView,
@@ -224,6 +229,10 @@ export default class Home extends BaseVue {
       }
       case 'role': {
         this.addTab('role', '角色管理')
+        break
+      }
+      case 'resource': {
+        this.addTab('resource', '资源管理')
         break
       }
       case 'permission': {

@@ -22,10 +22,4 @@ public class ResourcePermissionDto {
      * 权限id
      */
     private String permission;
-
-    /**
-     * (资源+权限)地址
-     */
-    @EqualsAndHashCode.Exclude
-    private String uri;
 }

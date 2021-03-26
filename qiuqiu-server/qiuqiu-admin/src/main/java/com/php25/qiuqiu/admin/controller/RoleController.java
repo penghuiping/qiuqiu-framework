@@ -51,7 +51,7 @@ public class RoleController extends JSONController {
      */
     @ApiDoc(result = RoleVo.class, url = "/qiuqiu_admin/v1/role/get_all")
     @APIVersion("v1")
-    @PostMapping("/getAll")
+    @PostMapping("/get_all")
     public JSONResponse getAll() {
         List<RoleDto> roleDtoList = roleService.getAllRoles();
         List<RoleVo> roleVos = roleDtoList.stream().map(roleDto -> {

@@ -12,12 +12,12 @@ import com.php25.qiuqiu.user.dto.permission.PermissionCreateDto;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import com.php25.qiuqiu.user.model.Permission;
 import com.php25.qiuqiu.user.repository.PermissionRepository;
+import com.php25.qiuqiu.user.repository.ResourceRepository;
 import com.php25.qiuqiu.user.service.PermissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 public class PermissionServiceImpl implements PermissionService {
 
     private final PermissionRepository permissionRepository;
+
+    private final ResourceRepository resourceRepository;
 
     @Override
     public Boolean create(PermissionCreateDto permission) {
@@ -72,7 +74,7 @@ public class PermissionServiceImpl implements PermissionService {
         if (!StringUtil.isBlank(permissionName)) {
             builder.append(SearchParam.of("name", Operator.EQ, permissionName));
         }
-        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
+        PageRequest pageRequest = PageRequest.of(pageNum, pageSize);
         Page<Permission> page = permissionRepository.findAll(builder, pageRequest);
         DataGridPageDto<PermissionDto> dataGridPageDto = new DataGridPageDto<>();
         List<PermissionDto> permissionDtos = page.get().map(permission -> {
@@ -82,18 +84,5 @@ public class PermissionServiceImpl implements PermissionService {
         }).collect(Collectors.toList());
         dataGridPageDto.setData(permissionDtos);
         return dataGridPageDto;
-    }
-
-    @Override
-    public List<PermissionDto> getAll() {
-        List<Permission> permissions = permissionRepository.findAllEnabled();
-        if (null != permissions && !permissions.isEmpty()) {
-            return permissions.stream().map(permission -> {
-                PermissionDto permissionDto = new PermissionDto();
-                BeanUtils.copyProperties(permission, permissionDto);
-                return permissionDto;
-            }).collect(Collectors.toList());
-        }
-        return Lists.newArrayList();
     }
 }

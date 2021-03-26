@@ -17,7 +17,6 @@ import com.php25.qiuqiu.user.constant.UserConstants;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
-import com.php25.qiuqiu.user.dto.role.ResourcePermission0Dto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.user.TokenDto;
 import com.php25.qiuqiu.user.dto.user.UserCreateDto;
@@ -163,8 +162,8 @@ public class UserServiceImpl implements UserService {
 
         //权限
         List<RoleResourcePermission> permissions = roleRepository.getPermissionsByRoleIds(roleIds);
-        Set<ResourcePermission0Dto> permissionDtos = permissions.stream().map(permission -> {
-            ResourcePermission0Dto permissionDto = new ResourcePermission0Dto();
+        Set<ResourcePermissionDto> permissionDtos = permissions.stream().map(permission -> {
+            ResourcePermissionDto permissionDto = new ResourcePermissionDto();
             BeanUtils.copyProperties(permission, permissionDto);
             return permissionDto;
         }).collect(Collectors.toSet());
@@ -204,8 +203,8 @@ public class UserServiceImpl implements UserService {
 
         //权限
         List<RoleResourcePermission> permissions = roleRepository.getPermissionsByRoleIds(roleIds);
-        Set<ResourcePermission0Dto> permissionDtos = permissions.stream().map(permission -> {
-            ResourcePermission0Dto permissionDto = new ResourcePermission0Dto();
+        Set<ResourcePermissionDto> permissionDtos = permissions.stream().map(permission -> {
+            ResourcePermissionDto permissionDto = new ResourcePermissionDto();
             BeanUtils.copyProperties(permission, permissionDto);
             return permissionDto;
         }).collect(Collectors.toSet());
@@ -236,7 +235,8 @@ public class UserServiceImpl implements UserService {
             String roleName = roleDto.getName();
             Set<ResourcePermissionDto> permissions = roleService.getPermissionsByRoleName(roleName);
             for (ResourcePermissionDto permissionDto : permissions) {
-                if (antPathMatcher.match("/**" + permissionDto.getUri(), uri)) {
+                String uri0 = String.format("/%s/%s", permissionDto.getResource(),permissionDto.getPermission());
+                if (antPathMatcher.match("/**" + uri0, uri)) {
                     return true;
                 }
             }

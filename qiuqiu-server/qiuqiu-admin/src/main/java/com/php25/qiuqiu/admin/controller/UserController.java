@@ -17,9 +17,7 @@ import com.php25.qiuqiu.admin.vo.out.TokenVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
-import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
-import com.php25.qiuqiu.user.dto.role.ResourcePermission0Dto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.user.TokenDto;
 import com.php25.qiuqiu.user.dto.user.UserCreateDto;
@@ -85,12 +83,12 @@ public class UserController extends JSONController {
         List<Long> roleIds = userDto.getRoles().stream().map(RoleDto::getId).collect(Collectors.toList());
         userVo.setRoleIds(roleIds);
 
-        Set<ResourcePermission0Dto> resourcePermission0DtoSet = userDto.getPermissions();
+        Set<ResourcePermissionDto> resourcePermission0DtoSet = userDto.getPermissions();
         List<ResourcePermissionVo> resourcePermissionVos = new ArrayList<>();
-        for(ResourcePermission0Dto resourcePermission0Dto: resourcePermission0DtoSet) {
+        for(ResourcePermissionDto resourcePermission0Dto: resourcePermission0DtoSet) {
             String resource = resourcePermission0Dto.getResource();
             List<String> permissions = new ArrayList<>();
-            for(ResourcePermission0Dto tmp: resourcePermission0DtoSet) {
+            for(ResourcePermissionDto tmp: resourcePermission0DtoSet) {
                 if(tmp.getResource().equals(resource)) {
                     permissions.add(tmp.getPermission());
                 }
@@ -121,12 +119,12 @@ public class UserController extends JSONController {
         List<Long> roleIds = userDto.getRoles().stream().map(RoleDto::getId).collect(Collectors.toList());
         userVo.setRoleIds(roleIds);
 
-        Set<ResourcePermission0Dto> resourcePermission0DtoSet = userDto.getPermissions();
+        Set<ResourcePermissionDto> resourcePermission0DtoSet = userDto.getPermissions();
         List<ResourcePermissionVo> resourcePermissionVos = new ArrayList<>();
-        for(ResourcePermission0Dto resourcePermission0Dto: resourcePermission0DtoSet) {
+        for(ResourcePermissionDto resourcePermission0Dto: resourcePermission0DtoSet) {
             String resource = resourcePermission0Dto.getResource();
             List<String> permissions = new ArrayList<>();
-            for(ResourcePermission0Dto tmp: resourcePermission0DtoSet) {
+            for(ResourcePermissionDto tmp: resourcePermission0DtoSet) {
                 if(tmp.getResource().equals(resource)) {
                     permissions.add(tmp.getPermission());
                 }

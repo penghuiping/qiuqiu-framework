@@ -12,12 +12,6 @@
       element-loading-spinner="el-icon-loading"
       :data="tableData">
       <el-table-column
-        fixed
-        label="ID"
-        prop="id"
-        width="50">
-      </el-table-column>
-      <el-table-column
         label="权限名"
         prop="name"
         width="150">
@@ -25,11 +19,6 @@
       <el-table-column
         label="描述"
         prop="description"
-        width="150">
-      </el-table-column>
-      <el-table-column
-        label="权限接口地址"
-        prop="uri"
         width="150">
       </el-table-column>
       <el-table-column
@@ -76,9 +65,6 @@
         <el-form-item label="描述:" :label-width="dialogFormLabelWidth" prop="description">
           <el-input v-model="permissionCreateVo.description"></el-input>
         </el-form-item>
-        <el-form-item label="uri:" :label-width="dialogFormLabelWidth" prop="uri">
-          <el-input v-model="permissionCreateVo.uri"></el-input>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="createDialogVisible = false">取 消</el-button>
@@ -89,17 +75,11 @@
     <!--更新权限信息表单-->
     <el-dialog title="权限更新" :visible.sync="updateDialogVisible">
       <el-form ref="updateForm" :model="permissionUpdateVo" :rules="rules">
-        <el-form-item :label-width="dialogFormLabelWidth" label="id:" prop="id">
-          <el-input v-model="permissionUpdateVo.id" disabled></el-input>
-        </el-form-item>
         <el-form-item label="权限名:" :label-width="dialogFormLabelWidth" prop="name">
-          <el-input v-model="permissionUpdateVo.name"></el-input>
+          <el-input v-model="permissionUpdateVo.name" disabled></el-input>
         </el-form-item>
         <el-form-item label="描述:" :label-width="dialogFormLabelWidth" prop="description">
           <el-input v-model="permissionUpdateVo.description"></el-input>
-        </el-form-item>
-        <el-form-item label="接口地址:" :label-width="dialogFormLabelWidth" prop="uri">
-          <el-input v-model="permissionUpdateVo.uri"></el-input>
         </el-form-item>
         <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth" prop="enable">
           <el-switch

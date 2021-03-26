@@ -8,9 +8,11 @@ import com.php25.qiuqiu.admin.vo.in.resource.ResourceCreateVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourcePermission0Vo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceUpdateVo;
+import com.php25.qiuqiu.admin.vo.out.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.ResourceVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.resource.ResourceCreateDto;
+import com.php25.qiuqiu.user.dto.resource.ResourceDetailDto;
 import com.php25.qiuqiu.user.dto.resource.ResourceDto;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.resource.ResourceUpdateDto;
@@ -48,7 +50,6 @@ public class ResourceController extends JSONController {
             ResourcePermissionDto resourcePermissionDto = new ResourcePermissionDto();
             resourcePermissionDto.setResource(resourceCreateVo.getName());
             resourcePermissionDto.setPermission(resourcePermission0Vo.getPermission());
-            resourcePermissionDto.setUri(resourcePermission0Vo.getUri());
             return resourcePermissionDto;
         }).collect(Collectors.toList());
         resourceCreateDto.setResourcePermissions(resourcePermissionDtos);
@@ -66,7 +67,6 @@ public class ResourceController extends JSONController {
             ResourcePermissionDto resourcePermissionDto = new ResourcePermissionDto();
             resourcePermissionDto.setResource(resourceUpdateVo.getName());
             resourcePermissionDto.setPermission(resourcePermission0Vo.getPermission());
-            resourcePermissionDto.setUri(resourcePermission0Vo.getUri());
             return resourcePermissionDto;
         }).collect(Collectors.toList());
         resourceUpdateDto.setResourcePermissions(resourcePermissionDtos);
@@ -95,5 +95,21 @@ public class ResourceController extends JSONController {
             return resourceVo;
         }).collect(Collectors.toList());
         return succeed(res);
+    }
+
+    /**
+     * 获取系统中所有内置权限
+     */
+    @APIVersion("v1")
+    @PostMapping("/get_all")
+    public JSONResponse getAll() {
+        List<ResourceDetailDto> permissions = resourceService.getAll();
+        List<ResourcePermissionVo> resourcePermissionVos = permissions.stream().map(resourceDetailDto -> {
+            ResourcePermissionVo resourcePermissionVo = new ResourcePermissionVo();
+            resourcePermissionVo.setResource(resourceDetailDto.getName());
+            resourcePermissionVo.setPermissions(resourcePermissionVo.getPermissions());
+            return resourcePermissionVo;
+        }).collect(Collectors.toList());
+        return succeed(resourcePermissionVos);
     }
 }

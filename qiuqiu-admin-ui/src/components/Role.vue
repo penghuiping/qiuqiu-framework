@@ -114,13 +114,56 @@
           </el-switch>
         </el-form-item>
         <el-form-item label="权限:" :label-width="dialogFormLabelWidth" prop="permissionIds">
-          <el-tree show-checkbox
-                   ref="permissionTree"
-                   node-key="id"
-                   :default-checked-keys="roleCreateVo.permissionIds"
-                   :default-expand-all="true"
-                   :props="treeProps"
-                   :data="permissionTree"></el-tree>
+          <el-table
+            ref="permissionTree"
+            :data="permissionTree"
+            border
+            style="width: 100%">
+            <el-table-column
+              prop="resource"
+              label="资源名"
+              width="160">
+            </el-table-column>
+            <el-table-column
+              prop="add"
+              label="新增"
+              width="50">
+            </el-table-column>
+            <el-table-column
+              prop="detail"
+              label="详情"
+              width="50">
+            </el-table-column>
+            <el-table-column
+              prop="update"
+              label="更新"
+              width="50">
+            </el-table-column>
+            <el-table-column
+              prop="delete"
+              label="删除"
+              width="50">
+            </el-table-column>
+            <el-table-column
+              prop="page"
+              label="分页"
+              width="50">
+            </el-table-column>
+            <el-table-column
+              prop="refresh"
+              label="刷新"
+              width="50">
+            </el-table-column>
+            <el-table-column
+              prop="refresh_all"
+              label="刷新所有"
+              width="50">
+            </el-table-column>
+            <el-table-column
+              prop="statistic"
+              label="统计">
+            </el-table-column>
+          </el-table>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -174,6 +217,7 @@ import { ElementUiTreeVo } from '@/api/vo'
 import { RoleCreateVo, RoleDetailVo, RoleListVo, RoleUpdateVo } from '@/api/vo/role'
 import { ElForm } from 'element-ui/types/form'
 import { ElTree } from 'element-ui/types/tree'
+import { ResourcePermissionsVo } from '@/api/vo/resouce'
 
 @Component
 export default class Role extends BaseVue {
@@ -188,7 +232,7 @@ export default class Role extends BaseVue {
   private roleCreateDialogVisible =false
   private dialogFormLabelWidth = '120px'
   private roleDetail = RoleDetailVo.newInstant()
-  private permissionTree: ElementUiTreeVo[] = []
+  private permissionTree: ResourcePermissionsVo[] = []
   private roleUpdateVo = RoleUpdateVo.newInstant()
   private roleCreateVo = RoleCreateVo.newInstant()
   private treeProps = {
