@@ -120,10 +120,13 @@
             <el-table-column
               prop="resource"
               label="资源名">
+              <template slot-scope="scope">
+              {{permissionTranslate(scope.row.resource)}}
+              </template>
             </el-table-column>
             <el-table-column v-for="(permission,index) in permission0s" v-bind:key="permission"
                              :prop="permission"
-                             :label="permission"
+                             :label="permissionTranslate(permission)"
                              width="50">
               <template slot-scope="scope">
                 <el-row type="flex" justify="center">
@@ -166,10 +169,13 @@
             <el-table-column
               prop="resource"
               label="资源名">
+              <template slot-scope="scope">
+                {{permissionTranslate(scope.row.resource)}}
+              </template>
             </el-table-column>
             <el-table-column v-for="(permission,index) in permission0s" v-bind:key="permission"
                              :prop="permission"
-                             :label="permission"
+                             :label="permissionTranslate(permission)"
                              width="50">
               <template slot-scope="scope">
                 <el-row type="flex" justify="center">
@@ -424,7 +430,7 @@ export default class Role extends BaseVue {
     this.checked = []
     this.resourcePermissionMetrics = []
     const arr: ResourcePermissionsVo[] = []
-    this.resource0s.forEach((resource0, index) => {
+    this.resource0s.forEach((resource0) => {
       arr.push(new ResourcePermissionsVo(resource0, []))
       const checkedRow: boolean[] = []
       const resourcePermissions: string[] = []
@@ -455,6 +461,10 @@ export default class Role extends BaseVue {
 
   permissionHas (permission: string, permissions: string[]): boolean {
     return Permission.has(permission, permissions)
+  }
+
+  permissionTranslate (permission: string): string {
+    return Permission.translate(permission)
   }
 }
 </script>
