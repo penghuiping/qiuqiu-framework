@@ -19,7 +19,8 @@ public enum UserErrorCode implements BusinessErrorStatus {
     ROLE_DATA_NOT_EXISTS("10010", "查询的角色数据不存在"),
     GROUP_DATA_NOT_EXISTS("10011", "查询的组数据不存在"),
     PERMISSION_DATA_NOT_EXISTS("10012", "查询的权限数据不存在"),
-    RESOURCE_HAS_BEEN_REFERENCED_BY_ROLE("10013", "资源被角色所引用无法删除");
+    RESOURCE_HAS_BEEN_REFERENCED_BY_ROLE("10013", "资源被角色所引用无法删除"),
+    RESOURCE_DATA_NOT_EXISTS("10014", "查询的资源数据不存在");
 
 
 

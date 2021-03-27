@@ -26,7 +26,7 @@ public class ResourceUpdateVo {
     /**
      * 资源对应的权限操作
      */
-    private List<ResourcePermission0Vo> resourcePermissions;
+    private List<String> permissions;
 
     /**
      * true:有效 false:无效

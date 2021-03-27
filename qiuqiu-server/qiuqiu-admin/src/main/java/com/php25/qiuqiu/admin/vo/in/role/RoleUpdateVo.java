@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.admin.vo.in.role;
 
+import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,7 +32,7 @@ public class RoleUpdateVo {
     /**
      * 权限id列表
      */
-    private List<Long> permissionIds;
+    private List<ResourcePermissionVo> resourcePermissions;
 
     /**
      * false:无效 true:有效

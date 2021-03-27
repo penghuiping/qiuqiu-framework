@@ -1,19 +1,17 @@
-package com.php25.qiuqiu.admin.vo.in.resource;
+package com.php25.qiuqiu.admin.vo.out.resource;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 /**
  * @author penghuiping
- * @date 2021/3/26 14:00
+ * @date 2021/3/26 14:22
  */
 @Setter
 @Getter
-public class ResourceCreateVo {
+public class ResourceVo {
 
-    /***
+    /**
      * 资源名
      */
     private String name;
@@ -24,7 +22,7 @@ public class ResourceCreateVo {
     private String description;
 
     /**
-     * 资源对应的权限操作
+     * true:有效 false:无效
      */
-    private List<String> permissions;
+    private Boolean enable;
 }

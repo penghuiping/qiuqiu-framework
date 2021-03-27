@@ -66,8 +66,8 @@
           <el-input v-model="resourceCreateVo.description"></el-input>
         </el-form-item>
 
-        <el-form-item label="对应权限:" :label-width="dialogFormLabelWidth" prop="permission">
-          <el-select v-model="resourceCreateVo.resourcePermissions" multiple placeholder="请选择资源对应权限">
+        <el-form-item label="对应权限:" :label-width="dialogFormLabelWidth" prop="permissions">
+          <el-select v-model="resourceCreateVo.permissions" multiple placeholder="请选择资源对应权限">
             <el-option v-for="item in permission0s" :key=item.name :label=item.description :value=item.name></el-option>
           </el-select>
         </el-form-item>
@@ -78,17 +78,19 @@
       </div>
     </el-dialog>
 
-    <!--更新权限信息表单-->
-    <el-dialog title="权限更新" :visible.sync="updateDialogVisible">
+    <!--更新资源信息表单-->
+    <el-dialog title="资源更新" :visible.sync="updateDialogVisible">
       <el-form ref="updateForm" :model="resourceUpdateVo" :rules="rules">
-        <el-form-item label="权限名:" :label-width="dialogFormLabelWidth" prop="name">
-          <el-input v-model="resourceUpdateVo.name"></el-input>
+        <el-form-item label="资源名:" :label-width="dialogFormLabelWidth" prop="name">
+          <el-input v-model="resourceUpdateVo.name" disabled></el-input>
         </el-form-item>
         <el-form-item label="描述:" :label-width="dialogFormLabelWidth" prop="description">
           <el-input v-model="resourceUpdateVo.description"></el-input>
         </el-form-item>
-        <el-form-item label="接口地址:" :label-width="dialogFormLabelWidth" prop="uri">
-          <el-input v-model="resourceUpdateVo.uri"></el-input>
+        <el-form-item label="对应权限:" :label-width="dialogFormLabelWidth" prop="permissions">
+          <el-select v-model="resourceUpdateVo.permissions" multiple placeholder="请选择资源对应权限">
+            <el-option v-for="item in permission0s" :key=item.name :label=item.description :value=item.name></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth" prop="enable">
           <el-switch
@@ -136,7 +138,7 @@ export default class Resource extends BaseVue {
     uri: [
       { required: true, message: '请输入资源接口地址', trigger: 'blur' }
     ],
-    permission: [
+    permissions: [
       { required: true, message: '请输入资源对应的权限', trigger: 'blur' }
     ],
     enable: [
@@ -144,7 +146,11 @@ export default class Resource extends BaseVue {
     ]
   }
 
-  async mounted () {
+  mounted () {
+    this.gotoPage()
+  }
+
+  async gotoPage () {
     this.loading = true
     const res = await ResourceApi.page()
     this.tableData = res.data.data
@@ -183,24 +189,55 @@ export default class Resource extends BaseVue {
 
   async update (row: ResourceVo) {
     console.log('update:', row)
+    const res = await ResourceApi.detail(row.name)
+    if (res && res.data.data) {
+      this.resourceUpdateVo = res.data.data
+      this.updateDialogVisible = true
+    }
   }
 
   updateConfirm () {
     (this.$refs.updateForm as ElForm).validate(async valid => {
       if (valid) {
-        console.log('update validate...')
+        const res = await ResourceApi.update(this.resourceUpdateVo)
+        if (res && res.data.data) {
+          this.gotoPage()
+          this.$message({
+            type: 'success',
+            message: '新增成功!'
+          })
+        } else {
+          this.$message({
+            type: 'info',
+            message: '新增失败'
+          })
+        }
+        this.updateDialogVisible = false
       }
     })
   }
 
-  async create () {
+  create () {
     this.createDialogVisible = true
   }
 
   createConfirm () {
     (this.$refs.createForm as ElForm).validate(async valid => {
       if (valid) {
-        console.log('create validate...')
+        const res = await ResourceApi.create(this.resourceCreateVo)
+        if (res && res.data.data) {
+          this.gotoPage()
+          this.$message({
+            type: 'success',
+            message: '新增成功!'
+          })
+        } else {
+          this.$message({
+            type: 'info',
+            message: '新增失败'
+          })
+        }
+        this.createDialogVisible = false
       }
     })
   }

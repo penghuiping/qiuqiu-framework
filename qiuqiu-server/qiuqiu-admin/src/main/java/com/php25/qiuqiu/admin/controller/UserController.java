@@ -12,7 +12,7 @@ import com.php25.qiuqiu.admin.vo.in.user.UserDetailVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserPageVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserUpdateVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
-import com.php25.qiuqiu.admin.vo.out.ResourcePermissionVo;
+import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.TokenVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserVo;

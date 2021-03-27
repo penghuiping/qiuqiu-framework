@@ -10,6 +10,7 @@ import com.php25.qiuqiu.admin.vo.in.role.RoleDetailVo;
 import com.php25.qiuqiu.admin.vo.in.role.RolePageVo;
 import com.php25.qiuqiu.admin.vo.in.role.RoleUpdateVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
+import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.role.RoleDetailOutVo;
 import com.php25.qiuqiu.admin.vo.out.role.RolePageOutVo;
 import com.php25.qiuqiu.admin.vo.out.role.RoleVo;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,7 +74,24 @@ public class RoleController extends JSONController {
     @PostMapping("/create")
     public JSONResponse create(@Valid @RequestBody RoleCreateVo roleCreateVo) {
         RoleCreateDto roleCreateDto = new RoleCreateDto();
+        List<ResourcePermissionVo> resourcePermissionVos = roleCreateVo.getResourcePermissions();
+        List<ResourcePermissionDto> resourcePermissionDtos = new ArrayList<>();
+        if(null != resourcePermissionVos  && !resourcePermissionVos.isEmpty()) {
+            for(ResourcePermissionVo resourcePermissionVo: resourcePermissionVos) {
+                String resource = resourcePermissionVo.getResource();
+                List<String> permissions = resourcePermissionVo.getPermissions();
+                if(null != permissions && !permissions.isEmpty()) {
+                    for(String permission: permissions) {
+                        ResourcePermissionDto resourcePermissionDto = new ResourcePermissionDto();
+                        resourcePermissionDto.setPermission(permission);
+                        resourcePermissionDto.setResource(resource);
+                        resourcePermissionDtos.add(resourcePermissionDto);
+                    }
+                }
+            }
+        }
         BeanUtils.copyProperties(roleCreateVo, roleCreateDto);
+        roleCreateDto.setResourcePermissions(resourcePermissionDtos);
         return succeed(roleService.create(roleCreateDto));
     }
 
@@ -86,7 +105,24 @@ public class RoleController extends JSONController {
     @PostMapping("/update")
     public JSONResponse update(@Valid @RequestBody RoleUpdateVo roleUpdateVo) {
         RoleUpdateDto roleUpdateDto = new RoleUpdateDto();
+        List<ResourcePermissionVo> resourcePermissionVos = roleUpdateVo.getResourcePermissions();
+        List<ResourcePermissionDto> resourcePermissionDtos = new ArrayList<>();
+        if(null != resourcePermissionVos  && !resourcePermissionVos.isEmpty()) {
+            for(ResourcePermissionVo resourcePermissionVo: resourcePermissionVos) {
+                String resource = resourcePermissionVo.getResource();
+                List<String> permissions = resourcePermissionVo.getPermissions();
+                if(null != permissions && !permissions.isEmpty()) {
+                    for(String permission: permissions) {
+                        ResourcePermissionDto resourcePermissionDto = new ResourcePermissionDto();
+                        resourcePermissionDto.setPermission(permission);
+                        resourcePermissionDto.setResource(resource);
+                        resourcePermissionDtos.add(resourcePermissionDto);
+                    }
+                }
+            }
+        }
         BeanUtils.copyProperties(roleUpdateVo, roleUpdateDto);
+        roleUpdateDto.setResourcePermissions(resourcePermissionDtos);
         return succeed(roleService.update(roleUpdateDto));
     }
 
@@ -114,13 +150,22 @@ public class RoleController extends JSONController {
         RoleDetailOutVo roleDetailOutVo = new RoleDetailOutVo();
         BeanUtils.copyProperties(roleDetailDto, roleDetailOutVo);
         List<ResourcePermissionDto> permissionDtos = roleDetailDto.getResourcePermissions();
+        List<ResourcePermissionVo> resourcePermissionVos = new ArrayList<>();
         if (null != permissionDtos && !permissionDtos.isEmpty()) {
-            List<String> resources = permissionDtos.stream().map(ResourcePermissionDto::getResource)
-                    .collect(Collectors.toList());
-            List<String> permissions = permissionDtos.stream().map(ResourcePermissionDto::getPermission)
-                    .collect(Collectors.toList());
-            roleDetailOutVo.setPermissions(permissions);
-            roleDetailOutVo.setResources(resources);
+           for(ResourcePermissionDto resourcePermissionDto: permissionDtos) {
+               String resource = resourcePermissionDto.getResource();
+               List<String> permissions = new ArrayList<>();
+               for (ResourcePermissionDto resourcePermissionDto0: permissionDtos) {
+                   if(resource.equals(resourcePermissionDto0.getResource())) {
+                        permissions.add(resourcePermissionDto0.getPermission());
+                   }
+               }
+               ResourcePermissionVo resourcePermissionVo = new ResourcePermissionVo();
+               resourcePermissionVo.setResource(resource);
+               resourcePermissionVo.setPermissions(permissions);
+               resourcePermissionVos.add(resourcePermissionVo);
+           }
+           roleDetailOutVo.setResourcePermissions(resourcePermissionVos);
         }
         return succeed(roleDetailOutVo);
     }

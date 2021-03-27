@@ -2,14 +2,15 @@
   <div>
     <!--操作栏-->
     <el-button-group>
-      <el-button type="primary" @click="handleCreateRole" v-if="permissionExists(resources.ROLE,permissions.ADD)">新增</el-button>
+      <el-button type="primary" @click="create" v-if="permissionExists(resources.ROLE,permissions.ADD)">新增
+      </el-button>
     </el-button-group>
     <!--数据表格-->
     <el-table
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      :data= "tableData">
+      :data="tableData">
       <el-table-column
         fixed
         label="ID"
@@ -31,7 +32,7 @@
         prop="enable"
         width="50">
         <template slot-scope="scope">
-          <span >{{ scope.row.enable?'有效':'无效' }}</span>
+          <span>{{ scope.row.enable ? '有效' : '无效' }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -39,23 +40,27 @@
         label="操作"
         width="200">
         <template slot-scope="scope">
-          <el-button @click="detailInfo(scope.row)" type="text" size="small" v-if="permissionExists(resources.ROLE,permissions.DETAIL)">
+          <el-button @click="detailInfo(scope.row)" type="text" size="small"
+                     v-if="permissionExists(resources.ROLE,permissions.DETAIL)">
             查看
           </el-button>
-          <el-button @click="update(scope.row)" type="text" size="small" v-if="permissionExists(resources.ROLE,permissions.UPDATE)">
+          <el-button @click="update(scope.row)" type="text" size="small"
+                     v-if="permissionExists(resources.ROLE,permissions.UPDATE)">
             编辑
           </el-button>
           <el-button
             size="small"
             type="text"
-            @click.native.prevent="deleteRow(scope.$index, tableData)" v-if="permissionExists(resources.ROLE,permissions.DELETE)">
+            @click.native.prevent="deleteRow(scope.$index, tableData)"
+            v-if="permissionExists(resources.ROLE,permissions.DELETE)">
             删除
           </el-button>
           <el-button
             size="small"
             type="text"
-            @click.native.prevent="toggleEnable(scope.$index, tableData)" v-if="permissionExists(resources.ROLE,permissions.UPDATE)">
-            {{scope.row.enable?'使无效':'使有效'}}
+            @click.native.prevent="toggleEnable(scope.$index, tableData)"
+            v-if="permissionExists(resources.ROLE,permissions.UPDATE)">
+            {{ scope.row.enable ? '使无效' : '使有效' }}
           </el-button>
         </template>
       </el-table-column>
@@ -77,15 +82,15 @@
     <!--查看详情表单-->
     <el-dialog title="角色详情" :visible.sync="roleDetailDialogVisible">
       <el-form :model="roleDetail" id="roleDetailForm">
-          <el-form-item label="角色名:" :label-width="dialogFormLabelWidth">
-            {{roleDetail.name}}
-          </el-form-item>
-          <el-form-item label="角色描述:" :label-width="dialogFormLabelWidth">
-            {{roleDetail.description}}
-          </el-form-item>
-          <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth">
-            {{roleDetail.enable?'有效':'无效'}}
-          </el-form-item>
+        <el-form-item label="角色名:" :label-width="dialogFormLabelWidth">
+          {{ roleDetail.name }}
+        </el-form-item>
+        <el-form-item label="角色描述:" :label-width="dialogFormLabelWidth">
+          {{ roleDetail.description }}
+        </el-form-item>
+        <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth">
+          {{ roleDetail.enable ? '有效' : '无效' }}
+        </el-form-item>
         <el-form-item label="权限:" :label-width="dialogFormLabelWidth">
           <el-tree show-checkbox
                    node-key="id"
@@ -106,14 +111,7 @@
         <el-form-item label="角色描述:" :label-width="dialogFormLabelWidth" prop="description">
           <el-input v-model="roleCreateVo.description"></el-input>
         </el-form-item>
-        <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth" prop="enable">
-          <el-switch
-            v-model="roleCreateVo.enable"
-            active-color="#13ce66"
-            inactive-color="#ff4949">
-          </el-switch>
-        </el-form-item>
-        <el-form-item label="权限:" :label-width="dialogFormLabelWidth" prop="permissionIds">
+        <el-form-item label="权限:" :label-width="dialogFormLabelWidth" prop="resourcePermissions">
           <el-table
             ref="permissionTree"
             :data="permissionTree"
@@ -121,47 +119,18 @@
             style="width: 100%">
             <el-table-column
               prop="resource"
-              label="资源名"
-              width="160">
+              label="资源名">
             </el-table-column>
-            <el-table-column
-              prop="add"
-              label="新增"
-              width="50">
-            </el-table-column>
-            <el-table-column
-              prop="detail"
-              label="详情"
-              width="50">
-            </el-table-column>
-            <el-table-column
-              prop="update"
-              label="更新"
-              width="50">
-            </el-table-column>
-            <el-table-column
-              prop="delete"
-              label="删除"
-              width="50">
-            </el-table-column>
-            <el-table-column
-              prop="page"
-              label="分页"
-              width="50">
-            </el-table-column>
-            <el-table-column
-              prop="refresh"
-              label="刷新"
-              width="50">
-            </el-table-column>
-            <el-table-column
-              prop="refresh_all"
-              label="刷新所有"
-              width="50">
-            </el-table-column>
-            <el-table-column
-              prop="statistic"
-              label="统计">
+            <el-table-column v-for="(permission,index) in permission0s" v-bind:key="permission"
+                             :prop="permission"
+                             :label="permission"
+                             width="50">
+              <template slot-scope="scope">
+                <el-row type="flex" justify="center">
+                  <el-checkbox v-model="checked[scope.$index][index]"
+                               :disabled="!permissionHas(permission,scope.row.permissions)"></el-checkbox>
+                </el-row>
+              </template>
             </el-table-column>
           </el-table>
         </el-form-item>
@@ -175,11 +144,8 @@
     <!--更新角色信息表单-->
     <el-dialog title="角色更新" :visible.sync="roleUpdateDialogVisible">
       <el-form ref="roleUpdateForm" :model="roleUpdateVo" :rules="rules">
-        <el-form-item :label-width="dialogFormLabelWidth" label="id:" prop="id">
-          <el-input v-model="roleUpdateVo.id" disabled></el-input>
-        </el-form-item>
         <el-form-item label="角色名:" :label-width="dialogFormLabelWidth" prop="name">
-          <el-input v-model="roleUpdateVo.name"></el-input>
+          <el-input v-model="roleUpdateVo.name" disabled></el-input>
         </el-form-item>
         <el-form-item label="角色描述:" :label-width="dialogFormLabelWidth" prop="description">
           <el-input v-model="roleUpdateVo.description"></el-input>
@@ -191,14 +157,28 @@
             inactive-color="#ff4949">
           </el-switch>
         </el-form-item>
-        <el-form-item label="权限:" :label-width="dialogFormLabelWidth" prop="permissionIds">
-          <el-tree show-checkbox
-                   ref="permissionTree"
-                   node-key="id"
-                   :default-checked-keys="roleUpdateVo.permissionIds"
-                   :default-expand-all="true"
-                   :props="treeProps"
-                   :data="permissionTree"></el-tree>
+        <el-form-item label="权限:" :label-width="dialogFormLabelWidth" prop="resourcePermissions">
+          <el-table
+            ref="permissionTree"
+            :data="permissionTree"
+            border
+            style="width: 100%">
+            <el-table-column
+              prop="resource"
+              label="资源名">
+            </el-table-column>
+            <el-table-column v-for="(permission,index) in permission0s" v-bind:key="permission"
+                             :prop="permission"
+                             :label="permission"
+                             width="50">
+              <template slot-scope="scope">
+                <el-row type="flex" justify="center">
+                  <el-checkbox v-model="checked[scope.$index][index]"
+                               :disabled="!permissionHas(permission,scope.row.permissions)"></el-checkbox>
+                </el-row>
+              </template>
+            </el-table-column>
+          </el-table>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -213,11 +193,10 @@
 import { Component } from 'vue-property-decorator'
 import { BaseVue } from '@/BaseVue'
 import { RoleApi } from '@/api/role'
-import { ElementUiTreeVo } from '@/api/vo'
 import { RoleCreateVo, RoleDetailVo, RoleListVo, RoleUpdateVo } from '@/api/vo/role'
 import { ElForm } from 'element-ui/types/form'
-import { ElTree } from 'element-ui/types/tree'
 import { ResourcePermissionsVo } from '@/api/vo/resouce'
+import { Permission } from '@/permission'
 
 @Component
 export default class Role extends BaseVue {
@@ -228,17 +207,45 @@ export default class Role extends BaseVue {
   private pageSize = 5
   private hideOnSinglePage = false
   private roleDetailDialogVisible = false
-  private roleUpdateDialogVisible =false
-  private roleCreateDialogVisible =false
+  private roleUpdateDialogVisible = false
+  private roleCreateDialogVisible = false
   private dialogFormLabelWidth = '120px'
   private roleDetail = RoleDetailVo.newInstant()
   private permissionTree: ResourcePermissionsVo[] = []
   private roleUpdateVo = RoleUpdateVo.newInstant()
   private roleCreateVo = RoleCreateVo.newInstant()
+  private checked: boolean[][] = []
   private treeProps = {
     children: 'children',
     label: 'label'
   }
+
+  private permission0s = [
+    Permission.permissions.ADD,
+    Permission.permissions.DETAIL,
+    Permission.permissions.GET_ALL,
+    Permission.permissions.UPDATE,
+    Permission.permissions.DELETE,
+    Permission.permissions.PAGE,
+    Permission.permissions.REFRESH,
+    Permission.permissions.REFRESH_ALL,
+    Permission.permissions.STATISTIC
+  ]
+
+  private resource0s = [
+    Permission.resources.USER,
+    Permission.resources.ROLE,
+    Permission.resources.RESOURCE,
+    Permission.resources.PERMISSION,
+    Permission.resources.GROUP,
+    Permission.resources.DICT,
+    Permission.resources.JOB,
+    Permission.resources.JOB_EXECUTION,
+    Permission.resources.JOB_LOG,
+    Permission.resources.AUDIT_LOG
+  ]
+
+  private resourcePermissionMetrics: string[][] = []
 
   private rules = {
     name: [
@@ -250,7 +257,7 @@ export default class Role extends BaseVue {
     enable: [
       { required: true, message: '请输入角色是否有效', trigger: 'blur' }
     ],
-    permissionIds: [
+    resourcePermissions: [
       { required: true, message: '请选择权限', trigger: 'blur' }
     ]
   }
@@ -264,9 +271,6 @@ export default class Role extends BaseVue {
     const res = await RoleApi.detail(row.id)
     this.roleDetail = res.data.data
     this.roleDetailDialogVisible = true
-
-    const res1 = await RoleApi.getAllSystemPermissions()
-    this.permissionTree = res1.data.data
     loading.close()
   }
 
@@ -299,52 +303,96 @@ export default class Role extends BaseVue {
   }
 
   async update (row: RoleListVo) {
+    this.resetChecked()
     const res = await RoleApi.detail(row.id)
     this.roleUpdateVo.id = res.data.data.id
     this.roleUpdateVo.name = res.data.data.name
     this.roleUpdateVo.description = res.data.data.description
-    this.roleUpdateVo.permissionIds = res.data.data.permissionIds
+    this.roleUpdateVo.resourcePermissions = res.data.data.resourcePermissions
     this.roleUpdateVo.enable = res.data.data.enable
-    this.roleUpdateDialogVisible = true
 
-    const res1 = await RoleApi.getAllSystemPermissions()
-    this.permissionTree = res1.data.data
+    const set = new Set<string>()
+    for (let i = 0; i < this.roleUpdateVo.resourcePermissions.length; i++) {
+      const tmp = this.roleUpdateVo.resourcePermissions[i]
+      const resource = tmp.resource
+      for (let j = 0; j < tmp.permissions.length; j++) {
+        const permission = tmp.permissions[j]
+        set.add(resource + ':' + permission)
+      }
+    }
+
+    for (let i = 0; i < this.resourcePermissionMetrics.length; i++) {
+      const permissions = this.resourcePermissionMetrics[i]
+      for (let j = 0; j < permissions.length; j++) {
+        const key = permissions[j]
+        if (set.has(key)) {
+          this.checked[i][j] = true
+        }
+      }
+    }
+    this.roleUpdateDialogVisible = true
   }
 
   updateConfirm () {
-    this.roleUpdateVo.permissionIds = (this.$refs.permissionTree as ElTree<number, ElementUiTreeVo>).getCheckedKeys();
+    this.roleUpdateVo.resourcePermissions = this.getCheckedPermissions();
     (this.$refs.roleUpdateForm as ElForm).validate(async valid => {
       if (valid) {
         const res = await RoleApi.update(this.roleUpdateVo)
         if (res.data.data) {
           this.roleUpdateDialogVisible = false
           this.goToPage(1, this.pageSize)
+          this.$message({
+            type: 'success',
+            message: '更新成功!'
+          })
         }
       }
     })
   }
 
+  async create () {
+    this.resetChecked()
+    this.roleCreateDialogVisible = true
+  }
+
   createConfirm () {
-    this.roleCreateVo.permissionIds = (this.$refs.permissionTree as ElTree<number, ElementUiTreeVo>).getCheckedKeys();
+    this.roleCreateVo.resourcePermissions = this.getCheckedPermissions();
     (this.$refs.roleCreateForm as ElForm).validate(async valid => {
       if (valid) {
         const res = await RoleApi.create(this.roleCreateVo)
         if (res.data.data) {
           this.roleCreateDialogVisible = false
           this.goToPage(1, this.pageSize)
+          this.$message({
+            type: 'success',
+            message: '创建成功!'
+          })
         }
       }
     })
   }
 
-  toggleEnable () {
-    console.log('.')
+  getCheckedPermissions (): ResourcePermissionsVo[] {
+    const resourcePermissionsList: ResourcePermissionsVo[] = []
+    for (let i = 0; i < this.checked.length; i++) {
+      const arr = this.checked[i]
+      const resource = this.resourcePermissionMetrics[i][0].split(':')[0]
+      const permissions: string[] = []
+      for (let j = 0; j < arr.length; j++) {
+        const flag = this.checked[i][j]
+        if (flag) {
+          const permission = this.resourcePermissionMetrics[i][j]
+          permissions.push(permission.split(':')[1])
+        }
+      }
+      const resourcePermissions = new ResourcePermissionsVo(resource, permissions)
+      resourcePermissionsList.push(resourcePermissions)
+    }
+    return resourcePermissionsList
   }
 
-  async handleCreateRole () {
-    const res1 = await RoleApi.getAllSystemPermissions()
-    this.permissionTree = res1.data.data
-    this.roleCreateDialogVisible = true
+  toggleEnable () {
+    console.log('.')
   }
 
   handleSizeChange (pageSize: number) {
@@ -359,6 +407,7 @@ export default class Role extends BaseVue {
 
   // 跳去某页操作
   async goToPage (pageNum: number, pageSize: number) {
+    this.resetChecked()
     this.loading = true
     const res = await RoleApi.page(pageNum, pageSize)
     this.loading = false
@@ -370,15 +419,52 @@ export default class Role extends BaseVue {
       this.hideOnSinglePage = true
     }
   }
+
+  async resetChecked () {
+    this.checked = []
+    this.resourcePermissionMetrics = []
+    const arr: ResourcePermissionsVo[] = []
+    this.resource0s.forEach((resource0, index) => {
+      arr.push(new ResourcePermissionsVo(resource0, []))
+      const checkedRow: boolean[] = []
+      const resourcePermissions: string[] = []
+      this.permission0s.forEach((permission) => {
+        checkedRow.push(false)
+        resourcePermissions.push(resource0 + ':' + permission)
+      })
+      this.checked.push(checkedRow)
+      this.resourcePermissionMetrics.push(resourcePermissions)
+    })
+
+    this.permissionTree = arr
+
+    const res1 = await RoleApi.getAllSystemPermissions()
+    const permissionTree0 = res1.data.data
+    this.permissionTree.forEach(value => {
+      permissionTree0.forEach(value1 => {
+        if (value.resource === value1.resource) {
+          value.permissions = value1.permissions
+        }
+      })
+    })
+
+    console.log('checked:', this.checked)
+    console.log('resourcePermissionMetrics:', this.resourcePermissionMetrics)
+    console.log('permissionTree:', this.permissionTree)
+  }
+
+  permissionHas (permission: string, permissions: string[]): boolean {
+    return Permission.has(permission, permissions)
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-.el-button-group , #pagination{
+.el-button-group, #pagination {
   margin-top: 1em;
 }
 
-#roleDetailForm .el-form-item{
+#roleDetailForm .el-form-item {
   color: black !important;
 }
 </style>

@@ -26,6 +26,7 @@ class Permission {
   static permissions = {
     ADD: 'create',
     DETAIL: 'detail',
+    GET_ALL: 'get_all',
     UPDATE: 'update',
     DELETE: 'delete',
     PAGE: 'page',
@@ -52,6 +53,11 @@ class Permission {
       return false
     }
     return permission0s.has(permission)
+  }
+
+  public static has (permission: string, permissions: string[]): boolean {
+    const set = new Set<string>(permissions)
+    return set.has(permission)
   }
 }
 

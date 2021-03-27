@@ -43,4 +43,12 @@ public interface ResourceRepository extends BaseDbRepository<Resource, String> {
      * @return 资源与权限关系
      */
     List<ResourcePermission> getAllResourcePermissions();
+
+    /**
+     * 根据资源名获取资源权限列表
+     *
+     * @param resourceName 资源名
+     * @return 资源权限列表
+     */
+    List<ResourcePermission> getResourcePermissionsByResourceName(String resourceName);
 }

@@ -6,10 +6,11 @@ import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceCreateVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceDeleteVo;
-import com.php25.qiuqiu.admin.vo.in.resource.ResourcePermission0Vo;
+import com.php25.qiuqiu.admin.vo.in.resource.ResourceIdVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceUpdateVo;
-import com.php25.qiuqiu.admin.vo.out.ResourcePermissionVo;
-import com.php25.qiuqiu.admin.vo.out.ResourceVo;
+import com.php25.qiuqiu.admin.vo.out.resource.ResourceDetailVo;
+import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
+import com.php25.qiuqiu.admin.vo.out.resource.ResourceVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.resource.ResourceCreateDto;
 import com.php25.qiuqiu.user.dto.resource.ResourceDetailDto;
@@ -45,11 +46,11 @@ public class ResourceController extends JSONController {
     public JSONResponse create(@Valid @RequestBody ResourceCreateVo resourceCreateVo) {
         ResourceCreateDto resourceCreateDto = new ResourceCreateDto();
         BeanUtils.copyProperties(resourceCreateVo, resourceCreateDto);
-        List<ResourcePermission0Vo> permissions = resourceCreateVo.getResourcePermissions();
-        List<ResourcePermissionDto> resourcePermissionDtos = permissions.stream().map(resourcePermission0Vo -> {
+        List<String> permissions = resourceCreateVo.getPermissions();
+        List<ResourcePermissionDto> resourcePermissionDtos = permissions.stream().map(permission -> {
             ResourcePermissionDto resourcePermissionDto = new ResourcePermissionDto();
             resourcePermissionDto.setResource(resourceCreateVo.getName());
-            resourcePermissionDto.setPermission(resourcePermission0Vo.getPermission());
+            resourcePermissionDto.setPermission(permission);
             return resourcePermissionDto;
         }).collect(Collectors.toList());
         resourceCreateDto.setResourcePermissions(resourcePermissionDtos);
@@ -62,11 +63,11 @@ public class ResourceController extends JSONController {
     public JSONResponse update(@Valid @RequestBody ResourceUpdateVo resourceUpdateVo) {
         ResourceUpdateDto resourceUpdateDto = new ResourceUpdateDto();
         BeanUtils.copyProperties(resourceUpdateVo, resourceUpdateDto);
-        List<ResourcePermission0Vo> resourcePermission0Vos = resourceUpdateVo.getResourcePermissions();
-        List<ResourcePermissionDto> resourcePermissionDtos = resourcePermission0Vos.stream().map(resourcePermission0Vo -> {
+        List<String> permissions = resourceUpdateVo.getPermissions();
+        List<ResourcePermissionDto> resourcePermissionDtos = permissions.stream().map(permission -> {
             ResourcePermissionDto resourcePermissionDto = new ResourcePermissionDto();
             resourcePermissionDto.setResource(resourceUpdateVo.getName());
-            resourcePermissionDto.setPermission(resourcePermission0Vo.getPermission());
+            resourcePermissionDto.setPermission(permission);
             return resourcePermissionDto;
         }).collect(Collectors.toList());
         resourceUpdateDto.setResourcePermissions(resourcePermissionDtos);
@@ -74,6 +75,7 @@ public class ResourceController extends JSONController {
         return succeed(true);
     }
 
+    @AuditLog
     @APIVersion("v1")
     @PostMapping("/delete")
     public JSONResponse delete(@Valid @RequestBody ResourceDeleteVo resourceDeleteVo) {
@@ -98,7 +100,7 @@ public class ResourceController extends JSONController {
     }
 
     /**
-     * 获取系统中所有内置权限
+     * 获取系统中所有内置资源
      */
     @APIVersion("v1")
     @PostMapping("/get_all")
@@ -107,9 +109,25 @@ public class ResourceController extends JSONController {
         List<ResourcePermissionVo> resourcePermissionVos = permissions.stream().map(resourceDetailDto -> {
             ResourcePermissionVo resourcePermissionVo = new ResourcePermissionVo();
             resourcePermissionVo.setResource(resourceDetailDto.getName());
-            resourcePermissionVo.setPermissions(resourcePermissionVo.getPermissions());
+            List<ResourcePermissionDto> resourcePermissionDtos = resourceDetailDto.getResourcePermissions();
+            List<String> permission0s = resourcePermissionDtos.stream().map(ResourcePermissionDto::getPermission).collect(Collectors.toList());
+            resourcePermissionVo.setPermissions(permission0s);
             return resourcePermissionVo;
         }).collect(Collectors.toList());
         return succeed(resourcePermissionVos);
+    }
+
+    /**
+     * 获取资源详情
+     */
+    @APIVersion("v1")
+    @PostMapping("/detail")
+    public JSONResponse detail(@Valid @RequestBody ResourceIdVo resourceIdVo) {
+        ResourceDetailDto resourceDetailDto = resourceService.detail(resourceIdVo.getName());
+        ResourceDetailVo resourceDetailVo = new ResourceDetailVo();
+        BeanUtils.copyProperties(resourceDetailDto,resourceDetailVo);
+        List<String> permissions = resourceDetailDto.getResourcePermissions().stream().map(ResourcePermissionDto::getPermission).collect(Collectors.toList());
+        resourceDetailVo.setPermissions(permissions);
+        return succeed(resourceDetailVo);
     }
 }

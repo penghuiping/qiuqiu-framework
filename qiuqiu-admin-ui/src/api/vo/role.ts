@@ -1,12 +1,14 @@
+import { ResourcePermissionsVo } from '@/api/vo/resouce'
+
 class RoleCreateVo {
   name: string
   description: string
-  permissionIds: number[]
+  resourcePermissions: ResourcePermissionsVo[]
 
-  constructor (name: string, description: string, permissionIds: number[]) {
+  constructor (name: string, description: string, resourcePermissions: ResourcePermissionsVo[]) {
     this.name = name
     this.description = description
-    this.permissionIds = permissionIds
+    this.resourcePermissions = resourcePermissions
   }
 
   static newInstant (): RoleCreateVo {
@@ -57,14 +59,14 @@ class RoleUpdateVo {
   id: number
   name: string
   description: string
-  permissionIds: number[]
+  resourcePermissions: ResourcePermissionsVo[]
   enable: boolean
 
-  constructor (id: number, name: string, description: string, permissionIds: number[], enable: boolean) {
+  constructor (id: number, name: string, description: string, resourcePermissions: ResourcePermissionsVo[], enable: boolean) {
     this.id = id
     this.name = name
     this.description = description
-    this.permissionIds = permissionIds
+    this.resourcePermissions = resourcePermissions
     this.enable = enable
   }
 
@@ -77,21 +79,19 @@ class RoleDetailVo {
   id: number
   name: string
   description: string
-  permissions: string[]
-  permissionIds: number[]
+  resourcePermissions: ResourcePermissionsVo[]
   enable: boolean
 
-  constructor (id: number, name: string, description: string, permissions: string[], permissionIds: number[], enable: boolean) {
+  constructor (id: number, name: string, description: string, resourcePermissions: ResourcePermissionsVo[], enable: boolean) {
     this.id = id
     this.name = name
     this.description = description
-    this.permissions = permissions
-    this.permissionIds = permissionIds
+    this.resourcePermissions = resourcePermissions
     this.enable = enable
   }
 
   static newInstant (): RoleDetailVo {
-    return new RoleDetailVo(-1, '', '', [], [], false)
+    return new RoleDetailVo(-1, '', '', [], false)
   }
 }
 

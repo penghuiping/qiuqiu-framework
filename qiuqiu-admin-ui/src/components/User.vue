@@ -63,13 +63,13 @@
           <el-button
             size="small"
             type="text"
-            v-if="permissionExists(permissions.USER_DETAIL)" @click="detailInfo(scope.row)">
+            v-if="permissionExists(resources.USER,permissions.DETAIL)" @click="detailInfo(scope.row)">
             查看
           </el-button>
           <el-button
             size="small"
             type="text"
-            v-if="permissionExists(permissions.USER_UPDATE)" @click="updateRow(scope.row)">
+            v-if="permissionExists(resources.USER,permissions.UPDATE)" @click="updateRow(scope.row)">
             编辑
           </el-button>
           <el-button
@@ -81,7 +81,7 @@
           <el-button
             size="small"
             type="text"
-            v-if="permissionExists(permissions.USER_UPDATE)"
+            v-if="permissionExists(resources.USER,permissions.UPDATE)"
             @click.native.prevent="toggleEnable(scope.$index, tableData)">
             {{ scope.row.enable ? '使无效' : '使有效' }}
           </el-button>

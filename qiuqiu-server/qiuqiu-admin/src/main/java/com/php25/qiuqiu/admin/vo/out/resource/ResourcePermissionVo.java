@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.vo.out;
+package com.php25.qiuqiu.admin.vo.out.resource;
 
 import lombok.Getter;
 import lombok.Setter;

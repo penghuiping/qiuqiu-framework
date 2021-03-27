@@ -49,4 +49,10 @@ public class ResourceRepositoryImpl extends BaseDbRepositoryImpl<Resource, Strin
         SqlParams sqlParams = Queries.of(dbType).from(ResourcePermission.class).select();
         return QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
     }
+
+    @Override
+    public List<ResourcePermission> getResourcePermissionsByResourceName(String resourceName) {
+        SqlParams sqlParams = Queries.of(dbType).from(ResourcePermission.class).whereEq("resource",resourceName).select();
+        return QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
+    }
 }

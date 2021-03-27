@@ -56,4 +56,12 @@ public interface ResourceService {
      * @return 系统所有资源
      */
     List<ResourceDetailDto> getAll();
+
+    /**
+     * 获取资源详情
+     *
+     * @param resourceName 资源名
+     * @return 资源详情
+     */
+    ResourceDetailDto detail(String resourceName);
 }

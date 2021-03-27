@@ -43,6 +43,7 @@ INSERT INTO t_resource_permission(resource,permission) VALUES ('resource','page'
 INSERT INTO t_resource_permission(resource,permission) VALUES ('resource','create');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('resource','update');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('resource','delete');
+INSERT INTO t_resource_permission(resource,permission) VALUES ('resource','detail');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('group','get_all');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('group','page');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('group','create');
@@ -88,6 +89,7 @@ INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'r
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'resource','create');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'resource','update');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'resource','delete');
+INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'resource','detail');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'group','get_all');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'group','page');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'group','create');

@@ -21,6 +21,12 @@ class ResourceApi {
   public static page (): Promise<AxiosResponse<JsonResponse<ResourceVo[]>>> {
     return axios.post(ApiConstant.RESOURCE_PAGE)
   }
+
+  public static detail (resource: string): Promise<AxiosResponse<JsonResponse<ResourceUpdateVo>>> {
+    return axios.post(ApiConstant.RESOURCE_DETAIL, {
+      name: resource
+    })
+  }
 }
 
 export {

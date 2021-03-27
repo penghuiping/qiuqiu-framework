@@ -58,6 +58,7 @@ class ApiConstant {
   static RESOURCE_UPDATE = '/resource/update'
   static RESOURCE_DELETE = '/resource/delete'
   static RESOURCE_GET_ALL = '/resource/get_all'
+  static RESOURCE_DETAIL = '/resource/detail'
   static GROUP_GET_ALL = '/group/get_all'
   static GROUP_CREATE = '/group/create'
   static GROUP_DELETE = '/group/delete'

@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.user.service.impl;
 
+import com.google.common.collect.Lists;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.StringUtil;
@@ -23,7 +24,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -93,15 +98,15 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public DataGridPageDto<ResourceDto> page(String resourceName, Integer pageNum, Integer pageSize) {
         SearchParamBuilder builder = new SearchParamBuilder();
-        if(StringUtil.isNotBlank(resourceName)) {
-            builder.append(SearchParam.of("name", Operator.EQ,resourceName));
+        if (StringUtil.isNotBlank(resourceName)) {
+            builder.append(SearchParam.of("name", Operator.EQ, resourceName));
         }
-        PageRequest pageRequest = PageRequest.of(pageNum,pageSize);
-        Page<Resource> page = this.resourceRepository.findAll(builder,pageRequest);
+        PageRequest pageRequest = PageRequest.of(pageNum, pageSize);
+        Page<Resource> page = this.resourceRepository.findAll(builder, pageRequest);
         DataGridPageDto<ResourceDto> dataGrid = new DataGridPageDto<>();
         List<ResourceDto> res = page.stream().map(resource -> {
             ResourceDto resourceDto = new ResourceDto();
-            BeanUtils.copyProperties(resource,resourceDto);
+            BeanUtils.copyProperties(resource, resourceDto);
             return resourceDto;
         }).collect(Collectors.toList());
         dataGrid.setData(res);
@@ -112,6 +117,53 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public List<ResourceDetailDto> getAll() {
         List<ResourcePermission> resourcePermissions = this.resourceRepository.getAllResourcePermissions();
-        return null;
+        Map<String, List<ResourcePermissionDto>> map = new HashMap<>(64);
+        for (ResourcePermission resourcePermission : resourcePermissions) {
+            String resourceName = resourcePermission.getResource();
+            List<ResourcePermissionDto> resourcePermissionDtos = new ArrayList<>();
+            for (ResourcePermission resourcePermission0 : resourcePermissions) {
+                if (resourceName.equals(resourcePermission0.getResource())) {
+                    ResourcePermissionDto resourcePermissionDto = new ResourcePermissionDto();
+                    resourcePermissionDto.setResource(resourcePermission0.getResource());
+                    resourcePermissionDto.setPermission(resourcePermission0.getPermission());
+                    resourcePermissionDtos.add(resourcePermissionDto);
+                }
+            }
+            map.put(resourceName, resourcePermissionDtos);
+        }
+
+        List<Resource> resources = this.resourceRepository.findAllEnabled();
+        List<ResourceDetailDto> res = resources.stream().map(resource -> {
+            ResourceDetailDto resourceDetailDto = new ResourceDetailDto();
+            BeanUtils.copyProperties(resource, resourceDetailDto);
+            List<ResourcePermissionDto> resourcePermissionDtos = map.get(resource.getName());
+            resourceDetailDto.setResourcePermissions(resourcePermissionDtos);
+            return resourceDetailDto;
+        }).collect(Collectors.toList());
+        return res;
+    }
+
+    @Override
+    public ResourceDetailDto detail(String resourceName) {
+        Optional<Resource> resourceOptional = this.resourceRepository.findById(resourceName);
+        if (!resourceOptional.isPresent()) {
+            throw Exceptions.throwBusinessException(UserErrorCode.RESOURCE_DATA_NOT_EXISTS);
+        }
+        Resource resource = resourceOptional.get();
+        ResourceDetailDto resourceDetailDto = new ResourceDetailDto();
+        BeanUtils.copyProperties(resource, resourceDetailDto);
+        List<ResourcePermission> resourcePermissions = this.resourceRepository.getResourcePermissionsByResourceName(resourceName);
+
+        if (null != resourcePermissions && !resourcePermissions.isEmpty()) {
+            List<ResourcePermissionDto> resourcePermissionDtos = resourcePermissions.stream().map(resourcePermission -> {
+                ResourcePermissionDto resourcePermissionDto = new ResourcePermissionDto();
+                BeanUtils.copyProperties(resourcePermission, resourcePermissionDto);
+                return resourcePermissionDto;
+            }).collect(Collectors.toList());
+            resourceDetailDto.setResourcePermissions(resourcePermissionDtos);
+        } else {
+            resourceDetailDto.setResourcePermissions(Lists.newArrayList());
+        }
+        return resourceDetailDto;
     }
 }

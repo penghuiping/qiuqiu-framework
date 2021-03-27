@@ -14,29 +14,15 @@ class ResourceVo {
   }
 }
 
-class ResourcePermissionVo {
-  permission: string
-  uri: string
-
-  constructor (permission: string, uri: string) {
-    this.permission = permission
-    this.uri = uri
-  }
-
-  static newInstant (): ResourcePermissionVo {
-    return new ResourcePermissionVo('', '')
-  }
-}
-
 class ResourceCreateVo {
   name: string
   description: string
-  resourcePermissions: ResourcePermissionVo[]
+  permissions: string[]
 
-  constructor (name: string, description: string, resourcePermissions: ResourcePermissionVo[]) {
+  constructor (name: string, description: string, permissions: string[]) {
     this.name = name
     this.description = description
-    this.resourcePermissions = resourcePermissions
+    this.permissions = permissions
   }
 
   static newInstant (): ResourceCreateVo {
@@ -47,13 +33,13 @@ class ResourceCreateVo {
 class ResourceUpdateVo {
   name: string
   description: string
-  resourcePermissions: ResourcePermissionVo[]
+  permissions: string[]
   enable: boolean
 
-  constructor (name: string, description: string, resourcePermissions: ResourcePermissionVo[], enable: boolean) {
+  constructor (name: string, description: string, permissions: string[], enable: boolean) {
     this.name = name
     this.description = description
-    this.resourcePermissions = resourcePermissions
+    this.permissions = permissions
     this.enable = enable
   }
 
@@ -74,7 +60,6 @@ class ResourcePermissionsVo {
 
 export {
   ResourceVo,
-  ResourcePermissionVo,
   ResourceCreateVo,
   ResourceUpdateVo,
   ResourcePermissionsVo

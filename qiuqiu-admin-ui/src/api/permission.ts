@@ -14,7 +14,7 @@ class PermissionApi {
 
   public static delete (name: string): Promise<AxiosResponse<JsonResponse<boolean>>> {
     return axios.post(ApiConstant.PERMISSION_DELETE, {
-      permissionIds: [name]
+      permission: name
     })
   }
 
