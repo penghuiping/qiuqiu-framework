@@ -1,4 +1,3 @@
-
 interface WsMessageHandler {
   getAction(): string;
 
@@ -59,7 +58,7 @@ class WebSocket0 {
    token: string
    pingTimeout: number
    handlers = new Map<string, WsMessageHandler>()
-   ws: WebSocket | undefined
+   static ws: WebSocket | undefined
    timer: number | undefined
 
    constructor (token: string, url: string, pingTimeout: number) {
@@ -74,8 +73,8 @@ class WebSocket0 {
    }
 
    clear () {
-     if (this.ws) {
-       this.ws.close()
+     if (WebSocket0.ws) {
+       WebSocket0.ws.close()
        clearInterval(this.timer)
      }
    }
@@ -84,8 +83,14 @@ class WebSocket0 {
      const pingTimeout = this.pingTimeout
      const handlers = this.handlers
      const token = this.token
-     this.ws = new WebSocket(this.url)
-     this.ws.onopen = function () {
+     const url = this.url
+     this.init0(url, token, pingTimeout, handlers)
+   }
+
+   init0 (url: string, token: string, pingTimeout: number, handlers: Map<string, WsMessageHandler>) {
+     console.log('url:', url, 'token:', token, 'pingTimeout:', pingTimeout)
+     WebSocket0.ws = new WebSocket(url)
+     WebSocket0.ws.onopen = function () {
        console.log('ws connection open')
        // 发送ws心跳包
        WebSocket0.prototype.timer = setInterval(() => {
@@ -96,7 +101,7 @@ class WebSocket0 {
          }))
        }, pingTimeout)
      }
-     this.ws.onmessage = function (e: MessageEvent) {
+     WebSocket0.ws.onmessage = function (e: MessageEvent) {
        const obj = JSON.parse(e.data)
        console.log('ws receive message:{}', obj)
        const handler0 = handlers.get(obj.action)
@@ -104,14 +109,23 @@ class WebSocket0 {
          handler0.handle(this, obj, token)
        }
      }
-     this.ws.onclose = function (e: CloseEvent) {
-       console.log('ws connection close...', e)
+     WebSocket0.ws.onclose = function (e: CloseEvent) {
+       console.log('ws connection close. ..', e)
+       if (e.code !== 1000) {
+         console.log('3秒后开始重连...')
+         clearInterval(WebSocket0.prototype.timer)
+         setTimeout(() => {
+           WebSocket0.prototype.init0(url, token, pingTimeout, handlers)
+         }, 3000)
+       }
      }
-     this.ws.onerror = function (e: Event) {
+     WebSocket0.ws.onerror = function (e: Event) {
        console.log('ws connection error:', e)
      }
-     this.registerHandler(new RequestAuthInfoHandler())
-     this.registerHandler(new ReplyAuthInfoHandler())
+     const handler0 = new RequestAuthInfoHandler()
+     const handler1 = new ReplyAuthInfoHandler()
+     handlers.set(handler0.getAction(), handler0)
+     handlers.set(handler1.getAction(), handler1)
    }
 
    uuid () {

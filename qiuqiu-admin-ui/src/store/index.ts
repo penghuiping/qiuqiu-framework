@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { WebSocket0 } from '@/utils/ws'
+import { WebSocket0 } from '@/ws/ws'
 
 Vue.use(Vuex)
 
@@ -17,8 +17,10 @@ export default new Vuex.Store({
     },
     logout (state) {
       state.token = ''
-      sessionStorage.clear();
-      (state.ws as WebSocket0).clear()
+      sessionStorage.clear()
+      if (state.ws) {
+        (state.ws as WebSocket0).clear()
+      }
     },
     loginUserPermissions (state, payload) {
       state.userPermissions = payload

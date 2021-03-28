@@ -8,6 +8,7 @@ import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.group.GroupCreateVo;
 import com.php25.qiuqiu.admin.vo.in.group.GroupDeleteVo;
+import com.php25.qiuqiu.admin.vo.in.group.GroupUpdateVo;
 import com.php25.qiuqiu.admin.vo.out.TreeVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.group.GroupCreateDto;
@@ -38,7 +39,7 @@ public class GroupController extends JSONController {
     /**
      * 获取系统中所有组列表
      */
-    @ApiDoc(result = TreeVo.class, url = "/qiuqiu_admin/v1/group/get_all")
+    @ApiDoc(result = TreeVo.class, url = "/group/get_all")
     @APIVersion("v1")
     @PostMapping("/get_all")
     public JSONResponse getAll() {
@@ -54,7 +55,7 @@ public class GroupController extends JSONController {
      * @param groupCreateVo
      */
     @AuditLog
-    @ApiDoc(stringResult = "true:创建成功", url = "/qiuqiu_admin/v1/group/create")
+    @ApiDoc(stringResult = "true:创建成功", url = "/group/create")
     @APIVersion("v1")
     @PostMapping("/create")
     public JSONResponse create(@Valid @RequestBody GroupCreateVo groupCreateVo) {
@@ -64,12 +65,27 @@ public class GroupController extends JSONController {
     }
 
     /**
+     * 更新用户组
+     *
+     * @param groupUpdateVo
+     */
+    @AuditLog
+    @ApiDoc(stringResult = "true:更新成功", url = "/group/update")
+    @APIVersion("v1")
+    @PostMapping("/update")
+    public JSONResponse create(@Valid @RequestBody GroupUpdateVo groupUpdateVo) {
+        GroupDto groupDto = new GroupDto();
+        BeanUtils.copyProperties(groupUpdateVo, groupDto);
+        return succeed(groupService.update(groupDto));
+    }
+
+    /**
      * 删除用户组
      *
      * @param groupDeleteVo
      */
     @AuditLog
-    @ApiDoc(stringResult = "true:创建成功", url = "/qiuqiu_admin/v1/group/delete")
+    @ApiDoc(stringResult = "true:创建成功", url = "/group/delete")
     @APIVersion("v1")
     @PostMapping("/delete")
     public JSONResponse delete(@Valid @RequestBody GroupDeleteVo groupDeleteVo) {
@@ -78,7 +94,7 @@ public class GroupController extends JSONController {
 
     private void buildTree(TreeVo node, TreeNode<GroupDto> node0) {
         node.setId(node0.getData().getId() + "");
-        node.setValue(node0.getData().getId() + "");
+        node.setValue(node0.getData().getName() + "");
         node.setLabel(node0.getData().getDescription());
         node.setDisabled(false);
         node.setChildren(Lists.newArrayList());

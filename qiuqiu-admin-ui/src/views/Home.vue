@@ -103,7 +103,7 @@ import { Component } from 'vue-property-decorator'
 import { BaseVue } from '@/BaseVue'
 import { UserApi } from '@/api/user'
 import { Permission } from '@/permission'
-import { WebSocket0 } from '@/utils/ws'
+import { WebSocket0 } from '@/ws/ws'
 import { NotifyTextHandler } from '@/ws'
 
 import IndexView from '@/components/Index.vue'
@@ -311,7 +311,7 @@ export default class Home extends BaseVue {
 
   initWS () {
     const token = this.$store.state.token
-    const url = 'ws://localhost:8081/qiuqiu_admin/websocket'
+    const url = 'ws://192.168.3.18:8081/qiuqiu_admin/websocket'
     const ws0 = new WebSocket0(token, url, 5000)
     ws0.registerHandler(new NotifyTextHandler(this))
     this.$store.state.ws = ws0

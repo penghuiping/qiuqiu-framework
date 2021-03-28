@@ -1,4 +1,4 @@
-import { WsMessageHandler, WsMsg } from '@/utils/ws'
+import { WsMessageHandler, WsMsg } from '@/ws/ws'
 import { BaseVue } from '@/BaseVue'
 
 class NotifyTextMsg extends WsMsg {

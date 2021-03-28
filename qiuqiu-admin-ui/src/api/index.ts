@@ -61,6 +61,7 @@ class ApiConstant {
   static RESOURCE_DETAIL = '/resource/detail'
   static GROUP_GET_ALL = '/group/get_all'
   static GROUP_CREATE = '/group/create'
+  static GROUP_UPDATE = '/group/update'
   static GROUP_DELETE = '/group/delete'
   static AUDIT_LOG_PAGE = '/audit_log/page'
   static DICT_PAGE = '/dict/page'

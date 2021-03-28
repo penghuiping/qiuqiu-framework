@@ -252,18 +252,18 @@ export default class JobExecution extends BaseVue {
         this.goToPage(this.searchKey, this.currentPage, this.pageSize)
         this.$message({
           type: 'success',
-          message: '刷新成功!'
+          message: '重新加载成功!'
         })
       } else {
         this.$message({
           type: 'info',
-          message: '刷新失败'
+          message: '重新加载失败'
         })
       }
     }).catch(() => {
       this.$message({
         type: 'info',
-        message: '已取消刷新'
+        message: '已取消重新加载'
       })
     })
   }

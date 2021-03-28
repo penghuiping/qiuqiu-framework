@@ -13,7 +13,23 @@ class GroupCreateVo {
      this.description = description
    }
 }
+class GroupUpdateVo {
+  id: number
+  name: string
+  description: string
+
+  static newInstant (): GroupUpdateVo {
+    return new GroupUpdateVo(-1, '', '')
+  }
+
+  constructor (id: number, name: string, description: string) {
+    this.id = id
+    this.name = name
+    this.description = description
+  }
+}
 
 export {
-  GroupCreateVo
+  GroupCreateVo,
+  GroupUpdateVo
 }
