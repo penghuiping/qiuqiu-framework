@@ -16,9 +16,9 @@ import javax.validation.constraints.Positive;
 public class JobLogPageVo {
 
     /**
-     * 任务id,用于搜索
+     * 任务名,用于搜索
      */
-    private String jobId;
+    private String jobName;
 
     /**
      * 分页页码

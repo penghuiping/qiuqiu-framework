@@ -6,7 +6,7 @@
         <el-input
           v-model="searchKey"
           clearable
-          placeholder="请输入用户名">
+          placeholder="请输入任务名">
         </el-input>
       </div>
       <el-button id="searchBtn" icon="el-icon-search" type="primary" @click="handleSearch">搜索</el-button>

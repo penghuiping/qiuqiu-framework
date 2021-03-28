@@ -164,7 +164,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     public DataGridPageDto<JobLogDto> pageJobLog(String username, String jobName, Integer pageNum, Integer pageSize) {
         List<Long> groupsId = groupService.findGroupsId(username);
         SearchParamBuilder builder = SearchParamBuilder.builder();
-        if (!StringUtil.isBlank(jobName)) {
+        if (StringUtil.isNotBlank(jobName)) {
             builder.append(SearchParam.of("jobName", Operator.EQ, jobName));
         }
         builder.append(SearchParam.of("groupId", Operator.IN, groupsId));

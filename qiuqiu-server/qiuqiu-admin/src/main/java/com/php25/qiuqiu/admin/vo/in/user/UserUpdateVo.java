@@ -48,4 +48,10 @@ public class UserUpdateVo {
     @NotNull
     @Size(min = 1)
     private List<Long> roleIds;
+
+    /**
+     * true:有效
+     */
+    @NotNull
+    private Boolean enable;
 }

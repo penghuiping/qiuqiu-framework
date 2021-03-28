@@ -37,7 +37,7 @@ public class JobLogController extends JSONController {
     @APIVersion("v1")
     @PostMapping("/page")
     public JSONResponse page(@RequestAttribute String username, @Valid @RequestBody JobLogPageVo jobLogPageVo) {
-        DataGridPageDto<JobLogDto> dataGrid = jobService.pageJobLog(username, jobLogPageVo.getJobId(), jobLogPageVo.getPageNum(), jobLogPageVo.getPageSize());
+        DataGridPageDto<JobLogDto> dataGrid = jobService.pageJobLog(username, jobLogPageVo.getJobName(), jobLogPageVo.getPageNum(), jobLogPageVo.getPageSize());
         PageResultVo<JobLogVo> result = new PageResultVo<>();
         List<JobLogDto> list = dataGrid.getData();
         List<JobLogVo> list0 = list.stream().map(jobLogDto -> {

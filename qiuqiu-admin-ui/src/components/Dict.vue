@@ -74,13 +74,6 @@
             v-if="permissionExists(resources.DICT,permissions.REFRESH)">
             刷新
           </el-button>
-          <el-button
-            size="small"
-            type="text"
-            @click.native.prevent="toggleEnable(scope.$index, tableData)"
-            v-if="permissionExists(resources.DICT,permissions.UPDATE)">
-            {{ scope.row.enable ? '使无效' : '使有效' }}
-          </el-button>
         </template>
       </el-table-column>
     </el-table>

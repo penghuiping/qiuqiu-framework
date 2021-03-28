@@ -45,13 +45,6 @@
             v-if="permissionExists(resources.RESOURCE,permissions.DELETE)">
             删除
           </el-button>
-          <el-button
-            size="small"
-            type="text"
-            @click.native.prevent="toggleEnable(scope.$index, tableData)"
-            v-if="permissionExists(resources.RESOURCE,permissions.UPDATE)">
-            {{ scope.row.enable ? '使无效' : '使有效' }}
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -240,10 +233,6 @@ export default class Resource extends BaseVue {
         this.createDialogVisible = false
       }
     })
-  }
-
-  toggleEnable () {
-    console.log('.')
   }
 }
 </script>

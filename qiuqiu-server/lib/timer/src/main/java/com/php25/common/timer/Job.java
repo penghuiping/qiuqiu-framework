@@ -4,6 +4,8 @@ import com.php25.common.core.mess.SpringContextHolder;
 import com.php25.common.core.util.RandomUtil;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -33,10 +35,11 @@ public class Job implements TimerTask {
      */
     private final Runnable task;
 
+    private Boolean highAvailable =false;
+
     public Job(String cron, Runnable task) {
         this(RandomUtil.randomUUID(), cron, task);
     }
-
 
     public Job(String jobExecutionId, String cron, Runnable task) {
         try {
@@ -56,6 +59,9 @@ public class Job implements TimerTask {
         this.cron = null;
     }
 
+    void setHighAvailable(Boolean highAvailable) {
+        this.highAvailable = highAvailable;
+    }
 
     public long getExecuteTime() {
         return executeTime;
@@ -80,7 +86,11 @@ public class Job implements TimerTask {
     @Override
     public void run(Timeout timeout) throws Exception {
         Job job0 = (Job) timeout.task();
-        TimerInnerLogManager jobExecutionLogManager = SpringContextHolder.getBean0(TimerInnerLogManager.class);
-        jobExecutionLogManager.synchronizedExecutionJob(job0);
+        if(highAvailable) {
+            TimerInnerLogManager jobExecutionLogManager = SpringContextHolder.getBean0(TimerInnerLogManager.class);
+            jobExecutionLogManager.synchronizedExecutionJob(job0);
+        }else {
+            job0.getTask().run();
+        }
     }
 }

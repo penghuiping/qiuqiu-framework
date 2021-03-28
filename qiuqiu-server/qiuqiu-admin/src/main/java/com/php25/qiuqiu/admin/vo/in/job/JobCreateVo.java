@@ -29,10 +29,4 @@ public class JobCreateVo {
      */
     @NotBlank
     private String description;
-
-    /**
-     * 任务的cron表达式
-     */
-    @NotBlank
-    private String cron;
 }

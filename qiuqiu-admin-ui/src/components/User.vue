@@ -78,13 +78,6 @@
             @click.native.prevent="deleteRow(scope.$index, tableData)" v-if="permissionExists(resources.USER,permissions.DELETE)">
             删除
           </el-button>
-          <el-button
-            size="small"
-            type="text"
-            v-if="permissionExists(resources.USER,permissions.UPDATE)"
-            @click.native.prevent="toggleEnable(scope.$index, tableData)">
-            {{ scope.row.enable ? '使无效' : '使有效' }}
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -275,35 +268,6 @@ export default class User extends BaseVue {
     this.groups = []
     this.groups.push(res.data.data)
     console.log('groups:', this.groups)
-  }
-
-  // 状态有效/无效开关操作
-  toggleEnable (index: number, rows: UserListVo[]) {
-    const userDto = rows[index]
-    let message = ''
-    if (userDto.enable) {
-      message = '失效'
-      userDto.enable = false
-    } else {
-      message = '生效'
-      userDto.enable = true
-    }
-
-    this.$confirm('使这条记录' + message + ', 是否继续?', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(() => {
-      this.$message({
-        type: 'success',
-        message: '成功!'
-      })
-    }).catch(() => {
-      this.$message({
-        type: 'info',
-        message: '已取消'
-      })
-    })
   }
 
   // 物理删除按钮操作

@@ -5,6 +5,8 @@ import com.php25.common.core.mess.SpringContextHolder;
 import com.php25.common.timer.model.TimerInnerLog;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,7 @@ public class Timer {
     }
 
     public void add(Job job, Boolean isHighAvailable) {
+        job.setHighAvailable(isHighAvailable);
         Timeout timeout = this.wheelTimer.newTimeout(job, job.getDelay(), TimeUnit.MILLISECONDS);
         Job job0 = (Job) timeout.task();
         cache.put(job0.getJobExecutionId(), timeout);
