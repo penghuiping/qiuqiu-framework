@@ -6,37 +6,39 @@ import Component from 'vue-class-component'
 
 @Component
 class BaseVue extends Vue {
-  private permissions = Permission.permissions
-  private resources = Permission.resources
+   permissions = Permission.permissions
+   resources = Permission.resources
+   innerPermissions = Permission.innerPermissions
+   innerResources = Permission.innerResources
 
-  get token () {
-    let token1 = this.$store.state.token
-    if (token1) {
-      return token1
-    }
-    token1 = sessionStorage.getItem('token')
-    if (token1) {
-      return token1
-    }
-    return ''
-  }
+   get token () {
+     let token1 = this.$store.state.token
+     if (token1) {
+       return token1
+     }
+     token1 = sessionStorage.getItem('token')
+     if (token1) {
+       return token1
+     }
+     return ''
+   }
 
   @Watch('token', {
     immediate: true
   })
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onChildChanged (val: string, oldVal: string) {
-    if ((val === '' || val == null) && this.$router.currentRoute.path !== '/') {
-      this.$confirm('由于您长时间没有操作,请重新登入', '提示', {
-        confirmButtonText: '确定',
-        type: 'warning'
-      }).then(() => {
-        this.routePage('/')
-      }).catch(() => {
-        this.routePage('/')
-      })
-    }
-  }
+   onChildChanged (val: string, oldVal: string) {
+     if ((val === '' || val == null) && this.$router.currentRoute.path !== '/') {
+       this.$confirm('由于您长时间没有操作,请重新登入', '提示', {
+         confirmButtonText: '确定',
+         type: 'warning'
+       }).then(() => {
+         this.routePage('/')
+       }).catch(() => {
+         this.routePage('/')
+       })
+     }
+   }
 
   // 页面跳转
   routePage (path: string) {

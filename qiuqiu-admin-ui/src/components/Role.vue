@@ -124,7 +124,7 @@
               {{permissionTranslate(scope.row.resource)}}
               </template>
             </el-table-column>
-            <el-table-column v-for="(permission,index) in permission0s" v-bind:key="permission"
+            <el-table-column v-for="(permission,index) in innerPermissions" v-bind:key="permission"
                              :prop="permission"
                              :label="permissionTranslate(permission)"
                              width="50">
@@ -173,7 +173,7 @@
                 {{permissionTranslate(scope.row.resource)}}
               </template>
             </el-table-column>
-            <el-table-column v-for="(permission,index) in permission0s" v-bind:key="permission"
+            <el-table-column v-for="(permission,index) in innerPermissions" v-bind:key="permission"
                              :prop="permission"
                              :label="permissionTranslate(permission)"
                              width="50">
@@ -225,31 +225,6 @@ export default class Role extends BaseVue {
     children: 'children',
     label: 'label'
   }
-
-  private permission0s = [
-    Permission.permissions.ADD,
-    Permission.permissions.DETAIL,
-    Permission.permissions.GET_ALL,
-    Permission.permissions.UPDATE,
-    Permission.permissions.DELETE,
-    Permission.permissions.PAGE,
-    Permission.permissions.REFRESH,
-    Permission.permissions.REFRESH_ALL,
-    Permission.permissions.STATISTIC
-  ]
-
-  private resource0s = [
-    Permission.resources.USER,
-    Permission.resources.ROLE,
-    Permission.resources.RESOURCE,
-    Permission.resources.PERMISSION,
-    Permission.resources.GROUP,
-    Permission.resources.DICT,
-    Permission.resources.JOB,
-    Permission.resources.JOB_EXECUTION,
-    Permission.resources.JOB_LOG,
-    Permission.resources.AUDIT_LOG
-  ]
 
   private resourcePermissionMetrics: string[][] = []
 
@@ -430,11 +405,11 @@ export default class Role extends BaseVue {
     this.checked = []
     this.resourcePermissionMetrics = []
     const arr: ResourcePermissionsVo[] = []
-    this.resource0s.forEach((resource0) => {
+    this.innerResources.forEach((resource0) => {
       arr.push(new ResourcePermissionsVo(resource0, []))
       const checkedRow: boolean[] = []
       const resourcePermissions: string[] = []
-      this.permission0s.forEach((permission) => {
+      this.innerPermissions.forEach((permission) => {
         checkedRow.push(false)
         resourcePermissions.push(resource0 + ':' + permission)
       })

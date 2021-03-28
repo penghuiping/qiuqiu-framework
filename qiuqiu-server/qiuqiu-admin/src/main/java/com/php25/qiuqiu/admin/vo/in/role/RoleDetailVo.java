@@ -17,6 +17,7 @@ public class RoleDetailVo {
     /***
      * 用户id
      */
+    @NotNull
     @Positive
     private Long roleId;
 }

@@ -20,6 +20,7 @@ public class UserUpdateVo {
     /**
      * 用户id
      */
+    @NotNull
     @Positive
     private Long id;
 
@@ -32,18 +33,19 @@ public class UserUpdateVo {
     /**
      * 密码
      */
-    @NotBlank
     private String password;
 
     /**
      * 组id
      */
+    @NotNull
     @Positive
     private Long groupId;
 
     /**
      * 角色列表id
      */
+    @NotNull
     @Size(min = 1)
     private List<Long> roleIds;
 }

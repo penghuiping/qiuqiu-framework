@@ -115,6 +115,7 @@ export default class Department extends BaseVue {
 
   create (data: ElementUiTreeVo) {
     this.parentNode = data
+    this.groupCreateVo = GroupCreateVo.newInstant()
     this.createDialogVisible = true
   }
 

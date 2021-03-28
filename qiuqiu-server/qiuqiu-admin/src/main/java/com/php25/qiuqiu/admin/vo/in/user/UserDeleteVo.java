@@ -18,6 +18,7 @@ public class UserDeleteVo {
     /**
      * 用户id列表
      */
+    @NotNull
     @Size(min = 1)
     private List<Long> userIds;
 }

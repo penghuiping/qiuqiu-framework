@@ -188,7 +188,7 @@
             ref="groupCascaderUpdate"
             v-model="groupsChecked"
             :options="groups"
-            :props="{ checkStrictly: true }"
+            :props="{checkStrictly: true}"
             :show-all-levels="false"
             clearable>
           </el-cascader>
@@ -272,7 +272,9 @@ export default class User extends BaseVue {
 
   async getGroups () {
     const res = await GroupApi.getAll()
+    this.groups = []
     this.groups.push(res.data.data)
+    console.log('groups:', this.groups)
   }
 
   // 状态有效/无效开关操作
@@ -339,22 +341,41 @@ export default class User extends BaseVue {
     this.userUpdateVo.username = res.data.data.username
     this.userUpdateVo.nickname = res.data.data.nickname
     this.userUpdateVo.groupId = res.data.data.groupId
-    this.groupsChecked = this.findGroupPath(this.userUpdateVo.groupId)
+    this.groupsChecked = this.findGroupPath(res.data.data.groupId)
+    console.log('this.groupsChecked:', this.groupsChecked)
     this.userUpdateVo.roleIds = res.data.data.roleIds
     this.userUpdateVo.enable = res.data.data.enable
     this.userUpdateDialogVisible = true
   }
 
+  findGroup (value: string): ElementUiTreeVo {
+    const set = new Array<ElementUiTreeVo>()
+    this.findChildGroup(value, this.groups, set)
+    return set[0]
+  }
+
+  findChildGroup (value: string, children: ElementUiTreeVo[], result: Array<ElementUiTreeVo>) {
+    children.forEach(child => {
+      if (child.value === value) {
+        result.push(child)
+        return
+      }
+      if (child.children && child.children.length > 0) {
+        this.findChildGroup(value, child.children, result)
+      }
+    })
+  }
+
   findGroupPath (groupId: number): string[] {
+    this.getGroups()
     const path: string[] = []
     const node = this.groups[0]
-    console.log('groups:', node)
     this.findGroupPath0(groupId, node, path)
     return path
   }
 
   findGroupPath0 (nodeId: number, node: ElementUiTreeVo, path: string[]): boolean {
-    path.push(node.id + '')
+    path.push(node.value)
     if (node.id + '' === nodeId + '') {
       return true
     }
@@ -399,11 +420,14 @@ export default class User extends BaseVue {
 
   // 创建新用户
   async handleCreateUser () {
+    this.userCreateVo = UserCreateVo.newInstant()
     this.userAddDialogVisible = true
   }
 
   handleCreateUserConfirm () {
-    this.userCreateVo.groupId = parseInt(this.groupsChecked[this.groupsChecked.length - 1]);
+    const groupName = this.groupsChecked.reverse()[0]
+    const tmp = this.findGroup(groupName)
+    this.userCreateVo.groupId = tmp.id;
     (this.$refs.userAddForm as ElForm).validate(async valid => {
       if (valid) {
         const userVo = new UserCreateVo(
@@ -431,7 +455,9 @@ export default class User extends BaseVue {
   }
 
   handleUpdateUserConfirm () {
-    this.userUpdateVo.groupId = parseInt(this.groupsChecked[this.groupsChecked.length - 1]);
+    const groupName = this.groupsChecked.reverse()[0]
+    const tmp = this.findGroup(groupName)
+    this.userUpdateVo.groupId = tmp.id;
     (this.$refs.userUpdateForm as ElForm).validate(async valid => {
       if (valid) {
         this.userUpdateDialogVisible = false

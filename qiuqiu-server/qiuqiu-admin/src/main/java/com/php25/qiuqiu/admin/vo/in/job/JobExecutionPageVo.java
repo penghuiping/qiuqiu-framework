@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 /**
@@ -21,12 +22,14 @@ public class JobExecutionPageVo {
     /**
      * 分页页码
      */
+    @NotNull
     @Positive
     private Integer pageNum;
 
     /**
      * 每页几条记录
      */
+    @NotNull
     @Positive
     @Max(100)
     private Integer pageSize;

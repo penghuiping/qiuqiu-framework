@@ -18,6 +18,7 @@ public class DictUpdateVo {
     /**
      * id值
      */
+    @NotNull
     @Positive
     private Long id;
 

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 /**
@@ -17,6 +18,7 @@ public class GroupUpdateVo {
     /**
      * 组id
      */
+    @NotNull
     @Positive
     private Long id;
 

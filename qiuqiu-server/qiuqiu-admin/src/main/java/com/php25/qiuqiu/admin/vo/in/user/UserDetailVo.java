@@ -17,6 +17,7 @@ public class UserDetailVo {
     /***
      * 用户id
      */
+    @NotNull
     @Positive
     private Long userId;
 }

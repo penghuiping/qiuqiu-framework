@@ -33,6 +33,7 @@ public class ResourceCreateVo {
     /**
      * 资源对应的权限操作
      */
+    @NotNull
     @Size(min = 1)
     private List<String> permissions;
 }

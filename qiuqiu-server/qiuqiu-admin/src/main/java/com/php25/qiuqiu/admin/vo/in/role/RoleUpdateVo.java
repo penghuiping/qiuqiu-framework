@@ -21,6 +21,7 @@ public class RoleUpdateVo {
     /**
      * 角色id
      */
+    @NotNull
     @Positive
     private Long id;
 
@@ -39,6 +40,7 @@ public class RoleUpdateVo {
     /**
      * 权限id列表
      */
+    @NotNull
     @Size(min = 1)
     private List<ResourcePermissionVo> resourcePermissions;
 

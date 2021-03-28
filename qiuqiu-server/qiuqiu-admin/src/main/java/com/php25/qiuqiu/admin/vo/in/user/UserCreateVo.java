@@ -27,6 +27,7 @@ public class UserCreateVo {
      * 昵称
      */
     @NotBlank
+    private String nickname;
 
     /**
      * 密码
@@ -37,12 +38,14 @@ public class UserCreateVo {
     /**
      * 组id
      */
+    @NotNull
     @Positive
     private Long groupId;
 
     /**
      * 角色列表id
      */
+    @NotNull
     @Size(min = 1)
     private List<Long> roleIds;
 }

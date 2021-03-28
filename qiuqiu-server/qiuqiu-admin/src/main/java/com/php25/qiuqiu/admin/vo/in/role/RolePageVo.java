@@ -19,12 +19,14 @@ public class RolePageVo {
     /**
      * 当前第几页
      */
+    @NotNull
     @Positive
     private Integer pageNum;
 
     /**
      * 每页几条数据
      */
+    @NotNull
     @Positive
     @Max(100)
     private Integer pageSize;

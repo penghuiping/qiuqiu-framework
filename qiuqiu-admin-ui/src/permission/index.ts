@@ -35,6 +35,31 @@ class Permission {
     STATISTIC: 'statistic'
   }
 
+  static innerPermissions = [
+    Permission.permissions.ADD,
+    Permission.permissions.DETAIL,
+    Permission.permissions.GET_ALL,
+    Permission.permissions.UPDATE,
+    Permission.permissions.DELETE,
+    Permission.permissions.PAGE,
+    Permission.permissions.REFRESH,
+    Permission.permissions.REFRESH_ALL,
+    Permission.permissions.STATISTIC
+  ]
+
+  static innerResources = [
+    Permission.resources.USER,
+    Permission.resources.ROLE,
+    Permission.resources.RESOURCE,
+    Permission.resources.PERMISSION,
+    Permission.resources.GROUP,
+    Permission.resources.DICT,
+    Permission.resources.JOB,
+    Permission.resources.JOB_EXECUTION,
+    Permission.resources.JOB_LOG,
+    Permission.resources.AUDIT_LOG
+  ]
+
   static translateMap = new Map<string, string>([
     [Permission.resources.USER, '用户管理'],
     [Permission.resources.ROLE, '角色管理'],
