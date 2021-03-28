@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 /**
  * @author penghuiping
@@ -16,6 +17,6 @@ public class UserDetailVo {
     /***
      * 用户id
      */
-    @NotNull(message = "用户id不能为空")
+    @Positive
     private Long userId;
 }

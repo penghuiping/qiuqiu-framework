@@ -3,8 +3,10 @@ package com.php25.qiuqiu.admin.vo.in.role;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 /**
  * @author penghuiping
@@ -17,15 +19,14 @@ public class RolePageVo {
     /**
      * 当前第几页
      */
-    @NotNull(message = "页数不能为空")
-    @Min(0)
+    @Positive
     private Integer pageNum;
 
     /**
      * 每页几条数据
      */
-    @NotNull(message = "每页条数不能为空")
-    @Min(1)
+    @Positive
+    @Max(100)
     private Integer pageSize;
 
     /**

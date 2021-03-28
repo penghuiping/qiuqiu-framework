@@ -3,6 +3,8 @@ package com.php25.qiuqiu.admin.vo.in.job;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * @author penghuiping
  * @date 2021/3/16 10:39
@@ -10,5 +12,10 @@ import lombok.Setter;
 @Setter
 @Getter
 public class JobExecutionIdVo {
+
+    /**
+     * 计划任务id
+     */
+    @NotBlank
     private String id;
 }

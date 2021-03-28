@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -18,30 +20,29 @@ public class UserCreateVo {
     /**
      * 用户名
      */
-    @NotBlank(message = "用户名不能为空")
+    @NotBlank
     private String username;
 
     /**
      * 昵称
      */
-    @NotBlank(message = "昵称不能为空")
-    private String nickname;
+    @NotBlank
 
     /**
      * 密码
      */
-    @NotBlank(message = "密码不能为空")
+    @NotBlank
     private String password;
 
     /**
      * 组id
      */
-    @NotNull(message = "组id不能为空")
+    @Positive
     private Long groupId;
 
     /**
      * 角色列表id
      */
-    @NotNull(message = "角色id不能为空")
+    @Size(min = 1)
     private List<Long> roleIds;
 }

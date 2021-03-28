@@ -3,6 +3,8 @@ package com.php25.qiuqiu.admin.vo.in.resource;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * @author penghuiping
  * @date 2021/3/27 09:23
@@ -14,5 +16,6 @@ public class ResourceIdVo {
     /**
      * 资源名
      */
+    @NotBlank
     private String name;
 }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -17,6 +18,6 @@ public class UserDeleteVo {
     /**
      * 用户id列表
      */
-    @NotNull(message = "用户id不能为空")
+    @Size(min = 1)
     private List<Long> userIds;
 }
