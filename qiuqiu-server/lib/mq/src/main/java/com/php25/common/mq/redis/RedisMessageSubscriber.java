@@ -2,7 +2,6 @@ package com.php25.common.mq.redis;
 
 import com.google.common.base.Charsets;
 import com.php25.common.core.mess.SpringContextHolder;
-import com.php25.common.core.util.StringUtil;
 import com.php25.common.mq.Message;
 import com.php25.common.mq.MessageHandler;
 import com.php25.common.mq.MessageSubscriber;

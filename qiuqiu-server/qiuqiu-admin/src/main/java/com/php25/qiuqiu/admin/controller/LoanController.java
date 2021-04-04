@@ -36,10 +36,11 @@ public class LoanController extends JSONController {
 
     @APIVersion("v1")
     @GetMapping("/test1")
-    public JSONResponse test1(@RequestParam("season") String season,@RequestParam("number") Integer number) {
+    public JSONResponse test1(@RequestParam("season") String season,@RequestParam("number") Integer number,@RequestParam("weight") Float weight) {
         VariableMap variables = Variables.createVariables()
                 .putValue("季节", season)
-                .putValue("顾客数", number);
+                .putValue("顾客数", number)
+                .putValue("权重", weight);
         DmnDecisionTableResult dishDecisionResult = decisionService.evaluateDecisionTableByKey("dish", variables);
         String desiredDish = dishDecisionResult.getSingleEntry();
         return succeed(desiredDish);

@@ -103,17 +103,17 @@ public class RedisMessageQueueManager implements MessageQueueManager, Initializi
 
     @Override
     public Boolean subscribe(String queue, String group, MessageHandler handler) {
-        return this.subscribe(queue,group,false,handler);
+        return this.subscribe(queue, group, false, handler);
     }
 
     @Override
     public Boolean subscribe(String queue, String group, Boolean autoDelete, MessageHandler handler) {
-        AssertUtil.hasText("queue","queue不能为空");
-        AssertUtil.hasText("group","group不能为空");
+        AssertUtil.hasText("queue", "queue不能为空");
+        AssertUtil.hasText("group", "group不能为空");
         RSet<String> groups = this.helper.groups(queue);
         String group0 = this.groupName(queue, group);
         groups.add(group0);
-        RedisMessageSubscriber subscriber = new RedisMessageSubscriber(subscriberThreadPool, redisManager,autoDelete);
+        RedisMessageSubscriber subscriber = new RedisMessageSubscriber(subscriberThreadPool, redisManager, autoDelete);
         subscriber.subscribe(queue, group0);
         subscriber.setHandler(handler);
         this.subscribers.add(subscriber);

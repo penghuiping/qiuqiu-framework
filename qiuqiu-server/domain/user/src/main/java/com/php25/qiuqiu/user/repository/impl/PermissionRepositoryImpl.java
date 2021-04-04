@@ -1,6 +1,5 @@
 package com.php25.qiuqiu.user.repository.impl;
 
-import com.google.common.collect.Lists;
 import com.php25.common.db.DbType;
 import com.php25.common.db.Queries;
 import com.php25.common.db.QueriesExecute;
@@ -11,9 +10,6 @@ import com.php25.qiuqiu.user.model.ResourcePermission;
 import com.php25.qiuqiu.user.repository.PermissionRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author penghuiping

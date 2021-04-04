@@ -1,12 +1,16 @@
 ########################################################
 ###common
 ########################################################
+jasypt:
+  encryptor:
+    ## 不安全 生产用 -Djasypt.encryptor.password=123456 方式
+    password: '@WSXcft6#EDCvgy7'
 app:
   db:
     ip: localhost
     port: 33306
-    username: root
-    password:
+    username: ENC(DySsEJn1LgKl6VqxdP7mTw==)
+    password: ENC(znfy5SdaY3e0hXjTpZQv1w==)
     name: test
   filesever:
     host: localhost
@@ -15,12 +19,13 @@ app:
   redis:
     host: localhost
     port: 36379
+    password: ENC(zGb6Ots9lRMd7RLIy6w12A==)
     database: 0
   rabbitmq:
     ip: localhost
     port: 5672
-    username: guest
-    password: guest
+    username: ENC(Esk0at/quBKVrWD6PKHwAg==)
+    password: ENC(GqHPMo3jAyV25ZAv5Zejnw==)
     virtualHost: /
 ########################################################
 ### static resources and upload load file
@@ -70,7 +75,7 @@ spring:
     host: ${app.redis.host}
     port: ${app.redis.port}
     database: ${app.redis.database}
-    #    password: ${app.redis.password}
+    #password: ${app.redis.password}
     ssl: false
     lettuce:
       pool:
