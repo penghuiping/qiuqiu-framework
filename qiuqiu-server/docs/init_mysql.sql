@@ -94,10 +94,14 @@ create table t_timer_job_log
 
 create table t_timer_inner_log
 (
-    id varchar(50) primary key,
-    execution_time datetime,
+    id varchar(50),
+    execution_time bigint,
     status int
 );
+
+alter table t_timer_inner_log
+    add constraint t_timer_inner_log_pk
+        primary key (id, execution_time);
 
 create table t_user
 (

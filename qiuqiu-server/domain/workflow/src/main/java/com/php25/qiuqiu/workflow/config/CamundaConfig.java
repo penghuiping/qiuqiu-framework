@@ -30,27 +30,10 @@ import javax.sql.DataSource;
 @Configuration
 public class CamundaConfig {
 
-    @Profile("local")
-    @Bean
-    public DataSource dataSource0() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:mem:process-engine;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
-        dataSource.setUsername("sa");
-        dataSource.setPassword("");
-        return dataSource;
-    }
-
-    @Profile("local")
-    @Bean
-    public PlatformTransactionManager transactionManager0(DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
-    }
-
     @Bean
     public SpringProcessEngineConfiguration engineConfiguration(
-            @Qualifier("dataSource0") DataSource dataSource0,
-            @Qualifier("transactionManager0")  PlatformTransactionManager transactionManager0,
+            DataSource dataSource0,
+            PlatformTransactionManager transactionManager0,
             @Value("classpath:loan.bpmn") Resource loan,
             @Value("classpath:dish.dmn") Resource dish
     ) {
@@ -59,7 +42,7 @@ public class CamundaConfig {
         configuration.setDataSource(dataSource0);
         configuration.setTransactionManager(transactionManager0);
         configuration.setDatabaseSchemaUpdate("true");
-        configuration.setDeploymentResources(new Resource[]{loan,dish});
+        configuration.setDeploymentResources(new Resource[]{loan, dish});
 
         DefaultDmnEngineConfiguration dmnEngineConfiguration = (DefaultDmnEngineConfiguration)
                 DmnEngineConfiguration.createDefaultDmnEngineConfiguration();
