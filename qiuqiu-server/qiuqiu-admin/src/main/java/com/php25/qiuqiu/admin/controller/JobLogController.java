@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 任务日志
  * @author penghuiping
  * @date 2021/3/27 00:32
  */
@@ -34,9 +35,14 @@ public class JobLogController extends JSONController {
 
     private final JobService jobService;
 
+    /**
+     * 任务日志分页查询
+     * @since v1
+     * @ignoreParams username
+     */
     @APIVersion("v1")
     @PostMapping("/page")
-    public JSONResponse page(@RequestAttribute String username, @Valid @RequestBody JobLogPageVo jobLogPageVo) {
+    public JSONResponse<PageResultVo<JobLogVo>> page(@RequestAttribute String username, @Valid @RequestBody JobLogPageVo jobLogPageVo) {
         DataGridPageDto<JobLogDto> dataGrid = jobService.pageJobLog(username, jobLogPageVo.getJobName(), jobLogPageVo.getPageNum(), jobLogPageVo.getPageSize());
         PageResultVo<JobLogVo> result = new PageResultVo<>();
         List<JobLogDto> list = dataGrid.getData();

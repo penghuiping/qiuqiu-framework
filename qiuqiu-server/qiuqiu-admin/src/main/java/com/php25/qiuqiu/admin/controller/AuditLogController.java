@@ -7,13 +7,10 @@ import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.AuditLogPageVo;
 import com.php25.qiuqiu.admin.vo.out.AuditLogPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
-import com.php25.qiuqiu.admin.vo.out.role.RolePageOutVo;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.service.AuditLogService;
-import io.github.yedaxia.apidocs.ApiDoc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 审计日志
  * @author penghuiping
  * @date 2021/3/11 15:18
  */
@@ -36,13 +34,11 @@ public class AuditLogController extends JSONController {
 
     /**
      * 审计日志分页查询
-     *
-     * @param auditLogPageVo 分页信息
+     * @since v1
      */
-    @ApiDoc(result = RolePageOutVo.class, url = "/qiuqiu_admin/v1/audit_log/page")
     @APIVersion("v1")
     @PostMapping("/page")
-    public JSONResponse page(@Valid @RequestBody AuditLogPageVo auditLogPageVo) {
+    public JSONResponse<PageResultVo<AuditLogPageOutVo>> page(@Valid @RequestBody AuditLogPageVo auditLogPageVo) {
         DataGridPageDto<AuditLogDto> dataGrid = auditLogService.page(auditLogPageVo.getUsername(),auditLogPageVo.getPageNum(), auditLogPageVo.getPageSize());
         List<AuditLogDto> list = dataGrid.getData();
         PageResultVo<AuditLogPageOutVo> res = new PageResultVo<>();

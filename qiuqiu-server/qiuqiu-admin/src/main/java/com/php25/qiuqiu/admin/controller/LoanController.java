@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * 工作流与规则引擎测试
  * @author penghuiping
  * @date 2021/3/25 09:27
  */
@@ -27,16 +28,24 @@ public class LoanController extends JSONController {
 
     private final DecisionService decisionService;
 
+    /**
+     * 工作流测试
+     * @since v1
+     */
     @APIVersion("v1")
     @GetMapping("/test")
-    public JSONResponse test() {
+    public JSONResponse<Boolean> test() {
         runtimeService.startProcessInstanceByKey("loan");
         return succeed(true);
     }
 
+    /**
+     * 规则引擎测试
+     * @since v1
+     */
     @APIVersion("v1")
     @GetMapping("/test1")
-    public JSONResponse test1(@RequestParam("season") String season,@RequestParam("number") Integer number,@RequestParam("weight") Float weight) {
+    public JSONResponse<String> test1(@RequestParam("season") String season,@RequestParam("number") Integer number,@RequestParam("weight") Float weight) {
         VariableMap variables = Variables.createVariables()
                 .putValue("季节", season)
                 .putValue("顾客数", number)

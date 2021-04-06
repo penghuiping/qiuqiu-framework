@@ -68,10 +68,6 @@
             <artifactId>workflow</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.yedaxia</groupId>
-            <artifactId>japidocs</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
@@ -140,6 +136,15 @@
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.github.shalousun</groupId>
+                <artifactId>smart-doc-maven-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>com.php25:webflux</include>
+                    </includes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

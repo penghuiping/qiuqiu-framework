@@ -8,12 +8,10 @@ import com.php25.qiuqiu.admin.vo.in.permission.PermissionCreateVo;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionUpdateVo;
 import com.php25.qiuqiu.admin.vo.out.permission.PermissionVo;
-import com.php25.qiuqiu.admin.vo.out.TreeVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.permission.PermissionCreateDto;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import com.php25.qiuqiu.user.service.PermissionService;
-import io.github.yedaxia.apidocs.ApiDoc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 权限管理
  * @author penghuiping
  * @date 2021/3/9 13:53
  */
@@ -41,11 +40,12 @@ public class PermissionController extends JSONController {
 
     /**
      * 获取权限列表，用于table页面展示
+     * @ignoreParams username
+     * @since v1
      */
-    @ApiDoc(result = PermissionVo.class, url = "/qiuqiu_admin/v1/permission/page")
     @APIVersion("v1")
     @PostMapping("/page")
-    public JSONResponse page(@RequestAttribute @NotBlank String username) {
+    public JSONResponse<List<PermissionVo>> page(@RequestAttribute @NotBlank String username) {
         DataGridPageDto<PermissionDto> page = permissionService.page("", 1, 100);
         List<PermissionVo> permissionVos = page.getData().stream().map(permissionDto -> {
             PermissionVo permissionVo = new PermissionVo();
@@ -57,13 +57,12 @@ public class PermissionController extends JSONController {
 
     /**
      * 更新权限信息
-     * @param permissionVo 权限更新数据
+     * @since v1
      */
     @AuditLog
-    @ApiDoc(stringResult = "true: 更新权限成功", url = "/qiuqiu_admin/v1/permission/update")
     @APIVersion("v1")
     @PostMapping("/update")
-    public JSONResponse update(@Valid @RequestBody PermissionUpdateVo permissionVo) {
+    public JSONResponse<Boolean> update(@Valid @RequestBody PermissionUpdateVo permissionVo) {
         PermissionDto permissionDto = new PermissionDto();
         BeanUtils.copyProperties(permissionVo, permissionDto);
         return succeed(permissionService.update(permissionDto));
@@ -71,13 +70,12 @@ public class PermissionController extends JSONController {
 
     /**
      * 创建权限信息
-     * @param permissionVo 权限创建数据
+     * @since v1
      */
     @AuditLog
-    @ApiDoc(stringResult = "true: 创建权限成功", url = "/qiuqiu_admin/v1/permission/create")
     @APIVersion("v1")
     @PostMapping("/create")
-    public JSONResponse create(@Valid @RequestBody PermissionCreateVo permissionVo) {
+    public JSONResponse<Boolean> create(@Valid @RequestBody PermissionCreateVo permissionVo) {
         PermissionCreateDto permissionDto = new PermissionCreateDto();
         BeanUtils.copyProperties(permissionVo, permissionDto);
         return succeed(permissionService.create(permissionDto));
@@ -85,13 +83,12 @@ public class PermissionController extends JSONController {
 
     /**
      * 删除权限信息
-     * @param permissionVo 权限删除数据
+     * @since v1
      */
     @AuditLog
-    @ApiDoc(stringResult = "true: 删除权限成功", url = "/qiuqiu_admin/v1/permission/delete")
     @APIVersion("v1")
     @PostMapping("/delete")
-    public JSONResponse delete(@Valid @RequestBody PermissionDeleteVo permissionVo) {
+    public JSONResponse<Boolean> delete(@Valid @RequestBody PermissionDeleteVo permissionVo) {
         return succeed(permissionService.delete(permissionVo.getPermission()));
     }
 }

@@ -1,0 +1,50 @@
+{
+  "outPath": "/tmp/doc",
+  "customResponseFields": [
+    {
+      "name": "code",
+      "desc": "错误码，0:正常",
+      "ownerClassName": "com.php25.common.flux.web.JSONResponse",
+      "value": "0"
+    },
+    {
+      "name": "data",
+      "desc": "返回数据",
+      "ownerClassName": "com.php25.common.flux.web.JSONResponse",
+      "value": "xxxxx"
+    },
+    {
+      "name": "message",
+      "desc": "错误码描述",
+      "ownerClassName": "com.php25.common.flux.web.JSONResponse",
+      "value": "success"
+    }
+  ],
+  "requestHeaders": [
+    {
+      "name": "jwt",
+      "type": "string",
+      "desc": "认证token",
+      "value": "jwt请求头的值",
+      "required": true,
+      "since": "v1"
+    }
+  ],
+  "errorCodeDictionaries": [
+    {
+      "title": "用户模块相关错误码",
+      "enumClassName": "com.php25.qiuqiu.user.constant.UserErrorCode",
+      "codeField": "code",
+      "descField": "desc"
+    }
+  ],
+  "revisionLogs": [
+    {
+      "version": "v1",
+      "revisionTime": "2021-04-06 21:48",
+      "status": "update",
+      "author": "penghuiping",
+      "remarks": "第一版本"
+    }
+  ]
+}

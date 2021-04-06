@@ -14,7 +14,6 @@ import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.group.GroupCreateDto;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
 import com.php25.qiuqiu.user.service.GroupService;
-import io.github.yedaxia.apidocs.ApiDoc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +25,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
+ * 用户组
  * @author penghuiping
  * @date 2021/3/6 21:36
  */
@@ -38,11 +38,11 @@ public class GroupController extends JSONController {
 
     /**
      * 获取系统中所有组列表
+     * @since v1
      */
-    @ApiDoc(result = TreeVo.class, url = "/group/get_all")
     @APIVersion("v1")
     @PostMapping("/get_all")
-    public JSONResponse getAll() {
+    public JSONResponse<TreeVo> getAll() {
         TreeNode<GroupDto> res = groupService.getAllGroupTree();
         TreeVo root = new TreeVo();
         buildTree(root, res);
@@ -51,14 +51,12 @@ public class GroupController extends JSONController {
 
     /**
      * 创建用户组
-     *
-     * @param groupCreateVo
+     * @since v1
      */
     @AuditLog
-    @ApiDoc(stringResult = "true:创建成功", url = "/group/create")
     @APIVersion("v1")
     @PostMapping("/create")
-    public JSONResponse create(@Valid @RequestBody GroupCreateVo groupCreateVo) {
+    public JSONResponse<Boolean> create(@Valid @RequestBody GroupCreateVo groupCreateVo) {
         GroupCreateDto groupCreateDto = new GroupCreateDto();
         BeanUtils.copyProperties(groupCreateVo, groupCreateDto);
         return succeed(groupService.create(groupCreateDto));
@@ -66,14 +64,12 @@ public class GroupController extends JSONController {
 
     /**
      * 更新用户组
-     *
-     * @param groupUpdateVo
+     * @since v1
      */
     @AuditLog
-    @ApiDoc(stringResult = "true:更新成功", url = "/group/update")
     @APIVersion("v1")
     @PostMapping("/update")
-    public JSONResponse create(@Valid @RequestBody GroupUpdateVo groupUpdateVo) {
+    public JSONResponse<Boolean> create(@Valid @RequestBody GroupUpdateVo groupUpdateVo) {
         GroupDto groupDto = new GroupDto();
         BeanUtils.copyProperties(groupUpdateVo, groupDto);
         return succeed(groupService.update(groupDto));
@@ -81,14 +77,12 @@ public class GroupController extends JSONController {
 
     /**
      * 删除用户组
-     *
-     * @param groupDeleteVo
+     * @since v1
      */
     @AuditLog
-    @ApiDoc(stringResult = "true:创建成功", url = "/group/delete")
     @APIVersion("v1")
     @PostMapping("/delete")
-    public JSONResponse delete(@Valid @RequestBody GroupDeleteVo groupDeleteVo) {
+    public JSONResponse<Boolean> delete(@Valid @RequestBody GroupDeleteVo groupDeleteVo) {
         return succeed(groupService.delete(groupDeleteVo.getGroupId()));
     }
 

@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 定时任务
+ *
  * @author penghuiping
  * @date 2021/3/9 10:29
  */
@@ -50,9 +52,14 @@ public class JobController extends JSONController {
 
     private final JobService jobService;
 
+    /**
+     * 分页查询定时任务列表
+     * @ignoreParams username
+     * @since v1
+     */
     @APIVersion("v1")
     @PostMapping("/page")
-    public JSONResponse page(@RequestAttribute String username, @Valid @RequestBody JobPageVo jobPageVo) {
+    public JSONResponse<PageResultVo<JobVo>> page(@RequestAttribute String username, @Valid @RequestBody JobPageVo jobPageVo) {
         DataGridPageDto<JobDto> dataGrid = jobService.page(username, jobPageVo.getJobName(), jobPageVo.getPageNum(), jobPageVo.getPageSize());
         PageResultVo<JobVo> res = new PageResultVo<>();
         List<JobVo> jobVos = dataGrid.getData().stream().map(jobDto -> {
@@ -66,34 +73,54 @@ public class JobController extends JSONController {
         return succeed(res);
     }
 
+    /**
+     * 创建定时任务
+     * @ignoreParams username
+     * @since v1
+     */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/create")
-    public JSONResponse create(@RequestAttribute String username, @Valid @RequestBody JobCreateVo jobCreateVo) {
+    public JSONResponse<Boolean> create(@RequestAttribute String username, @Valid @RequestBody JobCreateVo jobCreateVo) {
         JobCreateDto jobCreateDto = new JobCreateDto();
         BeanUtils.copyProperties(jobCreateVo, jobCreateDto);
         return succeed(jobService.create(username, jobCreateDto));
     }
 
+    /**
+     * 更新定时任务
+     * @ignoreParams username
+     * @since v1
+     */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/update")
-    public JSONResponse update(@RequestAttribute String username, @Valid @RequestBody JobUpdateVo jobUpdateVo) {
+    public JSONResponse<Boolean> update(@RequestAttribute String username, @Valid @RequestBody JobUpdateVo jobUpdateVo) {
         JobUpdateDto jobUpdateDto = new JobUpdateDto();
         BeanUtils.copyProperties(jobUpdateVo, jobUpdateDto);
         return succeed(jobService.update(username, jobUpdateDto));
     }
 
+    /**
+     * 删除定时任务
+     * @ignoreParams username
+     * @since v1
+     */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/delete")
-    public JSONResponse delete(@RequestAttribute String username, @Valid @RequestBody JobIdVo jobIdVo) {
+    public JSONResponse<Boolean> delete(@RequestAttribute String username, @Valid @RequestBody JobIdVo jobIdVo) {
         return succeed(jobService.delete(username, jobIdVo.getJobId()));
     }
 
+    /**
+     * 获取所有任务列表
+     * @ignoreParams username
+     * @since v1
+     */
     @APIVersion("v1")
     @PostMapping("/get_all")
-    public JSONResponse findAll(@RequestAttribute String username) {
+    public JSONResponse<List<JobVo>> findAll(@RequestAttribute String username) {
         List<JobDto> jobDtoList = jobService.findAll(username);
         if (null != jobDtoList && !jobDtoList.isEmpty()) {
             List<JobVo> res = jobDtoList.stream().map(jobDto -> {

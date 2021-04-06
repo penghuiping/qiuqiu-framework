@@ -12,8 +12,8 @@ import com.php25.qiuqiu.admin.vo.in.user.UserDetailVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserPageVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserUpdateVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
-import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.TokenVo;
+import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
@@ -25,7 +25,6 @@ import com.php25.qiuqiu.user.dto.user.UserDto;
 import com.php25.qiuqiu.user.dto.user.UserPageDto;
 import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 import com.php25.qiuqiu.user.service.UserService;
-import io.github.yedaxia.apidocs.ApiDoc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +41,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * 用户管理
  * @author penghuiping
  * @date 2021/2/3 10:23
  */
@@ -54,14 +54,12 @@ public class UserController extends JSONController {
 
     /**
      * 登入接口
-     *
-     * @param loginVo 登入信息
+     * @since v1
      */
     @AuditLog
-    @ApiDoc(stringResult = "返回jwt令牌", url = "/qiuqiu_admin/v1/user/login")
     @APIVersion("v1")
     @PostMapping("/login")
-    public JSONResponse login(@Valid @RequestBody LoginVo loginVo) {
+    public JSONResponse<TokenVo> login(@Valid @RequestBody LoginVo loginVo) {
         TokenDto tokenDto = userService.login(loginVo.getUsername(), loginVo.getPassword());
         TokenVo tokenVo = new TokenVo();
         BeanUtils.copyProperties(tokenDto, tokenVo);
@@ -70,11 +68,12 @@ public class UserController extends JSONController {
 
     /**
      * 获取用户信息接口
+     * @ignoreParams username
+     * @since v1
      */
-    @ApiDoc(result = UserVo.class, url = "/qiuqiu_admin/v1/user/info")
     @APIVersion("v1")
     @PostMapping("/info")
-    public JSONResponse getUserInfo(@RequestAttribute @NotBlank String username) {
+    public JSONResponse<UserVo> getUserInfo(@RequestAttribute @NotBlank String username) {
         UserDto userDto = userService.getUserInfo(username);
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(userDto, userVo);
@@ -106,11 +105,12 @@ public class UserController extends JSONController {
 
     /**
      * 获取用户信息接口
+     * @ignoreParams username
+     * @since v1
      */
-    @ApiDoc(result = UserVo.class, url = "/qiuqiu_admin/v1/user/detail")
     @APIVersion("v1")
     @PostMapping("/detail")
-    public JSONResponse detail(@RequestAttribute @NotBlank String username, @RequestBody UserDetailVo user) {
+    public JSONResponse<UserVo> detail(@RequestAttribute @NotBlank String username, @RequestBody UserDetailVo user) {
         UserDto userDto = userService.detail(user.getUserId());
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(userDto, userVo);
@@ -142,13 +142,12 @@ public class UserController extends JSONController {
 
     /**
      * 用户列表分页查询
-     *
-     * @param userPageVo 分页请求信息
+     * @since v1
+     * @ignoreParams username
      */
-    @ApiDoc(result = UserPageOutVo.class, url = "/qiuqiu_admin/v1/user/page")
     @APIVersion("v1")
     @PostMapping("/page")
-    public JSONResponse page(@RequestAttribute @NotBlank String username, @Valid @RequestBody UserPageVo userPageVo) {
+    public JSONResponse<PageResultVo<UserPageOutVo>> page(@RequestAttribute @NotBlank String username, @Valid @RequestBody UserPageVo userPageVo) {
         DataGridPageDto<UserPageDto> result = userService.page(userPageVo.getUsername(), userPageVo.getPageNum(), userPageVo.getPageSize());
         PageResultVo<UserPageOutVo> resultVo = new PageResultVo<>();
         resultVo.setCurrentPage(userPageVo.getPageNum());
@@ -164,14 +163,12 @@ public class UserController extends JSONController {
 
     /**
      * 创建用户
-     *
-     * @param userCreateVo 创建用户信息
+     * @since v1
      */
     @AuditLog
-    @ApiDoc(stringResult = "true:创建成功", url = "/qiuqiu_admin/v1/user/create")
     @APIVersion("v1")
     @PostMapping("/create")
-    public JSONResponse create(@Valid @RequestBody UserCreateVo userCreateVo) {
+    public JSONResponse<Boolean> create(@Valid @RequestBody UserCreateVo userCreateVo) {
         UserCreateDto userCreateDto = new UserCreateDto();
         BeanUtils.copyProperties(userCreateVo, userCreateDto);
         return succeed(userService.create(userCreateDto));
@@ -179,14 +176,12 @@ public class UserController extends JSONController {
 
     /**
      * 更新用户
-     *
-     * @param userUpdateVo 更新用户信息
+     * @since v1
      */
     @AuditLog
-    @ApiDoc(stringResult = "true:更新成功", url = "/qiuqiu_admin/v1/user/update")
     @APIVersion("v1")
     @PostMapping("/update")
-    public JSONResponse update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
+    public JSONResponse<Boolean> update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
         UserUpdateDto userUpdateDto = new UserUpdateDto();
         BeanUtils.copyProperties(userUpdateVo, userUpdateDto);
         if(StringUtil.isBlank(userUpdateDto.getPassword())) {
@@ -197,14 +192,11 @@ public class UserController extends JSONController {
 
     /**
      * 删除用户
-     * @param userDeleteVo 删除用户信息
-     *
      */
     @AuditLog
-    @ApiDoc(stringResult = "true:删除成功", url = "/qiuqiu_admin/v1/user/delete")
     @APIVersion("v1")
     @PostMapping("/delete")
-    public JSONResponse delete(@Valid @RequestBody UserDeleteVo userDeleteVo) {
+    public JSONResponse<Boolean> delete(@Valid @RequestBody UserDeleteVo userDeleteVo) {
         for (Long userId : userDeleteVo.getUserIds()) {
             userService.delete(userId);
         }
@@ -215,10 +207,9 @@ public class UserController extends JSONController {
      * 登出接口
      */
     @AuditLog
-    @ApiDoc(stringResult = "是否成功登出", url = "/qiuqiu_admin/v1/user/logout")
     @APIVersion("v1")
     @PostMapping("/logout")
-    public JSONResponse logout(@RequestAttribute @NotBlank String username) {
+    public JSONResponse<Boolean> logout(@RequestAttribute @NotBlank String username) {
         return succeed(userService.logout(username));
     }
 }

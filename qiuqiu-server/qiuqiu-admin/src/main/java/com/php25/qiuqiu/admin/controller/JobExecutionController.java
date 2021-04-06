@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 定时任务执行计划
  * @author penghuiping
  * @date 2021/3/27 00:32
  */
@@ -39,9 +40,14 @@ public class JobExecutionController extends JSONController {
 
     private final JobService jobService;
 
+    /**
+     * 分页查询定时任务执行计划
+     * @ignoreParams username
+     * @since v1
+     */
     @APIVersion("v1")
     @PostMapping("/page")
-    public JSONResponse page(@RequestAttribute String username, @Valid @RequestBody JobExecutionPageVo pageVo) {
+    public JSONResponse<PageResultVo<JobExecutionVo>> page(@RequestAttribute String username, @Valid @RequestBody JobExecutionPageVo pageVo) {
         DataGridPageDto<JobExecutionDto> dataGrid = jobService.pageJobExecution(username, pageVo.getJobName(), pageVo.getPageNum(), pageVo.getPageSize());
         PageResultVo<JobExecutionVo> result = new PageResultVo<>();
         List<JobExecutionVo> list = dataGrid.getData().stream().map(jobExecutionDto -> {
@@ -55,45 +61,75 @@ public class JobExecutionController extends JSONController {
         return succeed(result);
     }
 
+    /**
+     * 创建定时任务执行计划
+     * @ignoreParams username
+     * @since v1
+     */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/create")
-    public JSONResponse create(@RequestAttribute String username, @Valid @RequestBody JobExecutionCreateDto jobExecution) {
+    public JSONResponse<Boolean> create(@RequestAttribute String username, @Valid @RequestBody JobExecutionCreateDto jobExecution) {
         return succeed(jobService.createJobExecution(username, jobExecution));
     }
 
+    /**
+     * 更新定时任务执行计划
+     * @ignoreParams username
+     * @since v1
+     */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/update")
-    public JSONResponse update(@RequestAttribute String username, @Valid @RequestBody JobExecutionUpdateDto jobExecution) {
+    public JSONResponse<Boolean> update(@RequestAttribute String username, @Valid @RequestBody JobExecutionUpdateDto jobExecution) {
         return succeed(jobService.updateJobExecution(username, jobExecution));
     }
 
+    /**
+     * 删除定时任务执行计划
+     * @ignoreParams username
+     * @since v1
+     */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/delete")
-    public JSONResponse delete(@RequestAttribute String username, @Valid @RequestBody JobExecutionIdVo jobExecutionIdVo) {
+    public JSONResponse<Boolean> delete(@RequestAttribute String username, @Valid @RequestBody JobExecutionIdVo jobExecutionIdVo) {
         return succeed(jobService.deleteJobExecution(username, jobExecutionIdVo.getId()));
     }
 
+    /**
+     * 刷新定时任务执行计划
+     * @ignoreParams username
+     * @since v1
+     */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/refresh")
-    public JSONResponse refresh(@RequestAttribute String username, @Valid @RequestBody JobIdVo jobIdVo) {
+    public JSONResponse<Boolean> refresh(@RequestAttribute String username, @Valid @RequestBody JobIdVo jobIdVo) {
         return succeed(jobService.refresh(username, jobIdVo.getJobId()));
     }
 
+    /**
+     * 刷新所有定时任务执行计划
+     * @ignoreParams username
+     * @since v1
+     */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/refresh_all")
-    public JSONResponse refreshAll(@RequestAttribute String username) {
+    public JSONResponse<Boolean> refreshAll(@RequestAttribute String username) {
         return succeed(jobService.refreshAll(username));
     }
 
+    /**
+     * 统计定时任务执行计划加载情况
+     * @ignoreParams username
+     * @since v1
+     */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/statistic")
-    public JSONResponse statistic(@RequestAttribute String username) {
+    public JSONResponse<Boolean> statistic(@RequestAttribute String username) {
         jobService.statisticLoadedJobExecutionInfo();
         return succeed(true);
     }

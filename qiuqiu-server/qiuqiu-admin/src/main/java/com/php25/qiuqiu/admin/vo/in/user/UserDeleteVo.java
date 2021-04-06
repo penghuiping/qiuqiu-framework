@@ -17,6 +17,7 @@ public class UserDeleteVo {
 
     /**
      * 用户id列表
+     * @since v1
      */
     @NotNull
     @Size(min = 1)

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 资源管理
  * @author penghuiping
  * @date 2021/3/26 13:56
  */
@@ -40,10 +41,14 @@ public class ResourceController extends JSONController {
 
     private final ResourceService resourceService;
 
+    /**
+     *  创建资源
+     *  @since v1
+     */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/create")
-    public JSONResponse create(@Valid @RequestBody ResourceCreateVo resourceCreateVo) {
+    public JSONResponse<Boolean> create(@Valid @RequestBody ResourceCreateVo resourceCreateVo) {
         ResourceCreateDto resourceCreateDto = new ResourceCreateDto();
         BeanUtils.copyProperties(resourceCreateVo, resourceCreateDto);
         List<String> permissions = resourceCreateVo.getPermissions();
@@ -57,10 +62,14 @@ public class ResourceController extends JSONController {
         return succeed(resourceService.create(resourceCreateDto));
     }
 
+    /**
+     *  更新资源
+     *  @since v1
+     */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/update")
-    public JSONResponse update(@Valid @RequestBody ResourceUpdateVo resourceUpdateVo) {
+    public JSONResponse<Boolean> update(@Valid @RequestBody ResourceUpdateVo resourceUpdateVo) {
         ResourceUpdateDto resourceUpdateDto = new ResourceUpdateDto();
         BeanUtils.copyProperties(resourceUpdateVo, resourceUpdateDto);
         List<String> permissions = resourceUpdateVo.getPermissions();
@@ -75,10 +84,14 @@ public class ResourceController extends JSONController {
         return succeed(true);
     }
 
+    /**
+     *  删除资源
+     *  @since v1
+     */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/delete")
-    public JSONResponse delete(@Valid @RequestBody ResourceDeleteVo resourceDeleteVo) {
+    public JSONResponse<Boolean> delete(@Valid @RequestBody ResourceDeleteVo resourceDeleteVo) {
         List<String> resources = resourceDeleteVo.getResources();
         for(String resource:resources) {
             resourceService.delete(resource);
@@ -87,9 +100,13 @@ public class ResourceController extends JSONController {
     }
 
 
+    /**
+     *  分页查询资源列表
+     *  @since v1
+     */
     @APIVersion("v1")
     @PostMapping("/page")
-    public JSONResponse page() {
+    public JSONResponse<List<ResourceVo>> page() {
         DataGridPageDto<ResourceDto> dataGrid = resourceService.page("",1,200);
         List<ResourceVo> res= dataGrid.getData().stream().map(resourceDto -> {
             ResourceVo resourceVo = new ResourceVo();
@@ -101,10 +118,11 @@ public class ResourceController extends JSONController {
 
     /**
      * 获取系统中所有内置资源
+     * @since v1
      */
     @APIVersion("v1")
     @PostMapping("/get_all")
-    public JSONResponse getAll() {
+    public JSONResponse<List<ResourcePermissionVo>> getAll() {
         List<ResourceDetailDto> permissions = resourceService.getAll();
         List<ResourcePermissionVo> resourcePermissionVos = permissions.stream().map(resourceDetailDto -> {
             ResourcePermissionVo resourcePermissionVo = new ResourcePermissionVo();
@@ -119,10 +137,11 @@ public class ResourceController extends JSONController {
 
     /**
      * 获取资源详情
+     * @since v1
      */
     @APIVersion("v1")
     @PostMapping("/detail")
-    public JSONResponse detail(@Valid @RequestBody ResourceIdVo resourceIdVo) {
+    public JSONResponse<ResourceDetailVo> detail(@Valid @RequestBody ResourceIdVo resourceIdVo) {
         ResourceDetailDto resourceDetailDto = resourceService.detail(resourceIdVo.getName());
         ResourceDetailVo resourceDetailVo = new ResourceDetailVo();
         BeanUtils.copyProperties(resourceDetailDto,resourceDetailVo);

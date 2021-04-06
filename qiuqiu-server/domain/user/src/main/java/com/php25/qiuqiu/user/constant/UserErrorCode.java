@@ -3,6 +3,7 @@ package com.php25.qiuqiu.user.constant;
 import com.php25.common.core.exception.BusinessErrorStatus;
 
 /**
+ * 用户模块错误码
  * @author penghuiping
  * @date 2021/2/3 13:41
  */
