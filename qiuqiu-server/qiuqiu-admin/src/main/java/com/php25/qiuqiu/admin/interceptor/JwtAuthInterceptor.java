@@ -27,7 +27,7 @@ public class JwtAuthInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     private UserService userService;
 
-    private String[] excludeUris = new String[]{"/user/info","/user/logout"};
+    private String[] excludeUris = new String[]{"/user/info", "/user/logout"};
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -48,17 +48,18 @@ public class JwtAuthInterceptor extends HandlerInterceptorAdapter {
         String uri = request.getRequestURI();
 
         //在例外中的uri不需要校验权限
-        for(String excludeUri: excludeUris) {
-            if(uri.endsWith(excludeUri)) {
+        for (String excludeUri : excludeUris) {
+            if (uri.endsWith(excludeUri)) {
                 return true;
             }
         }
 
-        boolean hasPermission = userService.hasPermission(username, uri);
+        boolean hasPermission = userService.hasPermission(jwt, uri);
         if (!hasPermission) {
             throw Exceptions.throwBusinessException(UserErrorCode.HAS_NO_PERMISSION);
         }
-
         return true;
     }
+
+
 }

@@ -52,6 +52,7 @@ public class InternalMsgHandlers {
     @WsAction("ping")
     public void pingHandler(GlobalSession session, BaseRetryMsg msg) throws Exception {
         Ping ping = (Ping) msg;
+        log.info("ping:{}", JsonUtil.toJson(ping));
         session.updateExpireTime(ping.getSessionId());
         Pong pong = new Pong();
         pong.setMsgId(ping.getMsgId());

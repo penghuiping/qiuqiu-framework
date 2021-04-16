@@ -1,5 +1,7 @@
 package com.php25.qiuqiu.user.dto.user;
 
+import com.php25.qiuqiu.user.constant.DataAccessLevel;
+import com.php25.qiuqiu.user.constant.UserConstants;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
@@ -34,6 +36,8 @@ public class UserDto {
     private LocalDateTime createTime;
 
     private LocalDateTime lastModifiedTime;
+
+    private DataAccessLevel dataAccessLevel;
 
     private Boolean enable;
 }

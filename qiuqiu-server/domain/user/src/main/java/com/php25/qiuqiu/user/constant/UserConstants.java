@@ -11,4 +11,6 @@ public class UserConstants {
 
     public static final String JWT_REDIS_PREFIX = "jwt:";
     public static final String SESSION_PREFIX = "session:";
+
+    public static final String REFRESH_TOKEN = "refresh_token";
 }

@@ -12,7 +12,7 @@ import com.php25.common.core.util.jwt.UserRoleInfo;
 import com.php25.common.db.specification.Operator;
 import com.php25.common.db.specification.SearchParam;
 import com.php25.common.db.specification.SearchParamBuilder;
-import com.php25.common.redis.RedisManager;
+import com.php25.qiuqiu.user.constant.DataAccessLevel;
 import com.php25.qiuqiu.user.constant.UserConstants;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
@@ -22,7 +22,6 @@ import com.php25.qiuqiu.user.dto.user.TokenDto;
 import com.php25.qiuqiu.user.dto.user.UserCreateDto;
 import com.php25.qiuqiu.user.dto.user.UserDto;
 import com.php25.qiuqiu.user.dto.user.UserPageDto;
-import com.php25.qiuqiu.user.dto.user.UserSessionDto;
 import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 import com.php25.qiuqiu.user.model.Group;
 import com.php25.qiuqiu.user.model.Role;
@@ -34,6 +33,7 @@ import com.php25.qiuqiu.user.repository.RoleRepository;
 import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.service.RoleService;
 import com.php25.qiuqiu.user.service.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
@@ -67,8 +67,6 @@ public class UserServiceImpl implements UserService {
 
     private final GroupRepository groupRepository;
 
-    private final RedisManager redisManager;
-
     private final IdGenerator idGenerator;
 
     private final AntPathMatcher antPathMatcher;
@@ -81,17 +79,23 @@ public class UserServiceImpl implements UserService {
         if (!userOptional.isPresent()) {
             throw Exceptions.throwBusinessException(UserErrorCode.USER_NOT_FOUND);
         }
+        return generateToken(username, "");
+    }
+
+
+    private TokenDto generateToken(String username, String refreshToken) {
         String jti = idGenerator.getUUID();
         RSAPrivateKey privateKey = (RSAPrivateKey) SecretKeyUtil.generatePrivateKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(UserConstants.JWT_PRIVATE_KEY));
-        //存入redis
-        redisManager.string().set(getRedisJwtKey(username), jti, 1800L);
-        //构造redisSession
-        UserSessionDto userSessionDto = this.createUserSession(username, 1800L);
+        UserDto userDto = this.getUserInfo(username);
 
         //生成accessToken
-        List<String> roles = userSessionDto.getRoles().stream().map(RoleDto::getName).collect(Collectors.toList());
+        List<String> roles = userDto.getRoles().stream().map(RoleDto::getName).collect(Collectors.toList());
         String accessToken = JwtUtil.generateToken(jti, username, roles, 1800L, "QiuQiu", privateKey);
-        return new TokenDto(accessToken, 1800L);
+
+        if (StringUtil.isBlank(refreshToken)) {
+            refreshToken = JwtUtil.generateRefreshToken(idGenerator.getUUID(), username, 3600L * 24 * 7, "QiuQiu", privateKey);
+        }
+        return new TokenDto(accessToken, refreshToken, 1800L);
     }
 
     @Override
@@ -105,18 +109,10 @@ public class UserServiceImpl implements UserService {
             if (!userRoleInfo.isValid()) {
                 throw Exceptions.throwBusinessException(UserErrorCode.JWT_ILLEGAL);
             }
-
-            String username = userRoleInfo.getUsername();
-            if (!redisManager.exists(getRedisJwtKey(username))) {
-                return false;
-            }
-            String jti = userRoleInfo.getJti();
-
-            String jti0 = redisManager.string().get(getRedisJwtKey(username), String.class);
-            if (StringUtil.isBlank(jti) || !jti.equals(jti0)) {
-                throw Exceptions.throwBusinessException(UserErrorCode.JWT_ILLEGAL);
-            }
             return true;
+        } catch (ExpiredJwtException e) {
+            //jwt过期
+            throw Exceptions.throwBusinessException(UserErrorCode.JWT_EXPIRED);
         } catch (Exception e) {
             log.error("jwt解析出错", e);
             throw Exceptions.throwBusinessException(UserErrorCode.JWT_ILLEGAL);
@@ -124,13 +120,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean logout(String username) {
-        //清楚session会话信息
-        redisManager.remove(getRedisJwtKey(username));
-        redisManager.remove(getRedisSessionKey(username));
-        return true;
+    public TokenDto refreshToken(String refreshToken) {
+        RSAPublicKey publicKey = (RSAPublicKey) SecretKeyUtil.generatePublicKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(UserConstants.JWT_PUBLIC_KEY));
+        String username = null;
+        try {
+            UserRoleInfo userRoleInfo = JwtUtil.parse(refreshToken, publicKey);
+            username = userRoleInfo.getUsername();
+        } catch (Exception e) {
+            log.error("refreshToken解析出错", e);
+            throw Exceptions.throwBusinessException(UserErrorCode.REFRESH_TOKEN_ILLEGAL);
+        }
+        return generateToken(username, refreshToken);
     }
 
+    @Override
+    public Boolean logout(String username) {
+        return true;
+    }
 
     @Override
     public String getUsernameFromJwt(String jwt) {
@@ -158,6 +164,7 @@ public class UserServiceImpl implements UserService {
             return roleDto;
         }).collect(Collectors.toSet());
         userDto.setRoles(roleDtoSet);
+        userDto.setDataAccessLevel(DataAccessLevel.valueOf(user.getDataAccessLevel()));
         userDto.setEnable(user.getEnable());
 
         //权限
@@ -171,10 +178,10 @@ public class UserServiceImpl implements UserService {
 
         //组
         Optional<Group> groupOptional = groupRepository.findById(user.getGroupId());
-        if(groupOptional.isPresent()) {
+        if (groupOptional.isPresent()) {
             Group group = groupOptional.get();
             GroupDto groupDto = new GroupDto();
-            BeanUtils.copyProperties(group,groupDto);
+            BeanUtils.copyProperties(group, groupDto);
             userDto.setGroup(groupDto);
         }
         return userDto;
@@ -211,31 +218,25 @@ public class UserServiceImpl implements UserService {
         userDto.setPermissions(permissionDtos);
 
         //组
-        //组
         Optional<Group> groupOptional = groupRepository.findById(user.getGroupId());
-        if(groupOptional.isPresent()) {
+        if (groupOptional.isPresent()) {
             Group group = groupOptional.get();
             GroupDto groupDto = new GroupDto();
-            BeanUtils.copyProperties(group,groupDto);
+            BeanUtils.copyProperties(group, groupDto);
             userDto.setGroup(groupDto);
         }
         return userDto;
     }
 
     @Override
-    public Boolean hasPermission(String username, String uri) {
-        //先通过session判断
-        UserSessionDto userSessionDto = getUserSession(username);
-        if (null == userSessionDto) {
-            return false;
-        }
-
-        Set<RoleDto> roles = userSessionDto.getRoles();
-        for (RoleDto roleDto : roles) {
-            String roleName = roleDto.getName();
+    public Boolean hasPermission(String jwt, String uri) {
+        RSAPublicKey publicKey = (RSAPublicKey) SecretKeyUtil.generatePublicKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(UserConstants.JWT_PUBLIC_KEY));
+        UserRoleInfo userRoleInfo = JwtUtil.parse(jwt, publicKey);
+        List<String> roleNames = userRoleInfo.getRoleNames();
+        for (String roleName : roleNames) {
             Set<ResourcePermissionDto> permissions = roleService.getPermissionsByRoleName(roleName);
             for (ResourcePermissionDto permissionDto : permissions) {
-                String uri0 = String.format("/%s/%s", permissionDto.getResource(),permissionDto.getPermission());
+                String uri0 = String.format("/%s/%s", permissionDto.getResource(), permissionDto.getPermission());
                 if (antPathMatcher.match("/**" + uri0, uri)) {
                     return true;
                 }
@@ -305,7 +306,6 @@ public class UserServiceImpl implements UserService {
             userRepository.deleteRoleRefsByUserId(user.getId());
             userRepository.createRoleRefs(roleRefs);
         }
-        clearUserSession(user.getUsername());
         return true;
     }
 
@@ -316,43 +316,4 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteRoleRefsByUserId(userId);
         return true;
     }
-
-    @Override
-    public UserSessionDto createUserSession(String username, Long expireTime) {
-        String jti = redisManager.string().get(getRedisJwtKey(username), String.class);
-        //构造redisSession
-        UserSessionDto userSessionDto = new UserSessionDto();
-        userSessionDto.setUsername(username);
-        userSessionDto.setJti(jti);
-        UserDto userDto = this.getUserInfo(username);
-        //角色
-        userSessionDto.setRoles(userDto.getRoles());
-        GroupDto groupDto = userDto.getGroup();
-        userSessionDto.setGroupId(groupDto.getId());
-        redisManager.string().set(getRedisSessionKey(username), userSessionDto, expireTime);
-        return userSessionDto;
-    }
-
-    @Override
-    public UserSessionDto getUserSession(String username) {
-        if (!redisManager.exists(getRedisSessionKey(username))) {
-            this.createUserSession(username, 1800L);
-        }
-        return redisManager.string().get(getRedisSessionKey(username), UserSessionDto.class);
-    }
-
-    @Override
-    public void clearUserSession(String username) {
-        redisManager.remove(getRedisSessionKey(username));
-    }
-
-    private String getRedisJwtKey(String username) {
-        return UserConstants.JWT_REDIS_PREFIX + username;
-    }
-
-    private String getRedisSessionKey(String username) {
-        return UserConstants.SESSION_PREFIX + username;
-    }
-
-
 }

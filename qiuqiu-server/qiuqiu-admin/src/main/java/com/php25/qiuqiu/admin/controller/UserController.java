@@ -1,6 +1,7 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
@@ -17,6 +18,8 @@ import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
+import com.php25.qiuqiu.user.constant.UserConstants;
+import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.user.TokenDto;
@@ -33,15 +36,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * 用户管理
+ *
  * @author penghuiping
  * @date 2021/2/3 10:23
  */
@@ -54,20 +63,55 @@ public class UserController extends JSONController {
 
     /**
      * 登入接口
+     *
+     * @ignoreParams response
      * @since v1
      */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/login")
-    public JSONResponse<TokenVo> login(@Valid @RequestBody LoginVo loginVo) {
+    public JSONResponse<TokenVo> login(HttpServletResponse response, @Valid @RequestBody LoginVo loginVo) {
         TokenDto tokenDto = userService.login(loginVo.getUsername(), loginVo.getPassword());
         TokenVo tokenVo = new TokenVo();
-        BeanUtils.copyProperties(tokenDto, tokenVo);
+        tokenVo.setToken(tokenDto.getAccessToken());
+        tokenVo.setExpireTime(tokenDto.getExpireTime());
+        Cookie cookie = new Cookie(UserConstants.REFRESH_TOKEN, tokenDto.getRefreshToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
         return succeed(tokenVo);
     }
 
     /**
+     * 刷新token接口
+     *
+     * @ignoreParams request
+     */
+    @AuditLog
+    @APIVersion("v1")
+    @PostMapping("/refresh")
+    public JSONResponse<TokenVo> refresh(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (null != cookies) {
+            Optional<Cookie> cookieOptional = Arrays.stream(cookies)
+                    .filter(cookie -> UserConstants.REFRESH_TOKEN.equals(cookie.getName()))
+                    .findFirst();
+            if (cookieOptional.isPresent()) {
+                Cookie cookie = cookieOptional.get();
+                TokenDto tokenDto = userService.refreshToken(cookie.getValue());
+                TokenVo tokenVo = new TokenVo();
+                tokenVo.setToken(tokenDto.getAccessToken());
+                tokenVo.setExpireTime(tokenDto.getExpireTime());
+                return succeed(tokenVo);
+            }
+        }
+        throw Exceptions.throwBusinessException(UserErrorCode.REFRESH_TOKEN_ILLEGAL);
+    }
+
+    /**
      * 获取用户信息接口
+     *
      * @ignoreParams username
      * @since v1
      */
@@ -84,11 +128,11 @@ public class UserController extends JSONController {
 
         Set<ResourcePermissionDto> resourcePermission0DtoSet = userDto.getPermissions();
         List<ResourcePermissionVo> resourcePermissionVos = new ArrayList<>();
-        for(ResourcePermissionDto resourcePermission0Dto: resourcePermission0DtoSet) {
+        for (ResourcePermissionDto resourcePermission0Dto : resourcePermission0DtoSet) {
             String resource = resourcePermission0Dto.getResource();
             List<String> permissions = new ArrayList<>();
-            for(ResourcePermissionDto tmp: resourcePermission0DtoSet) {
-                if(tmp.getResource().equals(resource)) {
+            for (ResourcePermissionDto tmp : resourcePermission0DtoSet) {
+                if (tmp.getResource().equals(resource)) {
                     permissions.add(tmp.getPermission());
                 }
             }
@@ -105,6 +149,7 @@ public class UserController extends JSONController {
 
     /**
      * 获取用户信息接口
+     *
      * @ignoreParams username
      * @since v1
      */
@@ -121,11 +166,11 @@ public class UserController extends JSONController {
 
         Set<ResourcePermissionDto> resourcePermission0DtoSet = userDto.getPermissions();
         List<ResourcePermissionVo> resourcePermissionVos = new ArrayList<>();
-        for(ResourcePermissionDto resourcePermission0Dto: resourcePermission0DtoSet) {
+        for (ResourcePermissionDto resourcePermission0Dto : resourcePermission0DtoSet) {
             String resource = resourcePermission0Dto.getResource();
             List<String> permissions = new ArrayList<>();
-            for(ResourcePermissionDto tmp: resourcePermission0DtoSet) {
-                if(tmp.getResource().equals(resource)) {
+            for (ResourcePermissionDto tmp : resourcePermission0DtoSet) {
+                if (tmp.getResource().equals(resource)) {
                     permissions.add(tmp.getPermission());
                 }
             }
@@ -142,8 +187,9 @@ public class UserController extends JSONController {
 
     /**
      * 用户列表分页查询
-     * @since v1
+     *
      * @ignoreParams username
+     * @since v1
      */
     @APIVersion("v1")
     @PostMapping("/page")
@@ -163,6 +209,7 @@ public class UserController extends JSONController {
 
     /**
      * 创建用户
+     *
      * @since v1
      */
     @AuditLog
@@ -176,6 +223,7 @@ public class UserController extends JSONController {
 
     /**
      * 更新用户
+     *
      * @since v1
      */
     @AuditLog
@@ -184,7 +232,7 @@ public class UserController extends JSONController {
     public JSONResponse<Boolean> update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
         UserUpdateDto userUpdateDto = new UserUpdateDto();
         BeanUtils.copyProperties(userUpdateVo, userUpdateDto);
-        if(StringUtil.isBlank(userUpdateDto.getPassword())) {
+        if (StringUtil.isBlank(userUpdateDto.getPassword())) {
             userUpdateDto.setPassword(null);
         }
         return succeed(userService.update(userUpdateDto));

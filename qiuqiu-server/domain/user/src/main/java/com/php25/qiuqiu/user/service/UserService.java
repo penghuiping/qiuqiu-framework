@@ -5,7 +5,6 @@ import com.php25.qiuqiu.user.dto.user.TokenDto;
 import com.php25.qiuqiu.user.dto.user.UserCreateDto;
 import com.php25.qiuqiu.user.dto.user.UserDto;
 import com.php25.qiuqiu.user.dto.user.UserPageDto;
-import com.php25.qiuqiu.user.dto.user.UserSessionDto;
 import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 
 /**
@@ -21,22 +20,30 @@ public interface UserService {
      *
      * @param username 用户名
      * @param password 密码
-     * @return jwt令牌, 后面访问本系统接口，都需要带上此jwt令牌
+     * @return 访问令牌, 后面访问本系统接口，都需要带上此访问令牌
      */
     TokenDto login(String username, String password);
 
     /**
-     * 验证jwt令牌是否有效
+     * 验证访问令牌是否有效
      *
-     * @param jwt 令牌
+     * @param jwt 访问令牌
      * @return true:有效,false:无效
      */
     Boolean isTokenValid(String jwt);
 
     /**
-     * 根据jwt获取用户名
+     * 通过刷新令牌重新获取访问令牌
      *
-     * @param jwt 令牌
+     * @param refreshToken 刷新令牌
+     * @return jwt令牌, 后面访问本系统接口，都需要带上此jwt令牌
+     */
+    TokenDto refreshToken(String refreshToken);
+
+    /**
+     * 根据访问令牌获取用户名
+     *
+     * @param jwt 访问令牌
      * @return 用户名
      */
     String getUsernameFromJwt(String jwt);
@@ -68,11 +75,11 @@ public interface UserService {
     /**
      * 判断某个用户是否具有访问某个接口地址的权限
      *
-     * @param username 用户名
-     * @param uri      接口地址
+     * @param jwt 访问令牌
+     * @param uri 接口地址
      * @return true: 有权限
      */
-    Boolean hasPermission(String username, String uri);
+    Boolean hasPermission(String jwt, String uri);
 
     /**
      * 用户列表分页
@@ -107,30 +114,4 @@ public interface UserService {
      * @return true:删除成功
      */
     Boolean delete(Long userId);
-
-    /**
-     * 创建用户会话信息
-     *
-     * @param username   用户名
-     * @param expireTime 过期时长(秒)
-     * @return 用户会话信息
-     */
-    UserSessionDto createUserSession(String username, Long expireTime);
-
-    /**
-     * 获取用户会话信息
-     *
-     * @param username 用户名
-     * @return 用户会话信息
-     */
-    UserSessionDto getUserSession(String username);
-
-    /**
-     * 清除用户会话信息
-     *
-     * @param username 用户名
-     */
-    void clearUserSession(String username);
-
-
 }

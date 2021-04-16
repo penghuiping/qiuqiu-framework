@@ -61,6 +61,7 @@ public class User implements Persistable<Long> {
     @Column("last_modified_time")
     private LocalDateTime lastModifiedTime;
 
+
     @Column("group_id")
     private Long groupId;
 
@@ -70,11 +71,20 @@ public class User implements Persistable<Long> {
     @Column
     private Boolean enable;
 
+
+    /**
+     * 数据访问层级
+     */
+    @Column("data_access_level")
+    private String dataAccessLevel;
+
     /**
      * 用于判断是新增还是更新,true:新增 false:更新
      */
     @Transient
     private Boolean isNew;
+
+
 
 
     @Override

@@ -1,12 +1,17 @@
 package com.php25.qiuqiu.admin.config;
 
+import com.php25.common.core.mess.IdGenerator;
+import com.php25.common.core.mess.IdGeneratorImpl;
 import com.php25.common.db.DbType;
 import com.php25.common.db.EntitiesScan;
+import com.php25.qiuqiu.user.constant.DataAccessLevel;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -89,5 +94,8 @@ public class DbConfig {
                 "com.php25.qiuqiu.job.model",
                 "com.php25.common.timer.model"
         );
+
+        GenericConversionService genericConversionService = (GenericConversionService) DefaultConversionService.getSharedInstance();
+        genericConversionService.addConverter(String.class, DataAccessLevel.class, DataAccessLevel::valueOf);
     }
 }

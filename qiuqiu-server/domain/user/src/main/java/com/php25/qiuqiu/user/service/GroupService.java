@@ -1,6 +1,7 @@
 package com.php25.qiuqiu.user.service;
 
 import com.php25.common.core.tree.TreeNode;
+import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.qiuqiu.user.dto.group.GroupCreateDto;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
 
@@ -67,4 +68,12 @@ public interface GroupService {
      * @return true:删除成功
      */
     Boolean delete(Long groupId);
+
+    /**
+     *  根据用户名构建对应词用户的数据访问范围查询条件
+     *
+     * @param username 用户名
+     * @return 此用户的对应数据访问范围查询条件
+     */
+    SearchParamBuilder getDataAccessScope(String username);
 }

@@ -1,6 +1,5 @@
 package com.php25.qiuqiu.job.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.core.util.RandomUtil;
@@ -31,6 +30,7 @@ import com.php25.qiuqiu.job.repository.JobExecutionRepository;
 import com.php25.qiuqiu.job.repository.JobLogRepository;
 import com.php25.qiuqiu.job.repository.JobModelRepository;
 import com.php25.qiuqiu.user.service.GroupService;
+import com.php25.qiuqiu.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
@@ -113,9 +113,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
 
     @Override
     public List<JobDto> findAll(String username) {
-        List<Long> groupIds = groupService.findGroupsId(username);
-        SearchParamBuilder searchParamBuilder = new SearchParamBuilder();
-        searchParamBuilder.append(SearchParam.of("groupId", Operator.IN, groupIds));
+        SearchParamBuilder searchParamBuilder = groupService.getDataAccessScope(username);
         List<JobModel> list = jobModelRepository.findAll(searchParamBuilder);
         return list.stream().map(jobModel -> {
             JobDto jobDto = new JobDto();

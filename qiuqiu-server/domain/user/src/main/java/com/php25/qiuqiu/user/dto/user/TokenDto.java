@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.user.dto.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,20 +10,22 @@ import lombok.Setter;
  */
 @Setter
 @Getter
+@AllArgsConstructor
 public class TokenDto {
 
     /**
-     * 令牌
+     * 访问令牌(格式为jwt)
      */
-    private String token;
+    private String accessToken;
 
     /**
-     * 令牌有效时长(单位秒)
+     * 刷新令牌
+     */
+    private String refreshToken;
+
+    /**
+     * 访问令牌有效时长(单位秒)
      */
     private Long expireTime;
 
-    public TokenDto(String token, Long expireTime) {
-        this.token = token;
-        this.expireTime = expireTime;
-    }
 }
