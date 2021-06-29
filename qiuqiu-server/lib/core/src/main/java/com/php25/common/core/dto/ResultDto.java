@@ -1,46 +1,56 @@
 package com.php25.common.core.dto;
 
-import java.io.Serializable;
+import com.php25.common.core.exception.BusinessErrorStatus;
 
 /**
  * @author: penghuiping
  * @date: 2019/1/2 14:20
  * @description:
  */
-public class ResultDto<T> implements Serializable {
+public class ResultDto<T> {
 
     /**
-     * if status is true,then the object attribute of the ResultDto is valid
-     * else the object attribute should be ignored. It's maybe some wrong logic happened
-     * and we can't get correct data.
+     * When error happened, this field used to say what error is.
      */
-    private boolean status;
+    private BusinessErrorStatus error;
 
     /**
-     * This is a general type object, and it's specific type can only be decided on
-     * runtime
+     * When the program execution succeeded ,no error happened. Then this field stands for
+     * the right execution result of the program.
      */
-    private T object;
+    private T data;
 
+    private ResultDto() {
 
-    public ResultDto(boolean status, T object) {
-        this.status = status;
-        this.object = object;
     }
 
-    public boolean isStatus() {
-        return status;
+    public static <T> ResultDto<T> error(BusinessErrorStatus error) {
+        ResultDto<T> res = new ResultDto<T>();
+        res.error = error;
+        return res;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public static <T> ResultDto<T> ok(T data) {
+        ResultDto<T> res = new ResultDto<T>();
+        res.data = data;
+        return res;
     }
 
-    public T getObject() {
-        return object;
+
+    /**
+     * This method is used for judging whether errors has happened
+     *
+     * @return true: has some errors
+     */
+    public boolean hasError() {
+        return null != error && data == null;
     }
 
-    public void setObject(T object) {
-        this.object = object;
+    public BusinessErrorStatus getError() {
+        return error;
+    }
+
+    public T getData() {
+        return data;
     }
 }

@@ -84,11 +84,11 @@ public class JdbcDbRepositoryImpl<T, ID> implements JdbcDbRepository<T, ID> {
             }
         }
         int[] page = PageUtil.transToStartEnd(pageable.getPageNumber(), pageable.getPageSize());
-        SqlParams sqlParams = query.limit(page[0], pageable.getPageSize()).select();
+        SqlParams sqlParams = query.limit(page[0], page[1]).select();
         List<T> list = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
         SqlParams sqlParams1 = Queries.of(dbType).from(model).andSearchParamBuilder(searchParamBuilder).count();
         long total = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).count(sqlParams1);
-        return new PageImpl<T>(list, Pageable.unpaged(), total);
+        return new PageImpl<T>(list, pageable, total);
     }
 
     @Override

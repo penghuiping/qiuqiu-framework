@@ -41,7 +41,7 @@ public class InnerMsgRetryQueue implements InitializingBean, DisposableBean {
 
     private Timer delayQueue;
 
-    private AtomicBoolean isRunning = new AtomicBoolean(false);
+    private final AtomicBoolean isRunning = new AtomicBoolean(false);
 
     public InnerMsgRetryQueue() {
         msgs = CacheBuilder.newBuilder().initialCapacity(8196)

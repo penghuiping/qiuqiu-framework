@@ -28,7 +28,7 @@ public class InnerMsgRetryCallback implements Runnable {
                     expirationSocketSession.put(msg);
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("消息重发出错:{}", JsonUtil.toJson(msg), e);
         }
     }

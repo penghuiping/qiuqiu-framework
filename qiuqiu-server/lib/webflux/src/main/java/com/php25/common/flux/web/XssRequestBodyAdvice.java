@@ -73,11 +73,12 @@ public abstract class XssRequestBodyAdvice extends RequestBodyAdviceAdapter {
 
     /**
      * 配置白名单标签
+     * <p>
+     * 如: Whitelist.basicWithImages();
      *
      * @return 白名单标签
      */
     public abstract Whitelist configWhiteList();
-
 
 
 }

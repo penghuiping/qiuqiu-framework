@@ -8,19 +8,19 @@ package com.php25.common.core.util.crypto.constant;
  */
 public enum Mode{
 	/** 无模式 */
-	NONE,
+	NONE, 
 	/** Cipher Block Chaining */
-	CBC,
+	CBC, 
 	/** Cipher Feedback */
-	CFB,
+	CFB, 
 	/** A simplification of OFB */
 	CTR,
 	/** Cipher Text Stealing */
 	CTS,
 	/** Electronic Codebook */
-	ECB,
+	ECB, 
 	/** Output Feedback */
-	OFB,
+	OFB, 
 	/** Propagating Cipher Block */
 	PCBC;
 }

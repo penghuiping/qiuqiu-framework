@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.php25</groupId>
     <artifactId>timer</artifactId>
-    <version>2.3.2-SNAPSHOT</version>
+    <version>V.2.5.1</version>
 
     <parent>
         <groupId>com.php25</groupId>
         <artifactId>common-parent</artifactId>
-        <version>2.3.2-SNAPSHOT</version>
+        <version>V.2.5.1</version>
         <relativePath>../../common-parent/pom.xml</relativePath>
     </parent>
     <dependencies>
@@ -20,11 +20,21 @@
         </dependency>
         <dependency>
             <groupId>com.php25</groupId>
-            <artifactId>redis</artifactId>
+            <artifactId>db</artifactId>
         </dependency>
         <dependency>
             <groupId>com.php25</groupId>
-            <artifactId>db</artifactId>
+            <artifactId>mq</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -33,16 +43,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

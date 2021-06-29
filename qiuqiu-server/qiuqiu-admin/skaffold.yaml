@@ -12,8 +12,8 @@ deploy:
     - kustomize/base
 
 profiles:
-  - name: dev
+  - name: test
     deploy:
       kustomize:
         paths:
-        - kustomize/dev
+        - kustomize/test

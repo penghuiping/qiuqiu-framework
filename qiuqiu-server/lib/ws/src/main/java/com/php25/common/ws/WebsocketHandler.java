@@ -24,12 +24,12 @@ public class WebsocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
         BaseRetryMsg baseRetryMsg = JsonUtil.fromJson(payload, BaseRetryMsg.class);
-        if(!(baseRetryMsg instanceof Ping)) {
-            log.info("ws request msg:{}",JsonUtil.toJson(baseRetryMsg));
+        if (!(baseRetryMsg instanceof Ping)) {
+            log.info("ws request msg:{}", JsonUtil.toJson(baseRetryMsg));
         }
         ExpirationSocketSession expirationSocketSession = globalSession.getExpirationSocketSession(session);
-        if(null == expirationSocketSession) {
-            log.info("expirationSocketSession is null:{}",JsonUtil.toJson(baseRetryMsg));
+        if (null == expirationSocketSession) {
+            log.info("expirationSocketSession is null:{}", JsonUtil.toJson(baseRetryMsg));
             return;
         }
         baseRetryMsg.setSessionId(expirationSocketSession.getSessionId());

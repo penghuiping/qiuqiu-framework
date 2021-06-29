@@ -17,7 +17,7 @@ spec:
       containers:
       - name: qiuqiu-admin
         args:
-          - --spring.config.location=/etc/config/application.yml,/etc/config/application-dev.yml
+          - --spring.config.location=/etc/config/application.yml,/etc/config/application-test.yml
         volumeMounts:
           - mountPath: /etc/config
             name: qiuqiu-admin-config

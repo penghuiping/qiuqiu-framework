@@ -1,6 +1,5 @@
 package com.php25.common.ws;
 
-import com.php25.common.core.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -52,7 +51,6 @@ public class InternalMsgHandlers {
     @WsAction("ping")
     public void pingHandler(GlobalSession session, BaseRetryMsg msg) throws Exception {
         Ping ping = (Ping) msg;
-        log.info("ping:{}", JsonUtil.toJson(ping));
         session.updateExpireTime(ping.getSessionId());
         Pong pong = new Pong();
         pong.setMsgId(ping.getMsgId());

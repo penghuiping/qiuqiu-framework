@@ -8,7 +8,7 @@ configMapGenerator:
 - name: qiuqiu-admin-config-map
   files:
     - application.yml
-    - application-dev.yml
+    - application-test.yml
 
 ## 定义需要修改的配置
 patchesStrategicMerge:

@@ -1,27 +1,29 @@
 ########################################################
 ###common
 ########################################################
+jasypt:
+  encryptor:
+    password: '@WSXcft6#EDCvgy7' ## 不安全 生产用 -Djasypt.encryptor.password=123456 方式
 app:
   db:
     ip: mysql.default.svc.cluster.local
     port: 3306
-    username: root
-    password: G7bnF83jFt
+    username: ENC(03wB1jGDU1fmYQ1EQqPYWQ==) #root
+    password: ENC(MLc5g8jUCDV+P3cpPMcR9HONOTDbUB8D) #G7bnF83jFt
     name: test
   filesever:
     host: localhost
     path: /tmp/upload/
     thumbPath: /tmp/upload/thumb
   redis:
-    host: redis-master.default.svc.cluster.local
-    port: 6379
+    nodes: 10.1.1.37:6379,10.1.1.41:6379,10.1.1.40:6379,10.1.1.43:6379,10.1.1.42:6379,10.1.1.33:6379
     database: 0
-    password: 0nPV6BhZQb
+    password: ENC(6vhbjEmIMz3eAdpc7mYZQGBc8X6RjTmH) #eLzU55rt62
   rabbitmq:
     ip: rabbitmq.default.svc.cluster.local
     port: 5672
-    username: user
-    password: F5gWSJxLv7
+    username: ENC(pFn2b81c54QKgJ6tRAG+xg==) #user
+    password: ENC(9z/eW5s+91Zc9UdnZ7mCfhgTKc3yeKJ6) #F5gWSJxLv7
     virtualHost: /
 ########################################################
 ### static resources and upload load file
@@ -68,8 +70,9 @@ spring:
   ### redis
   ########################################################
   redis:
-    host: ${app.redis.host}
-    port: ${app.redis.port}
+    cluster:
+      max-redirects: 3
+      nodes: ${app.redis.nodes}
     database: ${app.redis.database}
     password: ${app.redis.password}
     ssl: false

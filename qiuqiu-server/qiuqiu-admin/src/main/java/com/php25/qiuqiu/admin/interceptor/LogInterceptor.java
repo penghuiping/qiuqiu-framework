@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component
 @ConditionalOnClass(HttpServletRequest.class)
-public class LogInterceptor extends HandlerInterceptorAdapter {
+public class LogInterceptor implements AsyncHandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(LogInterceptor.class);
 
 

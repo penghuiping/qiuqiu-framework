@@ -5,7 +5,7 @@ metadata:
     app: qiuqiu-admin
   name: qiuqiu-admin
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: qiuqiu-admin

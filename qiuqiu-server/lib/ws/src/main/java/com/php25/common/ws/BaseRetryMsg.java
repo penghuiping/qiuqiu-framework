@@ -7,9 +7,6 @@ import com.google.common.base.Objects;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.concurrent.Delayed;
-import java.util.concurrent.TimeUnit;
-
 /**
  * 所有需要重发的消息需要继承此抽象类
  *

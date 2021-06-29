@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.admin.config;
 
+import com.google.common.collect.Sets;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.redis.impl.RedisManagerImpl;
@@ -11,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
+import org.springframework.data.redis.connection.RedisConfiguration;
+import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -29,7 +32,7 @@ public class RedisConfig {
         return new LocalRedisManager(1024);
     }
 
-    @Profile(value = {"dev","test"})
+    @Profile(value = {"dev", "test"})
     @Bean
     public RedisManager redisManager(@Autowired StringRedisTemplate stringRedisTemplate) {
         return new RedisManagerImpl(stringRedisTemplate);
@@ -46,14 +49,74 @@ public class RedisConfig {
         if (clusterProperties.getMaxRedirects() != null) {
             config.setMaxRedirects(clusterProperties.getMaxRedirects());
         }
-        if(redisProperties.getPassword() != null) {
+        if (redisProperties.getPassword() != null) {
             config.setPassword(redisProperties.getPassword());
         }
+
+        LettucePoolingClientConfiguration.LettucePoolingClientConfigurationBuilder builder = LettucePoolingClientConfiguration.builder();
+
+        if (redisProperties.isSsl()) {
+            builder.useSsl();
+        }
+
         RedisProperties.Pool properties = redisProperties.getLettuce().getPool();
-        LettuceClientConfiguration clientConfiguration = LettucePoolingClientConfiguration.builder()
+        LettuceClientConfiguration clientConfiguration = builder
                 .commandTimeout((redisProperties.getTimeout()))
                 .poolConfig(getPoolConfig(properties)).build();
-        return new LettuceConnectionFactory(config,clientConfiguration);
+        return new LettuceConnectionFactory(config, clientConfiguration);
+    }
+
+
+    @Profile(value = {"dev"})
+    @Bean(destroyMethod = "destroy")
+    public LettuceConnectionFactory redisConnectionFactory1(RedisProperties redisProperties) {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+        config.setHostName(redisProperties.getHost());
+        config.setPort(redisProperties.getPort());
+        config.setDatabase(redisProperties.getDatabase());
+        if (!StringUtil.isBlank(redisProperties.getPassword())) {
+            config.setPassword(redisProperties.getPassword());
+        }
+
+        LettucePoolingClientConfiguration.LettucePoolingClientConfigurationBuilder builder = LettucePoolingClientConfiguration.builder();
+
+        if (redisProperties.isSsl()) {
+            builder.useSsl();
+        }
+
+        RedisProperties.Pool properties = redisProperties.getLettuce().getPool();
+        LettuceClientConfiguration clientConfiguration = builder
+                .commandTimeout((redisProperties.getTimeout()))
+                .poolConfig(getPoolConfig(properties)).build();
+        return new LettuceConnectionFactory(config, clientConfiguration);
+    }
+
+    @Profile(value = {"test0"})
+    @Bean(destroyMethod = "destroy")
+    public LettuceConnectionFactory redisConnectionFactory2(RedisProperties redisProperties) {
+        RedisProperties.Sentinel sentinelProperties = redisProperties.getSentinel();
+        RedisSentinelConfiguration config = new RedisSentinelConfiguration(
+                sentinelProperties.getMaster(), Sets.newHashSet(sentinelProperties.getNodes()));
+
+        if (sentinelProperties.getPassword() != null) {
+            config.setSentinelPassword(sentinelProperties.getPassword());
+        }
+
+        if (redisProperties.getPassword() != null) {
+            config.setPassword(redisProperties.getPassword());
+        }
+
+        LettucePoolingClientConfiguration.LettucePoolingClientConfigurationBuilder builder = LettucePoolingClientConfiguration.builder();
+
+        if (redisProperties.isSsl()) {
+            builder.useSsl();
+        }
+
+        RedisProperties.Pool properties = redisProperties.getLettuce().getPool();
+        LettuceClientConfiguration clientConfiguration = builder
+                .commandTimeout((redisProperties.getTimeout()))
+                .poolConfig(getPoolConfig(properties)).build();
+        return new LettuceConnectionFactory(config, clientConfiguration);
     }
 
     private GenericObjectPoolConfig<?> getPoolConfig(RedisProperties.Pool properties) {
@@ -68,22 +131,5 @@ public class RedisConfig {
             config.setMaxWaitMillis(properties.getMaxWait().toMillis());
         }
         return config;
-    }
-
-    @Profile(value = {"dev"})
-    @Bean(destroyMethod = "destroy")
-    public LettuceConnectionFactory redisConnectionFactory1(RedisProperties redisProperties) {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
-        config.setHostName(redisProperties.getHost());
-        config.setPort(redisProperties.getPort());
-        config.setDatabase(redisProperties.getDatabase());
-        if (!StringUtil.isBlank(redisProperties.getPassword())) {
-            config.setPassword(redisProperties.getPassword());
-        }
-        RedisProperties.Pool properties = redisProperties.getLettuce().getPool();
-        LettuceClientConfiguration clientConfiguration = LettucePoolingClientConfiguration.builder()
-                .commandTimeout((redisProperties.getTimeout()))
-                .poolConfig(getPoolConfig(properties)).build();
-        return new LettuceConnectionFactory(config,clientConfiguration);
     }
 }

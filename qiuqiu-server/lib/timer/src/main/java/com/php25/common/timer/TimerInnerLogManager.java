@@ -25,11 +25,11 @@ import java.util.concurrent.locks.Lock;
 public class TimerInnerLogManager {
     private static final Logger log = LoggerFactory.getLogger(TimerInnerLogManager.class);
 
-    private DbType dbType;
+    private final DbType dbType;
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    private RedisManager redisManager;
+    private final RedisManager redisManager;
 
     public TimerInnerLogManager(DbType dbType, JdbcTemplate jdbcTemplate, RedisManager redisManager) {
         this.dbType = dbType;
@@ -62,7 +62,7 @@ public class TimerInnerLogManager {
                     jobExecutionLog0.setStatus(1);
                     update(jobExecutionLog0);
                 }
-            }finally {
+            } finally {
                 lock.unlock();
             }
         }
@@ -111,7 +111,7 @@ public class TimerInnerLogManager {
             } finally {
                 lock.unlock();
             }
-        }else {
+        } else {
             log.info("查询到:{}", JsonUtil.toJson(jobExecutionLog));
         }
     }

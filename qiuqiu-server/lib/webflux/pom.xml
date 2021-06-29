@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.php25</groupId>
     <artifactId>webflux</artifactId>
-    <version>2.3.2-SNAPSHOT</version>
+    <version>V.2.5.1</version>
     <parent>
         <groupId>com.php25</groupId>
         <artifactId>common-parent</artifactId>
-        <version>2.3.2-SNAPSHOT</version>
+        <version>V.2.5.1</version>
         <relativePath>../../common-parent/pom.xml</relativePath>
     </parent>
     <dependencies>
@@ -34,6 +34,10 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
@@ -46,16 +50,21 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zipkin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-jose</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

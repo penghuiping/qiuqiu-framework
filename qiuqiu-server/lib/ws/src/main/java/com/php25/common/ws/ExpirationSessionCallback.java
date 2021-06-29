@@ -11,9 +11,9 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class ExpirationSessionCallback implements Runnable {
 
-    private String sessionId;
+    private final String sessionId;
 
-    private GlobalSession globalSession;
+    private final GlobalSession globalSession;
 
     public ExpirationSessionCallback(String sessionId) {
         this.sessionId = sessionId;
@@ -29,8 +29,8 @@ public class ExpirationSessionCallback implements Runnable {
             connectionClose.setMsgId(globalSession.generateUUID());
             connectionClose.setSessionId(sessionId);
             globalSession.send(connectionClose);
-        }catch (Exception e) {
-            log.error("未接受到心跳包，关闭session出错",e);
+        } catch (Exception e) {
+            log.error("未接受到心跳包，关闭session出错", e);
         }
 
     }

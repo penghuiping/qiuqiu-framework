@@ -51,7 +51,7 @@ public class RedisQueueSubscriber implements InitializingBean, DisposableBean {
                 new LinkedBlockingQueue<Runnable>(),
                 new ThreadFactoryBuilder().setNameFormat("ws-redis-queue-subscriber-%d")
                         .build());
-        isRunning.compareAndSet(false,true);
+        isRunning.compareAndSet(false, true);
         this.run();
     }
 
@@ -74,7 +74,7 @@ public class RedisQueueSubscriber implements InitializingBean, DisposableBean {
         this.singleThreadExecutor.execute(() -> {
             while (isRunning.get()) {
                 try {
-                    RList<String> rList = redisService.list(Constants.prefix + this.serverId,String.class);
+                    RList<String> rList = redisService.list(Constants.prefix + this.serverId, String.class);
                     String msg = rList.blockRightPop(1, TimeUnit.SECONDS);
                     if (!StringUtil.isBlank(msg)) {
                         BaseRetryMsg baseRetry = JsonUtil.fromJson(msg, BaseRetryMsg.class);
@@ -89,7 +89,7 @@ public class RedisQueueSubscriber implements InitializingBean, DisposableBean {
 
     private void registerRedisQueue() {
         log.info("register redis Queue....;serverId:{}", serverId);
-        redisService.expire(Constants.prefix + serverId,2L, TimeUnit.HOURS);
+        redisService.expire(Constants.prefix + serverId, 2L, TimeUnit.HOURS);
     }
 
     private void unRegisterRedisQueue() {

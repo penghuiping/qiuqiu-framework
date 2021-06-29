@@ -109,9 +109,9 @@ create table t_user
     nickname varchar(255),
     username varchar(50),
     password varchar(255),
-    user_access_level varchar(255),
     create_time datetime,
     last_modified_time datetime,
+    data_access_level varchar(50),
     group_id bigint,
     enable int
 );

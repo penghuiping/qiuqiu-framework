@@ -34,6 +34,7 @@ import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.service.RoleService;
 import com.php25.qiuqiu.user.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;

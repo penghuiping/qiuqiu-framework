@@ -18,9 +18,9 @@ public class VueMsgSerializer implements MsgSerializable {
         baseRetryMsg1.setInterval(null);
         baseRetryMsg1.setMaxRetry(null);
         baseRetryMsg1.setCount(null);
-        String msg =  JsonUtil.toJson(baseRetryMsg1);
-        if(!(baseRetryMsg instanceof Pong)) {
-            log.info("ws response msg:{}",msg);
+        String msg = JsonUtil.toJson(baseRetryMsg1);
+        if (!(baseRetryMsg instanceof Pong)) {
+            log.info("ws response msg:{}", msg);
         }
         return msg;
     }
