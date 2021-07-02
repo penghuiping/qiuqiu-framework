@@ -1,7 +1,7 @@
 package com.php25.qiuqiu.monitor.repository;
 
 import com.php25.common.db.repository.BaseDbRepository;
-import com.php25.qiuqiu.monitor.model.Dict;
+import com.php25.qiuqiu.monitor.entity.Dict;
 
 import java.util.Optional;
 

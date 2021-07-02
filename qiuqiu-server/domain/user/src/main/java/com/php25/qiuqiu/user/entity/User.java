@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.monitor.model;
+package com.php25.qiuqiu.user.entity;
 
 import com.php25.common.db.core.GenerationType;
 import com.php25.common.db.core.annotation.Column;
@@ -13,38 +13,41 @@ import org.springframework.data.domain.Persistable;
 import java.time.LocalDateTime;
 
 /**
+ * 用户
+ *
  * @author penghuiping
- * @date 2021/3/11 14:52
+ * @date 2021/2/3 11:30
  */
-@Setter
 @Getter
-@Table("t_audit_log")
-public class AuditLog implements Persistable<Long> {
+@Setter
+@Table("t_user")
+public class User implements Persistable<Long> {
 
     /**
-     * 日志id
+     * id,自增
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Long id;
 
     /**
-     * 系统用户名
+     * 用户昵称
+     */
+    @Column
+    private String nickname;
+
+    /**
+     * 用户名全局唯一不可重复
      */
     @Column
     private String username;
 
     /**
-     * 系统接口地址
+     * 密码
      */
     @Column
-    private String uri;
-
-    /**
-     * 接口入参
-     */
-    @Column
-    private String params;
+    private String password;
 
     /**
      * 创建时间
@@ -52,11 +55,40 @@ public class AuditLog implements Persistable<Long> {
     @Column("create_time")
     private LocalDateTime createTime;
 
+    /**
+     * 最后修改时间
+     */
+    @Column("last_modified_time")
+    private LocalDateTime lastModifiedTime;
+
+
+    @Column("group_id")
+    private Long groupId;
+
+    /**
+     * 是否可用 0:不可用 1:可用
+     */
+    @Column
+    private Boolean enable;
+
+
+    /**
+     * 数据访问层级
+     */
+    @Column("data_access_level")
+    private String dataAccessLevel;
+
+    /**
+     * 用于判断是新增还是更新,true:新增 false:更新
+     */
     @Transient
     private Boolean isNew;
 
+
+
+
     @Override
     public boolean isNew() {
-        return isNew;
+        return this.isNew;
     }
 }

@@ -9,13 +9,13 @@ import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.group.GroupCreateVo;
 import com.php25.qiuqiu.admin.vo.in.group.GroupDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.group.GroupUpdateVo;
+import com.php25.qiuqiu.admin.vo.mapper.GroupVoMapper;
 import com.php25.qiuqiu.admin.vo.out.TreeVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.group.GroupCreateDto;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
 import com.php25.qiuqiu.user.service.GroupService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * 用户组
+ *
  * @author penghuiping
  * @date 2021/3/6 21:36
  */
@@ -36,8 +37,11 @@ public class GroupController extends JSONController {
 
     private final GroupService groupService;
 
+    private final GroupVoMapper groupVoMapper;
+
     /**
      * 获取系统中所有组列表
+     *
      * @since v1
      */
     @APIVersion("v1")
@@ -51,32 +55,33 @@ public class GroupController extends JSONController {
 
     /**
      * 创建用户组
+     *
      * @since v1
      */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/create")
     public JSONResponse<Boolean> create(@Valid @RequestBody GroupCreateVo groupCreateVo) {
-        GroupCreateDto groupCreateDto = new GroupCreateDto();
-        BeanUtils.copyProperties(groupCreateVo, groupCreateDto);
+        GroupCreateDto groupCreateDto = groupVoMapper.toCreateDto(groupCreateVo);
         return succeed(groupService.create(groupCreateDto));
     }
 
     /**
      * 更新用户组
+     *
      * @since v1
      */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/update")
     public JSONResponse<Boolean> create(@Valid @RequestBody GroupUpdateVo groupUpdateVo) {
-        GroupDto groupDto = new GroupDto();
-        BeanUtils.copyProperties(groupUpdateVo, groupDto);
+        GroupDto groupDto = groupVoMapper.toGroupDto(groupUpdateVo);
         return succeed(groupService.update(groupDto));
     }
 
     /**
      * 删除用户组
+     *
      * @since v1
      */
     @AuditLog

@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.model;
+package com.php25.qiuqiu.monitor.entity;
 
 import com.php25.common.db.core.GenerationType;
 import com.php25.common.db.core.annotation.Column;
@@ -11,38 +11,41 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 
 /**
- * 角色
- *
  * @author penghuiping
- * @date 2021/3/2 08:54
+ * @date 2021/3/11 16:16
  */
 @Setter
 @Getter
-@Table("t_role")
-public class Role implements Persistable<Long> {
+@Table("t_dict")
+public class Dict implements Persistable<Long> {
 
     /**
-     * id,自增
+     * 自增id
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long id;
 
     /**
-     * 角色名
+     * 键
      */
-    @Column
-    private String name;
+    @Column("key0")
+    private String key;
 
     /**
-     * 角色描述
+     * 值
+     */
+    @Column
+    private String value;
+
+    /**
+     * 描述
      */
     @Column
     private String description;
 
     /**
-     * 是否可用 0:不可用 1:可用
+     * true: 有效,false: 无效
      */
     @Column
     private Boolean enable;

@@ -23,18 +23,20 @@ import com.php25.qiuqiu.user.dto.user.UserCreateDto;
 import com.php25.qiuqiu.user.dto.user.UserDto;
 import com.php25.qiuqiu.user.dto.user.UserPageDto;
 import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
-import com.php25.qiuqiu.user.model.Group;
-import com.php25.qiuqiu.user.model.Role;
-import com.php25.qiuqiu.user.model.RoleResourcePermission;
-import com.php25.qiuqiu.user.model.User;
-import com.php25.qiuqiu.user.model.UserRole;
+import com.php25.qiuqiu.user.entity.Group;
+import com.php25.qiuqiu.user.entity.Role;
+import com.php25.qiuqiu.user.entity.RoleResourcePermission;
+import com.php25.qiuqiu.user.entity.User;
+import com.php25.qiuqiu.user.entity.UserRole;
+import com.php25.qiuqiu.user.mapper.PermissionDtoMapper;
+import com.php25.qiuqiu.user.mapper.RoleDtoMapper;
+import com.php25.qiuqiu.user.mapper.UserDtoMapper;
 import com.php25.qiuqiu.user.repository.GroupRepository;
 import com.php25.qiuqiu.user.repository.RoleRepository;
 import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.service.RoleService;
 import com.php25.qiuqiu.user.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
@@ -73,6 +75,10 @@ public class UserServiceImpl implements UserService {
     private final AntPathMatcher antPathMatcher;
 
     private final RoleService roleService;
+
+    private final UserDtoMapper userDtoMapper;
+
+    private final RoleDtoMapper roleDtoMapper;
 
     @Override
     public TokenDto login(String username, String password) {
@@ -157,13 +163,9 @@ public class UserServiceImpl implements UserService {
         //角色
         List<Long> roleIds = userRepository.findRoleIdsByUserId(user.getId());
         List<Role> roles = (List<Role>) roleRepository.findAllById(roleIds);
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(user, userDto);
-        Set<RoleDto> roleDtoSet = roles.stream().map(role -> {
-            RoleDto roleDto = new RoleDto();
-            BeanUtils.copyProperties(role, roleDto);
-            return roleDto;
-        }).collect(Collectors.toSet());
+
+        UserDto userDto = userDtoMapper.toDto(user);
+        Set<RoleDto> roleDtoSet = roles.stream().map(roleDtoMapper::toDto0).collect(Collectors.toSet());
         userDto.setRoles(roleDtoSet);
         userDto.setDataAccessLevel(DataAccessLevel.valueOf(user.getDataAccessLevel()));
         userDto.setEnable(user.getEnable());

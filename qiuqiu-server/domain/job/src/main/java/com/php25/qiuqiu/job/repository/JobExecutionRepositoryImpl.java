@@ -5,10 +5,9 @@ import com.php25.common.db.Queries;
 import com.php25.common.db.QueriesExecute;
 import com.php25.common.db.core.sql.SqlParams;
 import com.php25.common.db.repository.BaseDbRepositoryImpl;
-import com.php25.qiuqiu.job.model.JobExecution;
+import com.php25.qiuqiu.job.entity.JobExecution;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 

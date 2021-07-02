@@ -1,9 +1,7 @@
 package com.php25.qiuqiu.job.repository;
 
 import com.php25.common.db.repository.BaseDbRepository;
-import com.php25.qiuqiu.job.model.JobModel;
-
-import java.util.List;
+import com.php25.qiuqiu.job.entity.JobModel;
 
 /**
  * @author penghuiping

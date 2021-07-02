@@ -1,6 +1,8 @@
-package com.php25.qiuqiu.user.model;
+package com.php25.qiuqiu.user.entity;
 
+import com.php25.common.db.core.GenerationType;
 import com.php25.common.db.core.annotation.Column;
+import com.php25.common.db.core.annotation.GeneratedValue;
 import com.php25.common.db.core.annotation.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,26 +11,41 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 
 /**
+ * 组织机构部门
+ *
  * @author penghuiping
- * @date 2021/3/25 16:16
+ * @date 2021/3/2 08:54
  */
 @Setter
 @Getter
-@Table("t_resource")
-public class Resource implements Persistable<String> {
+@Table("t_group")
+public class Group implements Persistable<Long> {
 
     /**
-     * 资源名
+     * id,自增
      */
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    private Long id;
+
+    /**
+     * 组名
+     */
     @Column
     private String name;
 
     /**
-     * 资源描述
+     * 描述
      */
     @Column
     private String description;
+
+    /**
+     * 父节点id
+     */
+    @Column("parent_id")
+    private Long parentId;
 
     /**
      * 是否有效 0:无效 1:有效
@@ -38,11 +55,6 @@ public class Resource implements Persistable<String> {
 
     @Transient
     private Boolean isNew;
-
-    @Override
-    public String getId() {
-        return this.name;
-    }
 
     @Override
     public boolean isNew() {

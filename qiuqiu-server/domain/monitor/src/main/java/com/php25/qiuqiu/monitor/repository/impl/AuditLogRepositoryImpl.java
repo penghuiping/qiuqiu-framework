@@ -2,7 +2,7 @@ package com.php25.qiuqiu.monitor.repository.impl;
 
 import com.php25.common.db.DbType;
 import com.php25.common.db.repository.BaseDbRepositoryImpl;
-import com.php25.qiuqiu.monitor.model.AuditLog;
+import com.php25.qiuqiu.monitor.entity.AuditLog;
 import com.php25.qiuqiu.monitor.repository.AuditLogRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

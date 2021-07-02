@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.job.model;
+package com.php25.qiuqiu.user.entity;
 
 import com.php25.common.db.core.annotation.Column;
 import com.php25.common.db.core.annotation.Table;
@@ -10,49 +10,42 @@ import org.springframework.data.domain.Persistable;
 
 /**
  * @author penghuiping
- * @date 2020/8/24 13:52
+ * @date 2021/3/25 16:16
  */
-@Table("t_timer_job")
-@Getter
 @Setter
-public class JobModel implements Persistable<String> {
+@Getter
+@Table("t_resource")
+public class Resource implements Persistable<String> {
 
     /**
-     * 任务id
+     * 资源名
      */
     @Id
-    private String id;
-
-    /**
-     * job名字可以用于搜索
-     */
     @Column
     private String name;
 
     /**
-     * job描述
+     * 资源描述
      */
     @Column
     private String description;
 
     /**
-     * 任务对应的java执行代码
+     * 是否有效 0:无效 1:有效
      */
-    @Column("class_name")
-    private String className;
-
-    /**
-     * 用户组id
-     */
-    @Column("group_id")
-    private Long groupId;
-
+    @Column
+    private Boolean enable;
 
     @Transient
     private Boolean isNew;
 
     @Override
+    public String getId() {
+        return this.name;
+    }
+
+    @Override
     public boolean isNew() {
-        return isNew;
+        return this.isNew;
     }
 }

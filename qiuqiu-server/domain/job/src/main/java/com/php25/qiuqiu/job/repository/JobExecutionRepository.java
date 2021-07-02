@@ -1,7 +1,7 @@
 package com.php25.qiuqiu.job.repository;
 
 import com.php25.common.db.repository.BaseDbRepository;
-import com.php25.qiuqiu.job.model.JobExecution;
+import com.php25.qiuqiu.job.entity.JobExecution;
 
 import java.util.Optional;
 

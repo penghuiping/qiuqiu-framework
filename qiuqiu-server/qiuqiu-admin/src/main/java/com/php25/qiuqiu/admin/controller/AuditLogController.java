@@ -5,12 +5,12 @@ import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.AuditLogPageVo;
+import com.php25.qiuqiu.admin.vo.mapper.AuditLogVoMapper;
 import com.php25.qiuqiu.admin.vo.out.AuditLogPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +32,8 @@ public class AuditLogController extends JSONController {
 
     private final AuditLogService auditLogService;
 
+    private final AuditLogVoMapper auditLogVoMapper;
+
     /**
      * 审计日志分页查询
      * @since v1
@@ -42,11 +44,7 @@ public class AuditLogController extends JSONController {
         DataGridPageDto<AuditLogDto> dataGrid = auditLogService.page(auditLogPageVo.getUsername(),auditLogPageVo.getPageNum(), auditLogPageVo.getPageSize());
         List<AuditLogDto> list = dataGrid.getData();
         PageResultVo<AuditLogPageOutVo> res = new PageResultVo<>();
-        res.setData(list.stream().map(auditLogDto -> {
-            AuditLogPageOutVo auditLogPageOutVo = new AuditLogPageOutVo();
-            BeanUtils.copyProperties(auditLogDto, auditLogPageOutVo);
-            return auditLogPageOutVo;
-        }).collect(Collectors.toList()));
+        res.setData(list.stream().map(auditLogVoMapper::toAuditLogPageOutVo).collect(Collectors.toList()));
         res.setTotal(dataGrid.getRecordsTotal());
         res.setCurrentPage(auditLogPageVo.getPageNum());
         return succeed(res);

@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.job.model;
+package com.php25.qiuqiu.monitor.entity;
 
 import com.php25.common.db.core.GenerationType;
 import com.php25.common.db.core.annotation.Column;
@@ -13,57 +13,44 @@ import org.springframework.data.domain.Persistable;
 import java.time.LocalDateTime;
 
 /**
- * 任务执行日志
- *
  * @author penghuiping
- * @date 2021/3/15 13:56
+ * @date 2021/3/11 14:52
  */
 @Setter
 @Getter
-@Table("t_timer_job_log")
-public class JobLog implements Persistable<Long> {
+@Table("t_audit_log")
+public class AuditLog implements Persistable<Long> {
+
     /**
-     * 日志自增id
+     * 日志id
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * 任务id
+     * 系统用户名
      */
-    @Column("job_id")
-    private String jobId;
+    @Column
+    private String username;
 
     /**
-     * 任务名字
+     * 系统接口地址
      */
-    @Column("job_name")
-    private String jobName;
+    @Column
+    private String uri;
 
     /**
-     * 任务执行时间
+     * 接口入参
      */
-    @Column("execute_time")
-    private LocalDateTime executeTime;
+    @Column
+    private String params;
 
     /**
-     * 任务执行 0:失败 1:成功
+     * 创建时间
      */
-    @Column("result_code")
-    private Integer resultCode;
-
-    /**
-     * 结果描述
-     */
-    @Column("result_message")
-    private String resultMessage;
-
-    /**
-     * 用户组id
-     */
-    @Column("group_id")
-    private Long groupId;
+    @Column("create_time")
+    private LocalDateTime createTime;
 
     @Transient
     private Boolean isNew;

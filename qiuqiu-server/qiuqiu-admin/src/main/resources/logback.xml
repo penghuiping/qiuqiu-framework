@@ -92,5 +92,7 @@
     <root level="INFO">
         <!-- 生产的话，请移除CONSOLE-->
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC-FILE"/>
+        <appender-ref ref="ASYNC-FILE-ERROR"/>
     </root>
 </configuration>

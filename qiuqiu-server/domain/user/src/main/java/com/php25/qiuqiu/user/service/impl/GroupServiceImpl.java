@@ -12,15 +12,14 @@ import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.group.GroupCreateDto;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
 import com.php25.qiuqiu.user.dto.user.UserDto;
-import com.php25.qiuqiu.user.dto.user.UserSessionDto;
-import com.php25.qiuqiu.user.model.Group;
-import com.php25.qiuqiu.user.model.User;
+import com.php25.qiuqiu.user.entity.Group;
+import com.php25.qiuqiu.user.entity.User;
+import com.php25.qiuqiu.user.mapper.GroupDtoMapper;
 import com.php25.qiuqiu.user.repository.GroupRepository;
 import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.service.GroupService;
 import com.php25.qiuqiu.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,13 +43,13 @@ public class GroupServiceImpl implements GroupService {
 
     private final UserService userService;
 
+    private final GroupDtoMapper groupDtoMapper;
+
 
     private GroupDto findById(Long groupId) {
         Optional<Group> groupOptional = groupRepository.findById(groupId);
         if (groupOptional.isPresent()) {
-            GroupDto groupDto = new GroupDto();
-            BeanUtils.copyProperties(groupOptional.get(), groupDto);
-            return groupDto;
+            return groupDtoMapper.toDto(groupOptional.get());
         }
         return null;
     }
@@ -58,7 +57,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Long findGroupId(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
-        if(userOptional.isPresent()) {
+        if (userOptional.isPresent()) {
             User user = userOptional.get();
             return user.getGroupId();
         }
@@ -69,15 +68,11 @@ public class GroupServiceImpl implements GroupService {
     public List<Long> findGroupsId(String username) {
         Long groupId = findGroupId(username);
         List<Group> groups = groupRepository.findEnabledGroupsByIds(Lists.newArrayList(groupId));
-        List<GroupDto> groupDtos = groups.stream().map(group -> {
-            GroupDto groupDto = new GroupDto();
-            BeanUtils.copyProperties(group,groupDto);
-            return groupDto;
-        }).collect(Collectors.toList());
+        List<GroupDto> groupDtos = groups.stream().map(groupDtoMapper::toDto).collect(Collectors.toList());
         TreeNode<GroupDto> groupTree = this.getAllGroupTree();
 
-        Set<Long> res  = new HashSet<>();
-        for(GroupDto groupDto:groupDtos) {
+        Set<Long> res = new HashSet<>();
+        for (GroupDto groupDto : groupDtos) {
             List<GroupDto> group0s = Trees.getAllSuccessorNodes(groupTree, groupDto);
             List<Long> tmp = group0s.stream().map(GroupDto::getId).collect(Collectors.toList());
             res.addAll(tmp);
@@ -88,28 +83,19 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public TreeNode<GroupDto> getAllGroupTree() {
         List<Group> groups = (List<Group>) groupRepository.findAll();
-        List<GroupDto> groupDtoList = groups.stream().map(group -> {
-            GroupDto groupDto = new GroupDto();
-            BeanUtils.copyProperties(group, groupDto);
-            return groupDto;
-        }).collect(Collectors.toList());
+        List<GroupDto> groupDtoList = groups.stream().map(groupDtoMapper::toDto).collect(Collectors.toList());
         return Trees.buildTree(groupDtoList);
     }
 
     @Override
     public List<GroupDto> childGroups(Long groupId) {
         List<Group> groups = groupRepository.findDirectGroupByParentId(groupId);
-        return groups.stream().map(group -> {
-            GroupDto groupDto = new GroupDto();
-            BeanUtils.copyProperties(group, groupDto);
-            return groupDto;
-        }).collect(Collectors.toList());
+        return groups.stream().map(groupDtoMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
     public Boolean create(GroupCreateDto group) {
-        Group group0 = new Group();
-        BeanUtils.copyProperties(group, group0);
+        Group group0 = groupDtoMapper.toEntity(group);
         group0.setEnable(true);
         group0.setIsNew(true);
         groupRepository.save(group0);
@@ -118,8 +104,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Boolean update(GroupDto group) {
-        Group group0 = new Group();
-        BeanUtils.copyProperties(group, group0);
+        Group group0 = groupDtoMapper.toEntity(group);
         group0.setIsNew(false);
         groupRepository.save(group0);
         return true;

@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.monitor.model;
+package com.php25.qiuqiu.job.entity;
 
 import com.php25.common.db.core.GenerationType;
 import com.php25.common.db.core.annotation.Column;
@@ -10,45 +10,60 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 
+import java.time.LocalDateTime;
+
 /**
+ * 任务执行日志
+ *
  * @author penghuiping
- * @date 2021/3/11 16:16
+ * @date 2021/3/15 13:56
  */
 @Setter
 @Getter
-@Table("t_dict")
-public class Dict implements Persistable<Long> {
-
+@Table("t_timer_job_log")
+public class JobLog implements Persistable<Long> {
     /**
-     * 自增id
+     * 日志自增id
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * 键
+     * 任务id
      */
-    @Column("key0")
-    private String key;
+    @Column("job_id")
+    private String jobId;
 
     /**
-     * 值
+     * 任务名字
      */
-    @Column
-    private String value;
+    @Column("job_name")
+    private String jobName;
 
     /**
-     * 描述
+     * 任务执行时间
      */
-    @Column
-    private String description;
+    @Column("execute_time")
+    private LocalDateTime executeTime;
 
     /**
-     * true: 有效,false: 无效
+     * 任务执行 0:失败 1:成功
      */
-    @Column
-    private Boolean enable;
+    @Column("result_code")
+    private Integer resultCode;
+
+    /**
+     * 结果描述
+     */
+    @Column("result_message")
+    private String resultMessage;
+
+    /**
+     * 用户组id
+     */
+    @Column("group_id")
+    private Long groupId;
 
     @Transient
     private Boolean isNew;

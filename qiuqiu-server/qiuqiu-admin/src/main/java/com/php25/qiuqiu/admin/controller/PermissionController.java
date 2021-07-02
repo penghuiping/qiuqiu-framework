@@ -7,13 +7,13 @@ import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionCreateVo;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionUpdateVo;
+import com.php25.qiuqiu.admin.vo.mapper.PermissionVoMapper;
 import com.php25.qiuqiu.admin.vo.out.permission.PermissionVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.permission.PermissionCreateDto;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import com.php25.qiuqiu.user.service.PermissionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +37,8 @@ public class PermissionController extends JSONController {
 
     private final PermissionService permissionService;
 
+    private final PermissionVoMapper permissionVoMapper;
+
 
     /**
      * 获取权限列表，用于table页面展示
@@ -47,11 +49,7 @@ public class PermissionController extends JSONController {
     @PostMapping("/page")
     public JSONResponse<List<PermissionVo>> page(@RequestAttribute @NotBlank String username) {
         DataGridPageDto<PermissionDto> page = permissionService.page("", 1, 100);
-        List<PermissionVo> permissionVos = page.getData().stream().map(permissionDto -> {
-            PermissionVo permissionVo = new PermissionVo();
-            BeanUtils.copyProperties(permissionDto, permissionVo);
-            return permissionVo;
-        }).collect(Collectors.toList());
+        List<PermissionVo> permissionVos = page.getData().stream().map(permissionVoMapper::toVo).collect(Collectors.toList());
         return succeed(permissionVos);
     }
 
@@ -63,8 +61,7 @@ public class PermissionController extends JSONController {
     @APIVersion("v1")
     @PostMapping("/update")
     public JSONResponse<Boolean> update(@Valid @RequestBody PermissionUpdateVo permissionVo) {
-        PermissionDto permissionDto = new PermissionDto();
-        BeanUtils.copyProperties(permissionVo, permissionDto);
+        PermissionDto permissionDto = permissionVoMapper.toDto(permissionVo);
         return succeed(permissionService.update(permissionDto));
     }
 
@@ -76,8 +73,7 @@ public class PermissionController extends JSONController {
     @APIVersion("v1")
     @PostMapping("/create")
     public JSONResponse<Boolean> create(@Valid @RequestBody PermissionCreateVo permissionVo) {
-        PermissionCreateDto permissionDto = new PermissionCreateDto();
-        BeanUtils.copyProperties(permissionVo, permissionDto);
+        PermissionCreateDto permissionDto = permissionVoMapper.toCreateDto(permissionVo);
         return succeed(permissionService.create(permissionDto));
     }
 

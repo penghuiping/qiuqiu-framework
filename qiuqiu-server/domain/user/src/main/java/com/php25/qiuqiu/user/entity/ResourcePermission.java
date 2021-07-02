@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.model;
+package com.php25.qiuqiu.user.entity;
 
 import com.php25.common.db.core.annotation.Column;
 import com.php25.common.db.core.annotation.Table;
@@ -6,29 +6,24 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 角色资源权限关系
+ * 资源与权限关系
  *
  * @author penghuiping
- * @date 2021/3/25 16:18
+ * @date 2021/3/2 09:15
  */
 @Setter
 @Getter
-@Table("t_role_resource_permission")
-public class RoleResourcePermission {
-    /**
-     * 角色id
-     */
-    @Column("role_id")
-    private Long roleId;
+@Table("t_resource_permission")
+public class ResourcePermission {
 
     /**
-     * 资源
+     * 资源id
      */
     @Column("resource")
     private String resource;
 
     /**
-     * 权限
+     * 权限id
      */
     @Column("permission")
     private String permission;

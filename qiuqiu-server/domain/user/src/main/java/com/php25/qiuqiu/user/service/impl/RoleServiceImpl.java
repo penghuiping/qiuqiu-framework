@@ -13,15 +13,16 @@ import com.php25.qiuqiu.user.dto.role.RoleDetailDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.role.RolePageDto;
 import com.php25.qiuqiu.user.dto.role.RoleUpdateDto;
-import com.php25.qiuqiu.user.model.ResourcePermission;
-import com.php25.qiuqiu.user.model.Role;
-import com.php25.qiuqiu.user.model.RoleResourcePermission;
+import com.php25.qiuqiu.user.entity.ResourcePermission;
+import com.php25.qiuqiu.user.entity.Role;
+import com.php25.qiuqiu.user.entity.RoleResourcePermission;
+import com.php25.qiuqiu.user.mapper.ResourceDtoMapper;
+import com.php25.qiuqiu.user.mapper.RoleDtoMapper;
 import com.php25.qiuqiu.user.repository.ResourceRepository;
 import com.php25.qiuqiu.user.repository.RoleRepository;
 import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.service.RoleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,6 +55,10 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
 
     private Map<String, Set<ResourcePermissionDto>> rolePermissionMap;
 
+    private final RoleDtoMapper roleDtoMapper;
+
+    private final ResourceDtoMapper resourceDtoMapper;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         this.loadPermissionRelation();
@@ -62,8 +67,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
     @Override
     @Transactional
     public Boolean create(RoleCreateDto role) {
-        Role role0 = new Role();
-        BeanUtils.copyProperties(role, role0);
+        Role role0 = roleDtoMapper.toEntity(role);
         role0.setEnable(true);
         role0.setIsNew(true);
         roleRepository.save(role0);
@@ -87,8 +91,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
     @Override
     @Transactional
     public Boolean update(RoleUpdateDto role) {
-        Role role0 = new Role();
-        BeanUtils.copyProperties(role, role0);
+        Role role0 = roleDtoMapper.toEntity(role);
         role0.setIsNew(false);
         roleRepository.save(role0);
 
@@ -136,12 +139,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
         PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
         Page<Role> page = roleRepository.findAll(builder, pageRequest);
         DataGridPageDto<RolePageDto> res = new DataGridPageDto<>();
-        List<RolePageDto> roleDtos = page.get().map(role -> {
-            RolePageDto roleDto = new RolePageDto();
-            BeanUtils.copyProperties(role, roleDto);
-            roleDto.setEnable(role.getEnable());
-            return roleDto;
-        }).collect(Collectors.toList());
+        List<RolePageDto> roleDtos = page.get().map(roleDtoMapper::toDto).collect(Collectors.toList());
         res.setRecordsTotal(page.getTotalElements());
         res.setData(roleDtos);
         return res;
@@ -150,11 +148,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
     @Override
     public List<RoleDto> getAllRoles() {
         List<Role> roles = roleRepository.findAllEnabled();
-        return roles.stream().map(role -> {
-            RoleDto roleDto = new RoleDto();
-            BeanUtils.copyProperties(role, roleDto);
-            return roleDto;
-        }).collect(Collectors.toList());
+        return roles.stream().map(roleDtoMapper::toDto0).collect(Collectors.toList());
     }
 
     private void loadPermissionRelation() {
@@ -169,8 +163,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
                     if (resourcePermission.getPermission().equals(permission.getPermission())
                             && resourcePermission.getResource().equals(permission.getResource())
                     ) {
-                        ResourcePermissionDto resourcePermissionDto = new ResourcePermissionDto();
-                        BeanUtils.copyProperties(resourcePermission, resourcePermissionDto);
+                        ResourcePermissionDto resourcePermissionDto = resourceDtoMapper.toDto(resourcePermission);
                         set.add(resourcePermissionDto);
                     }
                 }
@@ -202,8 +195,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
             throw Exceptions.throwBusinessException(UserErrorCode.ROLE_DATA_NOT_EXISTS);
         }
         Role role = roleOptional.get();
-        RoleDetailDto roleDetailDto = new RoleDetailDto();
-        BeanUtils.copyProperties(role, roleDetailDto);
+        RoleDetailDto roleDetailDto = roleDtoMapper.toRoleDetailDto(role);
         roleDetailDto.setEnable(role.getEnable());
         Set<ResourcePermissionDto> resourcePermissionDtos = getPermissionsByRoleName(role.getName());
         roleDetailDto.setResourcePermissions(new ArrayList<>(resourcePermissionDtos));

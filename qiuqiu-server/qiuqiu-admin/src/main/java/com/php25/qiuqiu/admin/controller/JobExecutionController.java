@@ -4,9 +4,12 @@ import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.qiuqiu.admin.vo.in.job.JobExecutionCreateVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobExecutionIdVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobExecutionPageVo;
+import com.php25.qiuqiu.admin.vo.in.job.JobExecutionUpdateVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobIdVo;
+import com.php25.qiuqiu.admin.vo.mapper.JobExecutionVoMapper;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.job.JobExecutionVo;
 import com.php25.qiuqiu.job.dto.JobExecutionCreateDto;
@@ -16,7 +19,6 @@ import com.php25.qiuqiu.job.service.JobService;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 
 /**
  * 定时任务执行计划
+ *
  * @author penghuiping
  * @date 2021/3/27 00:32
  */
@@ -40,8 +43,11 @@ public class JobExecutionController extends JSONController {
 
     private final JobService jobService;
 
+    private final JobExecutionVoMapper jobExecutionVoMapper;
+
     /**
      * 分页查询定时任务执行计划
+     *
      * @ignoreParams username
      * @since v1
      */
@@ -50,11 +56,7 @@ public class JobExecutionController extends JSONController {
     public JSONResponse<PageResultVo<JobExecutionVo>> page(@RequestAttribute String username, @Valid @RequestBody JobExecutionPageVo pageVo) {
         DataGridPageDto<JobExecutionDto> dataGrid = jobService.pageJobExecution(username, pageVo.getJobName(), pageVo.getPageNum(), pageVo.getPageSize());
         PageResultVo<JobExecutionVo> result = new PageResultVo<>();
-        List<JobExecutionVo> list = dataGrid.getData().stream().map(jobExecutionDto -> {
-            JobExecutionVo jobExecutionVo = new JobExecutionVo();
-            BeanUtils.copyProperties(jobExecutionDto, jobExecutionVo);
-            return jobExecutionVo;
-        }).collect(Collectors.toList());
+        List<JobExecutionVo> list = dataGrid.getData().stream().map(jobExecutionVoMapper::toJobExecutionVo).collect(Collectors.toList());
         result.setData(list);
         result.setTotal(dataGrid.getRecordsTotal());
         result.setCurrentPage(pageVo.getPageNum());
@@ -63,30 +65,35 @@ public class JobExecutionController extends JSONController {
 
     /**
      * 创建定时任务执行计划
+     *
      * @ignoreParams username
      * @since v1
      */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/create")
-    public JSONResponse<Boolean> create(@RequestAttribute String username, @Valid @RequestBody JobExecutionCreateDto jobExecution) {
-        return succeed(jobService.createJobExecution(username, jobExecution));
+    public JSONResponse<Boolean> create(@RequestAttribute String username, @Valid @RequestBody JobExecutionCreateVo jobExecution) {
+        JobExecutionCreateDto jobExecutionCreateDto = jobExecutionVoMapper.toJobExecutionDto(jobExecution);
+        return succeed(jobService.createJobExecution(username, jobExecutionCreateDto));
     }
 
     /**
      * 更新定时任务执行计划
+     *
      * @ignoreParams username
      * @since v1
      */
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/update")
-    public JSONResponse<Boolean> update(@RequestAttribute String username, @Valid @RequestBody JobExecutionUpdateDto jobExecution) {
-        return succeed(jobService.updateJobExecution(username, jobExecution));
+    public JSONResponse<Boolean> update(@RequestAttribute String username, @Valid @RequestBody JobExecutionUpdateVo jobExecution) {
+        JobExecutionUpdateDto jobExecutionUpdateDto = jobExecutionVoMapper.toJobExecutionDto(jobExecution);
+        return succeed(jobService.updateJobExecution(username, jobExecutionUpdateDto));
     }
 
     /**
      * 删除定时任务执行计划
+     *
      * @ignoreParams username
      * @since v1
      */
@@ -99,6 +106,7 @@ public class JobExecutionController extends JSONController {
 
     /**
      * 刷新定时任务执行计划
+     *
      * @ignoreParams username
      * @since v1
      */
@@ -111,6 +119,7 @@ public class JobExecutionController extends JSONController {
 
     /**
      * 刷新所有定时任务执行计划
+     *
      * @ignoreParams username
      * @since v1
      */
@@ -123,6 +132,7 @@ public class JobExecutionController extends JSONController {
 
     /**
      * 统计定时任务执行计划加载情况
+     *
      * @ignoreParams username
      * @since v1
      */

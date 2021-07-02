@@ -2,7 +2,7 @@ package com.php25.qiuqiu.job.repository;
 
 import com.php25.common.db.DbType;
 import com.php25.common.db.repository.BaseDbRepositoryImpl;
-import com.php25.qiuqiu.job.model.JobLog;
+import com.php25.qiuqiu.job.entity.JobLog;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 

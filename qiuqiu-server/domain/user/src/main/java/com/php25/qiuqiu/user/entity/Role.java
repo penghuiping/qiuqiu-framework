@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.model;
+package com.php25.qiuqiu.user.entity;
 
 import com.php25.common.db.core.GenerationType;
 import com.php25.common.db.core.annotation.Column;
@@ -11,15 +11,15 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 
 /**
- * 组织机构部门
+ * 角色
  *
  * @author penghuiping
  * @date 2021/3/2 08:54
  */
 @Setter
 @Getter
-@Table("t_group")
-public class Group implements Persistable<Long> {
+@Table("t_role")
+public class Role implements Persistable<Long> {
 
     /**
      * id,自增
@@ -30,25 +30,19 @@ public class Group implements Persistable<Long> {
     private Long id;
 
     /**
-     * 组名
+     * 角色名
      */
     @Column
     private String name;
 
     /**
-     * 描述
+     * 角色描述
      */
     @Column
     private String description;
 
     /**
-     * 父节点id
-     */
-    @Column("parent_id")
-    private Long parentId;
-
-    /**
-     * 是否有效 0:无效 1:有效
+     * 是否可用 0:不可用 1:可用
      */
     @Column
     private Boolean enable;
@@ -58,6 +52,6 @@ public class Group implements Persistable<Long> {
 
     @Override
     public boolean isNew() {
-        return this.isNew;
+        return isNew;
     }
 }

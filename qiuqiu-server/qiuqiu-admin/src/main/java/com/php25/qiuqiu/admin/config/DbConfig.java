@@ -89,10 +89,10 @@ public class DbConfig {
     @PostConstruct
     public void init() {
         new EntitiesScan().scanPackage(
-                "com.php25.qiuqiu.user.model",
-                "com.php25.qiuqiu.monitor.model",
-                "com.php25.qiuqiu.job.model",
-                "com.php25.common.timer.model"
+                "com.php25.qiuqiu.user.entity",
+                "com.php25.qiuqiu.monitor.entity",
+                "com.php25.qiuqiu.job.entity",
+                "com.php25.common.timer.entity"
         );
 
         GenericConversionService genericConversionService = (GenericConversionService) DefaultConversionService.getSharedInstance();
