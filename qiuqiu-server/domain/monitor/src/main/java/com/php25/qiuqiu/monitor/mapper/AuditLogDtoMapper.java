@@ -2,11 +2,13 @@ package com.php25.qiuqiu.monitor.mapper;
 
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.entity.AuditLog;
+import org.mapstruct.Mapper;
 
 /**
  * @author penghuiping
  * @date 2021/7/5 13:54
  */
+@Mapper(componentModel = "spring")
 public interface AuditLogDtoMapper {
 
     /**
