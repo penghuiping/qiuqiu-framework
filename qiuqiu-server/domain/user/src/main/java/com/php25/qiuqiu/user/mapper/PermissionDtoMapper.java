@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.dto.mapper;
+package com.php25.qiuqiu.user.mapper;
 
 import com.php25.qiuqiu.user.dto.permission.PermissionCreateDto;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;

@@ -14,7 +14,7 @@ import com.php25.qiuqiu.user.dto.group.GroupDto;
 import com.php25.qiuqiu.user.dto.user.UserDto;
 import com.php25.qiuqiu.user.entity.Group;
 import com.php25.qiuqiu.user.entity.User;
-import com.php25.qiuqiu.user.dto.mapper.GroupDtoMapper;
+import com.php25.qiuqiu.user.mapper.GroupDtoMapper;
 import com.php25.qiuqiu.user.repository.GroupRepository;
 import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.service.GroupService;
