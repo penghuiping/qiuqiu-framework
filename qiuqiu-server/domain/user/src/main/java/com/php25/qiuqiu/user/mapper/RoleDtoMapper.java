@@ -1,11 +1,13 @@
 package com.php25.qiuqiu.user.mapper;
 
+import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleCreateDto;
 import com.php25.qiuqiu.user.dto.role.RoleDetailDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.role.RolePageDto;
 import com.php25.qiuqiu.user.dto.role.RoleUpdateDto;
 import com.php25.qiuqiu.user.entity.Role;
+import com.php25.qiuqiu.user.entity.RoleResourcePermission;
 import org.mapstruct.Mapper;
 
 /**
@@ -55,4 +57,12 @@ public interface RoleDtoMapper {
      * @return dto
      */
     RolePageDto toDto(Role role);
+
+    /**
+     * entity转dto
+     *
+     * @param roleResourcePermission entity
+     * @return dto
+     */
+    ResourcePermissionDto toDto(RoleResourcePermission roleResourcePermission);
 }

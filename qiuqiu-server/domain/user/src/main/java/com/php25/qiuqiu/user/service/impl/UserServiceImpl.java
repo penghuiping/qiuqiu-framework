@@ -28,6 +28,8 @@ import com.php25.qiuqiu.user.entity.Role;
 import com.php25.qiuqiu.user.entity.RoleResourcePermission;
 import com.php25.qiuqiu.user.entity.User;
 import com.php25.qiuqiu.user.entity.UserRole;
+import com.php25.qiuqiu.user.mapper.GroupDtoMapper;
+import com.php25.qiuqiu.user.mapper.PermissionDtoMapper;
 import com.php25.qiuqiu.user.mapper.RoleDtoMapper;
 import com.php25.qiuqiu.user.mapper.UserDtoMapper;
 import com.php25.qiuqiu.user.repository.GroupRepository;
@@ -38,7 +40,6 @@ import com.php25.qiuqiu.user.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -78,6 +79,8 @@ public class UserServiceImpl implements UserService {
     private final UserDtoMapper userDtoMapper;
 
     private final RoleDtoMapper roleDtoMapper;
+
+    private final GroupDtoMapper groupDtoMapper;
 
     @Override
     public TokenDto login(String username, String password) {
@@ -171,19 +174,14 @@ public class UserServiceImpl implements UserService {
 
         //权限
         List<RoleResourcePermission> permissions = roleRepository.getPermissionsByRoleIds(roleIds);
-        Set<ResourcePermissionDto> permissionDtos = permissions.stream().map(permission -> {
-            ResourcePermissionDto permissionDto = new ResourcePermissionDto();
-            BeanUtils.copyProperties(permission, permissionDto);
-            return permissionDto;
-        }).collect(Collectors.toSet());
+        Set<ResourcePermissionDto> permissionDtos = permissions.stream().map(roleDtoMapper::toDto).collect(Collectors.toSet());
         userDto.setPermissions(permissionDtos);
 
         //组
         Optional<Group> groupOptional = groupRepository.findById(user.getGroupId());
         if (groupOptional.isPresent()) {
             Group group = groupOptional.get();
-            GroupDto groupDto = new GroupDto();
-            BeanUtils.copyProperties(group, groupDto);
+            GroupDto groupDto = groupDtoMapper.toDto(group);
             userDto.setGroup(groupDto);
         }
         return userDto;
@@ -200,31 +198,21 @@ public class UserServiceImpl implements UserService {
         //角色
         List<Long> roleIds = userRepository.findRoleIdsByUserId(user.getId());
         List<Role> roles = (List<Role>) roleRepository.findAllById(roleIds);
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(user, userDto);
-        Set<RoleDto> roleDtoSet = roles.stream().map(role -> {
-            RoleDto roleDto = new RoleDto();
-            BeanUtils.copyProperties(role, roleDto);
-            return roleDto;
-        }).collect(Collectors.toSet());
+        UserDto userDto = userDtoMapper.toDto(user);
+        Set<RoleDto> roleDtoSet = roles.stream().map(roleDtoMapper::toDto0).collect(Collectors.toSet());
         userDto.setRoles(roleDtoSet);
         userDto.setEnable(user.getEnable());
 
         //权限
         List<RoleResourcePermission> permissions = roleRepository.getPermissionsByRoleIds(roleIds);
-        Set<ResourcePermissionDto> permissionDtos = permissions.stream().map(permission -> {
-            ResourcePermissionDto permissionDto = new ResourcePermissionDto();
-            BeanUtils.copyProperties(permission, permissionDto);
-            return permissionDto;
-        }).collect(Collectors.toSet());
+        Set<ResourcePermissionDto> permissionDtos = permissions.stream().map(roleDtoMapper::toDto).collect(Collectors.toSet());
         userDto.setPermissions(permissionDtos);
 
         //组
         Optional<Group> groupOptional = groupRepository.findById(user.getGroupId());
         if (groupOptional.isPresent()) {
             Group group = groupOptional.get();
-            GroupDto groupDto = new GroupDto();
-            BeanUtils.copyProperties(group, groupDto);
+            GroupDto groupDto = groupDtoMapper.toDto(group);
             userDto.setGroup(groupDto);
         }
         return userDto;
@@ -257,8 +245,7 @@ public class UserServiceImpl implements UserService {
         Page<User> userPage = userRepository.findAll(builder, pageRequest);
         DataGridPageDto<UserPageDto> res = new DataGridPageDto<>();
         List<UserPageDto> list = userPage.get().map(user -> {
-            UserPageDto userPageDto = new UserPageDto();
-            BeanUtils.copyProperties(user, userPageDto);
+            UserPageDto userPageDto = userDtoMapper.toDto0(user);
             userPageDto.setEnable(user.getEnable());
             return userPageDto;
         }).collect(Collectors.toList());
@@ -270,8 +257,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean create(UserCreateDto userCreateDto) {
-        User user = new User();
-        BeanUtils.copyProperties(userCreateDto, user);
+        User user = userDtoMapper.toEntity(userCreateDto);
         user.setCreateTime(LocalDateTime.now());
         user.setLastModifiedTime(LocalDateTime.now());
         user.setEnable(true);
@@ -292,8 +278,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean update(UserUpdateDto userUpdateDto) {
-        User user = new User();
-        BeanUtils.copyProperties(userUpdateDto, user);
+        User user = userDtoMapper.toEntity(userUpdateDto);
         user.setLastModifiedTime(LocalDateTime.now());
         user.setIsNew(false);
         userRepository.save(user);

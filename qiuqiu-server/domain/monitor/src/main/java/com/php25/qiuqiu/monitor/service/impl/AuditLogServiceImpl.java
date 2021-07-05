@@ -11,11 +11,11 @@ import com.php25.common.mq.Message;
 import com.php25.common.mq.MessageQueueManager;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.entity.AuditLog;
+import com.php25.qiuqiu.monitor.mapper.AuditLogDtoMapper;
 import com.php25.qiuqiu.monitor.repository.AuditLogRepository;
 import com.php25.qiuqiu.monitor.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,12 +40,14 @@ public class AuditLogServiceImpl implements AuditLogService, InitializingBean {
 
     private final AuditLogRepository auditLogRepository;
 
+    private final AuditLogDtoMapper auditLogDtoMapper;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         messageQueueManager.subscribe("audit_log", message -> {
             String body = JsonUtil.toJson(message.getBody());
             log.info("msg body:{}", body);
-            AuditLogDto auditLogDto =  JsonUtil.fromJson(body,AuditLogDto.class);
+            AuditLogDto auditLogDto = JsonUtil.fromJson(body, AuditLogDto.class);
             this.create0(auditLogDto);
         });
     }
@@ -57,27 +59,22 @@ public class AuditLogServiceImpl implements AuditLogService, InitializingBean {
     }
 
     private Boolean create0(AuditLogDto auditLogDto) {
-        AuditLog auditLog = new AuditLog();
-        BeanUtils.copyProperties(auditLogDto, auditLog);
+        AuditLog auditLog = auditLogDtoMapper.toEntity(auditLogDto);
         auditLog.setIsNew(true);
         auditLogRepository.save(auditLog);
         return true;
     }
 
     @Override
-    public DataGridPageDto<AuditLogDto> page(String username,Integer pageNum, Integer pageSize) {
+    public DataGridPageDto<AuditLogDto> page(String username, Integer pageNum, Integer pageSize) {
         SearchParamBuilder builder = SearchParamBuilder.builder();
-        if(!StringUtil.isBlank(username)) {
-            builder.append(SearchParam.of("username", Operator.EQ,username));
+        if (!StringUtil.isBlank(username)) {
+            builder.append(SearchParam.of("username", Operator.EQ, username));
         }
         PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
         Page<AuditLog> page = auditLogRepository.findAll(builder, pageRequest);
         DataGridPageDto<AuditLogDto> dataGrid = new DataGridPageDto<>();
-        List<AuditLogDto> data = page.get().map(auditLog -> {
-            AuditLogDto auditLogDto = new AuditLogDto();
-            BeanUtils.copyProperties(auditLog, auditLogDto);
-            return auditLogDto;
-        }).collect(Collectors.toList());
+        List<AuditLogDto> data = page.get().map(auditLogDtoMapper::toDto).collect(Collectors.toList());
         dataGrid.setData(data);
         dataGrid.setRecordsTotal(page.getTotalElements());
         return dataGrid;

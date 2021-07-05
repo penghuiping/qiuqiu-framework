@@ -11,11 +11,11 @@ import com.php25.common.mq.Message;
 import com.php25.common.mq.MessageQueueManager;
 import com.php25.qiuqiu.monitor.dto.DictDto;
 import com.php25.qiuqiu.monitor.entity.Dict;
+import com.php25.qiuqiu.monitor.mapper.DictDtoMapper;
 import com.php25.qiuqiu.monitor.repository.DictRepository;
 import com.php25.qiuqiu.monitor.service.DictionaryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +47,8 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
 
     private final IdGenerator idGenerator;
 
+    private final DictDtoMapper dictDtoMapper;
+
     @Value("${server.id}")
     private String serverId;
 
@@ -73,9 +75,7 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
                 return null;
             }
             Dict dict = dictOptional.get();
-            DictDto dictDto = new DictDto();
-            BeanUtils.copyProperties(dict, dictDto);
-            value = dictDto;
+            value = dictDtoMapper.toDto(dict);
             cache.put(key, value);
         }
 
@@ -87,8 +87,7 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
 
     @Override
     public Boolean update(DictDto dictDto) {
-        Dict dict = new Dict();
-        BeanUtils.copyProperties(dictDto, dict);
+        Dict dict = dictDtoMapper.toEntity(dictDto);
         dict.setIsNew(false);
         dictRepository.save(dict);
         return true;
@@ -126,11 +125,7 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
         PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
         Page<Dict> page = dictRepository.findAll(searchParamBuilder, pageRequest);
         DataGridPageDto<DictDto> dataGrid = new DataGridPageDto<>();
-        List<DictDto> dictDtoList = page.get().map(dict -> {
-            DictDto dictDto = new DictDto();
-            BeanUtils.copyProperties(dict, dictDto);
-            return dictDto;
-        }).collect(Collectors.toList());
+        List<DictDto> dictDtoList = page.get().map(dictDtoMapper::toDto).collect(Collectors.toList());
         dataGrid.setData(dictDtoList);
         dataGrid.setRecordsTotal(page.getTotalElements());
         return dataGrid;

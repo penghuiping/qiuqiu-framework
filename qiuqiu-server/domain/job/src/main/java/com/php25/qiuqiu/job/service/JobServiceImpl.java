@@ -26,13 +26,13 @@ import com.php25.qiuqiu.job.dto.JobUpdateDto;
 import com.php25.qiuqiu.job.entity.JobExecution;
 import com.php25.qiuqiu.job.entity.JobLog;
 import com.php25.qiuqiu.job.entity.JobModel;
+import com.php25.qiuqiu.job.mapper.JobDtoMapper;
 import com.php25.qiuqiu.job.repository.JobExecutionRepository;
 import com.php25.qiuqiu.job.repository.JobLogRepository;
 import com.php25.qiuqiu.job.repository.JobModelRepository;
 import com.php25.qiuqiu.user.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,6 +71,8 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
 
     private final MessageQueueManager messageQueueManager;
 
+    private final JobDtoMapper jobDtoMapper;
+
     @Value("${server.id}")
     private String serverId;
 
@@ -99,11 +101,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         PageRequest request = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
         Page<JobModel> page = jobModelRepository.findAll(searchParamBuilder, request);
 
-        List<JobDto> jobDtoList = page.get().map(jobModel -> {
-            JobDto jobDto = new JobDto();
-            BeanUtils.copyProperties(jobModel, jobDto);
-            return jobDto;
-        }).collect(Collectors.toList());
+        List<JobDto> jobDtoList = page.get().map(jobDtoMapper::toDto).collect(Collectors.toList());
         DataGridPageDto<JobDto> dataGrid = new DataGridPageDto<>();
         dataGrid.setData(jobDtoList);
         dataGrid.setRecordsTotal(page.getTotalElements());
@@ -114,18 +112,13 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     public List<JobDto> findAll(String username) {
         SearchParamBuilder searchParamBuilder = groupService.getDataAccessScope(username);
         List<JobModel> list = jobModelRepository.findAll(searchParamBuilder);
-        return list.stream().map(jobModel -> {
-            JobDto jobDto = new JobDto();
-            BeanUtils.copyProperties(jobModel, jobDto);
-            return jobDto;
-        }).collect(Collectors.toList());
+        return list.stream().map(jobDtoMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
     public Boolean create(String username, JobCreateDto job) {
         Long groupId = groupService.findGroupId(username);
-        JobModel jobModel = new JobModel();
-        BeanUtils.copyProperties(job, jobModel);
+        JobModel jobModel = jobDtoMapper.toEntity(job);
         jobModel.setGroupId(groupId);
         jobModel.setId(RandomUtil.randomUUID());
         jobModel.setIsNew(true);
@@ -135,8 +128,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
 
     @Override
     public Boolean update(String username, JobUpdateDto job) {
-        JobModel jobModel = new JobModel();
-        BeanUtils.copyProperties(job, jobModel);
+        JobModel jobModel = jobDtoMapper.toEntity(job);
         jobModel.setIsNew(false);
         jobModelRepository.save(jobModel);
         return true;
@@ -168,11 +160,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
         Page<JobLog> page = jobLogRepository.findAll(builder, pageRequest);
         DataGridPageDto<JobLogDto> dataGrid = new DataGridPageDto<>();
-        List<JobLogDto> jobLogDtoList = page.get().map(jobLog -> {
-            JobLogDto jobLogDto = new JobLogDto();
-            BeanUtils.copyProperties(jobLog, jobLogDto);
-            return jobLogDto;
-        }).collect(Collectors.toList());
+        List<JobLogDto> jobLogDtoList = page.get().map(jobDtoMapper::toDto0).collect(Collectors.toList());
         dataGrid.setData(jobLogDtoList);
         dataGrid.setRecordsTotal(page.getTotalElements());
         return dataGrid;
@@ -186,8 +174,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             return false;
         }
         JobModel jobModel = jobModelOptional.get();
-        JobLog jobLog0 = new JobLog();
-        BeanUtils.copyProperties(jobLog, jobLog0);
+        JobLog jobLog0 = jobDtoMapper.toEntity0(jobLog);
         jobLog0.setGroupId(jobModel.getGroupId());
         jobLog0.setIsNew(true);
         jobLogRepository.save(jobLog0);
@@ -201,8 +188,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             return false;
         }
         Long groupId = groupService.findGroupId(username);
-        JobExecution jobExecution0 = new JobExecution();
-        BeanUtils.copyProperties(jobExecution, jobExecution0);
+        JobExecution jobExecution0 = jobDtoMapper.toEntity1(jobExecution);
         jobExecution0.setGroupId(groupId);
         jobExecution0.setEnable(true);
         jobExecution0.setTimerLoadedNumber(0);
@@ -224,8 +210,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         List<Long> groupIds = groupService.findGroupsId(username);
         if (groupIds.contains(groupId)) {
             //可以更新
-            JobExecution jobExecution0 = new JobExecution();
-            BeanUtils.copyProperties(jobExecution, jobExecution0);
+            JobExecution jobExecution0 = jobDtoMapper.toEntity1(jobExecution);
             jobExecution0.setIsNew(false);
             jobExecutionRepository.save(jobExecution0);
             return true;
@@ -261,11 +246,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         Page<JobExecution> page = this.jobExecutionRepository.findAll(builder, pageRequest);
         DataGridPageDto<JobExecutionDto> dataGrid = new DataGridPageDto<>();
         dataGrid.setRecordsTotal(page.getTotalElements());
-        dataGrid.setData(page.get().map(jobExecution -> {
-            JobExecutionDto jobExecutionDto = new JobExecutionDto();
-            BeanUtils.copyProperties(jobExecution, jobExecutionDto);
-            return jobExecutionDto;
-        }).collect(Collectors.toList()));
+        dataGrid.setData(page.get().map(jobDtoMapper::toDto1).collect(Collectors.toList()));
         return dataGrid;
     }
 
