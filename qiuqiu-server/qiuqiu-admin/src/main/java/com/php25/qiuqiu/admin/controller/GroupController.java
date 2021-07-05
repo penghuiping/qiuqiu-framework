@@ -9,7 +9,7 @@ import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.group.GroupCreateVo;
 import com.php25.qiuqiu.admin.vo.in.group.GroupDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.group.GroupUpdateVo;
-import com.php25.qiuqiu.admin.vo.mapper.GroupVoMapper;
+import com.php25.qiuqiu.admin.mapper.GroupVoMapper;
 import com.php25.qiuqiu.admin.vo.out.TreeVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.group.GroupCreateDto;

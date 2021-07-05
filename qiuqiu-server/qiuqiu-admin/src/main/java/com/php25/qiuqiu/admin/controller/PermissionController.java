@@ -7,7 +7,7 @@ import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionCreateVo;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionUpdateVo;
-import com.php25.qiuqiu.admin.vo.mapper.PermissionVoMapper;
+import com.php25.qiuqiu.admin.mapper.PermissionVoMapper;
 import com.php25.qiuqiu.admin.vo.out.permission.PermissionVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.permission.PermissionCreateDto;

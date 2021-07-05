@@ -15,7 +15,7 @@ import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.resource.ResourceUpdateDto;
 import com.php25.qiuqiu.user.entity.Resource;
 import com.php25.qiuqiu.user.entity.ResourcePermission;
-import com.php25.qiuqiu.user.mapper.ResourceDtoMapper;
+import com.php25.qiuqiu.user.dto.mapper.ResourceDtoMapper;
 import com.php25.qiuqiu.user.repository.ResourceRepository;
 import com.php25.qiuqiu.user.service.ResourceService;
 import lombok.RequiredArgsConstructor;

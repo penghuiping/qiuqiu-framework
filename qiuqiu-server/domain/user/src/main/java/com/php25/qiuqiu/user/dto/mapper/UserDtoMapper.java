@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.mapper;
+package com.php25.qiuqiu.user.dto.mapper;
 
 import com.php25.qiuqiu.user.dto.user.UserDto;
 import com.php25.qiuqiu.user.entity.User;

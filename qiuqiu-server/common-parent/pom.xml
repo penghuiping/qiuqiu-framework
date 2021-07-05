@@ -38,6 +38,7 @@
         <oracle>11.2.0.3</oracle>
         <java-uuid-generator>4.0.1</java-uuid-generator>
         <jjwt>0.10.7</jjwt>
+        <map-struct>1.4.2.Final</map-struct>
         <assertj>3.17.2</assertj>
         <netty>4.1.52.Final</netty>
         <core>V.2.5.1</core>
@@ -255,12 +256,12 @@
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
-                <version>1.4.2.Final</version>
+                <version>${map-struct}</version>
             </dependency>
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct-processor</artifactId>
-                <version>1.4.2.Final</version>
+                <version>${map-struct}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -353,7 +354,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>3.8.1</version>
                     <configuration>
                         <source>1.8</source>
                         <target>1.8</target>

@@ -5,7 +5,7 @@ import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.job.JobLogPageVo;
-import com.php25.qiuqiu.admin.vo.mapper.JobLogVoMapper;
+import com.php25.qiuqiu.admin.mapper.JobLogVoMapper;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.job.JobLogVo;
 import com.php25.qiuqiu.job.dto.JobLogDto;

@@ -9,7 +9,7 @@ import com.php25.qiuqiu.admin.vo.in.job.JobCreateVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobIdVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobPageVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobUpdateVo;
-import com.php25.qiuqiu.admin.vo.mapper.JobVoMapper;
+import com.php25.qiuqiu.admin.mapper.JobVoMapper;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.job.JobVo;
 import com.php25.qiuqiu.job.dto.JobCreateDto;

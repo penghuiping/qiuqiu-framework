@@ -9,7 +9,7 @@ import com.php25.qiuqiu.admin.vo.in.role.RoleDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.role.RoleDetailVo;
 import com.php25.qiuqiu.admin.vo.in.role.RolePageVo;
 import com.php25.qiuqiu.admin.vo.in.role.RoleUpdateVo;
-import com.php25.qiuqiu.admin.vo.mapper.RoleVoMapper;
+import com.php25.qiuqiu.admin.mapper.RoleVoMapper;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.role.RoleDetailOutVo;

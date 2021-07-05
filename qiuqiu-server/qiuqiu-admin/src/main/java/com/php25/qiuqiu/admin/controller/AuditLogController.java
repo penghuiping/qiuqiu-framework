@@ -5,7 +5,7 @@ import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.AuditLogPageVo;
-import com.php25.qiuqiu.admin.vo.mapper.AuditLogVoMapper;
+import com.php25.qiuqiu.admin.mapper.AuditLogVoMapper;
 import com.php25.qiuqiu.admin.vo.out.AuditLogPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;

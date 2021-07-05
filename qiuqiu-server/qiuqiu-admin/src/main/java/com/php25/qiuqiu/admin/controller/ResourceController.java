@@ -8,7 +8,7 @@ import com.php25.qiuqiu.admin.vo.in.resource.ResourceCreateVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceIdVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceUpdateVo;
-import com.php25.qiuqiu.admin.vo.mapper.ResourceVoMapper;
+import com.php25.qiuqiu.admin.mapper.ResourceVoMapper;
 import com.php25.qiuqiu.admin.vo.out.resource.ResourceDetailVo;
 import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.resource.ResourceVo;

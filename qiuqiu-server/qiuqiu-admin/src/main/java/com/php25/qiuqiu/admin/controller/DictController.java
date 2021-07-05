@@ -8,7 +8,7 @@ import com.php25.qiuqiu.admin.vo.in.DictPageVo;
 import com.php25.qiuqiu.admin.vo.in.dict.DictCreateVo;
 import com.php25.qiuqiu.admin.vo.in.dict.DictKeyVo;
 import com.php25.qiuqiu.admin.vo.in.dict.DictUpdateVo;
-import com.php25.qiuqiu.admin.vo.mapper.DictVoMapper;
+import com.php25.qiuqiu.admin.mapper.DictVoMapper;
 import com.php25.qiuqiu.admin.vo.out.DictVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
