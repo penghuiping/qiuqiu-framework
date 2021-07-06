@@ -6,6 +6,7 @@ import com.php25.common.core.util.StringUtil;
 import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.qiuqiu.admin.mapper.UserVoMapper;
 import com.php25.qiuqiu.admin.vo.in.LoginVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserCreateVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserDeleteVo;
@@ -29,7 +30,6 @@ import com.php25.qiuqiu.user.dto.user.UserPageDto;
 import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 import com.php25.qiuqiu.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,6 +60,8 @@ import java.util.stream.Collectors;
 public class UserController extends JSONController {
 
     private final UserService userService;
+
+    private final UserVoMapper userVoMapper;
 
     /**
      * 登入接口
@@ -119,8 +121,7 @@ public class UserController extends JSONController {
     @PostMapping("/info")
     public JSONResponse<UserVo> getUserInfo(@RequestAttribute @NotBlank String username) {
         UserDto userDto = userService.getUserInfo(username);
-        UserVo userVo = new UserVo();
-        BeanUtils.copyProperties(userDto, userVo);
+        UserVo userVo = userVoMapper.toVo(userDto);
         List<String> roleNames = userDto.getRoles().stream().map(RoleDto::getDescription).collect(Collectors.toList());
         userVo.setRoles(roleNames);
         List<Long> roleIds = userDto.getRoles().stream().map(RoleDto::getId).collect(Collectors.toList());
@@ -157,8 +158,7 @@ public class UserController extends JSONController {
     @PostMapping("/detail")
     public JSONResponse<UserVo> detail(@RequestAttribute @NotBlank String username, @RequestBody UserDetailVo user) {
         UserDto userDto = userService.detail(user.getUserId());
-        UserVo userVo = new UserVo();
-        BeanUtils.copyProperties(userDto, userVo);
+        UserVo userVo = userVoMapper.toVo(userDto);
         List<String> roleNames = userDto.getRoles().stream().map(RoleDto::getDescription).collect(Collectors.toList());
         userVo.setRoles(roleNames);
         List<Long> roleIds = userDto.getRoles().stream().map(RoleDto::getId).collect(Collectors.toList());
@@ -198,11 +198,7 @@ public class UserController extends JSONController {
         PageResultVo<UserPageOutVo> resultVo = new PageResultVo<>();
         resultVo.setCurrentPage(userPageVo.getPageNum());
         resultVo.setTotal(result.getRecordsTotal());
-        List<UserPageOutVo> list = result.getData().stream().map(userPageDto -> {
-            UserPageOutVo userPageOutVo = new UserPageOutVo();
-            BeanUtils.copyProperties(userPageDto, userPageOutVo);
-            return userPageOutVo;
-        }).collect(Collectors.toList());
+        List<UserPageOutVo> list = result.getData().stream().map(userVoMapper::toVo).collect(Collectors.toList());
         resultVo.setData(list);
         return succeed(resultVo);
     }
@@ -216,8 +212,7 @@ public class UserController extends JSONController {
     @APIVersion("v1")
     @PostMapping("/create")
     public JSONResponse<Boolean> create(@Valid @RequestBody UserCreateVo userCreateVo) {
-        UserCreateDto userCreateDto = new UserCreateDto();
-        BeanUtils.copyProperties(userCreateVo, userCreateDto);
+        UserCreateDto userCreateDto = userVoMapper.toDto(userCreateVo);
         return succeed(userService.create(userCreateDto));
     }
 
@@ -230,8 +225,7 @@ public class UserController extends JSONController {
     @APIVersion("v1")
     @PostMapping("/update")
     public JSONResponse<Boolean> update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
-        UserUpdateDto userUpdateDto = new UserUpdateDto();
-        BeanUtils.copyProperties(userUpdateVo, userUpdateDto);
+        UserUpdateDto userUpdateDto =  userVoMapper.toDto(userUpdateVo);
         if (StringUtil.isBlank(userUpdateDto.getPassword())) {
             userUpdateDto.setPassword(null);
         }

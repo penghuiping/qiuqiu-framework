@@ -24,7 +24,6 @@ import com.php25.qiuqiu.user.dto.role.RolePageDto;
 import com.php25.qiuqiu.user.dto.role.RoleUpdateDto;
 import com.php25.qiuqiu.user.service.RoleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -145,7 +144,6 @@ public class RoleController extends JSONController {
     public JSONResponse<RoleDetailOutVo> detail(@Valid @RequestBody RoleDetailVo roleDetailVo) {
         RoleDetailDto roleDetailDto = roleService.detail(roleDetailVo.getRoleId());
         RoleDetailOutVo roleDetailOutVo = roleVoMapper.toVo(roleDetailDto);
-        BeanUtils.copyProperties(roleDetailDto, roleDetailOutVo);
         List<ResourcePermissionDto> permissionDtos = roleDetailDto.getResourcePermissions();
         List<ResourcePermissionVo> resourcePermissionVos = new ArrayList<>();
         if (null != permissionDtos && !permissionDtos.isEmpty()) {
