@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.Map;
+
 /**
  * @author: penghuiping
  * @date: 2018/8/8 16:46
@@ -40,6 +42,11 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
     public static <T> T getBean0(Class<T> requiredType) {
         assertContextInjected();
         return applicationContext.getBean(requiredType);
+    }
+
+    public static <T> Map<String, T> getBean1(Class<T> requiredType) {
+        assertContextInjected();
+        return applicationContext.getBeansOfType(requiredType);
     }
 
     public static void clearHolder() {

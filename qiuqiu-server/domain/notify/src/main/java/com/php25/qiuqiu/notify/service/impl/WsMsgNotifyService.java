@@ -1,8 +1,8 @@
-package com.php25.qiuqiu.notify.impl;
+package com.php25.qiuqiu.notify.service.impl;
 
 import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.ws.GlobalSession;
-import com.php25.qiuqiu.notify.MsgNotifyService;
+import com.php25.qiuqiu.notify.service.MsgNotifyService;
 import com.php25.qiuqiu.notify.dto.ws.NotifyTextMsg;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

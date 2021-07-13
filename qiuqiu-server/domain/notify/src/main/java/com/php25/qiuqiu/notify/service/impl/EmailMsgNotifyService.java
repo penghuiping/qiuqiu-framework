@@ -1,6 +1,6 @@
-package com.php25.qiuqiu.notify.impl;
+package com.php25.qiuqiu.notify.service.impl;
 
-import com.php25.qiuqiu.notify.MsgNotifyService;
+import com.php25.qiuqiu.notify.service.MsgNotifyService;
 
 /**
  * 消息通知-邮箱方式

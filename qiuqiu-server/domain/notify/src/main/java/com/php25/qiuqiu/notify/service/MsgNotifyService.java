@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.notify;
+package com.php25.qiuqiu.notify.service;
 
 /**
  * 消息通知
@@ -14,5 +14,5 @@ public interface MsgNotifyService {
      * @param msg 文本消息
      * @return true: 通知成功
      */
-    public boolean broadcastTextMsg(String msg);
+    boolean broadcastTextMsg(String msg);
 }

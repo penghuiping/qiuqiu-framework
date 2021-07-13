@@ -3,7 +3,7 @@ package com.php25.qiuqiu.admin.job;
 import com.php25.common.core.mess.SpringContextHolder;
 import com.php25.qiuqiu.job.dto.BaseRunnable;
 import com.php25.qiuqiu.monitor.service.DictionaryService;
-import com.php25.qiuqiu.notify.MsgNotifyService;
+import com.php25.qiuqiu.notify.service.MsgNotifyService;
 
 /**
  * @author penghuiping

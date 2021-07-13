@@ -8,13 +8,16 @@ import com.php25.qiuqiu.user.dto.user.UserCreateDto;
 import com.php25.qiuqiu.user.dto.user.UserDto;
 import com.php25.qiuqiu.user.dto.user.UserPageDto;
 import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
+import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * @author penghuiping
  * @date 2021/7/6 13:35
  */
 @Mapper(componentModel = "spring")
+@DecoratedWith(UserVoMapperDecorator.class)
 public interface UserVoMapper {
 
     /**
@@ -23,7 +26,9 @@ public interface UserVoMapper {
      * @param userDto dto
      * @return vo
      */
+    @Mapping(target = "roles",ignore = true)
     UserVo toVo(UserDto userDto);
+
 
     /**
      * vo转dto
@@ -31,6 +36,7 @@ public interface UserVoMapper {
      * @param userVo vo
      * @return dto
      */
+    @Mapping(target = "roles",ignore = true)
     UserDto toDto(UserVo userVo);
 
 

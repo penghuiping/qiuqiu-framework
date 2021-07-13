@@ -122,3 +122,11 @@ server:
     context-path: /qiuqiu_admin
   id: ${random.uuid}
 ws.enable: true
+########################################################
+### http_client
+########################################################
+httpClient:
+  maxIdleConnection: 10
+  connectionTimeout: 5000
+  readTimeout: 5000
+  writeTimeout: 5000
