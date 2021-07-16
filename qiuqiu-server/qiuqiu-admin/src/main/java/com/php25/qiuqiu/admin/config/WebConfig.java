@@ -37,7 +37,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(logInterceptor).addPathPatterns("/v1/**/**");
-        registry.addInterceptor(jwtAuthInterceptor).addPathPatterns("/v1/**/**").excludePathPatterns("/v1/user/login","/v1/user/refresh","/v1/loan/**");
+        registry.addInterceptor(jwtAuthInterceptor).addPathPatterns("/v1/**/**").excludePathPatterns("/v1/user/login","/v1/user/refresh","/v1/user/img_code","/v1/loan/**");
 
     }
 
@@ -57,9 +57,10 @@ public class WebConfig extends WebMvcConfigurationSupport {
     protected RequestMappingHandlerAdapter createRequestMappingHandlerAdapter() {
         RequestMappingHandlerAdapter requestMappingHandlerAdapter = super.createRequestMappingHandlerAdapter();
         requestMappingHandlerAdapter.setRequestBodyAdvice(Lists.newArrayList(new XssRequestBodyAdvice() {
+            private final Whitelist whitelist = Whitelist.simpleText();
             @Override
             public Whitelist configWhiteList() {
-                return Whitelist.basicWithImages();
+                return this.whitelist;
             }
         }));
         return requestMappingHandlerAdapter;

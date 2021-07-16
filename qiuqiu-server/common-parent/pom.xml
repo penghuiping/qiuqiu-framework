@@ -340,6 +340,11 @@
                 <artifactId>workflow</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
+            <dependency>
+                <groupId>com.php25.qiuqiu</groupId>
+                <artifactId>media</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

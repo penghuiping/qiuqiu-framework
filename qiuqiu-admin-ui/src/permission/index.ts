@@ -19,7 +19,8 @@ class Permission {
     JOB_EXECUTION: 'job_execution',
     JOB_LOG: 'job_log',
     REPORT: 'report',
-    MEDIA: 'media'
+    MEDIA: 'media',
+    RULE: 'rule'
   }
 
   // 下为系统内置权限
@@ -57,7 +58,8 @@ class Permission {
     Permission.resources.JOB,
     Permission.resources.JOB_EXECUTION,
     Permission.resources.JOB_LOG,
-    Permission.resources.AUDIT_LOG
+    Permission.resources.AUDIT_LOG,
+    Permission.resources.RULE
   ]
 
   static translateMap = new Map<string, string>([
@@ -71,6 +73,7 @@ class Permission {
     [Permission.resources.JOB, '定时任务'],
     [Permission.resources.JOB_EXECUTION, '执行计划'],
     [Permission.resources.JOB_LOG, '执行日志'],
+    [Permission.resources.RULE, '规则管理'],
     [Permission.permissions.ADD, '新增'],
     [Permission.permissions.DETAIL, '详情'],
     [Permission.permissions.GET_ALL, '获取所有'],

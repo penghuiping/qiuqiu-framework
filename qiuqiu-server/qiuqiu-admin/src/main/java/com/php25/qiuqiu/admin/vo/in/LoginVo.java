@@ -24,4 +24,10 @@ public class LoginVo {
      */
     @NotBlank
     private String password;
+
+    /**
+     * 验证码
+     */
+    @NotBlank
+    private String code;
 }

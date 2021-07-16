@@ -1,14 +1,20 @@
 <template>
   <el-row align="middle" class="loginFormWrapper" justify="center" type="flex">
-    <el-form ref="form" :rules="rules" :model="loginForm" class="loginForm" label-width="80px" >
+    <el-form ref="form" :rules="rules" :model="loginForm" class="loginForm" label-width="80px">
       <el-form-item>
         <label class="loginFormTitle">登入后台管理系统</label>
       </el-form-item>
-      <el-form-item label="用户名:"  prop="username">
+      <el-form-item label="用户名:" prop="username">
         <el-input v-model=loginForm.username></el-input>
       </el-form-item>
-      <el-form-item label="密码:"  prop="password">
+      <el-form-item label="密码:" prop="password">
         <el-input v-model=loginForm.password show-password></el-input>
+      </el-form-item>
+      <el-form-item label="验证码:" prop="code">
+        <el-row  justify="space-between" type="flex">
+          <el-input v-model=loginForm.code></el-input>
+          <img id="code_img" src="http://localhost:8081/qiuqiu_admin/v1/user/img_code" alt="" width="100px" height="40px"/>
+        </el-row>
       </el-form-item>
       <el-row justify="space-between" type="flex">
         <el-form-item>
@@ -40,6 +46,7 @@ export default class Login extends BaseVue {
   private loginForm = {
     username: '',
     password: '',
+    code: '',
     checked: false
   }
 
@@ -50,6 +57,10 @@ export default class Login extends BaseVue {
     password: [
       { required: true, message: '请输入密码', trigger: 'change' },
       { min: 6, max: 32, message: '长度在 6 到 32 个字符', trigger: 'change' }
+    ],
+    code: [
+      { required: true, message: '请输入图形验证码', trigger: 'change' },
+      { min: 6, max: 6, message: '长度6字符', trigger: 'change' }
     ]
   }
 
@@ -57,7 +68,7 @@ export default class Login extends BaseVue {
     (this.$refs.form as ElForm).validate(async valid => {
       if (valid) {
         const loading = this.showLoading()
-        const res = await UserApi.login(this.loginForm.username, this.loginForm.password)
+        const res = await UserApi.login(this.loginForm.username, this.loginForm.password, this.loginForm.code)
         this.closeLoading(loading)
         const jsonResponse = res.data
         if (jsonResponse.code === '0') {
@@ -92,7 +103,7 @@ export default class Login extends BaseVue {
     text-align: center;
   }
 
-  a,label{
+  a, label {
     color: white;
   }
 
@@ -110,6 +121,10 @@ export default class Login extends BaseVue {
     width: 100%;
   }
 
+  #code_img {
+    margin-left: 8px;
+  }
+
   .account {
     color: yellow !important;
     display: block;
@@ -125,7 +140,7 @@ export default class Login extends BaseVue {
     text-align: center;
   }
 
-  a,label{
+  a, label {
     color: white;
   }
 
@@ -148,7 +163,7 @@ export default class Login extends BaseVue {
     display: block;
   }
 
-  #forgetPwdBtn,#rememberPwd{
+  #forgetPwdBtn, #rememberPwd {
     font-size: 5px !important;
   }
 }

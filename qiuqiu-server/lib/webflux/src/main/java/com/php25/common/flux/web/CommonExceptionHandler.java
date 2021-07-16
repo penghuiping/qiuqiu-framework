@@ -88,7 +88,6 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<JSONResponse> handleBusinessException(BusinessException e) {
-        log.error("出现业务错误!!", e);
         JSONResponse jsonResponse = new JSONResponse();
         jsonResponse.setCode(e.getCode());
         jsonResponse.setMessage(e.getMessage());

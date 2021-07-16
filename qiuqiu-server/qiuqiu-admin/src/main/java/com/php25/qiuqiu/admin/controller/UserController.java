@@ -2,6 +2,7 @@ package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
+import com.php25.common.core.util.RandomUtil;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
@@ -18,6 +19,7 @@ import com.php25.qiuqiu.admin.vo.out.TokenVo;
 import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserVo;
+import com.php25.qiuqiu.media.service.ImageService;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.constant.UserConstants;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
@@ -30,6 +32,8 @@ import com.php25.qiuqiu.user.dto.user.UserPageDto;
 import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 import com.php25.qiuqiu.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +45,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,6 +62,7 @@ import java.util.stream.Collectors;
  * @author penghuiping
  * @date 2021/2/3 10:23
  */
+@Log4j2
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -62,6 +71,8 @@ public class UserController extends JSONController {
     private final UserService userService;
 
     private final UserVoMapper userVoMapper;
+
+    private final ImageService imageService;
 
     /**
      * 登入接口
@@ -72,7 +83,8 @@ public class UserController extends JSONController {
     @AuditLog
     @APIVersion("v1")
     @PostMapping("/login")
-    public JSONResponse<TokenVo> login(HttpServletResponse response, @Valid @RequestBody LoginVo loginVo) {
+    public JSONResponse<TokenVo> login(HttpServletResponse response,
+                                       @Valid @RequestBody LoginVo loginVo) {
         TokenDto tokenDto = userService.login(loginVo.getUsername(), loginVo.getPassword());
         TokenVo tokenVo = new TokenVo();
         tokenVo.setToken(tokenDto.getAccessToken());
@@ -83,6 +95,32 @@ public class UserController extends JSONController {
         cookie.setPath("/");
         response.addCookie(cookie);
         return succeed(tokenVo);
+    }
+
+    /**
+     * 获取登入验证码
+     */
+    @APIVersion("v1")
+    @GetMapping("/img_code")
+    public void getImgCode(HttpServletResponse response) {
+        String code = RandomUtil.getRandomNumbersAndLetters(6);
+        try (
+                ReadableByteChannel readableByteChannel = imageService.getCode(code);
+                WritableByteChannel writableByteChannel = Channels.newChannel(response.getOutputStream());
+        ) {
+            ByteBuffer buffer = ByteBuffer.allocate(512);
+            while (true) {
+                buffer.clear();
+                int size = readableByteChannel.read(buffer);
+                if (size <= 0) {
+                    break;
+                }
+                buffer.flip();
+                writableByteChannel.write(buffer);
+            }
+        } catch (Exception e) {
+            throw Exceptions.throwIllegalStateException("获取验证码失败", e);
+        }
     }
 
     /**
@@ -225,7 +263,7 @@ public class UserController extends JSONController {
     @APIVersion("v1")
     @PostMapping("/update")
     public JSONResponse<Boolean> update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
-        UserUpdateDto userUpdateDto =  userVoMapper.toDto(userUpdateVo);
+        UserUpdateDto userUpdateDto = userVoMapper.toDto(userUpdateVo);
         if (StringUtil.isBlank(userUpdateDto.getPassword())) {
             userUpdateDto.setPassword(null);
         }

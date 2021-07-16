@@ -45,11 +45,15 @@
           <el-menu-item index="4-2" @click="menuClick('jobExecution')" v-if="permissionExists(resources.JOB_EXECUTION,permissions.PAGE)">执行列表</el-menu-item>
           <el-menu-item index="4-3" @click="menuClick('jobLog')" v-if="permissionExists(resources.JOB_LOG,permissions.PAGE)">执行日志</el-menu-item>
         </el-submenu>
-        <el-menu-item index="5" @click="menuClick('media')" v-if="permissionExists(resources.MEDIA,permissions.PAGE)">
+        <el-menu-item index="5" @click="menuClick('rule')" v-if="permissionExists(resources.RULE,permissions.PAGE)">
+          <i class="el-icon-menu"></i>
+          <span slot="title">规则管理</span>
+        </el-menu-item>
+        <el-menu-item index="6" @click="menuClick('media')" v-if="permissionExists(resources.MEDIA,permissions.PAGE)">
           <i class="el-icon-menu"></i>
           <span slot="title">媒体管理</span>
         </el-menu-item>
-        <el-menu-item index="6" disabled>
+        <el-menu-item index="7" disabled>
           <i class="el-icon-setting"></i>
           <span slot="title">其他</span>
         </el-menu-item>
@@ -91,6 +95,7 @@
             <JobView v-if="item.key==='job'"/>
             <JobLogView v-if="item.key==='jobLog'"/>
             <JobExecutionView v-if="item.key==='jobExecution'"/>
+            <RuleView v-if="item.key==='rule'"/>
           </el-tab-pane>
         </el-tabs>
       </el-main>
@@ -117,6 +122,7 @@ import DictView from '@/components/Dict.vue'
 import JobView from '@/components/Job.vue'
 import JobLogView from '@/components/JobLog.vue'
 import JobExecutionView from '@/components/JobExeuction.vue'
+import RuleView from '@/components/Rule.vue'
 
 class TabItem {
   title: string
@@ -142,7 +148,8 @@ class TabItem {
     DictView,
     JobView,
     JobLogView,
-    JobExecutionView
+    JobExecutionView,
+    RuleView
   }
 })
 export default class Home extends BaseVue {
@@ -267,6 +274,10 @@ export default class Home extends BaseVue {
         this.addTab('media', '媒体管理')
         break
       }
+      case 'rule': {
+        this.addTab('rule', '规则管理')
+        break
+      }
       case 'report': {
         this.addTab('report', '报表管理')
         break
@@ -311,7 +322,7 @@ export default class Home extends BaseVue {
 
   initWS () {
     const token = this.$store.state.token
-    const url = 'ws://192.168.3.18:8081/qiuqiu_admin/websocket'
+    const url = 'ws://localhost:8081/qiuqiu_admin/websocket'
     const ws0 = new WebSocket0(token, url, 5000)
     ws0.registerHandler(new NotifyTextHandler(this))
     this.$store.state.ws = ws0

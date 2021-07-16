@@ -2,12 +2,17 @@ import axios from 'axios'
 import store from '@/store'
 import { JsonResponse } from '@/api/vo'
 
+axios.defaults.withCredentials = true
+
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
   if (store.state.token) { // 判断是否存在token，如果存在的话，则每个http header都加上token
     config.headers.jwt = `${store.state.token}`
   }
+
+  console.log('header:', config.headers)
+
   return config
 }, function (error) {
   // 对请求错误做些什么
@@ -22,7 +27,7 @@ axios.interceptors.response.use(
     const jsonResponse = new JsonResponse('', '', '')
     Object.assign(jsonResponse, response.data)
     const code = jsonResponse.code
-    if (code === '10001' || code === '10002') {
+    if (code === '10001' || code === '10002' || code === '10003') {
       store.commit('logout')
     }
     return response

@@ -84,13 +84,31 @@
         <el-form-item label="是否有效:" :label-width="dialogFormLabelWidth">
           {{ roleDetail.enable ? '有效' : '无效' }}
         </el-form-item>
-        <el-form-item label="权限:" :label-width="dialogFormLabelWidth">
-          <el-tree show-checkbox
-                   node-key="id"
-                   :default-checked-keys="roleDetail.permissionIds"
-                   :default-expand-all="true"
-                   :props="treeProps"
-                   :data="permissionTree" disabled></el-tree>
+        <el-form-item label="权限:" :label-width="dialogFormLabelWidth" prop="resourcePermissions">
+          <el-table
+            ref="permissionTree"
+            :data="permissionTree"
+            border
+            style="width: 100%">
+            <el-table-column
+              prop="resource"
+              label="资源名">
+              <template slot-scope="scope">
+                {{permissionTranslate(scope.row.resource)}}
+              </template>
+            </el-table-column>
+            <el-table-column v-for="(permission,index) in innerPermissions" v-bind:key="permission"
+                             :prop="permission"
+                             :label="permissionTranslate(permission)"
+                             width="50">
+              <template slot-scope="scope">
+                <el-row type="flex" justify="center">
+                  <el-checkbox v-model="checked[scope.$index][index]"
+                               :disabled="!permissionHas(permission,scope.row.permissions)"></el-checkbox>
+                </el-row>
+              </template>
+            </el-table-column>
+          </el-table>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -244,6 +262,26 @@ export default class Role extends BaseVue {
     const loading = this.showLoading()
     const res = await RoleApi.detail(row.id)
     this.roleDetail = res.data.data
+
+    const set = new Set<string>()
+    for (let i = 0; i < this.roleDetail.resourcePermissions.length; i++) {
+      const tmp = this.roleDetail.resourcePermissions[i]
+      const resource = tmp.resource
+      for (let j = 0; j < tmp.permissions.length; j++) {
+        const permission = tmp.permissions[j]
+        set.add(resource + ':' + permission)
+      }
+    }
+
+    for (let i = 0; i < this.resourcePermissionMetrics.length; i++) {
+      const permissions = this.resourcePermissionMetrics[i]
+      for (let j = 0; j < permissions.length; j++) {
+        const key = permissions[j]
+        if (set.has(key)) {
+          this.checked[i][j] = true
+        }
+      }
+    }
     this.roleDetailDialogVisible = true
     loading.close()
   }
