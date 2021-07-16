@@ -29,7 +29,7 @@ public class Dict implements Persistable<Long> {
     /**
      * 键
      */
-    @Column("key0")
+    @Column
     private String key;
 
     /**

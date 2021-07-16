@@ -19,4 +19,9 @@ public class JobExecutionCreateDto {
      * 任务名
      */
     private String jobId;
+
+    /**
+     * 执行入参 json格式
+     */
+    private String params;
 }
