@@ -77,4 +77,10 @@ public class PermissionServiceImpl implements PermissionService {
         dataGridPageDto.setData(permissionDtos);
         return dataGridPageDto;
     }
+
+    @Override
+    public List<PermissionDto> getAll() {
+        List<Permission> permissions = permissionRepository.findAllEnabled();
+        return permissions.stream().map(permissionDtoMapper::toDto).collect(Collectors.toList());
+    }
 }

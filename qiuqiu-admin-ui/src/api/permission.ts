@@ -21,6 +21,10 @@ class PermissionApi {
   public static page (): Promise<AxiosResponse<JsonResponse<PermissionVo[]>>> {
     return axios.post(ApiConstant.PERMISSION_PAGE)
   }
+
+  public static getAll (): Promise<AxiosResponse<JsonResponse<PermissionVo[]>>> {
+    return axios.post(ApiConstant.PERMISSION_GET_ALL)
+  }
 }
 
 export {

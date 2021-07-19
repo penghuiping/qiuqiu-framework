@@ -147,7 +147,7 @@ export default class Resource extends BaseVue {
     this.loading = true
     const res = await ResourceApi.page()
     this.tableData = res.data.data
-    const res0 = await PermissionApi.page()
+    const res0 = await PermissionApi.getAll()
     this.permission0s = res0.data.data
     this.loading = false
   }

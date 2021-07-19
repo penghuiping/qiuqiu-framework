@@ -54,6 +54,7 @@ class ApiConstant {
   static ROLE_UPDATE = '/role/update'
   static ROLE_CREATE = '/role/create'
   static PERMISSION_PAGE = '/permission/page'
+  static PERMISSION_GET_ALL = '/permission/get_all'
   static PERMISSION_CREATE = '/permission/create'
   static PERMISSION_UPDATE = '/permission/update'
   static PERMISSION_DELETE = '/permission/delete'

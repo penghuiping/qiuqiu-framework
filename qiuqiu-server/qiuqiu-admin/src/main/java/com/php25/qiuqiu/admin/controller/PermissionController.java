@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 /**
  * 权限管理
+ *
  * @author penghuiping
  * @date 2021/3/9 13:53
  */
@@ -42,6 +43,7 @@ public class PermissionController extends JSONController {
 
     /**
      * 获取权限列表，用于table页面展示
+     *
      * @ignoreParams username
      * @since v1
      */
@@ -54,7 +56,18 @@ public class PermissionController extends JSONController {
     }
 
     /**
+     * 获取所有有效的权限列表
+     */
+    @APIVersion("v1")
+    @PostMapping("/get_all")
+    public JSONResponse<List<PermissionVo>> getAll() {
+        List<PermissionDto> permissionDtos = permissionService.getAll();
+        return succeed(permissionDtos.stream().map(permissionVoMapper::toVo).collect(Collectors.toList()));
+    }
+
+    /**
      * 更新权限信息
+     *
      * @since v1
      */
     @AuditLog
@@ -67,6 +80,7 @@ public class PermissionController extends JSONController {
 
     /**
      * 创建权限信息
+     *
      * @since v1
      */
     @AuditLog
@@ -79,6 +93,7 @@ public class PermissionController extends JSONController {
 
     /**
      * 删除权限信息
+     *
      * @since v1
      */
     @AuditLog
