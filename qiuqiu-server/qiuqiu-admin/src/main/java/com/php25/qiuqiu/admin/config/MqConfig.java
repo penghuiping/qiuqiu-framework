@@ -5,6 +5,8 @@ import com.php25.common.mq.rabbit.RabbitMessageListener;
 import com.php25.common.mq.rabbit.RabbitMessageQueueManager;
 import com.php25.common.mq.redis.RedisMessageQueueManager;
 import com.php25.common.redis.RedisManager;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.connection.PooledChannelConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,5 +32,4 @@ public class MqConfig {
     MessageQueueManager messageQueueManager(RabbitTemplate rabbitTemplate) {
         return new RabbitMessageQueueManager(rabbitTemplate, new RabbitMessageListener(rabbitTemplate));
     }
-
 }

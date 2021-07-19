@@ -6,13 +6,15 @@ import com.php25.common.redis.RedisManager;
 import com.php25.common.redis.impl.RedisManagerImpl;
 import com.php25.common.redis.local.LocalRedisManager;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
-import org.springframework.data.redis.connection.RedisConfiguration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
@@ -24,6 +26,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  * @author penghuiping
  * @date 2021/2/3 10:29
  */
+@EnableConfigurationProperties({RedisProperties.class})
 @Configuration
 public class RedisConfig {
     @Profile(value = {"local"})
@@ -34,8 +37,19 @@ public class RedisConfig {
 
     @Profile(value = {"dev", "test"})
     @Bean
-    public RedisManager redisManager(@Autowired StringRedisTemplate stringRedisTemplate) {
+    public RedisManager redisManager(StringRedisTemplate stringRedisTemplate) {
         return new RedisManagerImpl(stringRedisTemplate);
+    }
+
+
+    @Profile(value = {"dev", "test"})
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnSingleCandidate(RedisConnectionFactory.class)
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        StringRedisTemplate template = new StringRedisTemplate();
+        template.setConnectionFactory(redisConnectionFactory);
+        return template;
     }
 
 

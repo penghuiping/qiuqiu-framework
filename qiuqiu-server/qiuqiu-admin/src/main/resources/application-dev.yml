@@ -35,11 +35,6 @@ base_assets_upload_path: ${app.filesever.path}/${spring.application.name}/upload
 base_assets_upload_url: http://${app.filesever.host}/${spring.application.name}/upload/
 base_thumb_path: ${app.filesever.thumbPath}/${spring.application.name}/
 ########################################################
-### 文档生成地址
-########################################################
-document:
-  project-path: qiuqiu-admin
-########################################################
 ### LOG
 ########################################################
 logging:

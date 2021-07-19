@@ -1,7 +1,5 @@
 package com.php25.qiuqiu.admin.config;
 
-import com.php25.common.core.mess.IdGenerator;
-import com.php25.common.core.mess.IdGeneratorImpl;
 import com.php25.common.db.DbType;
 import com.php25.common.db.EntitiesScan;
 import com.php25.qiuqiu.user.constant.DataAccessLevel;
@@ -28,7 +26,7 @@ import javax.sql.DataSource;
 @Configuration
 public class DbConfig {
 
-    @Profile(value = {"local"})
+    @Profile(value = {"local1"})
     @Primary
     @Bean
     public DataSource sqLiteDataSource() {
@@ -37,7 +35,7 @@ public class DbConfig {
         return sqLiteDataSource;
     }
 
-    @Profile(value = {"dev", "test"})
+    @Profile(value = {"local","dev", "test"})
     @Primary
     @Bean
     public DataSource hikariDataSource(DbProperties dbProperties) {
@@ -74,13 +72,13 @@ public class DbConfig {
         return new JdbcTemplate(dataSource);
     }
 
-    @Profile(value = {"local"})
+    @Profile(value = {"local1"})
     @Bean
     public DbType dbType() {
         return DbType.SQLITE;
     }
 
-    @Profile(value = {"dev","test"})
+    @Profile(value = {"local","dev","test"})
     @Bean
     public DbType dbType1() {
         return DbType.MYSQL;
