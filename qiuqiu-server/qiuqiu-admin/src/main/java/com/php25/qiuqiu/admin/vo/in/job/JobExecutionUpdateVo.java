@@ -33,6 +33,11 @@ public class JobExecutionUpdateVo {
     private String jobId;
 
     /**
+     * job执行入参,格式为json字符串
+     */
+    private String params;
+
+    /**
      * 0:无效 1:有效
      */
     @NotNull

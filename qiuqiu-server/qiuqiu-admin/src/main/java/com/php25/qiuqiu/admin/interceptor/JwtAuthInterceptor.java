@@ -8,7 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Log4j2
 @Component
-public class JwtAuthInterceptor extends HandlerInterceptorAdapter {
+public class JwtAuthInterceptor implements AsyncHandlerInterceptor {
 
     @Lazy
     @Autowired

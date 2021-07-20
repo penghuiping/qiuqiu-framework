@@ -22,6 +22,11 @@ public class JobExecutionVo {
     private String cron;
 
     /**
+     * job执行入参,格式为json字符串
+     */
+    private String params;
+
+    /**
      * 任务id
      */
     private String jobId;

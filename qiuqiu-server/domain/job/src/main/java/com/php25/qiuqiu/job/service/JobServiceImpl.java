@@ -347,8 +347,8 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         Runnable task = null;
         try {
             Class<?> cls = Class.forName(className);
-            task = (BaseRunnable) cls.getDeclaredConstructor(String.class, String.class)
-                    .newInstance(jobModel.getId(), jobModel.getName());
+            task = (BaseRunnable) cls.getDeclaredConstructor(String.class, String.class,String.class)
+                    .newInstance(jobModel.getId(), jobModel.getName(),executionId);
         } catch (Exception e) {
             log.error("定时任务对应的执行代码类加载出错", e);
             return;
@@ -363,6 +363,12 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         } catch (ParseException e) {
             log.error("定时任务cron表达式出错", e);
         }
+    }
+
+    @Override
+    public JobExecutionDto findOne(String jobExecutionId) {
+        Optional<JobExecution> jobExecutionOptional = this.jobExecutionRepository.findById(jobExecutionId);
+        return jobExecutionOptional.map(jobDtoMapper::toDto1).orElse(null);
     }
 
     private void subscribeRefreshJobEnabled() {

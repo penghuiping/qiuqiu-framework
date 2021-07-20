@@ -14,13 +14,13 @@ public class SystemNotifyJob extends BaseRunnable {
 
     private final MsgNotifyService msgNotifyService;
 
-    public SystemNotifyJob(String jobId,String jobName) {
-        super(jobId,jobName);
+    public SystemNotifyJob(String jobId,String jobName,String jobExecutionId) {
+        super(jobId,jobName,jobExecutionId);
         this.msgNotifyService = SpringContextHolder.getBean0(MsgNotifyService.class);
     }
 
     @Override
-    public void run0() {
-        msgNotifyService.broadcastTextMsg("你好,这是测试系统通知");
+    public void run0(String params) {
+        msgNotifyService.broadcastTextMsg(params);
     }
 }

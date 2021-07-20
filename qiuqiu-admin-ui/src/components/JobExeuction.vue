@@ -39,6 +39,11 @@
         width="150">
       </el-table-column>
       <el-table-column
+        label="任务参数"
+        prop="params"
+        width="150">
+      </el-table-column>
+      <el-table-column
         label="载入定时器数"
         prop="timerLoadedNumber"
         width="150">
@@ -99,6 +104,9 @@
         <el-form-item label="cron表达式:" :label-width="dialogFormLabelWidth" prop="cron">
           <el-input v-model="jobExecutionCreateVo.cron"></el-input>
         </el-form-item>
+        <el-form-item label="任务参数:" :label-width="dialogFormLabelWidth" prop="params">
+          <el-input v-model="jobExecutionCreateVo.params"></el-input>
+        </el-form-item>
         <el-form-item label="任务:" :label-width="dialogFormLabelWidth" prop="jobId">
           <el-select v-model="jobExecutionCreateVo.jobId" placeholder="请选择任务">
             <el-option v-for="item in jobs" :key=item.id :label=item.description :value=item.id></el-option>
@@ -119,6 +127,9 @@
         </el-form-item>
         <el-form-item label="cron表达式:" :label-width="dialogFormLabelWidth" prop="cron">
           <el-input v-model="jobExecutionUpdateVo.cron"></el-input>
+        </el-form-item>
+        <el-form-item label="任务参数:" :label-width="dialogFormLabelWidth" prop="params">
+          <el-input v-model="jobExecutionUpdateVo.params"></el-input>
         </el-form-item>
         <el-form-item label="任务:" :label-width="dialogFormLabelWidth" prop="jobId">
           <el-input v-model="jobExecutionUpdateVo.jobId"></el-input>

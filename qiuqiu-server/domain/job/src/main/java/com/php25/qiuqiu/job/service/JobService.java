@@ -148,4 +148,12 @@ public interface JobService {
      */
     void statisticLoadedJobExecutionInfo();
 
+    /**
+     * 根据jobExecutionId获取执行任务
+     *
+     * @param jobExecutionId 任务执行编号
+     * @return 执行任务
+     */
+    JobExecutionDto findOne(String jobExecutionId);
+
 }

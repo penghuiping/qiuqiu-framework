@@ -22,14 +22,14 @@ public class SystemMonitorInfoPrintJob extends BaseRunnable {
     private final SystemMonitorService systemMonitorService;
 
 
-    public SystemMonitorInfoPrintJob(String jobId,String jobName) {
-        super(jobId,jobName);
+    public SystemMonitorInfoPrintJob(String jobId,String jobName,String jobExecutionId) {
+        super(jobId,jobName,jobExecutionId);
         this.dictionaryService = SpringContextHolder.getBean0(DictionaryService.class);
         this.systemMonitorService = SpringContextHolder.getBean0(SystemMonitorService.class);
     }
 
     @Override
-    public void run0() {
+    public void run0(String params) {
         String json = dictionaryService.get("apps_ip_port");
         List<String> ipPorts = JsonUtil.fromJson(json, new TypeReference<List<String>>() {
         });

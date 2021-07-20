@@ -57,34 +57,40 @@ class JobExecutionVo {
   cron: string
   jobId: string
   jobName: string
+  params: string
   timerLoadedNumber: number
   enable: boolean
 
-  constructor (id: string, cron: string, jobId: string, jobName: string, timerLoadedNumber: number, enable: boolean) {
+  constructor (id: string, cron: string, jobId: string, jobName: string,
+    params: string,
+    timerLoadedNumber: number, enable: boolean) {
     this.id = id
     this.cron = cron
     this.jobId = jobId
     this.jobName = jobName
+    this.params = params
     this.timerLoadedNumber = timerLoadedNumber
     this.enable = enable
   }
 
   static newInstant (): JobExecutionVo {
-    return new JobExecutionVo('', '', '', '', 0, false)
+    return new JobExecutionVo('', '', '', '', '', 0, false)
   }
 }
 
 class JobExecutionCreateVo {
   cron: string
   jobId: string
+  params: string
 
-  constructor (cron: string, jobId: string) {
+  constructor (cron: string, jobId: string, params: string) {
     this.cron = cron
     this.jobId = jobId
+    this.params = params
   }
 
   static newInstant (): JobExecutionCreateVo {
-    return new JobExecutionCreateVo('', '')
+    return new JobExecutionCreateVo('', '', '')
   }
 }
 
@@ -92,17 +98,19 @@ class JobExecutionUpdateVo {
   id: string
   cron: string
   jobId: string
+  params: string
   enable: boolean
 
-  constructor (id: string, cron: string, jobId: string, enable: boolean) {
+  constructor (id: string, cron: string, jobId: string, params: string, enable: boolean) {
     this.id = id
     this.cron = cron
     this.jobId = jobId
+    this.params = params
     this.enable = enable
   }
 
   static newInstant (): JobExecutionUpdateVo {
-    return new JobExecutionUpdateVo('', '', '', false)
+    return new JobExecutionUpdateVo('', '', '', '', false)
   }
 }
 

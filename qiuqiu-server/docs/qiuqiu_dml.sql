@@ -117,16 +117,12 @@ INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'j
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'job_execution','delete');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'job_execution','statistic');
 
-INSERT INTO t_dict (id, `key`, value, description, enable) VALUES (1, 'test', 'test_value', '这是用于测试', 1);
-INSERT INTO t_dict (id, `key`, value, description, enable) VALUES (2, 'test_msg', '这是测试消息', '这是测试消息', 1);
-INSERT INTO t_dict (id, `key`, value, description, enable) VALUES (3, 'sys_notify_enable', 'true', '系统通知', 0);
-INSERT INTO t_dict (id, `key`, value, description, enable) VALUES (4, '127.0.0.1:9091', 'http://127.0.0.1:9091/actuator/prometheus', '本机状态监控信息', 1);
-INSERT INTO t_dict (id, `key`, value, description, enable) VALUES (5, 'apps_ip_port', '["127.0.0.1:9091"]', '应用服务器监控端口列表', 1);
+INSERT INTO t_dict (id, `key`, value, description, enable) VALUES (1, '127.0.0.1:9091', 'http://127.0.0.1:9091/actuator/prometheus', '本机状态监控信息', 1);
+INSERT INTO t_dict (id, `key`, value, description, enable) VALUES (2, 'apps_ip_port', '["127.0.0.1:9091"]', '应用服务器监控端口列表', 1);
 
 INSERT INTO t_group (id, name, description, parent_id, enable) VALUES (1, 'root', '总部', null, 1);
 
 
-INSERT INTO t_timer_job (id, class_name, name, description, group_id) VALUES ('4d7f14ed-bdf7-4bde-b5a3-54bb1986fa36', 'com.php25.qiuqiu.admin.job.SystemMonitorInfoPrintJob', 'per_minute_sys_monitor', '每分钟系统监控', 1);
+INSERT INTO t_timer_job (id, class_name, name, description, group_id) VALUES ('4d7f14ed-bdf7-4bde-b5a3-54bb1986fa36', 'com.php25.qiuqiu.admin.job.SystemMonitorInfoPrintJob', 'sys_metrics_monitor', '系统metrics监控', 1);
 INSERT INTO t_timer_job (id, class_name, name, description, group_id) VALUES ('c0408b9d-cb6f-49e9-8bb2-93ed033d4267', 'com.php25.qiuqiu.admin.job.SystemNotifyJob', 'sys_notify', '系统通知', 1);
-INSERT INTO t_timer_job (id, class_name, name, description, group_id) VALUES ('d8d0c2e7-e93b-46ef-88b2-8e2d52782185', 'com.php25.qiuqiu.admin.job.NotifyTextJob', 'common_text_notify', '普通文本通知', 1);
 

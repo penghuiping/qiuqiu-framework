@@ -48,6 +48,12 @@ public class JobExecution implements Persistable<String> {
     private String jobName;
 
     /**
+     * job执行入参,格式为json字符串
+     */
+    @Column("params")
+    private String params;
+
+    /**
      * 0:无效 1:有效
      */
     @Column

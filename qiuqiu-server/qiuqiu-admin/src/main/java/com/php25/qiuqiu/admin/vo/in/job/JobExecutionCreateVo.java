@@ -23,4 +23,9 @@ public class JobExecutionCreateVo {
      */
     @NotBlank
     private String jobId;
+
+    /**
+     * job执行入参,格式为json字符串
+     */
+    private String params;
 }

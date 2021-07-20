@@ -17,11 +17,14 @@ public abstract class BaseRunnable implements Runnable {
 
     private final String jobId;
 
+    private final String jobExecutionId;
+
     private final JobService jobService;
 
-    public BaseRunnable(String jobId,String jobName) {
+    public BaseRunnable(String jobId,String jobName,String jobExecutionId) {
         this.jobId = jobId;
         this.jobName = jobName;
+        this.jobExecutionId = jobExecutionId;
         this.jobService = SpringContextHolder.getBean0(JobService.class);
     }
 
@@ -29,7 +32,8 @@ public abstract class BaseRunnable implements Runnable {
     public void run() {
         LocalDateTime now = LocalDateTime.now();
         try {
-            this.run0();
+            JobExecutionDto jobExecutionDto = this.jobService.findOne(jobExecutionId);
+            this.run0(jobExecutionDto.getParams());
             JobLogCreateDto jobLogCreateDto = new JobLogCreateDto();
             jobLogCreateDto.setJobId(this.jobId);
             jobLogCreateDto.setJobName(this.jobName);
@@ -49,5 +53,10 @@ public abstract class BaseRunnable implements Runnable {
         }
     }
 
-    abstract public void run0();
+    /**
+     * 所有的自定义任务，都需要实现此方法，并且逻辑都写在此方法上
+     *
+     * @param params 任务参数
+     */
+    abstract public void run0(String params);
 }
