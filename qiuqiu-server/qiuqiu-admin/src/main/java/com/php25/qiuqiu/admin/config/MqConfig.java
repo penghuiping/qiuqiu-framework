@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class MqConfig {
 
-    @Profile(value = {"local"})
+    @Profile(value = {"local","local1"})
     @Bean
     MessageQueueManager messageQueueManager0(RedisManager redisManager) {
         return new RedisMessageQueueManager(redisManager);

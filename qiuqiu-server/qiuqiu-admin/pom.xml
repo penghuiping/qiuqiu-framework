@@ -65,10 +65,6 @@
         </dependency>
         <dependency>
             <groupId>com.php25.qiuqiu</groupId>
-            <artifactId>workflow</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.php25.qiuqiu</groupId>
             <artifactId>media</artifactId>
         </dependency>
         <dependency>

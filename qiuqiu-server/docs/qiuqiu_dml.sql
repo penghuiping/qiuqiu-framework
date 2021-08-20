@@ -117,8 +117,8 @@ INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'j
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'job_execution','delete');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'job_execution','statistic');
 
-INSERT INTO t_dict (id, `key`, value, description, enable) VALUES (1, '127.0.0.1:9091', 'http://127.0.0.1:9091/actuator/prometheus', '本机状态监控信息', 1);
-INSERT INTO t_dict (id, `key`, value, description, enable) VALUES (2, 'apps_ip_port', '["127.0.0.1:9091"]', '应用服务器监控端口列表', 1);
+INSERT INTO t_dict (id, key0, value, description, enable) VALUES (1, '127.0.0.1:9091', 'http://127.0.0.1:9091/actuator/prometheus', '本机状态监控信息', 1);
+INSERT INTO t_dict (id, key0, value, description, enable) VALUES (2, 'apps_ip_port', '["127.0.0.1:9091"]', '应用服务器监控端口列表', 1);
 
 INSERT INTO t_group (id, name, description, parent_id, enable) VALUES (1, 'root', '总部', null, 1);
 

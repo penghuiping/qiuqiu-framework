@@ -17,7 +17,7 @@ drop table if exists t_dict;
 create table t_dict
 (
     id          bigint primary key auto_increment comment 'id主键',
-    `key`       varchar(255) unique not null comment '键',
+    key0       varchar(255) unique not null comment '键',
     value       varchar(255) comment '值',
     description varchar(255) comment '描述',
     enable      tinyint             not null comment '0: 无效,1:有效,2:软删除'

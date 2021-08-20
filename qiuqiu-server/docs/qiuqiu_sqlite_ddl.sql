@@ -92,6 +92,7 @@ create table t_timer_job_execution
     group_id int,
     job_id varchar,
     job_name varchar,
+    params varchar,
     enable int,
     timer_loaded_number int
 );
@@ -126,6 +127,7 @@ create table t_user
     password varchar,
     create_time datetime,
     last_modified_time datetime,
+    data_access_level varchar,
     group_id int,
     enable int
 );

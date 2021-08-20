@@ -1,6 +1,7 @@
 package com.php25.qiuqiu.job.service;
 
 import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.core.util.StringUtil;
@@ -9,15 +10,16 @@ import com.php25.common.db.specification.SearchParam;
 import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.common.mq.Message;
 import com.php25.common.mq.MessageQueueManager;
+import com.php25.common.redis.RedisManager;
 import com.php25.common.timer.CronExpression;
 import com.php25.common.timer.Job;
 import com.php25.common.timer.Timer;
+import com.php25.qiuqiu.job.constant.JobErrorCode;
 import com.php25.qiuqiu.job.dto.BaseRunnable;
 import com.php25.qiuqiu.job.dto.JobCreateDto;
 import com.php25.qiuqiu.job.dto.JobDto;
 import com.php25.qiuqiu.job.dto.JobExecutionCreateDto;
 import com.php25.qiuqiu.job.dto.JobExecutionDto;
-import com.php25.qiuqiu.job.dto.JobExecutionStatisticReqDto;
 import com.php25.qiuqiu.job.dto.JobExecutionStatisticResDto;
 import com.php25.qiuqiu.job.dto.JobExecutionUpdateDto;
 import com.php25.qiuqiu.job.dto.JobLogCreateDto;
@@ -48,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
 /**
@@ -72,6 +75,8 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     private final MessageQueueManager messageQueueManager;
 
     private final JobDtoMapper jobDtoMapper;
+
+    private final RedisManager redisManager;
 
     @Value("${server.id}")
     private String serverId;
@@ -227,6 +232,9 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             return false;
         }
         JobExecution jobExecution = jobExecutionOptional.get();
+        if(timer.getAllLoadedExecutionIds().contains(jobExecution.getId())) {
+            throw Exceptions.throwBusinessException(JobErrorCode.JOB_EXECUTION_HAS_LOADED_CANT_DELETE);
+        }
         Long groupId = jobExecution.getGroupId();
         if (groupsId.contains(groupId)) {
             jobExecutionRepository.deleteById(id);
@@ -282,7 +290,6 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         messageQueueManager.subscribe("statistic_loaded_job_execution", serverId, true, message -> {
             String tmp = JsonUtil.toJson(message.getBody());
             log.info("JobExecutionStatisticReqDto为:{}", tmp);
-            JobExecutionStatisticReqDto reqDto = JsonUtil.fromJson(tmp, JobExecutionStatisticReqDto.class);
             Set<String> executionIds = timer.getAllLoadedExecutionIds();
             Map<String,Integer> res = new HashMap<>();
             for(String executionId: executionIds) {
@@ -291,7 +298,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             JobExecutionStatisticResDto resDto = new JobExecutionStatisticResDto();
             resDto.setEntries(res);
             Message message0 = new Message(RandomUtil.randomUUID(), resDto);
-            messageQueueManager.send(reqDto.getQueue(), reqDto.getGroup(), message0);
+            messageQueueManager.send("merge_statistic_loaded_job_execution", serverId, message0);
         });
     }
 
@@ -299,14 +306,20 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         messageQueueManager.subscribe("merge_statistic_loaded_job_execution", serverId, true, message -> {
             JobExecutionStatisticResDto res = JsonUtil.fromJson(JsonUtil.toJson(message.getBody()),JobExecutionStatisticResDto.class );
             res.getEntries().forEach((key, value) -> {
-                Optional<JobExecution> jobExecutionOptional = jobExecutionRepository.findById(key);
-                if (jobExecutionOptional.isPresent()) {
-                    JobExecution jobExecution = jobExecutionOptional.get();
-                    JobExecution jobExecution0 = new JobExecution();
-                    jobExecution0.setId(jobExecution.getId());
-                    jobExecution0.setTimerLoadedNumber(jobExecution.getTimerLoadedNumber() + value);
-                    jobExecution0.setIsNew(false);
-                    jobExecutionRepository.save(jobExecution0);
+                Lock lock = redisManager.lock("merge_statistic_loaded_job_execution");
+                lock.lock();
+                try {
+                    Optional<JobExecution> jobExecutionOptional = jobExecutionRepository.findById(key);
+                    if (jobExecutionOptional.isPresent()) {
+                        JobExecution jobExecution = jobExecutionOptional.get();
+                        JobExecution jobExecution0 = new JobExecution();
+                        jobExecution0.setId(jobExecution.getId());
+                        jobExecution0.setTimerLoadedNumber(jobExecution.getTimerLoadedNumber() + value);
+                        jobExecution0.setIsNew(false);
+                        jobExecutionRepository.save(jobExecution0);
+                    }
+                }finally {
+                    lock.unlock();
                 }
             });
         });
@@ -314,10 +327,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
 
     @Override
     public void statisticLoadedJobExecutionInfo() {
-        JobExecutionStatisticReqDto reqDto = new JobExecutionStatisticReqDto();
-        reqDto.setGroup(serverId);
-        reqDto.setQueue("merge_statistic_loaded_job_execution");
-        Message message = new Message(RandomUtil.randomUUID(), reqDto);
+        Message message = new Message(RandomUtil.randomUUID(), "");
         jobExecutionRepository.resetTimerLoadedNumber();
         messageQueueManager.send("statistic_loaded_job_execution", message);
     }

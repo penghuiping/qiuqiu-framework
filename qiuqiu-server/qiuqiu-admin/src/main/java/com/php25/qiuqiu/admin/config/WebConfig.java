@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.flux.web.APIVersionHandlerMapping;
 import com.php25.common.flux.web.XssRequestBodyAdvice;
+import com.php25.common.flux.web.XssResponseBodyAdvice;
 import com.php25.qiuqiu.admin.interceptor.JwtAuthInterceptor;
 import com.php25.qiuqiu.admin.interceptor.LogInterceptor;
 import org.jsoup.safety.Whitelist;
@@ -57,6 +58,13 @@ public class WebConfig extends WebMvcConfigurationSupport {
     protected RequestMappingHandlerAdapter createRequestMappingHandlerAdapter() {
         RequestMappingHandlerAdapter requestMappingHandlerAdapter = super.createRequestMappingHandlerAdapter();
         requestMappingHandlerAdapter.setRequestBodyAdvice(Lists.newArrayList(new XssRequestBodyAdvice() {
+            private final Whitelist whitelist = Whitelist.simpleText();
+            @Override
+            public Whitelist configWhiteList() {
+                return this.whitelist;
+            }
+        }));
+        requestMappingHandlerAdapter.setResponseBodyAdvice(Lists.newArrayList(new XssResponseBodyAdvice() {
             private final Whitelist whitelist = Whitelist.simpleText();
             @Override
             public Whitelist configWhiteList() {

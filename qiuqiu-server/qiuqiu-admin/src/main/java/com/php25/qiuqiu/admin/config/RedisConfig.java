@@ -29,7 +29,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @EnableConfigurationProperties({RedisProperties.class})
 @Configuration
 public class RedisConfig {
-    @Profile(value = {"local"})
+    @Profile(value = {"local","local1"})
     @Bean
     public RedisManager redisManager1() {
         return new LocalRedisManager(1024);
