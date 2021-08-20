@@ -2,6 +2,7 @@ package com.php25.common.flux.web;
 
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.JsonUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
@@ -16,20 +17,21 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @author penghuiping
  * @date 2021/7/22 14:03
  */
+@SuppressWarnings("rawtypes")
 public abstract class XssResponseBodyAdvice implements ResponseBodyAdvice {
     private static final Logger log = LoggerFactory.getLogger(XssResponseBodyAdvice.class);
 
     @Override
-    public boolean supports(MethodParameter returnType, Class converterType) {
+    public boolean supports(@NotNull MethodParameter returnType, @NotNull Class converterType) {
         return true;
     }
 
     @Override
-    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+    public Object beforeBodyWrite(Object body, @NotNull MethodParameter returnType, @NotNull MediaType selectedContentType, @NotNull Class selectedConverterType, @NotNull ServerHttpRequest request, @NotNull ServerHttpResponse response) {
         String responseBody = JsonUtil.toJson(body);
         log.info("response body:{}", responseBody);
         boolean isValid = Jsoup.isValid(responseBody, this.configWhiteList());
-        if(!isValid) {
+        if (!isValid) {
             throw Exceptions.throwBusinessException("999998", "responseBody存在不安全的html内容");
         }
         return body;

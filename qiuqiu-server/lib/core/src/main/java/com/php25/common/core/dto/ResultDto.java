@@ -24,6 +24,7 @@ public class ResultDto<T> {
 
     }
 
+
     public static <T> ResultDto<T> error(BusinessErrorStatus error) {
         ResultDto<T> res = new ResultDto<T>();
         res.error = error;
@@ -36,6 +37,21 @@ public class ResultDto<T> {
         return res;
     }
 
+
+    public static <T> ResultDto<T> error(String code, String description) {
+        BusinessErrorStatus businessErrorStatus = new BusinessErrorStatus() {
+            @Override
+            public String getCode() {
+                return code;
+            }
+
+            @Override
+            public String getDesc() {
+                return description;
+            }
+        };
+        return error(businessErrorStatus);
+    }
 
     /**
      * This method is used for judging whether errors has happened
