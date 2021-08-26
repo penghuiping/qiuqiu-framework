@@ -1,4 +1,7 @@
-package com.php25.common.ws;
+package com.php25.common.ws.handler;
+
+import com.php25.common.ws.BaseRetryMsg;
+import com.php25.common.ws.GlobalSession;
 
 /**
  * @author penghuiping
@@ -12,5 +15,5 @@ public interface ReplyAckHandler {
      * @param session 全局websocketSession
      * @param msg     需要回复的源消息
      */
-    void handle(GlobalSession session,BaseRetryMsg msg) throws Exception;
+    void handle(GlobalSession session, BaseRetryMsg msg) throws Exception;
 }

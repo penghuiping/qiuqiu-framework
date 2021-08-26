@@ -1,7 +1,7 @@
 package com.php25.qiuqiu.notify.dto.ws;
 
 import com.php25.common.ws.BaseRetryMsg;
-import com.php25.common.ws.WsMsg;
+import com.php25.common.ws.annotation.WsMsg;
 import lombok.Getter;
 import lombok.Setter;
 

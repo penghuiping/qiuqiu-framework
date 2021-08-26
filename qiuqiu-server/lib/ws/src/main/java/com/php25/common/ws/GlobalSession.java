@@ -9,11 +9,16 @@ import com.php25.common.redis.RList;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.timer.Job;
 import com.php25.common.timer.Timer;
+import com.php25.common.ws.config.Constants;
+import com.php25.common.ws.protocal.ConnectionClose;
+import com.php25.common.ws.protocal.ConnectionCreate;
+import com.php25.common.ws.protocal.SecurityAuthentication;
+import com.php25.common.ws.retry.InnerMsgRetryQueue;
+import com.php25.common.ws.serializer.InternalMsgSerializer;
+import com.php25.common.ws.serializer.VueMsgSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.web.socket.TextMessage;
@@ -47,7 +52,7 @@ public class GlobalSession implements InitializingBean, ApplicationListener<Cont
 
     private final SecurityAuthentication securityAuthentication;
 
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
 
     private final MsgDispatcher msgDispatcher;
 
@@ -73,6 +78,10 @@ public class GlobalSession implements InitializingBean, ApplicationListener<Cont
         this.msgDispatcher = msgDispatcher;
         this.timer = timer;
         this.messageQueueManager = messageQueueManager;
+        int cpuNum = Runtime.getRuntime().availableProcessors();
+        this.executorService = new ThreadPoolExecutor(1, 2 * cpuNum,
+                60L, TimeUnit.SECONDS,
+                new SynchronousQueue<>(), new ThreadFactoryBuilder().setNameFormat("ws-worker-thread-%d").build(), new ThreadPoolExecutor.AbortPolicy());
     }
 
 
@@ -93,10 +102,6 @@ public class GlobalSession implements InitializingBean, ApplicationListener<Cont
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.executorService = new ThreadPoolExecutor(1, 512,
-                60L, TimeUnit.SECONDS,
-                new SynchronousQueue<>(), new ThreadFactoryBuilder().setNameFormat("ws-worker-thread-%d").build(), new ThreadPoolExecutor.AbortPolicy());
-
         this.messageQueueManager.subscribe("ws_session", serverId, true, message -> {
             for (String key : sessions.keySet()) {
                 try {
@@ -145,17 +150,11 @@ public class GlobalSession implements InitializingBean, ApplicationListener<Cont
 
 
     protected void create(WebSocketSession webSocketSession) {
-        long now = System.currentTimeMillis();
-        ExpirationSocketSession expirationSocketSession = new ExpirationSocketSession();
-        expirationSocketSession.setTimestamp(now);
-        expirationSocketSession.setWebSocketSession(webSocketSession);
-        expirationSocketSession.setSessionId(generateUUID());
-        expirationSocketSession.setExecutorService(executorService);
-        expirationSocketSession.setMsgDispatcher(msgDispatcher);
+        ExpirationSocketSession expirationSocketSession = new ExpirationSocketSession(generateUUID(), webSocketSession, executorService, msgDispatcher);
         sessions.put(expirationSocketSession.getSessionId(), expirationSocketSession);
         _sessions.put(webSocketSession.getId(), expirationSocketSession);
 
-        ExpirationSessionCallback callback = new ExpirationSessionCallback(expirationSocketSession.getSessionId());
+        SessionExpiredCallback callback = new SessionExpiredCallback(expirationSocketSession.getSessionId());
         long executeTime = System.currentTimeMillis() + 30000L;
         Job job = new Job(expirationSocketSession.getSessionId(), executeTime, callback);
         timer.add(job);
@@ -179,7 +178,7 @@ public class GlobalSession implements InitializingBean, ApplicationListener<Cont
         return null;
     }
 
-    protected ExpirationSocketSession getExpirationSocketSession(String sid) {
+    public ExpirationSocketSession getExpirationSocketSession(String sid) {
         return sessions.get(sid);
     }
 
@@ -190,12 +189,10 @@ public class GlobalSession implements InitializingBean, ApplicationListener<Cont
 
     protected void updateExpireTime(String sid) {
         ExpirationSocketSession expirationSocketSession = sessions.get(sid);
-        long now = System.currentTimeMillis();
-        expirationSocketSession.setTimestamp(now);
+        expirationSocketSession.refreshTime();
         timer.stop(sid);
-        ExpirationSessionCallback callback = new ExpirationSessionCallback(sid);
         long executeTime = System.currentTimeMillis() + 30000L;
-        Job job = new Job(expirationSocketSession.getSessionId(), executeTime, callback);
+        Job job = new Job(expirationSocketSession.getSessionId(), executeTime, expirationSocketSession.getCallback());
         timer.add(job);
     }
 

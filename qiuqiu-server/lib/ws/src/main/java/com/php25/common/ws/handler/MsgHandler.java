@@ -1,4 +1,7 @@
-package com.php25.common.ws;
+package com.php25.common.ws.handler;
+
+import com.php25.common.ws.BaseRetryMsg;
+import com.php25.common.ws.GlobalSession;
 
 /**
  * 消息处理接口

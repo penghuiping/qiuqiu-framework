@@ -1,5 +1,7 @@
-package com.php25.common.ws;
+package com.php25.common.ws.serializer;
 
+
+import com.php25.common.ws.BaseRetryMsg;
 
 /**
  * @author penghuiping

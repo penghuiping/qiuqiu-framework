@@ -1,13 +1,19 @@
 package com.php25.common.ws;
 
 import com.php25.common.core.util.JsonUtil;
+import com.php25.common.ws.protocal.ConnectionClose;
+import com.php25.common.ws.protocal.ConnectionCreate;
+import com.php25.common.ws.protocal.Ping;
+import com.php25.common.ws.retry.InnerMsgRetryQueue;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-
+/**
+ * websocket的消息通讯的入口
+ */
 @Slf4j
 public class WebsocketHandler extends TextWebSocketHandler {
 

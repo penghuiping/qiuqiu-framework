@@ -1,15 +1,20 @@
-package com.php25.common.ws;
+package com.php25.common.ws.retry;
 
-import com.google.common.cache.Cache;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.php25.common.core.mess.SpringContextHolder;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.timer.Job;
 import com.php25.common.timer.Timer;
+import com.php25.common.ws.BaseRetryMsg;
+import com.php25.common.ws.ExpirationSocketSession;
+import com.php25.common.ws.GlobalSession;
+import com.php25.common.ws.protocal.Ping;
+import com.php25.common.ws.protocal.Pong;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
@@ -38,19 +43,24 @@ public class InnerMsgRetryQueue implements InitializingBean, ApplicationListener
 
     private final Cache<String, BaseRetryMsg> msgs;
 
-    private ExecutorService singleThreadExecutorNoDelay;
+    private final ExecutorService singleThreadExecutorNoDelay;
 
     private GlobalSession globalSession;
 
     private Timer delayQueue;
 
-    private final AtomicBoolean isRunning = new AtomicBoolean(false);
+    private final AtomicBoolean isRunning = new AtomicBoolean(true);
 
     public InnerMsgRetryQueue() {
-        msgs = CacheBuilder.newBuilder().initialCapacity(8196)
+        msgs = Caffeine.newBuilder()
+                .maximumSize(8196)
                 .expireAfterWrite(Duration.ofMinutes(1))
                 .build();
-
+        this.singleThreadExecutorNoDelay = new ThreadPoolExecutor(1, 1,
+                0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(),
+                new ThreadFactoryBuilder().setNameFormat("ws-delay-queue-nodelay-subscriber-%d")
+                        .build());
     }
 
     public GlobalSession getGlobalSession() {
@@ -85,12 +95,6 @@ public class InnerMsgRetryQueue implements InitializingBean, ApplicationListener
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.singleThreadExecutorNoDelay = new ThreadPoolExecutor(1, 1,
-                0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(),
-                new ThreadFactoryBuilder().setNameFormat("ws-delay-queue-nodelay-subscriber-%d")
-                        .build());
-        isRunning.compareAndSet(false, true);
         run();
     }
 
@@ -119,7 +123,7 @@ public class InnerMsgRetryQueue implements InitializingBean, ApplicationListener
     public void put(BaseRetryMsg baseRetry) {
         if (baseRetry.getInterval() > 0) {
             InnerMsgRetryCallback callback = new InnerMsgRetryCallback(baseRetry);
-            Job job = new Job(baseRetry.getMsgId() + baseRetry.getAction(), baseRetry.getInterval() + baseRetry.timestamp, callback);
+            Job job = new Job(baseRetry.getMsgId() + baseRetry.getAction(), baseRetry.getInterval() + baseRetry.getTimestamp(), callback);
             getDelayQueue().add(job);
         } else {
             noDelayQueue.offer(baseRetry);
@@ -140,6 +144,6 @@ public class InnerMsgRetryQueue implements InitializingBean, ApplicationListener
 
     public void stats() {
         log.info("InnerMsgRetryQueue noDelayQueue:{}", noDelayQueue.size());
-        log.info("InnerMsgRetryQueue msgs:{}", msgs.size());
+        log.info("InnerMsgRetryQueue msgs:{}", msgs.estimatedSize());
     }
 }

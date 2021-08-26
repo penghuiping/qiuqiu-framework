@@ -1,6 +1,8 @@
-package com.php25.common.ws;
+package com.php25.common.ws.protocal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.php25.common.ws.BaseRetryMsg;
+import com.php25.common.ws.annotation.WsMsg;
 import lombok.Getter;
 import lombok.Setter;
 

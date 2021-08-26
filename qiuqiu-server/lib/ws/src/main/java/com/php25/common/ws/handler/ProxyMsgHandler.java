@@ -1,4 +1,7 @@
-package com.php25.common.ws;
+package com.php25.common.ws.handler;
+
+import com.php25.common.ws.BaseRetryMsg;
+import com.php25.common.ws.GlobalSession;
 
 import java.lang.reflect.Method;
 
@@ -21,7 +24,7 @@ public class ProxyMsgHandler implements MsgHandler<BaseRetryMsg> {
     }
 
     @Override
-    public void handle(GlobalSession session,BaseRetryMsg msg) throws Exception {
+    public void handle(GlobalSession session, BaseRetryMsg msg) throws Exception {
         this.srcObjectMethod.invoke(cls.cast(this.srcObject), session, msg);
     }
 }

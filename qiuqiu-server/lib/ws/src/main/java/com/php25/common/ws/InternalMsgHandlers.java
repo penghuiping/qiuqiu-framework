@@ -1,5 +1,15 @@
 package com.php25.common.ws;
 
+import com.php25.common.ws.annotation.WsAction;
+import com.php25.common.ws.annotation.WsController;
+import com.php25.common.ws.protocal.Ack;
+import com.php25.common.ws.protocal.ConnectionClose;
+import com.php25.common.ws.protocal.ConnectionCreate;
+import com.php25.common.ws.protocal.Ping;
+import com.php25.common.ws.protocal.Pong;
+import com.php25.common.ws.protocal.ReplyAuthInfo;
+import com.php25.common.ws.protocal.RequestAuthInfo;
+import com.php25.common.ws.protocal.SubmitAuthInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -78,7 +88,7 @@ public class InternalMsgHandlers {
         if (requestAuthInfo.getCount() > 4) {
             ConnectionClose connectionClose = new ConnectionClose();
             connectionClose.setMsgId(session.generateUUID());
-            connectionClose.setSessionId(msg.sessionId);
+            connectionClose.setSessionId(msg.getSessionId());
             session.send(connectionClose);
             return;
         }
