@@ -22,4 +22,6 @@ public class RetryObject<T> {
     private Date lastModifiedTime;
 
     private Integer retryNumber;
+
+    private RejectAction<T> rejectAction;
 }

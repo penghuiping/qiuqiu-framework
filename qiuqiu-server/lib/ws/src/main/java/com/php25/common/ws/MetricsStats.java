@@ -1,7 +1,6 @@
 package com.php25.common.ws;
 
 import com.php25.common.core.mess.SpringContextHolder;
-import com.php25.common.ws.retry.InnerMsgRetryQueue;
 
 /**
  * @author penghuiping
@@ -10,7 +9,7 @@ import com.php25.common.ws.retry.InnerMsgRetryQueue;
 public class MetricsStats {
 
     public void stats() {
-        SpringContextHolder.getBean0(InnerMsgRetryQueue.class).stats();
-        SpringContextHolder.getBean0(GlobalSession.class).stats();
+        SpringContextHolder.getBean0(RetryMsgManager.class).stats();
+        SpringContextHolder.getBean0(SessionContext.class).stats();
     }
 }

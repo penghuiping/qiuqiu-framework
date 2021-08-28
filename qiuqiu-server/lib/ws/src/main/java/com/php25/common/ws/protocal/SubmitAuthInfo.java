@@ -1,6 +1,5 @@
 package com.php25.common.ws.protocal;
 
-import com.php25.common.ws.BaseRetryMsg;
 import com.php25.common.ws.annotation.WsMsg;
 import lombok.Getter;
 import lombok.Setter;

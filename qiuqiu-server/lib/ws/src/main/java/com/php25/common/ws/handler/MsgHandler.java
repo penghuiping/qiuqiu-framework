@@ -1,7 +1,7 @@
 package com.php25.common.ws.handler;
 
-import com.php25.common.ws.BaseRetryMsg;
-import com.php25.common.ws.GlobalSession;
+import com.php25.common.ws.protocal.BaseMsg;
+import com.php25.common.ws.SessionContext;
 
 /**
  * 消息处理接口
@@ -9,8 +9,8 @@ import com.php25.common.ws.GlobalSession;
  * @author penghuiping
  * @date 2020/08/10
  */
-public interface MsgHandler<T extends BaseRetryMsg> {
+public interface MsgHandler<T extends BaseMsg> {
 
-    void handle(GlobalSession session, T msg) throws Exception;
+    void handle(SessionContext session, T msg) throws Exception;
 
 }

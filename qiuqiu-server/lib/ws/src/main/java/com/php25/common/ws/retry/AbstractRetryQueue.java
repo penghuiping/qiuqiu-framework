@@ -53,12 +53,18 @@ public abstract class AbstractRetryQueue<T> implements RetryQueue<T> {
 
     @Override
     public Boolean offer(String id, T value) {
+        return this.offer(id, value, null);
+    }
+
+    @Override
+    public Boolean offer(String id, T value, RejectAction<T> rejectAction) {
         RetryObject<T> retryObject = new RetryObject<>();
         retryObject.setId(id);
         retryObject.setValue(value);
         retryObject.setRetryNumber(0);
         retryObject.setCreateTime(new Date());
         retryObject.setLastModifiedTime(new Date());
+        retryObject.setRejectAction(rejectAction);
         if (container.putIfAbsent(id, retryObject) != null) {
             timer.add(new Job(id, retryObject.getLastModifiedTime().getTime() + this.retryInterval, new RetryActionAdapter(retryObject, this.retryAction)));
         }
@@ -75,6 +81,11 @@ public abstract class AbstractRetryQueue<T> implements RetryQueue<T> {
         timer.stop(id);
         RetryObject<T> retryObject = container.remove(id);
         return retryObject.getValue();
+    }
+
+    @Override
+    public Long size() {
+        return (long) container.size();
     }
 
     private class RetryActionAdapter implements Runnable {
@@ -95,7 +106,11 @@ public abstract class AbstractRetryQueue<T> implements RetryQueue<T> {
             if (retryObject.getRetryNumber() >= AbstractRetryQueue.this.maxRetryNumber) {
                 //触发拒绝策略
                 AbstractRetryQueue.this.remove(retryObject.getId());
-                AbstractRetryQueue.this.rejectAction.doAction(this.retryObject.getValue());
+                if (null != retryObject.getRejectAction()) {
+                    retryObject.getRejectAction().doAction(this.retryObject.getValue());
+                } else {
+                    AbstractRetryQueue.this.rejectAction.doAction(this.retryObject.getValue());
+                }
             }
             //进行下次的重试
             retryObject.setLastModifiedTime(new Date());

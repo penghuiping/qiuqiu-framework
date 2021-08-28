@@ -2,12 +2,14 @@ package com.php25.common.ws.serializer;
 
 
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.ws.BaseRetryMsg;
+import com.php25.common.ws.protocal.BaseMsg;
+import com.php25.common.ws.protocal.BaseRetryMsg;
 import com.php25.common.ws.protocal.Pong;
-import com.php25.common.ws.serializer.MsgSerializable;
 import lombok.extern.log4j.Log4j2;
 
 /**
+ * 用于给前端vue的消息格式序列化
+ *
  * @author penghuiping
  * @date 2020/9/3 10:32
  */
@@ -15,14 +17,11 @@ import lombok.extern.log4j.Log4j2;
 public class VueMsgSerializer implements MsgSerializable {
 
     @Override
-    public String from(BaseRetryMsg baseRetryMsg) {
-        BaseRetryMsg baseRetryMsg1 = JsonUtil.fromJson(JsonUtil.toJson(baseRetryMsg), BaseRetryMsg.class);
-        baseRetryMsg1.setSessionId(null);
-        baseRetryMsg1.setInterval(null);
-        baseRetryMsg1.setMaxRetry(null);
-        baseRetryMsg1.setCount(null);
-        String msg = JsonUtil.toJson(baseRetryMsg1);
-        if (!(baseRetryMsg instanceof Pong)) {
+    public String from(BaseMsg baseMsg) {
+        BaseMsg baseMsg1 = JsonUtil.fromJson(JsonUtil.toJson(baseMsg), BaseMsg.class);
+        baseMsg1.setSessionId(null);
+        String msg = JsonUtil.toJson(baseMsg1);
+        if (!(baseMsg1 instanceof Pong)) {
             log.info("ws response msg:{}", msg);
         }
         return msg;

@@ -2,6 +2,7 @@ package com.php25.common.ws;
 
 import com.google.common.base.Objects;
 import com.php25.common.core.mess.SpringContextHolder;
+import com.php25.common.ws.protocal.BaseMsg;
 import com.php25.common.ws.protocal.ConnectionClose;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +32,7 @@ public class ExpirationSocketSession {
 
     private WebSocketSession webSocketSession;
 
-    private BlockingQueue<BaseRetryMsg> buffer = new LinkedBlockingQueue<>();
+    private BlockingQueue<BaseMsg> buffer = new LinkedBlockingQueue<>();
 
     private ExecutorService executorService;
 
@@ -85,8 +86,8 @@ public class ExpirationSocketSession {
         isRunning.compareAndSet(true, false);
     }
 
-    public void put(BaseRetryMsg baseRetryMsg) {
-        boolean flag = buffer.offer(baseRetryMsg);
+    public void put(BaseMsg baseMsg) {
+        boolean flag = buffer.offer(baseMsg);
         if (flag) {
             if (null == this.threadFuture || this.threadFuture.isDone()) {
                 synchronized (this) {
@@ -96,9 +97,9 @@ public class ExpirationSocketSession {
                             int count = 0;
                             while (isRunning.get()) {
                                 try {
-                                    BaseRetryMsg baseRetryMsg1 = buffer.poll(1, TimeUnit.SECONDS);
-                                    if (null != baseRetryMsg1) {
-                                        msgDispatcher.dispatch(baseRetryMsg1);
+                                    BaseMsg baseMsg1 = buffer.poll(1, TimeUnit.SECONDS);
+                                    if (null != baseMsg1) {
+                                        msgDispatcher.dispatch(baseMsg1);
                                         count = 0;
                                     } else {
                                         count++;
@@ -127,11 +128,11 @@ class SessionExpiredCallback implements Runnable {
 
     private final String sessionId;
 
-    private final GlobalSession globalSession;
+    private final SessionContext globalSession;
 
     public SessionExpiredCallback(String sessionId) {
         this.sessionId = sessionId;
-        this.globalSession = SpringContextHolder.getBean0(GlobalSession.class);
+        this.globalSession = SpringContextHolder.getBean0(SessionContext.class);
     }
 
     @Override
@@ -139,7 +140,6 @@ class SessionExpiredCallback implements Runnable {
         try {
             log.info("长时间未收到心跳包关闭ws连接");
             ConnectionClose connectionClose = new ConnectionClose();
-            connectionClose.setCount(1);
             connectionClose.setMsgId(globalSession.generateUUID());
             connectionClose.setSessionId(sessionId);
             globalSession.send(connectionClose);

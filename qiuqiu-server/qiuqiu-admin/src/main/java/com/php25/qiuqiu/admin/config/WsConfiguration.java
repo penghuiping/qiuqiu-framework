@@ -8,10 +8,10 @@ import com.php25.common.core.util.StringUtil;
 import com.php25.common.mq.MessageQueueManager;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.timer.Timer;
-import com.php25.common.ws.GlobalSession;
-import com.php25.common.ws.retry.InnerMsgRetryQueue;
+import com.php25.common.ws.SessionContext;
 import com.php25.common.ws.MsgDispatcher;
 import com.php25.common.ws.RedisQueueSubscriber;
+import com.php25.common.ws.RetryMsgManager;
 import com.php25.common.ws.config.RegisterHandlerConfig;
 import com.php25.common.ws.protocal.SecurityAuthentication;
 import com.php25.common.ws.WebsocketHandler;
@@ -75,19 +75,19 @@ public class WsConfiguration implements WebSocketConfigurer {
     }
 
     @Bean
-    public InnerMsgRetryQueue innerMsgRetryQueue() {
-        return new InnerMsgRetryQueue();
+    public RetryMsgManager retryMsgManager() {
+        return new RetryMsgManager();
     }
 
     @Bean
-    public GlobalSession globalSession(RedisManager redisManager,
-                                       MsgDispatcher msgDispatcher,
-                                       SecurityAuthentication securityAuthentication,
-                                       InnerMsgRetryQueue innerMsgRetryQueue,
-                                       Timer timer,
-                                       MessageQueueManager messageQueueManager
+    public SessionContext globalSession(RedisManager redisManager,
+                                        MsgDispatcher msgDispatcher,
+                                        SecurityAuthentication securityAuthentication,
+                                        RetryMsgManager RetryMsgManager,
+                                        Timer timer,
+                                        MessageQueueManager messageQueueManager
     ) {
-        return new GlobalSession(innerMsgRetryQueue,
+        return new SessionContext(RetryMsgManager,
                 redisManager,
                 securityAuthentication,
                 serverId,
@@ -97,13 +97,13 @@ public class WsConfiguration implements WebSocketConfigurer {
     }
 
     @Bean
-    public RedisQueueSubscriber redisQueueSubscriber(RedisManager redisManager, InnerMsgRetryQueue innerMsgRetryQueue) {
-        return new RedisQueueSubscriber(redisManager, serverId, innerMsgRetryQueue);
+    public RedisQueueSubscriber redisQueueSubscriber(RedisManager redisManager, RetryMsgManager retryMsgManager) {
+        return new RedisQueueSubscriber(redisManager, serverId, retryMsgManager);
     }
 
     @Bean
-    public WebsocketHandler websocketHandler(GlobalSession globalSession, InnerMsgRetryQueue innerMsgRetryQueue) {
-        return new WebsocketHandler(globalSession, innerMsgRetryQueue);
+    public WebsocketHandler websocketHandler(RetryMsgManager retryMsgManager) {
+        return new WebsocketHandler(retryMsgManager);
     }
 
     @Bean

@@ -27,6 +27,16 @@ public interface RetryQueue<T> {
     Boolean offer(String id, T value);
 
     /**
+     * 把对象加入重试队列
+     *
+     * @param id           对象id
+     * @param value        对象
+     * @param rejectAction 重试超过阈值的拒绝策略
+     * @return true:加入成功
+     */
+    Boolean offer(String id, T value, RejectAction<T> rejectAction);
+
+    /**
      * 根据对象id获取对象
      *
      * @param id 对象id
@@ -42,4 +52,11 @@ public interface RetryQueue<T> {
      * @return 对象
      */
     T remove(String id);
+
+    /**
+     * 获取重试队列中的对象数量
+     *
+     * @return
+     */
+    Long size();
 }
