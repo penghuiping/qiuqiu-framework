@@ -24,13 +24,13 @@ class RequestAuthInfoHandler implements WsMessageHandler {
   }
 
   handle (ws: WebSocket, msg: WsMsg, token: string): void {
-    ws.send(JSON.stringify({
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      msg_id: msg.msg_id,
-      action: 'submit_auth_info',
-      token: token,
-      timestamp: new Date().getTime()
-    }))
+    // ws.send(JSON.stringify({
+    //   // eslint-disable-next-line @typescript-eslint/camelcase
+    //   msg_id: msg.msg_id,
+    //   action: 'submit_auth_info',
+    //   token: token,
+    //   timestamp: new Date().getTime()
+    // }))
   }
 }
 

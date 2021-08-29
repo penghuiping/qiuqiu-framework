@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.jsontype.SubtypeResolver;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.ws.protocal.BaseMsg;
-import com.php25.common.ws.protocal.BaseRetryMsg;
 import com.php25.common.ws.MsgDispatcher;
 import com.php25.common.ws.WsException;
 import com.php25.common.ws.annotation.WsAction;

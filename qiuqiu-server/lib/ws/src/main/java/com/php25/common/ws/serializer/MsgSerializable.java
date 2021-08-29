@@ -2,7 +2,6 @@ package com.php25.common.ws.serializer;
 
 
 import com.php25.common.ws.protocal.BaseMsg;
-import com.php25.common.ws.protocal.BaseRetryMsg;
 
 /**
  * @author penghuiping

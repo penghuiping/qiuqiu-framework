@@ -6,7 +6,7 @@ import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RList;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.ws.config.Constants;
-import com.php25.common.ws.protocal.BaseRetryMsg;
+import com.php25.common.ws.protocal.BaseMsg;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.InitializingBean;
@@ -15,7 +15,6 @@ import org.springframework.context.event.ContextClosedEvent;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -79,8 +78,8 @@ public class RedisQueueSubscriber implements InitializingBean, ApplicationListen
                     RList<String> rList = redisManager.list(Constants.prefix + this.serverId, String.class);
                     String msg = rList.blockRightPop(1, TimeUnit.SECONDS);
                     if (!StringUtil.isBlank(msg)) {
-                        BaseRetryMsg baseRetry = JsonUtil.fromJson(msg, BaseRetryMsg.class);
-                        retryMsgManager.put(baseRetry);
+                        BaseMsg baseMsg = JsonUtil.fromJson(msg, BaseMsg.class);
+                        retryMsgManager.put(baseMsg,false);
                     }
                 } catch (Exception e) {
                     log.error("轮训获取redis队列中的消息出错", e);

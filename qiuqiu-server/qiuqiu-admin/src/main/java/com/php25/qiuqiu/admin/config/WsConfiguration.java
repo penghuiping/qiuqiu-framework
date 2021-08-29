@@ -80,14 +80,14 @@ public class WsConfiguration implements WebSocketConfigurer {
     }
 
     @Bean
-    public SessionContext globalSession(RedisManager redisManager,
-                                        MsgDispatcher msgDispatcher,
-                                        SecurityAuthentication securityAuthentication,
-                                        RetryMsgManager RetryMsgManager,
-                                        Timer timer,
-                                        MessageQueueManager messageQueueManager
+    public SessionContext sessionContext(RedisManager redisManager,
+                                         MsgDispatcher msgDispatcher,
+                                         SecurityAuthentication securityAuthentication,
+                                         RetryMsgManager retryMsgManager,
+                                         Timer timer,
+                                         MessageQueueManager messageQueueManager
     ) {
-        return new SessionContext(RetryMsgManager,
+        return new SessionContext(retryMsgManager,
                 redisManager,
                 securityAuthentication,
                 serverId,
@@ -102,8 +102,8 @@ public class WsConfiguration implements WebSocketConfigurer {
     }
 
     @Bean
-    public WebsocketHandler websocketHandler(RetryMsgManager retryMsgManager) {
-        return new WebsocketHandler(retryMsgManager);
+    public WebsocketHandler websocketHandler(SessionContext sessionContext) {
+        return new WebsocketHandler(sessionContext);
     }
 
     @Bean

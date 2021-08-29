@@ -1,7 +1,7 @@
 package com.php25.qiuqiu.notify.dto.ws;
 
-import com.php25.common.ws.protocal.BaseRetryMsg;
 import com.php25.common.ws.annotation.WsMsg;
+import com.php25.common.ws.protocal.BaseMsg;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +12,6 @@ import lombok.Setter;
 @Setter
 @Getter
 @WsMsg(action = "notify_text")
-public class NotifyTextMsg extends BaseRetryMsg {
+public class NotifyTextMsg extends BaseMsg {
     private String content;
 }

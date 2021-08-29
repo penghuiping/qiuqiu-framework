@@ -1,12 +1,9 @@
 package com.php25.common.ws;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.mess.SpringContextHolder;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.ws.protocal.BaseMsg;
-import com.php25.common.ws.protocal.BaseNoRetryMsg;
-import com.php25.common.ws.protocal.BaseRetryMsg;
 import com.php25.common.ws.retry.DefaultRetryQueue;
 import com.php25.common.ws.retry.RejectAction;
 import com.php25.common.ws.retry.RetryQueue;
@@ -35,9 +32,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Log4j2
 public class RetryMsgManager implements InitializingBean, ApplicationListener<ContextClosedEvent> {
 
-    private final BlockingQueue<BaseNoRetryMsg> noDelayQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<BaseMsg> noDelayQueue = new LinkedBlockingQueue<>();
 
-    private final RetryQueue<BaseRetryMsg> retryQueue;
+    private final RetryQueue<BaseMsg> retryQueue;
 
     private final ExecutorService singleThreadExecutorNoDelay;
 
@@ -55,6 +52,7 @@ public class RetryMsgManager implements InitializingBean, ApplicationListener<Co
         this.retryQueue = new DefaultRetryQueue<>(5, 5000L,
                 retryMsg -> {
                     //重试逻辑
+                    log.info("重试逻辑:{}",JsonUtil.toJson(retryMsg));
                     ExpirationSocketSession expirationSocketSession = this.getGlobalSession().getExpirationSocketSession(retryMsg.getSessionId());
                     if (null != expirationSocketSession) {
                         expirationSocketSession.put(retryMsg);
@@ -97,7 +95,7 @@ public class RetryMsgManager implements InitializingBean, ApplicationListener<Co
     public void run() {
         this.singleThreadExecutorNoDelay.execute(() -> {
             while (isRunning.get()) {
-                BaseNoRetryMsg msg = null;
+                BaseMsg msg = null;
                 try {
                     msg = noDelayQueue.poll(2, TimeUnit.SECONDS);
                     if (null != msg) {
@@ -113,32 +111,26 @@ public class RetryMsgManager implements InitializingBean, ApplicationListener<Co
         });
     }
 
-    public void put(BaseMsg baseMsg) {
-        //判断是否需要重试
-        if (baseMsg instanceof BaseRetryMsg) {
-            //需要重试
-            BaseRetryMsg baseRetry = (BaseRetryMsg) baseMsg;
-            retryQueue.offer(baseRetry.getMsgId(), baseRetry);
-        } else if (baseMsg instanceof BaseNoRetryMsg) {
-            //不需要重试
-            BaseNoRetryMsg baseNoRetryMsg = (BaseNoRetryMsg) baseMsg;
-            noDelayQueue.offer(baseNoRetryMsg);
-        } else {
-            throw Exceptions.throwImpossibleException();
-        }
+    public void put(BaseMsg baseMsg,boolean retry) {
+        this.put(baseMsg,retry,null);
+
     }
 
-    public void put(BaseRetryMsg baseMsg, RejectAction<BaseRetryMsg> rejectAction) {
-        //需要重试
-        BaseRetryMsg baseRetry = baseMsg;
-        retryQueue.offer(baseRetry.getMsgId(), baseRetry, rejectAction);
+    public void put(BaseMsg baseMsg,boolean retry, RejectAction<BaseMsg> rejectAction) {
+        if(retry) {
+            //需要重试
+            retryQueue.offer(baseMsg.getMsgId(), baseMsg,rejectAction);
+        }else {
+            //不需要重试
+            noDelayQueue.offer(baseMsg);
+        }
     }
 
     public void remove(String msgId) {
         retryQueue.remove(msgId);
     }
 
-    public BaseRetryMsg get(String msgId) {
+    public BaseMsg get(String msgId) {
         return retryQueue.get(msgId);
     }
 

@@ -65,10 +65,9 @@ public abstract class AbstractRetryQueue<T> implements RetryQueue<T> {
         retryObject.setCreateTime(new Date());
         retryObject.setLastModifiedTime(new Date());
         retryObject.setRejectAction(rejectAction);
-        if (container.putIfAbsent(id, retryObject) != null) {
-            timer.add(new Job(id, retryObject.getLastModifiedTime().getTime() + this.retryInterval, new RetryActionAdapter(retryObject, this.retryAction)));
-        }
-        return false;
+        container.put(id, retryObject);
+        timer.add(new Job(id, retryObject.getLastModifiedTime().getTime() + this.retryInterval, new RetryActionAdapter(retryObject, this.retryAction)));
+        return true;
     }
 
     @Override

@@ -128,11 +128,11 @@ class SessionExpiredCallback implements Runnable {
 
     private final String sessionId;
 
-    private final SessionContext globalSession;
+    private final SessionContext sessionContext;
 
     public SessionExpiredCallback(String sessionId) {
         this.sessionId = sessionId;
-        this.globalSession = SpringContextHolder.getBean0(SessionContext.class);
+        this.sessionContext = SpringContextHolder.getBean0(SessionContext.class);
     }
 
     @Override
@@ -140,9 +140,9 @@ class SessionExpiredCallback implements Runnable {
         try {
             log.info("长时间未收到心跳包关闭ws连接");
             ConnectionClose connectionClose = new ConnectionClose();
-            connectionClose.setMsgId(globalSession.generateUUID());
+            connectionClose.setMsgId(sessionContext.generateUUID());
             connectionClose.setSessionId(sessionId);
-            globalSession.send(connectionClose);
+            sessionContext.send(connectionClose);
         } catch (Exception e) {
             log.error("未接受到心跳包，关闭session出错", e);
         }

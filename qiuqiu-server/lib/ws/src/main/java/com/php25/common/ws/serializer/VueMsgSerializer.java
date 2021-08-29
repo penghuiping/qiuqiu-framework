@@ -3,7 +3,6 @@ package com.php25.common.ws.serializer;
 
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.ws.protocal.BaseMsg;
-import com.php25.common.ws.protocal.BaseRetryMsg;
 import com.php25.common.ws.protocal.Pong;
 import lombok.extern.log4j.Log4j2;
 

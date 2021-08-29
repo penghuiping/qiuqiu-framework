@@ -2,12 +2,9 @@ package com.php25.common.ws;
 
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.ws.protocal.BaseMsg;
-import com.php25.common.ws.protocal.BaseRetryMsg;
 import com.php25.common.ws.protocal.ConnectionClose;
 import com.php25.common.ws.protocal.ConnectionCreate;
 import com.php25.common.ws.protocal.Ping;
-import com.php25.common.ws.protocal.RequestAuthInfo;
-import com.php25.common.ws.retry.RejectAction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -24,57 +21,47 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class WebsocketHandler extends TextWebSocketHandler {
 
 
-    private final RetryMsgManager retryMsgManager;
+    private final SessionContext sessionContext;
 
-    public WebsocketHandler(RetryMsgManager retryMsgManager) {
-        this.retryMsgManager = retryMsgManager;
+    public WebsocketHandler(SessionContext sessionContext) {
+        this.sessionContext = sessionContext;
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        SessionContext sessionContext = retryMsgManager.getGlobalSession();
         String payload = message.getPayload();
         BaseMsg baseMsg = JsonUtil.fromJson(payload, BaseMsg.class);
         if (!(baseMsg instanceof Ping)) {
             log.info("ws request msg:{}", JsonUtil.toJson(baseMsg));
         }
-        ExpirationSocketSession expirationSocketSession = sessionContext.getExpirationSocketSession(session);
+        ExpirationSocketSession expirationSocketSession = this.sessionContext.getExpirationSocketSession(session);
         if (null == expirationSocketSession) {
             log.info("expirationSocketSession is null:{}", JsonUtil.toJson(baseMsg));
             return;
         }
         baseMsg.setSessionId(expirationSocketSession.getSessionId());
-        if (baseMsg instanceof RequestAuthInfo) {
-            retryMsgManager.put((RequestAuthInfo) baseMsg, value -> {
-                ConnectionClose connectionClose = new ConnectionClose();
-                connectionClose.setMsgId(sessionContext.generateUUID());
-                connectionClose.setSessionId(value.getSessionId());
-                retryMsgManager.put(connectionClose);
-            });
-        } else {
-            retryMsgManager.put(baseMsg);
-        }
+        expirationSocketSession.put(baseMsg);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         ConnectionClose connectionClose = new ConnectionClose();
-        connectionClose.setMsgId(retryMsgManager.getGlobalSession().generateUUID());
-        ExpirationSocketSession expirationSocketSession = retryMsgManager.getGlobalSession().getExpirationSocketSession(session);
+        connectionClose.setMsgId(this.sessionContext.generateUUID());
+        ExpirationSocketSession expirationSocketSession = this.sessionContext.getExpirationSocketSession(session);
         connectionClose.setSessionId(expirationSocketSession.getSessionId());
-        retryMsgManager.put(connectionClose);
+        expirationSocketSession.put(connectionClose);
     }
 
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         //websocket连接建立
-        retryMsgManager.getGlobalSession().create(session);
+        this.sessionContext.create(session);
         ConnectionCreate connectionCreate = new ConnectionCreate();
-        connectionCreate.setMsgId(retryMsgManager.getGlobalSession().generateUUID());
-        ExpirationSocketSession expirationSocketSession = retryMsgManager.getGlobalSession().getExpirationSocketSession(session);
+        connectionCreate.setMsgId(this.sessionContext.generateUUID());
+        ExpirationSocketSession expirationSocketSession = this.sessionContext.getExpirationSocketSession(session);
         connectionCreate.setSessionId(expirationSocketSession.getSessionId());
-        retryMsgManager.put(connectionCreate);
+        expirationSocketSession.put(connectionCreate);
     }
 
 

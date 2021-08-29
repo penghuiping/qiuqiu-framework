@@ -11,6 +11,6 @@ import lombok.Setter;
 @Setter
 @Getter
 @WsMsg(action = "submit_auth_info")
-public class SubmitAuthInfo extends BaseRetryMsg {
+public class SubmitAuthInfo extends BaseMsg {
     private String token;
 }

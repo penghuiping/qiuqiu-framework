@@ -11,5 +11,5 @@ import lombok.Setter;
 @Setter
 @Getter
 @WsMsg(action = "ping")
-public class Ping extends BaseNoRetryMsg {
+public class Ping extends BaseMsg {
 }

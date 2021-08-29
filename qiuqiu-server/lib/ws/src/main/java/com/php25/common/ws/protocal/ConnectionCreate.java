@@ -11,5 +11,5 @@ import lombok.Setter;
 @Setter
 @Getter
 @WsMsg(action = "connection_create")
-public class ConnectionCreate extends BaseNoRetryMsg {
+public class ConnectionCreate extends BaseMsg {
 }

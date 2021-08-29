@@ -48,6 +48,12 @@ public class DefaultMsgHandlers {
         requestAuthInfo.setSessionId(msg.getSessionId());
         requestAuthInfo.setTimestamp(System.currentTimeMillis());
         session.send(requestAuthInfo);
+        session.getRetryMsgManager().put(requestAuthInfo, true, value -> {
+            ConnectionClose connectionClose = new ConnectionClose();
+            connectionClose.setMsgId(session.generateUUID());
+            connectionClose.setSessionId(value.getSessionId());
+            session.send(connectionClose);
+        });
     }
 
     @WsAction("ping")

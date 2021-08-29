@@ -11,6 +11,6 @@ import lombok.Setter;
 @Setter
 @Getter
 @WsMsg(action = "ack")
-public class Ack extends BaseNoRetryMsg {
+public class Ack extends BaseMsg {
 
 }
