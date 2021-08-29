@@ -32,16 +32,16 @@ public class RedisQueueSubscriber implements InitializingBean, ApplicationListen
 
     private final String serverId;
 
-    private final RetryMsgManager retryMsgManager;
-
     private ExecutorService singleThreadExecutor;
 
     private final AtomicBoolean isRunning = new AtomicBoolean(true);
 
-    public RedisQueueSubscriber(RedisManager redisManager, String serverId, RetryMsgManager retryMsgManager) {
+    private final SessionContext sessionContext;
+
+    public RedisQueueSubscriber(RedisManager redisManager, String serverId, SessionContext sessionContext) {
         this.redisManager = redisManager;
         this.serverId = serverId;
-        this.retryMsgManager = retryMsgManager;
+        this.sessionContext = sessionContext;
     }
 
 
@@ -79,7 +79,8 @@ public class RedisQueueSubscriber implements InitializingBean, ApplicationListen
                     String msg = rList.blockRightPop(1, TimeUnit.SECONDS);
                     if (!StringUtil.isBlank(msg)) {
                         BaseMsg baseMsg = JsonUtil.fromJson(msg, BaseMsg.class);
-                        retryMsgManager.put(baseMsg,false);
+                        ExpirationSocketSession expirationSocketSession = this.sessionContext.getExpirationSocketSession(baseMsg.getSessionId());
+                        expirationSocketSession.put(baseMsg);
                     }
                 } catch (Exception e) {
                     log.error("轮训获取redis队列中的消息出错", e);

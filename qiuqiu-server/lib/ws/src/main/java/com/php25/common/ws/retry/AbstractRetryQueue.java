@@ -79,7 +79,10 @@ public abstract class AbstractRetryQueue<T> implements RetryQueue<T> {
     public T remove(String id) {
         timer.stop(id);
         RetryObject<T> retryObject = container.remove(id);
-        return retryObject.getValue();
+        if (null != retryObject) {
+            return retryObject.getValue();
+        }
+        return null;
     }
 
     @Override

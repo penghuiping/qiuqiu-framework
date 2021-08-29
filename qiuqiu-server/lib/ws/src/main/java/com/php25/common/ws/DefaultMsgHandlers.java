@@ -48,11 +48,12 @@ public class DefaultMsgHandlers {
         requestAuthInfo.setSessionId(msg.getSessionId());
         requestAuthInfo.setTimestamp(System.currentTimeMillis());
         session.send(requestAuthInfo);
-        session.getRetryMsgManager().put(requestAuthInfo, true, value -> {
+        session.getRetryMsgManager().put(requestAuthInfo, value -> {
             ConnectionClose connectionClose = new ConnectionClose();
             connectionClose.setMsgId(session.generateUUID());
             connectionClose.setSessionId(value.getSessionId());
-            session.send(connectionClose);
+            ExpirationSocketSession expirationSocketSession = session.getExpirationSocketSession(value.getSessionId());
+            expirationSocketSession.put(connectionClose);
         });
     }
 

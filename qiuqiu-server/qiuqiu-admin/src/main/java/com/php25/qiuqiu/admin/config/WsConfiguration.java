@@ -97,8 +97,8 @@ public class WsConfiguration implements WebSocketConfigurer {
     }
 
     @Bean
-    public RedisQueueSubscriber redisQueueSubscriber(RedisManager redisManager, RetryMsgManager retryMsgManager) {
-        return new RedisQueueSubscriber(redisManager, serverId, retryMsgManager);
+    public RedisQueueSubscriber redisQueueSubscriber(RedisManager redisManager, SessionContext sessionContext) {
+        return new RedisQueueSubscriber(redisManager, serverId, sessionContext);
     }
 
     @Bean
