@@ -108,13 +108,13 @@ public class RegisterHandlerConfig {
             subtypeResolver.registerSubtypes(BaseMsg.class);
             for (Class<?> cls : classes) {
                 Class<?> superCls = cls.getSuperclass();
-//                if (superCls.equals(BaseRetryMsg.class)) {
+                if (superCls.equals(BaseMsg.class)) {
                     WsMsg wsMsg = cls.getDeclaredAnnotation(WsMsg.class);
                     String action = wsMsg.action();
                     if (!StringUtil.isBlank(action)) {
                         subtypeResolver.registerSubtypes(new NamedType(cls, wsMsg.action()));
                     }
-//                }
+                }
             }
         } catch (Exception e) {
             throw new WsException("ws在扫包时出错", e);

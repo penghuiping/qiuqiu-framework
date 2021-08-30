@@ -51,7 +51,7 @@ public class RedisQueueSubscriber implements InitializingBean, ApplicationListen
                 0L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(1024),
                 new ThreadFactoryBuilder().setNameFormat("ws-redis-queue-subscriber-%d")
-                        .build());
+                        .build(),new ThreadPoolExecutor.AbortPolicy());
         this.run();
     }
 

@@ -29,6 +29,6 @@ public class WsMsgNotifyService implements MsgNotifyService {
         notifyTextMsg.setSessionId(null);
         notifyTextMsg.setTimestamp(System.currentTimeMillis());
         globalSession.send(notifyTextMsg);
-        return false;
+        return true;
     }
 }

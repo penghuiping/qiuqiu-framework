@@ -90,7 +90,6 @@ public class DefaultMsgHandlers {
         sidUid.setSessionId(msg.getSessionId());
         sidUid.setUserId(uid);
         session.init(sidUid);
-
         session.getRetryMsgManager().remove(msg.getMsgId());
 
         ReplyAuthInfo replyAuthInfo = new ReplyAuthInfo();

@@ -32,7 +32,7 @@ public class ExpirationSocketSession {
 
     private WebSocketSession webSocketSession;
 
-    private BlockingQueue<BaseMsg> buffer = new LinkedBlockingQueue<>();
+    private BlockingQueue<BaseMsg> buffer = new LinkedBlockingQueue<>(1024);
 
     private ExecutorService executorService;
 
@@ -142,7 +142,8 @@ class SessionExpiredCallback implements Runnable {
             ConnectionClose connectionClose = new ConnectionClose();
             connectionClose.setMsgId(sessionContext.generateUUID());
             connectionClose.setSessionId(sessionId);
-            sessionContext.send(connectionClose);
+            ExpirationSocketSession expirationSocketSession = sessionContext.getExpirationSocketSession(sessionId);
+            expirationSocketSession.put(connectionClose);
         } catch (Exception e) {
             log.error("未接受到心跳包，关闭session出错", e);
         }
