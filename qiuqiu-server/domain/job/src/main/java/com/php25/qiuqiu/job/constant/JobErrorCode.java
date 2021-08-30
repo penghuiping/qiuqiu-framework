@@ -7,7 +7,7 @@ import com.php25.common.core.exception.BusinessErrorStatus;
  * @date 2021/7/26 16:05
  */
 public enum JobErrorCode implements BusinessErrorStatus {
-    JOB_EXECUTION_HAS_LOADED_CANT_DELETE("30000","执行任务已经被加载,不能被删除");
+    JOB_EXECUTION_HAS_LOADED_CANT_DELETE("A1200", "执行任务已经被加载,不能被删除");
 
     private String code;
     private String description;

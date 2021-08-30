@@ -32,6 +32,17 @@ public abstract class TimeUtil {
     }
 
     /**
+     * 把日期类型的字符串，转换成日期类型
+     *
+     * @param dateStr           日期字符串 如:"2020-10-01"
+     * @param dateTimeFormatter 解析的日期格式 如:"yyyy-MM-dd"
+     * @return 日期时间
+     */
+    public static LocalDateTime parseDateString(String dateStr, DateTimeFormatter dateTimeFormatter) {
+        return LocalDateTime.parse(dateStr, dateTimeFormatter);
+    }
+
+    /**
      * 把时间戳转成字符串
      *
      * @param timeInMillis      UTC时间戳

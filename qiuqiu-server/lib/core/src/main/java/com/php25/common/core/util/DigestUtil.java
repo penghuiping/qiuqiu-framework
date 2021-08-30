@@ -2,7 +2,6 @@ package com.php25.common.core.util;
 
 import com.php25.common.core.exception.Exceptions;
 
-import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
@@ -36,7 +35,7 @@ public abstract class DigestUtil {
         AssertUtil.hasText(str, "str不能为空");
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-            return messageDigest.digest(str.getBytes(StandardCharsets.UTF_8));
+            return messageDigest.digest(str.getBytes("utf8"));
         } catch (Exception e) {
             throw Exceptions.throwIllegalStateException("出错啦!", e);
         }
@@ -84,7 +83,7 @@ public abstract class DigestUtil {
         AssertUtil.hasText(shaAlgorithm, "shaAlgorithm不能为空");
         try {
             MessageDigest md = MessageDigest.getInstance(shaAlgorithm);
-            return md.digest(str.getBytes(StandardCharsets.UTF_8));
+            return md.digest(str.getBytes("utf8"));
         } catch (Exception e) {
             throw Exceptions.throwIllegalStateException("出错啦!", e);
         }

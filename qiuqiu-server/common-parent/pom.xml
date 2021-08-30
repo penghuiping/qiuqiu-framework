@@ -41,6 +41,7 @@
         <map-struct>1.4.2.Final</map-struct>
         <assertj>3.17.2</assertj>
         <netty>4.1.52.Final</netty>
+        <disruptor>3.4.4</disruptor>
         <core>V.2.5.1</core>
         <redis>V.2.5.1</redis>
         <db>V.2.5.1</db>
@@ -313,6 +314,11 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.12</version>
+            </dependency>
+            <dependency>
+                <groupId>com.lmax</groupId>
+                <artifactId>disruptor</artifactId>
+                <version>${disruptor}</version>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>

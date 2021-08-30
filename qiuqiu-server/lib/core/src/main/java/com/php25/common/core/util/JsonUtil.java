@@ -44,7 +44,6 @@ public abstract class JsonUtil {
         objectMapper.setDateFormat(new SimpleDateFormat(TimeUtil.STD_FORMAT));
         JavaTimeModule timeModule = new JavaTimeModule();
         timeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer());
-        timeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
         objectMapper.registerModule(timeModule);
     }
 
@@ -134,8 +133,8 @@ public abstract class JsonUtil {
     public static class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
         @Override
         public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-            String value = jsonParser.getValueAsString();
-            return LocalDateTime.parse(value, DateTimeFormatter.ofPattern(TimeUtil.STD_FORMAT));
+            Long timestamp = jsonParser.getLongValue();
+            return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
         }
     }
 }

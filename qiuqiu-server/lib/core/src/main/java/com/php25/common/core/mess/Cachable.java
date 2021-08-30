@@ -11,14 +11,14 @@ public interface Cachable {
      *
      * @return true: 初始化缓存成功
      */
-    Boolean initCache();
+    Boolean init();
 
     /**
      * 清楚缓存
      *
      * @return true: 清除缓存成功
      */
-    Boolean clearCache();
+    Boolean clear();
 
 
     /**
@@ -26,11 +26,11 @@ public interface Cachable {
      *
      * @return 缓存名
      */
-    String cacheName();
+    String name();
 
 
     /**
      * 打印缓存状态信息
      */
-    void printCacheStatusInfo();
+    void printStatusInfo();
 }

@@ -19,7 +19,7 @@ import java.util.Map;
 @Lazy(false)
 public class SpringContextHolder implements ApplicationContextAware, DisposableBean {
     private static ApplicationContext applicationContext = null;
-    private static Logger logger = LoggerFactory.getLogger(SpringContextHolder.class);
+    private static final Logger logger = LoggerFactory.getLogger(SpringContextHolder.class);
 
     public SpringContextHolder() {
     }
@@ -38,6 +38,7 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
         assertContextInjected();
         return (T) applicationContext.getBean(name);
     }
+
 
     public static <T> T getBean0(Class<T> requiredType) {
         assertContextInjected();
