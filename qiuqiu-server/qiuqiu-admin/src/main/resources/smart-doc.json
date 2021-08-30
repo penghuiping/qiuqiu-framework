@@ -3,9 +3,9 @@
   "customResponseFields": [
     {
       "name": "code",
-      "desc": "错误码，0:正常",
+      "desc": "错误码，00000:正常",
       "ownerClassName": "com.php25.common.flux.web.JSONResponse",
-      "value": "0"
+      "value": "00000"
     },
     {
       "name": "data",

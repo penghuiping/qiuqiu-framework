@@ -71,7 +71,7 @@ export default class Login extends BaseVue {
         const res = await UserApi.login(this.loginForm.username, this.loginForm.password, this.loginForm.code)
         this.closeLoading(loading)
         const jsonResponse = res.data
-        if (jsonResponse.code === '0') {
+        if (jsonResponse.code === '00000') {
           const token = res.data.data.token
           const expireTime = res.data.data.expireTime
           console.log(expireTime)
