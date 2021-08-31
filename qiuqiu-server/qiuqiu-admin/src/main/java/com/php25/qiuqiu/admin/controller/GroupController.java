@@ -3,7 +3,6 @@ package com.php25.qiuqiu.admin.controller;
 import com.google.common.collect.Lists;
 import com.php25.common.core.tree.TreeNode;
 import com.php25.common.core.tree.Trees;
-import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.group.GroupCreateVo;
@@ -44,8 +43,7 @@ public class GroupController extends JSONController {
      *
      * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/get_all")
+    @PostMapping(value = "/get_all",headers = {"version=v1"})
     public JSONResponse<TreeVo> getAll() {
         TreeNode<GroupDto> res = groupService.getAllGroupTree();
         TreeVo root = new TreeVo();
@@ -59,8 +57,7 @@ public class GroupController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/create")
+    @PostMapping(value = "/create",headers = {"version=v1"})
     public JSONResponse<Boolean> create(@Valid @RequestBody GroupCreateVo groupCreateVo) {
         GroupCreateDto groupCreateDto = groupVoMapper.toCreateDto(groupCreateVo);
         return succeed(groupService.create(groupCreateDto));
@@ -72,8 +69,7 @@ public class GroupController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/update")
+    @PostMapping(value = "/update",headers = {"version=v1"})
     public JSONResponse<Boolean> create(@Valid @RequestBody GroupUpdateVo groupUpdateVo) {
         GroupDto groupDto = groupVoMapper.toGroupDto(groupUpdateVo);
         return succeed(groupService.update(groupDto));
@@ -85,8 +81,7 @@ public class GroupController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/delete")
+    @PostMapping(value = "/delete",headers = {"version=v1"})
     public JSONResponse<Boolean> delete(@Valid @RequestBody GroupDeleteVo groupDeleteVo) {
         return succeed(groupService.delete(groupDeleteVo.getGroupId()));
     }

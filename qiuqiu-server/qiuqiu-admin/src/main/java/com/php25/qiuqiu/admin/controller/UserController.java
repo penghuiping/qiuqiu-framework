@@ -4,7 +4,6 @@ import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.core.util.StringUtil;
-import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.mapper.UserVoMapper;
@@ -81,8 +80,7 @@ public class UserController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/login")
+    @PostMapping(value = "/login",headers = {"version=v1"})
     public JSONResponse<TokenVo> login(HttpServletResponse response,
                                        @Valid @RequestBody LoginVo loginVo) {
         TokenDto tokenDto = userService.login(loginVo.getUsername(), loginVo.getPassword());
@@ -100,8 +98,7 @@ public class UserController extends JSONController {
     /**
      * 获取登入验证码
      */
-    @APIVersion("v1")
-    @GetMapping("/img_code")
+    @GetMapping(value = "/img_code")
     public void getImgCode(HttpServletResponse response) {
         String code = RandomUtil.getRandomNumbersAndLetters(6);
         try (
@@ -129,8 +126,7 @@ public class UserController extends JSONController {
      * @ignoreParams request
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/refresh")
+    @PostMapping(value = "/refresh",headers = {"version=v1"})
     public JSONResponse<TokenVo> refresh(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (null != cookies) {
@@ -155,8 +151,7 @@ public class UserController extends JSONController {
      * @ignoreParams username
      * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/info")
+    @PostMapping(value = "/info",headers = {"version=v1"})
     public JSONResponse<UserVo> getUserInfo(@RequestAttribute @NotBlank String username) {
         UserDto userDto = userService.getUserInfo(username);
         UserVo userVo = userVoMapper.toVo(userDto);
@@ -192,8 +187,7 @@ public class UserController extends JSONController {
      * @ignoreParams username
      * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/detail")
+    @PostMapping(value = "/detail",headers = {"version=v1"})
     public JSONResponse<UserVo> detail(@RequestAttribute @NotBlank String username, @RequestBody UserDetailVo user) {
         UserDto userDto = userService.detail(user.getUserId());
         UserVo userVo = userVoMapper.toVo(userDto);
@@ -229,8 +223,7 @@ public class UserController extends JSONController {
      * @ignoreParams username
      * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/page")
+    @PostMapping(value = "/page",headers = {"version=v1"})
     public JSONResponse<PageResultVo<UserPageOutVo>> page(@RequestAttribute @NotBlank String username, @Valid @RequestBody UserPageVo userPageVo) {
         DataGridPageDto<UserPageDto> result = userService.page(userPageVo.getUsername(), userPageVo.getPageNum(), userPageVo.getPageSize());
         PageResultVo<UserPageOutVo> resultVo = new PageResultVo<>();
@@ -247,8 +240,7 @@ public class UserController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/create")
+    @PostMapping(value = "/create",headers = {"version=v1"})
     public JSONResponse<Boolean> create(@Valid @RequestBody UserCreateVo userCreateVo) {
         UserCreateDto userCreateDto = userVoMapper.toDto(userCreateVo);
         return succeed(userService.create(userCreateDto));
@@ -260,8 +252,7 @@ public class UserController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/update")
+    @PostMapping(value = "/update",headers = {"version=v1"})
     public JSONResponse<Boolean> update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
         UserUpdateDto userUpdateDto = userVoMapper.toDto(userUpdateVo);
         if (StringUtil.isBlank(userUpdateDto.getPassword())) {
@@ -274,8 +265,7 @@ public class UserController extends JSONController {
      * 删除用户
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/delete")
+    @PostMapping(value = "/delete",headers = {"version=v1"})
     public JSONResponse<Boolean> delete(@Valid @RequestBody UserDeleteVo userDeleteVo) {
         for (Long userId : userDeleteVo.getUserIds()) {
             userService.delete(userId);
@@ -287,8 +277,7 @@ public class UserController extends JSONController {
      * 登出接口
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/logout")
+    @PostMapping(value = "/logout",headers = {"version=v1"})
     public JSONResponse<Boolean> logout(@RequestAttribute @NotBlank String username) {
         return succeed(userService.logout(username));
     }

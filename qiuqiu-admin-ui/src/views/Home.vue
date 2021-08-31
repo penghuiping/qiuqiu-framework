@@ -14,7 +14,7 @@
         || permissionExists(resources.GROUP,permissions.PAGE)">
           <template slot="title">
             <i class="el-icon-user"></i>
-            <span slot="title">权限管理</span>
+            <span slot="title">用户权限</span>
           </template>
           <el-menu-item index="2-1" @click="menuClick('user')" v-if="permissionExists(resources.USER,permissions.PAGE)">用户管理</el-menu-item>
           <el-menu-item index="2-2" @click="menuClick('role')" v-if="permissionExists(resources.ROLE,permissions.PAGE)">角色管理</el-menu-item>

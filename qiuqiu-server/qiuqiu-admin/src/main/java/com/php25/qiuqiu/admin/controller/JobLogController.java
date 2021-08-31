@@ -1,11 +1,10 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
-import com.php25.qiuqiu.admin.vo.in.job.JobLogPageVo;
 import com.php25.qiuqiu.admin.mapper.JobLogVoMapper;
+import com.php25.qiuqiu.admin.vo.in.job.JobLogPageVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.job.JobLogVo;
 import com.php25.qiuqiu.job.dto.JobLogDto;
@@ -24,6 +23,7 @@ import java.util.stream.Collectors;
 
 /**
  * 任务日志
+ *
  * @author penghuiping
  * @date 2021/3/27 00:32
  */
@@ -39,11 +39,11 @@ public class JobLogController extends JSONController {
 
     /**
      * 任务日志分页查询
-     * @since v1
+     *
      * @ignoreParams username
+     * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/page")
+    @PostMapping(value = "/page", headers = {"version=v1"})
     public JSONResponse<PageResultVo<JobLogVo>> page(@RequestAttribute String username, @Valid @RequestBody JobLogPageVo jobLogPageVo) {
         DataGridPageDto<JobLogDto> dataGrid = jobService.pageJobLog(username, jobLogPageVo.getJobName(), jobLogPageVo.getPageNum(), jobLogPageVo.getPageSize());
         PageResultVo<JobLogVo> result = new PageResultVo<>();

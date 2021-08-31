@@ -1,7 +1,6 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.job.JobExecutionCreateVo;
@@ -51,8 +50,7 @@ public class JobExecutionController extends JSONController {
      * @ignoreParams username
      * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/page")
+    @PostMapping(value = "/page", headers = {"version=v1"})
     public JSONResponse<PageResultVo<JobExecutionVo>> page(@RequestAttribute String username, @Valid @RequestBody JobExecutionPageVo pageVo) {
         DataGridPageDto<JobExecutionDto> dataGrid = jobService.pageJobExecution(username, pageVo.getJobName(), pageVo.getPageNum(), pageVo.getPageSize());
         PageResultVo<JobExecutionVo> result = new PageResultVo<>();
@@ -70,8 +68,7 @@ public class JobExecutionController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/create")
+    @PostMapping(value = "/create", headers = {"version=v1"})
     public JSONResponse<Boolean> create(@RequestAttribute String username, @Valid @RequestBody JobExecutionCreateVo jobExecution) {
         JobExecutionCreateDto jobExecutionCreateDto = jobExecutionVoMapper.toJobExecutionDto(jobExecution);
         return succeed(jobService.createJobExecution(username, jobExecutionCreateDto));
@@ -84,8 +81,7 @@ public class JobExecutionController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/update")
+    @PostMapping(value = "/update", headers = {"version=v1"})
     public JSONResponse<Boolean> update(@RequestAttribute String username, @Valid @RequestBody JobExecutionUpdateVo jobExecution) {
         JobExecutionUpdateDto jobExecutionUpdateDto = jobExecutionVoMapper.toJobExecutionDto(jobExecution);
         return succeed(jobService.updateJobExecution(username, jobExecutionUpdateDto));
@@ -98,8 +94,7 @@ public class JobExecutionController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/delete")
+    @PostMapping(value = "/delete", headers = {"version=v1"})
     public JSONResponse<Boolean> delete(@RequestAttribute String username, @Valid @RequestBody JobExecutionIdVo jobExecutionIdVo) {
         return succeed(jobService.deleteJobExecution(username, jobExecutionIdVo.getId()));
     }
@@ -111,8 +106,7 @@ public class JobExecutionController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/refresh")
+    @PostMapping(value = "/refresh", headers = {"version=v1"})
     public JSONResponse<Boolean> refresh(@RequestAttribute String username, @Valid @RequestBody JobIdVo jobIdVo) {
         return succeed(jobService.refresh(username, jobIdVo.getJobId()));
     }
@@ -124,8 +118,7 @@ public class JobExecutionController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/refresh_all")
+    @PostMapping(value = "/refresh_all", headers = {"version=v1"})
     public JSONResponse<Boolean> refreshAll(@RequestAttribute String username) {
         return succeed(jobService.refreshAll(username));
     }
@@ -137,8 +130,7 @@ public class JobExecutionController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/statistic")
+    @PostMapping(value = "/statistic",headers = {"version=v1"})
     public JSONResponse<Boolean> statistic(@RequestAttribute String username) {
         jobService.statisticLoadedJobExecutionInfo();
         return succeed(true);

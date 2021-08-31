@@ -1,7 +1,6 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.role.RoleCreateVo;
@@ -54,8 +53,7 @@ public class RoleController extends JSONController {
      *
      * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/get_all")
+    @PostMapping(value = "/get_all",headers = {"version=v1"})
     public JSONResponse<List<RoleVo>> getAll() {
         List<RoleDto> roleDtoList = roleService.getAllRoles();
         List<RoleVo> roleVos = roleDtoList.stream().map(roleVoMapper::toVo).collect(Collectors.toList());
@@ -68,8 +66,7 @@ public class RoleController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/create")
+    @PostMapping(value = "/create",headers = {"version=v1"})
     public JSONResponse<Boolean> create(@Valid @RequestBody RoleCreateVo roleCreateVo) {
         List<ResourcePermissionVo> resourcePermissionVos = roleCreateVo.getResourcePermissions();
         List<ResourcePermissionDto> resourcePermissionDtos = new ArrayList<>();
@@ -98,8 +95,7 @@ public class RoleController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/update")
+    @PostMapping(value = "/update",headers = "version=v1")
     public JSONResponse<Boolean> update(@Valid @RequestBody RoleUpdateVo roleUpdateVo) {
         List<ResourcePermissionVo> resourcePermissionVos = roleUpdateVo.getResourcePermissions();
         List<ResourcePermissionDto> resourcePermissionDtos = new ArrayList<>();
@@ -128,8 +124,7 @@ public class RoleController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/delete")
+    @PostMapping(value = "/delete",headers = {"version=v1"})
     public JSONResponse<Boolean> delete(@Valid @RequestBody RoleDeleteVo roleDeleteVo) {
         return succeed(roleService.delete(roleDeleteVo.getRoleIds()));
     }
@@ -139,8 +134,7 @@ public class RoleController extends JSONController {
      *
      * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/detail")
+    @PostMapping(value = "/detail",headers = {"version=v1"})
     public JSONResponse<RoleDetailOutVo> detail(@Valid @RequestBody RoleDetailVo roleDetailVo) {
         RoleDetailDto roleDetailDto = roleService.detail(roleDetailVo.getRoleId());
         RoleDetailOutVo roleDetailOutVo = roleVoMapper.toVo(roleDetailDto);
@@ -170,8 +164,7 @@ public class RoleController extends JSONController {
      *
      * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/page")
+    @PostMapping(value = "/page",headers = {"version=v1"})
     public JSONResponse<PageResultVo<RolePageOutVo>> page(@Valid @RequestBody RolePageVo rolePageVo) {
         DataGridPageDto<RolePageDto> page = roleService.page(rolePageVo.getRoleName(), rolePageVo.getPageNum(), rolePageVo.getPageSize());
         PageResultVo<RolePageOutVo> res = new PageResultVo<>();

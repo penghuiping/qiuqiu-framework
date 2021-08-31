@@ -1,12 +1,12 @@
-package com.php25.qiuqiu.admin.interceptor;
+package com.php25.common.flux.web;
 
+import com.php25.common.core.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,14 +25,26 @@ public class LogInterceptor implements AsyncHandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        logger.info("开始访问" + request.getRequestURL().toString());
+        StringBuilder sb = new StringBuilder();
+        sb.append(request.getRequestURL().toString());
+        if(StringUtil.isNotBlank(request.getHeader("version"))) {
+            sb.append("[").append("version:").append(request.getHeader("version")).append("]");
+        }
+
+        logger.info("开始访问:"+sb);
         request.setAttribute("startTime", System.currentTimeMillis());
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        logger.info("开始加载视图" + request.getRequestURL().toString());
+        StringBuilder sb = new StringBuilder();
+        sb.append(request.getRequestURL().toString());
+        if(StringUtil.isNotBlank(request.getHeader("version"))) {
+            sb.append("[").append("version:").append(request.getHeader("version")).append("]");
+        }
+
+        logger.info("开始加载视图:" + sb);
     }
 
     @Override

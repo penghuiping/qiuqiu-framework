@@ -3,6 +3,6 @@ module.exports = {
     plugins: []
   },
   devServer: {
-    proxy: 'http://localhost:8081/qiuqiu_admin/v1/'
+    proxy: 'http://localhost:8081/qiuqiu_admin/'
   }
 }

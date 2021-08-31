@@ -10,6 +10,7 @@ axios.interceptors.request.use(function (config) {
   if (store.state.token) { // 判断是否存在token，如果存在的话，则每个http header都加上token
     config.headers.jwt = `${store.state.token}`
   }
+  config.headers.version = 'v1'
 
   console.log('header:', config.headers)
 

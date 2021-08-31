@@ -1,7 +1,6 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.DictPageVo;
@@ -44,8 +43,7 @@ public class DictController extends JSONController {
      *
      * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/page")
+    @PostMapping(value = "/page",headers = {"version=v1"})
     public JSONResponse<PageResultVo<DictVo>> page(@Valid @RequestBody DictPageVo dictPageVo) {
         DataGridPageDto<DictDto> dataGrid = dictionaryService.page(dictPageVo.getKey(), dictPageVo.getPageNum(), dictPageVo.getPageSize());
         List<DictDto> list = dataGrid.getData();
@@ -62,8 +60,7 @@ public class DictController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/create")
+    @PostMapping(value = "/create",headers = {"version=v1"})
     public JSONResponse<Boolean> create(@Valid @RequestBody DictCreateVo dictCreateVo) {
         return succeed(dictionaryService.create(
                 dictCreateVo.getKey(),
@@ -77,8 +74,7 @@ public class DictController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/update")
+    @PostMapping(value = "/update",headers = {"version=v1"})
     public JSONResponse<Boolean> update(@Valid @RequestBody DictUpdateVo dictUpdateVo) {
         DictDto dictDto = dictVoMapper.toDictDto(dictUpdateVo);
         return succeed(dictionaryService.update(dictDto));
@@ -91,8 +87,7 @@ public class DictController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/delete")
+    @PostMapping(value = "/delete",headers = {"version=v1"})
     public JSONResponse<Boolean> delete(@Valid @RequestBody DictKeyVo dictKeyVo) {
         return succeed(dictionaryService.delete(dictKeyVo.getKey()));
     }
@@ -103,8 +98,7 @@ public class DictController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/refresh")
+    @PostMapping(value = "/refresh",headers = {"version=v1"})
     public JSONResponse<Boolean> refresh(@Valid @RequestBody DictKeyVo dictKeyVo) {
         return succeed(dictionaryService.removeCache(dictKeyVo.getKey()));
     }

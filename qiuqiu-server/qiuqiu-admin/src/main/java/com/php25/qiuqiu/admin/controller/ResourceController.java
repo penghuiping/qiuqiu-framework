@@ -1,14 +1,13 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.common.flux.web.APIVersion;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.qiuqiu.admin.mapper.ResourceVoMapper;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceCreateVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceIdVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceUpdateVo;
-import com.php25.qiuqiu.admin.mapper.ResourceVoMapper;
 import com.php25.qiuqiu.admin.vo.out.resource.ResourceDetailVo;
 import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.resource.ResourceVo;
@@ -50,8 +49,7 @@ public class ResourceController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/create")
+    @PostMapping(value = "/create",headers = {"version=v1"})
     public JSONResponse<Boolean> create(@Valid @RequestBody ResourceCreateVo resourceCreateVo) {
         ResourceCreateDto resourceCreateDto = resourceVoMapper.toDto(resourceCreateVo);
         List<String> permissions = resourceCreateVo.getPermissions();
@@ -71,8 +69,7 @@ public class ResourceController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/update")
+    @PostMapping(value = "/update",headers = {"version=v1"})
     public JSONResponse<Boolean> update(@Valid @RequestBody ResourceUpdateVo resourceUpdateVo) {
         ResourceUpdateDto resourceUpdateDto = resourceVoMapper.toDto(resourceUpdateVo);
         List<String> permissions = resourceUpdateVo.getPermissions();
@@ -93,8 +90,7 @@ public class ResourceController extends JSONController {
      * @since v1
      */
     @AuditLog
-    @APIVersion("v1")
-    @PostMapping("/delete")
+    @PostMapping(value = "/delete",headers = {"version=v1"})
     public JSONResponse<Boolean> delete(@Valid @RequestBody ResourceDeleteVo resourceDeleteVo) {
         List<String> resources = resourceDeleteVo.getResources();
         for (String resource : resources) {
@@ -109,8 +105,7 @@ public class ResourceController extends JSONController {
      *
      * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/page")
+    @PostMapping(value = "/page",headers = {"version=v1"})
     public JSONResponse<List<ResourceVo>> page() {
         DataGridPageDto<ResourceDto> dataGrid = resourceService.page("", 1, 200);
         List<ResourceVo> res = dataGrid.getData().stream().map(resourceVoMapper::toVo).collect(Collectors.toList());
@@ -122,8 +117,7 @@ public class ResourceController extends JSONController {
      *
      * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/get_all")
+    @PostMapping(value = "/get_all",headers = {"version=v1"})
     public JSONResponse<List<ResourcePermissionVo>> getAll() {
         List<ResourceDetailDto> permissions = resourceService.getAll();
         List<ResourcePermissionVo> resourcePermissionVos = permissions.stream().map(resourceDetailDto -> {
@@ -142,8 +136,7 @@ public class ResourceController extends JSONController {
      *
      * @since v1
      */
-    @APIVersion("v1")
-    @PostMapping("/detail")
+    @PostMapping(value = "/detail",headers = {"version=v1"})
     public JSONResponse<ResourceDetailVo> detail(@Valid @RequestBody ResourceIdVo resourceIdVo) {
         ResourceDetailDto resourceDetailDto = resourceService.detail(resourceIdVo.getName());
         ResourceDetailVo resourceDetailVo = resourceVoMapper.toVo(resourceDetailDto);

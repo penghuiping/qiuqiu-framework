@@ -2,11 +2,10 @@ package com.php25.qiuqiu.admin.config;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.flux.web.APIVersionHandlerMapping;
+import com.php25.common.flux.web.LogInterceptor;
 import com.php25.common.flux.web.XssRequestBodyAdvice;
 import com.php25.common.flux.web.XssResponseBodyAdvice;
 import com.php25.qiuqiu.admin.interceptor.JwtAuthInterceptor;
-import com.php25.qiuqiu.admin.interceptor.LogInterceptor;
 import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +17,6 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.List;
 
@@ -37,15 +35,9 @@ public class WebConfig extends WebMvcConfigurationSupport {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(logInterceptor).addPathPatterns("/v1/**/**");
-        registry.addInterceptor(jwtAuthInterceptor).addPathPatterns("/v1/**/**").excludePathPatterns("/v1/user/login","/v1/user/refresh","/v1/user/img_code","/v1/loan/**");
+        registry.addInterceptor(logInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(jwtAuthInterceptor).addPathPatterns("/**").excludePathPatterns("/user/login","/user/refresh","/user/img_code","/loan/**");
 
-    }
-
-    @Override
-    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
-        super.createRequestMappingHandlerMapping();
-        return new APIVersionHandlerMapping();
     }
 
     @Override
