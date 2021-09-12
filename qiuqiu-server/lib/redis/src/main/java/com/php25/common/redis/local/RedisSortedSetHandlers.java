@@ -210,7 +210,7 @@ public class RedisSortedSetHandlers {
     private static ExpiredCache getCacheValue(LruCachePlus cache, String key) {
         ExpiredCache expiredCache = cache.getValue(key);
         if (null == expiredCache) {
-            expiredCache = new ExpiredCache(Constants.DEFAULT_EXPIRED_TIME, key, TreeMultimap.create());
+            expiredCache = new ExpiredCache(Constants.UNEXPIRED, key, TreeMultimap.create());
         }
         return expiredCache;
     }

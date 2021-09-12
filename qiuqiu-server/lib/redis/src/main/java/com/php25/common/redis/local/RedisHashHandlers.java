@@ -109,7 +109,7 @@ public class RedisHashHandlers {
     private static ExpiredCache getCacheValue(LruCachePlus cache, String key) {
         ExpiredCache expiredCache = cache.getValue(key);
         if (null == expiredCache) {
-            expiredCache = new ExpiredCache(Constants.DEFAULT_EXPIRED_TIME, key, new HashMap<String, Object>());
+            expiredCache = new ExpiredCache(Constants.UNEXPIRED, key, new HashMap<String, Object>());
         }
         return expiredCache;
     }

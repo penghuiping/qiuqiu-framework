@@ -96,7 +96,7 @@ public class RedisListHandlers {
         ExpiredCache expiredCache = cache.getValue(key);
         if (null == expiredCache) {
             LinkedListPlus<Object> linkedListPlus = new LinkedListPlus<>();
-            expiredCache = new ExpiredCache(Constants.DEFAULT_EXPIRED_TIME, key, linkedListPlus);
+            expiredCache = new ExpiredCache(Constants.UNEXPIRED, key, linkedListPlus);
         }
         return expiredCache;
     }
