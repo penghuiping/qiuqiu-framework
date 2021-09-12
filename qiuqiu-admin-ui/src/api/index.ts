@@ -28,7 +28,7 @@ axios.interceptors.response.use(
     const jsonResponse = new JsonResponse('', '', '')
     Object.assign(jsonResponse, response.data)
     const code = jsonResponse.code
-    if (code === '10001' || code === '10002' || code === '10003') {
+    if (code === 'A1101' || code === 'A1102' || code === 'A1103') {
       store.commit('logout')
     }
     return response

@@ -2,6 +2,7 @@ package com.php25.common.ws;
 
 import com.google.common.base.Objects;
 import com.php25.common.core.mess.SpringContextHolder;
+import com.php25.common.core.util.JsonUtil;
 import com.php25.common.ws.protocal.BaseMsg;
 import com.php25.common.ws.protocal.ConnectionClose;
 import lombok.Getter;
@@ -87,6 +88,11 @@ public class ExpirationSocketSession {
     }
 
     public void put(BaseMsg baseMsg) {
+        if (executorService.isShutdown()) {
+            log.warn("线程池已经关闭,无法继续处理消息,:{}", JsonUtil.toJson(baseMsg));
+            return;
+        }
+
         boolean flag = buffer.offer(baseMsg);
         if (flag) {
             if (null == this.threadFuture || this.threadFuture.isDone()) {
