@@ -10,10 +10,7 @@ import com.php25.common.redis.RSet;
 import com.php25.common.redis.RSortedSet;
 import com.php25.common.redis.RString;
 import com.php25.common.redis.RedisManager;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 

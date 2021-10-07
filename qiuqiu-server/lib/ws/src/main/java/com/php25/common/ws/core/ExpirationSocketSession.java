@@ -1,4 +1,4 @@
-package com.php25.common.ws;
+package com.php25.common.ws.core;
 
 import com.google.common.base.Objects;
 import com.php25.common.core.mess.SpringContextHolder;

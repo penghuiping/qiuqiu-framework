@@ -6,7 +6,6 @@ import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
-import com.php25.common.core.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
@@ -60,7 +59,7 @@ class RedisCmdDispatcher {
         //定时清理过期对象线程，直接关闭不影响
         this.singleExpireCacheWorker.shutdown();
         try {
-            this.singleExpireCacheWorker.awaitTermination(3,TimeUnit.SECONDS);
+            this.singleExpireCacheWorker.awaitTermination(3, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

@@ -1,7 +1,7 @@
 package com.php25.qiuqiu.notify.service.impl;
 
 import com.php25.common.core.mess.IdGenerator;
-import com.php25.common.ws.SessionContext;
+import com.php25.common.ws.core.SessionContext;
 import com.php25.qiuqiu.notify.service.MsgNotifyService;
 import com.php25.qiuqiu.notify.dto.ws.NotifyTextMsg;
 import lombok.RequiredArgsConstructor;

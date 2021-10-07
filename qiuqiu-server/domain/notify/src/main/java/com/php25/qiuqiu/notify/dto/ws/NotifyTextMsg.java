@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.notify.dto.ws;
 
-import com.php25.common.ws.annotation.WsMsg;
+import com.php25.common.ws.handler.WsMsg;
 import com.php25.common.ws.protocal.BaseMsg;
 import lombok.Getter;
 import lombok.Setter;

@@ -13,7 +13,7 @@ import lombok.extern.log4j.Log4j2;
  * @date 2020/9/3 10:32
  */
 @Log4j2
-public class VueMsgSerializer implements MsgSerializable {
+public class VueMsgSerializer implements MsgSerializer {
 
     @Override
     public String from(BaseMsg baseMsg) {

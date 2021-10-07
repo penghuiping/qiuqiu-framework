@@ -1,7 +1,7 @@
 package com.php25.common.ws.handler;
 
 import com.php25.common.ws.protocal.BaseMsg;
-import com.php25.common.ws.SessionContext;
+import com.php25.common.ws.core.SessionContext;
 
 /**
  * 消息处理接口

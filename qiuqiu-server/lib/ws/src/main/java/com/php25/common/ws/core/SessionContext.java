@@ -1,4 +1,4 @@
-package com.php25.common.ws;
+package com.php25.common.ws.core;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.php25.common.core.util.RandomUtil;
@@ -9,10 +9,10 @@ import com.php25.common.redis.RList;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.timer.Job;
 import com.php25.common.timer.Timer;
-import com.php25.common.ws.config.Constants;
 import com.php25.common.ws.protocal.BaseMsg;
 import com.php25.common.ws.protocal.SecurityAuthentication;
 import com.php25.common.ws.serializer.InternalMsgSerializer;
+import com.php25.common.ws.serializer.MsgSerializer;
 import com.php25.common.ws.serializer.VueMsgSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -58,9 +58,9 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
 
     private final MsgDispatcher msgDispatcher;
 
-    private final VueMsgSerializer vueMsgSerializer = new VueMsgSerializer();
+    private final MsgSerializer msgSerializer = new VueMsgSerializer();
 
-    private final InternalMsgSerializer internalMsgSerializer = new InternalMsgSerializer();
+    private final MsgSerializer internalMsgSerializer = new InternalMsgSerializer();
 
     public String getServerId() {
         return serverId;
@@ -116,7 +116,7 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
         });
     }
 
-    protected void init(SidUid sidUid) {
+    public void init(SidUid sidUid) {
         //先判断uid原来是否存在，存在就关闭原有连接，使用新的连接
         SidUid sidUid1 = redisService.string().get(Constants.prefix + sidUid.getUserId(), SidUid.class);
         if (sidUid1 != null) {
@@ -127,7 +127,7 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
         redisService.string().set(Constants.prefix + sidUid.getSessionId(), sidUid, 3600L);
     }
 
-    protected void clean(String sid) {
+    public void clean(String sid) {
         SidUid sidUid = redisService.string().get(Constants.prefix + sid, SidUid.class);
         if (null != sidUid) {
             redisService.remove(Constants.prefix + sidUid.getUserId());
@@ -163,7 +163,7 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
     }
 
 
-    protected void close(String sid) {
+    public void close(String sid) {
         ExpirationSocketSession expirationSocketSession = sessions.remove(sid);
         expirationSocketSession.setSessionId(sid);
         expirationSocketSession.stop();
@@ -172,7 +172,7 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
     }
 
 
-    protected WebSocketSession get(String sid) {
+    public WebSocketSession get(String sid) {
         ExpirationSocketSession expirationSocketSession = sessions.get(sid);
         if (null != expirationSocketSession) {
             return expirationSocketSession.getWebSocketSession();
@@ -189,7 +189,7 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
     }
 
 
-    protected void updateExpireTime(String sid) {
+    public void updateExpireTime(String sid) {
         ExpirationSocketSession expirationSocketSession = sessions.get(sid);
         expirationSocketSession.refreshTime();
         timer.stop(sid);
@@ -212,14 +212,14 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
         try {
             if (StringUtil.isBlank(sid)) {
                 //没有指定sid,则认为进行全局广播，并且广播消息不会重试
-                Message message = new Message(RandomUtil.randomUUID(), vueMsgSerializer.from(baseMsg));
+                Message message = new Message(RandomUtil.randomUUID(), msgSerializer.from(baseMsg));
                 messageQueueManager.send("ws_session", message);
             } else {
                 //现看看sid是否本地存在
                 if (this.sessions.containsKey(sid)) {
                     //本地存在,直接通过本地session发送
                     WebSocketSession socketSession = sessions.get(sid).getWebSocketSession();
-                    socketSession.sendMessage(new TextMessage(vueMsgSerializer.from(baseMsg)));
+                    socketSession.sendMessage(new TextMessage(msgSerializer.from(baseMsg)));
                 } else {
                     //获取远程session,并往redis推送
                     SidUid sidUid = redisService.string().get(Constants.prefix + sid, SidUid.class);
@@ -241,7 +241,7 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
         return this.sessions;
     }
 
-    protected String generateUUID() {
+    public String generateUUID() {
         return RandomUtil.randomUUID().replace("_", "");
     }
 

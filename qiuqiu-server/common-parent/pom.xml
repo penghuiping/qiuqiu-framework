@@ -30,18 +30,25 @@
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-lang3.version>3.10</commons-lang3.version>
-        <jmh.version>1.21</jmh.version>
-        <jfairy.version>0.5.9</jfairy.version>
         <hikari.version>3.3.1</hikari.version>
         <bouncycastle.version>1.67</bouncycastle.version>
         <hibernate-validator>6.1.5.Final</hibernate-validator>
         <oracle>11.2.0.3</oracle>
+        <sqlite-jdbc.verison>3.31.1</sqlite-jdbc.verison>
         <java-uuid-generator>4.0.1</java-uuid-generator>
         <jjwt>0.10.7</jjwt>
-        <map-struct>1.4.2.Final</map-struct>
-        <assertj>3.17.2</assertj>
+        <mapstruct>1.4.2.Final</mapstruct>
+        <lombok>1.18.12</lombok>
+        <lombok-mapstruct-binding>0.2.0</lombok-mapstruct-binding>
         <netty>4.1.52.Final</netty>
         <disruptor>3.4.4</disruptor>
+        <caffeine>2.9.0</caffeine>
+        <jsoup.version>1.13.1</jsoup.version>
+        <quartz.version>2.3.2</quartz.version>
+        <jasypt-spring-boot-starter.version>2.1.1</jasypt-spring-boot-starter.version>
+        <jmh.version>1.21</jmh.version>
+        <jfairy.version>0.5.9</jfairy.version>
+        <assertj>3.17.2</assertj>
         <core>V.2.5.1</core>
         <redis>V.2.5.1</redis>
         <db>V.2.5.1</db>
@@ -159,54 +166,6 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>com.php25</groupId>
-                <artifactId>core</artifactId>
-                <version>${core}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.php25</groupId>
-                <artifactId>validation</artifactId>
-                <version>${validation}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.php25</groupId>
-                <artifactId>db</artifactId>
-                <version>${db}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.php25</groupId>
-                <artifactId>redis</artifactId>
-                <version>${redis}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.php25</groupId>
-                <artifactId>ws</artifactId>
-                <version>${ws}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.php25</groupId>
-                <artifactId>webflux</artifactId>
-                <version>${webflux}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.php25</groupId>
-                <artifactId>mq</artifactId>
-                <version>${mq}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.php25</groupId>
-                <artifactId>timer</artifactId>
-                <version>${timer}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-api</artifactId>
                 <version>${jjwt}</version>
@@ -257,17 +216,17 @@
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
-                <version>${map-struct}</version>
+                <version>${mapstruct}</version>
             </dependency>
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct-processor</artifactId>
-                <version>${map-struct}</version>
+                <version>${mapstruct}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>caffeine</artifactId>
-                <version>2.9.0</version>
+                <version>${caffeine}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -277,17 +236,17 @@
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
-                <version>2.3.2</version>
+                <version>${quartz.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
-                <version>1.13.1</version>
+                <version>${jsoup.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xerial</groupId>
                 <artifactId>sqlite-jdbc</artifactId>
-                <version>3.31.1</version>
+                <version>${sqlite-jdbc.verison}</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>
@@ -308,12 +267,12 @@
             <dependency>
                 <groupId>com.github.ulisesbocchio</groupId>
                 <artifactId>jasypt-spring-boot-starter</artifactId>
-                <version>2.1.1</version>
+                <version>${jasypt-spring-boot-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.12</version>
+                <version>${lombok}</version>
             </dependency>
             <dependency>
                 <groupId>com.lmax</groupId>
@@ -325,6 +284,56 @@
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj}</version>
                 <scope>test</scope>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.php25</groupId>
+                <artifactId>core</artifactId>
+                <version>${core}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.php25</groupId>
+                <artifactId>validation</artifactId>
+                <version>${validation}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.php25</groupId>
+                <artifactId>db</artifactId>
+                <version>${db}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.php25</groupId>
+                <artifactId>redis</artifactId>
+                <version>${redis}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.php25</groupId>
+                <artifactId>ws</artifactId>
+                <version>${ws}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.php25</groupId>
+                <artifactId>webflux</artifactId>
+                <version>${webflux}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.php25</groupId>
+                <artifactId>mq</artifactId>
+                <version>${mq}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.php25</groupId>
+                <artifactId>timer</artifactId>
+                <version>${timer}</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.php25.qiuqiu</groupId>
@@ -366,6 +375,14 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>2.5.2</version>
+                    <executions>
+                        <execution>
+                            <id>repackage</id>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -375,6 +392,23 @@
                         <source>1.8</source>
                         <target>1.8</target>
                         <encoding>UTF-8</encoding>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct}</version>
+                            </path>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok}</version>
+                            </path>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok-mapstruct-binding</artifactId>
+                                <version>${lombok-mapstruct-binding}</version>
+                            </path>
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
                 <plugin>

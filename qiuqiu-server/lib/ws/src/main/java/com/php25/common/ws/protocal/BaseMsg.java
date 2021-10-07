@@ -3,7 +3,7 @@ package com.php25.common.ws.protocal;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.php25.common.ws.annotation.WsMsg;
+import com.php25.common.ws.handler.WsMsg;
 import lombok.Getter;
 import lombok.Setter;
 
