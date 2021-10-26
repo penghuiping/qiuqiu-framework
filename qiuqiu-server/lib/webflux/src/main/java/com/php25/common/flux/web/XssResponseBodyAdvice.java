@@ -4,6 +4,7 @@ import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +41,9 @@ public abstract class XssResponseBodyAdvice implements ResponseBodyAdvice {
     /**
      * 配置白名单标签
      * <p>
-     * 如: Whitelist.basicWithImages();
+     * 如: Safelist.basicWithImages();
      *
      * @return 白名单标签
      */
-    public abstract Whitelist configWhiteList();
+    public abstract Safelist configWhiteList();
 }

@@ -43,7 +43,7 @@
         <netty>4.1.52.Final</netty>
         <disruptor>3.4.4</disruptor>
         <caffeine>2.9.0</caffeine>
-        <jsoup.version>1.13.1</jsoup.version>
+        <jsoup.version>1.14.2</jsoup.version>
         <quartz.version>2.3.2</quartz.version>
         <jasypt-spring-boot-starter.version>2.1.1</jasypt-spring-boot-starter.version>
         <jmh.version>1.21</jmh.version>

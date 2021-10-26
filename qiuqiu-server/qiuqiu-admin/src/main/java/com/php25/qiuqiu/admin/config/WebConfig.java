@@ -2,12 +2,13 @@ package com.php25.qiuqiu.admin.config;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.flux.web.LogInterceptor;
+import com.php25.common.flux.web.LoggingFilter;
 import com.php25.common.flux.web.XssRequestBodyAdvice;
 import com.php25.common.flux.web.XssResponseBodyAdvice;
 import com.php25.qiuqiu.admin.interceptor.JwtAuthInterceptor;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -30,14 +31,20 @@ public class WebConfig extends WebMvcConfigurationSupport {
     @Autowired
     JwtAuthInterceptor jwtAuthInterceptor;
 
-    @Autowired
-    LogInterceptor logInterceptor;
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(logInterceptor).addPathPatterns("/**");
-        registry.addInterceptor(jwtAuthInterceptor).addPathPatterns("/**").excludePathPatterns("/user/login","/user/refresh","/user/img_code","/loan/**");
+        registry.addInterceptor(jwtAuthInterceptor).addPathPatterns("/**").excludePathPatterns("/user/login", "/user/refresh", "/user/img_code", "/loan/**");
 
+    }
+
+
+    @Bean
+    FilterRegistrationBean<LoggingFilter> loggingFilter() {
+        FilterRegistrationBean<LoggingFilter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
+        filterFilterRegistrationBean.setFilter(new LoggingFilter());
+        filterFilterRegistrationBean.setOrder(1);
+        filterFilterRegistrationBean.addUrlPatterns("/*");
+        return filterFilterRegistrationBean;
     }
 
     @Override
@@ -50,16 +57,18 @@ public class WebConfig extends WebMvcConfigurationSupport {
     protected RequestMappingHandlerAdapter createRequestMappingHandlerAdapter() {
         RequestMappingHandlerAdapter requestMappingHandlerAdapter = super.createRequestMappingHandlerAdapter();
         requestMappingHandlerAdapter.setRequestBodyAdvice(Lists.newArrayList(new XssRequestBodyAdvice() {
-            private final Whitelist whitelist = Whitelist.simpleText();
+            private final Safelist whitelist = Safelist.simpleText();
+
             @Override
-            public Whitelist configWhiteList() {
+            public Safelist configWhiteList() {
                 return this.whitelist;
             }
         }));
         requestMappingHandlerAdapter.setResponseBodyAdvice(Lists.newArrayList(new XssResponseBodyAdvice() {
-            private final Whitelist whitelist = Whitelist.simpleText();
+            private final Safelist whitelist = Safelist.simpleText();
+
             @Override
-            public Whitelist configWhiteList() {
+            public Safelist configWhiteList() {
                 return this.whitelist;
             }
         }));
