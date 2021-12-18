@@ -10,13 +10,13 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 /**
- * @author: penghuiping
- * @date: 2019/7/24 17:21
- * @description:
+ * weflux 通用日志打印
+ * @author penghuiping
+ * @date 2019/7/24 17:21
  */
-public class LogFilter implements WebFilter {
+public class WebFluxLogFilter implements WebFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(LogFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(WebFluxLogFilter.class);
 
     @Override
     public Mono<Void> filter(ServerWebExchange serverWebExchange, WebFilterChain webFilterChain) {

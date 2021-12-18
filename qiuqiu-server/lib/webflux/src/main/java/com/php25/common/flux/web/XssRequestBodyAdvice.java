@@ -10,7 +10,6 @@ import com.php25.common.core.exception.Exceptions;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
-import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
@@ -43,11 +42,11 @@ public abstract class XssRequestBodyAdvice extends RequestBodyAdviceAdapter {
     @NotNull
     @Override
     public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, @NotNull MethodParameter parameter, @NotNull Type targetType, @NotNull Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
-        if(null == inputMessage.getHeaders().getContentType()) {
+        if (null == inputMessage.getHeaders().getContentType()) {
             return inputMessage;
         }
 
-        if(!inputMessage.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON)) {
+        if (!inputMessage.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON)) {
             return inputMessage;
         }
 
@@ -81,7 +80,7 @@ public abstract class XssRequestBodyAdvice extends RequestBodyAdviceAdapter {
                 }
             };
         } else {
-            throw Exceptions.throwBusinessException("999999", "requestBody存在不安全的html内容");
+            throw Exceptions.throwBusinessException("A9999", "requestBody存在不安全的html内容");
         }
     }
 

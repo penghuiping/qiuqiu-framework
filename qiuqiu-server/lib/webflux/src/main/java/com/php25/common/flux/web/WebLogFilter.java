@@ -8,12 +8,13 @@ import org.springframework.web.filter.AbstractRequestLoggingFilter;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * servlet filter 通用日志打印
  * @author penghuiping
  * @date 2021/10/26 21:44
  */
-public class LoggingFilter extends AbstractRequestLoggingFilter {
+public class WebLogFilter extends AbstractRequestLoggingFilter {
 
-    private Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
+    private final Logger logger = LoggerFactory.getLogger(WebLogFilter.class);
 
     @Override
     protected boolean shouldLog(HttpServletRequest request) {
@@ -27,11 +28,11 @@ public class LoggingFilter extends AbstractRequestLoggingFilter {
     protected void beforeRequest(HttpServletRequest request, String message) {
         StringBuilder sb = new StringBuilder();
         sb.append(message);
-        if(StringUtil.isNotBlank(request.getHeader("version"))) {
+        if (StringUtil.isNotBlank(request.getHeader("version"))) {
             sb.append("[").append("version:").append(request.getHeader("version")).append("]");
         }
 
-        logger.info("开始访问:{}",sb);
+        logger.info("开始访问:{}", sb);
         request.setAttribute("startTime", System.currentTimeMillis());
     }
 
@@ -41,7 +42,7 @@ public class LoggingFilter extends AbstractRequestLoggingFilter {
     @Override
     protected void afterRequest(HttpServletRequest request, String message) {
         Long startTime = (Long) request.getAttribute("startTime");
-        logger.info("结束访问:{},总耗时:{}ms",message,(System.currentTimeMillis() - startTime));
+        logger.info("结束访问:{},总耗时:{}ms", message, (System.currentTimeMillis() - startTime));
     }
 
 }

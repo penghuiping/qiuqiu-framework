@@ -5,7 +5,6 @@ import com.php25.common.core.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
-import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
@@ -33,7 +32,7 @@ public abstract class XssResponseBodyAdvice implements ResponseBodyAdvice {
         log.info("response body:{}", responseBody);
         boolean isValid = Jsoup.isValid(responseBody, this.configWhiteList());
         if (!isValid) {
-            throw Exceptions.throwBusinessException("999998", "responseBody存在不安全的html内容");
+            throw Exceptions.throwBusinessException("B9999", "responseBody存在不安全的html内容");
         }
         return body;
     }
@@ -41,7 +40,7 @@ public abstract class XssResponseBodyAdvice implements ResponseBodyAdvice {
     /**
      * 配置白名单标签
      * <p>
-     * 如: Safelist.basicWithImages();
+     * 如: Whitelist.basicWithImages();
      *
      * @return 白名单标签
      */

@@ -46,7 +46,7 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
 
     private final RetryMsgManager retryMsgManager;
 
-    private final RedisManager redisService;
+    private final RedisManager redisManager;
 
     private final MessageQueueManager messageQueueManager;
 
@@ -74,7 +74,7 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
                           Timer timer,
                           MessageQueueManager messageQueueManager) {
         this.retryMsgManager = retryMsgManager;
-        this.redisService = redisService;
+        this.redisManager = redisService;
         this.serverId = serverId;
         this.securityAuthentication = securityAuthentication;
         this.msgDispatcher = msgDispatcher;
@@ -118,21 +118,21 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
 
     public void init(SidUid sidUid) {
         //先判断uid原来是否存在，存在就关闭原有连接，使用新的连接
-        SidUid sidUid1 = redisService.string().get(Constants.prefix + sidUid.getUserId(), SidUid.class);
+        SidUid sidUid1 = redisManager.string().get(Constants.prefix + sidUid.getUserId(), SidUid.class);
         if (sidUid1 != null) {
             clean(sidUid1.getSessionId());
             close(sidUid1.getSessionId());
         }
-        redisService.string().set(Constants.prefix + sidUid.getUserId(), sidUid, 3600L);
-        redisService.string().set(Constants.prefix + sidUid.getSessionId(), sidUid, 3600L);
+        redisManager.string().set(Constants.prefix + sidUid.getUserId(), sidUid, 3600L);
+        redisManager.string().set(Constants.prefix + sidUid.getSessionId(), sidUid, 3600L);
     }
 
     public void clean(String sid) {
-        SidUid sidUid = redisService.string().get(Constants.prefix + sid, SidUid.class);
+        SidUid sidUid = redisManager.string().get(Constants.prefix + sid, SidUid.class);
         if (null != sidUid) {
-            redisService.remove(Constants.prefix + sidUid.getUserId());
+            redisManager.remove(Constants.prefix + sidUid.getUserId());
         }
-        redisService.remove(Constants.prefix + sid);
+        redisManager.remove(Constants.prefix + sid);
     }
 
     public RetryMsgManager getRetryMsgManager() {
@@ -199,7 +199,7 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
     }
 
     public String getSid(String uid) {
-        SidUid sidUid = redisService.string().get(Constants.prefix + uid, SidUid.class);
+        SidUid sidUid = redisManager.string().get(Constants.prefix + uid, SidUid.class);
         if (null != sidUid) {
             return sidUid.getSessionId();
         }
@@ -222,9 +222,9 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
                     socketSession.sendMessage(new TextMessage(msgSerializer.from(baseMsg)));
                 } else {
                     //获取远程session,并往redis推送
-                    SidUid sidUid = redisService.string().get(Constants.prefix + sid, SidUid.class);
+                    SidUid sidUid = redisManager.string().get(Constants.prefix + sid, SidUid.class);
                     String serverId = sidUid.getServerId();
-                    RList<String> rList = redisService.list(Constants.prefix + serverId, String.class);
+                    RList<String> rList = redisManager.list(Constants.prefix + serverId, String.class);
                     rList.leftPush(internalMsgSerializer.from(baseMsg));
                 }
             }
