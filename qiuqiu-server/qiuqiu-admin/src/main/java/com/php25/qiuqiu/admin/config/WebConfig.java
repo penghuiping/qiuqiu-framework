@@ -2,12 +2,13 @@ package com.php25.qiuqiu.admin.config;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.flux.web.LoggingFilter;
+import com.php25.common.flux.web.WebLogFilter;
 import com.php25.common.flux.web.XssRequestBodyAdvice;
 import com.php25.common.flux.web.XssResponseBodyAdvice;
 import com.php25.qiuqiu.admin.interceptor.JwtAuthInterceptor;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,9 @@ public class WebConfig extends WebMvcConfigurationSupport {
     @Autowired
     JwtAuthInterceptor jwtAuthInterceptor;
 
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtAuthInterceptor).addPathPatterns("/**").excludePathPatterns("/user/login", "/user/refresh", "/user/img_code", "/loan/**");
@@ -39,9 +43,11 @@ public class WebConfig extends WebMvcConfigurationSupport {
 
 
     @Bean
-    FilterRegistrationBean<LoggingFilter> loggingFilter() {
-        FilterRegistrationBean<LoggingFilter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
-        filterFilterRegistrationBean.setFilter(new LoggingFilter());
+    FilterRegistrationBean<WebLogFilter> loggingFilter() {
+        FilterRegistrationBean<WebLogFilter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
+        filterFilterRegistrationBean.setFilter(new WebLogFilter(
+            contextPath+"/user/**"
+        ));
         filterFilterRegistrationBean.setOrder(1);
         filterFilterRegistrationBean.addUrlPatterns("/*");
         return filterFilterRegistrationBean;
