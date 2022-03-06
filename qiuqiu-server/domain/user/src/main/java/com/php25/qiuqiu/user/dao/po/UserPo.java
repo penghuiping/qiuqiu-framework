@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
-@TableName("t_user")
+@TableName(value = "t_user")
 public class UserPo {
     /**
      * id,自增
@@ -44,7 +44,7 @@ public class UserPo {
     /**
      * 创建时间
      */
-    @TableField("create_time")
+    @TableField(value = "create_time")
     private LocalDateTime createTime;
 
     /**
