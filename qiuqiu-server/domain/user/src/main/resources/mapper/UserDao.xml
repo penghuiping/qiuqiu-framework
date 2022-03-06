@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.php25.qiuqiu.user.dao.UserDao">
+
+
+    <insert id="insertBatch">
+        insert into t_user(,nickname,username,
+        password,create_time,last_modified_time,
+        group_id,,data_access_level)
+        values
+        <foreach collection="userPoCollection" item="item" separator=",">
+            (#{item.id,jdbcType=NUMERIC},#{item.nickname,jdbcType=VARCHAR},#{item.username,jdbcType=VARCHAR},
+            #{item.password,jdbcType=VARCHAR},#{item.createTime},#{item.lastModifiedTime},
+            #{item.groupId,jdbcType=NUMERIC},#{item.enable,jdbcType=BOOLEAN},#{item.dataAccessLevel,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+</mapper>

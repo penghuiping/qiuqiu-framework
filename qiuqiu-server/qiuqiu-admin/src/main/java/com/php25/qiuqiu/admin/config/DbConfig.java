@@ -1,22 +1,16 @@
 package com.php25.qiuqiu.admin.config;
 
-import com.php25.common.db.DbType;
-import com.php25.common.db.EntitiesScan;
-import com.php25.qiuqiu.user.constant.DataAccessLevel;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.convert.support.DefaultConversionService;
-import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.sqlite.SQLiteDataSource;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 /**
@@ -70,30 +64,5 @@ public class DbConfig {
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
-    }
-
-    @Profile(value = {"local1"})
-    @Bean
-    public DbType dbType() {
-        return DbType.SQLITE;
-    }
-
-    @Profile(value = {"local","dev","test"})
-    @Bean
-    public DbType dbType1() {
-        return DbType.MYSQL;
-    }
-
-    @PostConstruct
-    public void init() {
-        new EntitiesScan().scanPackage(
-                "com.php25.qiuqiu.user.entity",
-                "com.php25.qiuqiu.monitor.entity",
-                "com.php25.qiuqiu.job.entity",
-                "com.php25.common.timer.entity"
-        );
-
-        GenericConversionService genericConversionService = (GenericConversionService) DefaultConversionService.getSharedInstance();
-        genericConversionService.addConverter(String.class, DataAccessLevel.class, DataAccessLevel::valueOf);
     }
 }

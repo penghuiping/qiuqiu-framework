@@ -17,12 +17,10 @@
 
     <modules>
         <module>core</module>
-        <module>db</module>
         <module>webflux</module>
         <module>redis</module>
         <module>validation</module>
         <module>ws</module>
-        <module>mq</module>
         <module>timer</module>
     </modules>
 

@@ -1,20 +1,39 @@
 package com.php25.qiuqiu.monitor.repository.impl;
 
-import com.php25.common.db.DbType;
-import com.php25.common.db.repository.BaseDbRepositoryImpl;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.php25.qiuqiu.monitor.dao.AuditLogDao;
+import com.php25.qiuqiu.monitor.dao.po.AuditLogPo;
 import com.php25.qiuqiu.monitor.entity.AuditLog;
 import com.php25.qiuqiu.monitor.repository.AuditLogRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
 /**
  * @author penghuiping
  * @date 2021/3/11 15:09
  */
+@RequiredArgsConstructor
 @Repository
-public class AuditLogRepositoryImpl extends BaseDbRepositoryImpl<AuditLog, Long> implements AuditLogRepository {
+public class AuditLogRepositoryImpl implements AuditLogRepository {
 
-    public AuditLogRepositoryImpl(JdbcTemplate jdbcTemplate, DbType dbType) {
-        super(jdbcTemplate, dbType);
+    private final AuditLogDao auditLogDao;
+
+    @Override
+    public boolean save(AuditLog auditLog) {
+        AuditLogPo auditLogPo = new AuditLogPo();
+        BeanUtils.copyProperties(auditLog, auditLogPo);
+        if (null == auditLog.getId()) {
+            //新增
+            return auditLogDao.insert(auditLogPo) > 0;
+        } else {
+            //更新
+            return auditLogDao.updateById(auditLogPo) > 0;
+        }
+    }
+
+    @Override
+    public IPage<AuditLog> page(String username, Integer pageNum, Integer pageSize) {
+        return null;
     }
 }

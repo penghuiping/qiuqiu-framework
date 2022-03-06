@@ -1,7 +1,5 @@
 package com.php25.qiuqiu.user.entity;
 
-import com.php25.common.db.core.annotation.Column;
-import com.php25.common.db.core.annotation.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,18 +11,15 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-@Table("t_user_role")
 public class UserRole {
 
     /**
      * 用户id
      */
-    @Column("user_id")
     private Long userId;
 
     /**
      * 角色id
      */
-    @Column("role_id")
     private Long roleId;
 }

@@ -1,11 +1,8 @@
 package com.php25.qiuqiu.user.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.util.StringUtil;
-import com.php25.common.db.specification.Operator;
-import com.php25.common.db.specification.SearchParam;
-import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.permission.PermissionCreateDto;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
@@ -14,8 +11,6 @@ import com.php25.qiuqiu.user.mapper.PermissionDtoMapper;
 import com.php25.qiuqiu.user.repository.PermissionRepository;
 import com.php25.qiuqiu.user.service.PermissionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,17 +32,15 @@ public class PermissionServiceImpl implements PermissionService {
     public Boolean create(PermissionCreateDto permission) {
         Permission permission0 = permissionDtoMapper.toEntity(permission);
         permission0.setEnable(true);
-        permission0.setIsNew(true);
-        permissionRepository.save(permission0);
+        permissionRepository.save(permission0, true);
         return true;
     }
 
     @Override
     public Boolean update(PermissionDto permission) {
         Permission permission0 = permissionDtoMapper.toEntity(permission);
-        permission0.setIsNew(false);
         permission0.setEnable(permission.getEnable());
-        permissionRepository.save(permission0);
+        permissionRepository.save(permission0, false);
         return true;
     }
 
@@ -66,14 +59,10 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public DataGridPageDto<PermissionDto> page(String permissionName, Integer pageNum, Integer pageSize) {
-        SearchParamBuilder builder = SearchParamBuilder.builder();
-        if (!StringUtil.isBlank(permissionName)) {
-            builder.append(SearchParam.of("name", Operator.EQ, permissionName));
-        }
-        PageRequest pageRequest = PageRequest.of(pageNum, pageSize);
-        Page<Permission> page = permissionRepository.findAll(builder, pageRequest);
+        IPage<Permission> page = permissionRepository.page(permissionName, pageNum, pageSize);
         DataGridPageDto<PermissionDto> dataGridPageDto = new DataGridPageDto<>();
-        List<PermissionDto> permissionDtos = page.get().map(permissionDtoMapper::toDto).collect(Collectors.toList());
+        List<PermissionDto> permissionDtos = page.getRecords().stream()
+                .map(permissionDtoMapper::toDto).collect(Collectors.toList());
         dataGridPageDto.setData(permissionDtos);
         return dataGridPageDto;
     }

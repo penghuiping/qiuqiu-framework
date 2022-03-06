@@ -20,8 +20,8 @@
             <artifactId>core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.php25</groupId>
-            <artifactId>db</artifactId>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus</artifactId>
         </dependency>
         <dependency>
             <groupId>com.php25</groupId>

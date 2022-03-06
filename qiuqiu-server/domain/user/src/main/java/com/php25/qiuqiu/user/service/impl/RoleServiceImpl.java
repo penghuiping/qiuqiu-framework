@@ -1,11 +1,8 @@
 package com.php25.qiuqiu.user.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.util.StringUtil;
-import com.php25.common.db.specification.Operator;
-import com.php25.common.db.specification.SearchParam;
-import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleCreateDto;
@@ -24,9 +21,6 @@ import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,8 +63,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
     public Boolean create(RoleCreateDto role) {
         Role role0 = roleDtoMapper.toEntity(role);
         role0.setEnable(true);
-        role0.setIsNew(true);
-        roleRepository.save(role0);
+        roleRepository.save(role0, true);
 
         //role与permission关系
         List<ResourcePermissionDto> permissions = role.getResourcePermissions();
@@ -92,8 +85,7 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
     @Transactional
     public Boolean update(RoleUpdateDto role) {
         Role role0 = roleDtoMapper.toEntity(role);
-        role0.setIsNew(false);
-        roleRepository.save(role0);
+        roleRepository.save(role0, false);
 
         //role与permission关系
         List<ResourcePermissionDto> permissions = role.getResourcePermissions();
@@ -132,15 +124,11 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
 
     @Override
     public DataGridPageDto<RolePageDto> page(String roleName, Integer pageNum, Integer pageSize) {
-        SearchParamBuilder builder = SearchParamBuilder.builder();
-        if (!StringUtil.isBlank(roleName)) {
-            builder.append(SearchParam.of("name", Operator.EQ, roleName));
-        }
-        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
-        Page<Role> page = roleRepository.findAll(builder, pageRequest);
+        IPage<Role> page = roleRepository.page(roleName, pageNum, pageSize);
         DataGridPageDto<RolePageDto> res = new DataGridPageDto<>();
-        List<RolePageDto> roleDtos = page.get().map(roleDtoMapper::toDto).collect(Collectors.toList());
-        res.setRecordsTotal(page.getTotalElements());
+        List<RolePageDto> roleDtos = page.getRecords().stream().map(roleDtoMapper::toDto)
+                .collect(Collectors.toList());
+        res.setRecordsTotal(page.getTotal());
         res.setData(roleDtos);
         return res;
     }

@@ -1,13 +1,11 @@
 package com.php25.qiuqiu.admin.config;
 
-import com.php25.common.db.DbType;
 import com.php25.common.redis.RedisManager;
-import com.php25.common.timer.RedisTimerInnerLogManager;
 import com.php25.common.timer.Timer;
 import com.php25.common.timer.TimerInnerLogManager;
+import com.php25.common.timer.dao.TimerInnerLogDao;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * @author penghuiping
@@ -22,7 +20,7 @@ public class TimerConfig {
     }
 
     @Bean
-    TimerInnerLogManager jobExecutionLogManager(DbType dbType, JdbcTemplate jdbcTemplate, RedisManager redisManager) {
-        return new RedisTimerInnerLogManager(dbType, jdbcTemplate,redisManager);
+    TimerInnerLogManager jobExecutionLogManager(TimerInnerLogDao timerInnerLogDao, RedisManager redisManager) {
+        return new TimerInnerLogManager(timerInnerLogDao, redisManager);
     }
 }

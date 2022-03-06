@@ -4,14 +4,9 @@ import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.tree.TreeNode;
 import com.php25.common.core.tree.Trees;
-import com.php25.common.db.specification.Operator;
-import com.php25.common.db.specification.SearchParam;
-import com.php25.common.db.specification.SearchParamBuilder;
-import com.php25.qiuqiu.user.constant.DataAccessLevel;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.group.GroupCreateDto;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
-import com.php25.qiuqiu.user.dto.user.UserDto;
 import com.php25.qiuqiu.user.entity.Group;
 import com.php25.qiuqiu.user.entity.User;
 import com.php25.qiuqiu.user.mapper.GroupDtoMapper;
@@ -48,10 +43,7 @@ public class GroupServiceImpl implements GroupService {
 
     private GroupDto findById(Long groupId) {
         Optional<Group> groupOptional = groupRepository.findById(groupId);
-        if (groupOptional.isPresent()) {
-            return groupDtoMapper.toDto(groupOptional.get());
-        }
-        return null;
+        return groupOptional.map(groupDtoMapper::toDto).orElse(null);
     }
 
     @Override
@@ -97,16 +89,14 @@ public class GroupServiceImpl implements GroupService {
     public Boolean create(GroupCreateDto group) {
         Group group0 = groupDtoMapper.toEntity(group);
         group0.setEnable(true);
-        group0.setIsNew(true);
-        groupRepository.save(group0);
+        groupRepository.save(group0,true);
         return true;
     }
 
     @Override
     public Boolean update(GroupDto group) {
         Group group0 = groupDtoMapper.toEntity(group);
-        group0.setIsNew(false);
-        groupRepository.save(group0);
+        groupRepository.save(group0,false);
         return true;
     }
 
@@ -125,39 +115,39 @@ public class GroupServiceImpl implements GroupService {
         return true;
     }
 
-    @Override
-    public SearchParamBuilder getDataAccessScope(String username) {
-        UserDto userDto = userService.getUserInfo(username);
-        DataAccessLevel dataAccessLevel = userDto.getDataAccessLevel();
-        SearchParamBuilder searchParamBuilder = new SearchParamBuilder();
-        switch (dataAccessLevel) {
-            case GLOBAL_DATA: {
-                //查询全部,所以不需要搜索条件
-                break;
-            }
-            case GROUP_DATA: {
-                //只能查询当前组
-                Long groupId = this.findGroupId(username);
-                searchParamBuilder.append(SearchParam.of("groupId", Operator.EQ, groupId));
-                break;
-            }
-            case GROUP_AND_CHILDREN_DATA: {
-                //只能查询当前组与子组
-                List<Long> groupIds = this.findGroupsId(username);
-                searchParamBuilder.append(SearchParam.of("groupId", Operator.IN, groupIds));
-                break;
-            }
-            case ONLY_SELF: {
-                //只能访问自己创建的数据
-                searchParamBuilder.append(SearchParam.of("createBy", Operator.EQ, username));
-                break;
-            }
-            default: {
-                //默认 ONLY_SELF
-                searchParamBuilder.append(SearchParam.of("createBy", Operator.EQ, username));
-                break;
-            }
-        }
-        return searchParamBuilder;
-    }
+//    @Override
+//    public SearchParamBuilder getDataAccessScope(String username) {
+//        UserDto userDto = userService.getUserInfo(username);
+//        DataAccessLevel dataAccessLevel = userDto.getDataAccessLevel();
+//        SearchParamBuilder searchParamBuilder = new SearchParamBuilder();
+//        switch (dataAccessLevel) {
+//            case GLOBAL_DATA: {
+//                //查询全部,所以不需要搜索条件
+//                break;
+//            }
+//            case GROUP_DATA: {
+//                //只能查询当前组
+//                Long groupId = this.findGroupId(username);
+//                searchParamBuilder.append(SearchParam.of("groupId", Operator.EQ, groupId));
+//                break;
+//            }
+//            case GROUP_AND_CHILDREN_DATA: {
+//                //只能查询当前组与子组
+//                List<Long> groupIds = this.findGroupsId(username);
+//                searchParamBuilder.append(SearchParam.of("groupId", Operator.IN, groupIds));
+//                break;
+//            }
+//            case ONLY_SELF: {
+//                //只能访问自己创建的数据
+//                searchParamBuilder.append(SearchParam.of("createBy", Operator.EQ, username));
+//                break;
+//            }
+//            default: {
+//                //默认 ONLY_SELF
+//                searchParamBuilder.append(SearchParam.of("createBy", Operator.EQ, username));
+//                break;
+//            }
+//        }
+//        return searchParamBuilder;
+//    }
 }

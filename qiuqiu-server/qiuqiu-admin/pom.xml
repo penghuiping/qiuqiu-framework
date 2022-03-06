@@ -120,7 +120,6 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus</artifactId>
-            <version>3.4.2</version>
         </dependency>
     </dependencies>
 

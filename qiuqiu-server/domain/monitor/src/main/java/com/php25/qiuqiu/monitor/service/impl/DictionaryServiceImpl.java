@@ -1,12 +1,9 @@
 package com.php25.qiuqiu.monitor.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.core.util.StringUtil;
-import com.php25.common.db.specification.Operator;
-import com.php25.common.db.specification.SearchParam;
-import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.common.mq.Message;
 import com.php25.common.mq.MessageQueueManager;
 import com.php25.qiuqiu.monitor.dto.DictDto;
@@ -19,9 +16,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,7 +48,7 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        messageQueueManager.subscribe("dict", serverId,true, message -> {
+        messageQueueManager.subscribe("dict", serverId, true, message -> {
             log.info("刷新缓存:{}", JsonUtil.toJson(message));
             String key = message.getBody().toString();
             this.removeCache0(key);
@@ -88,9 +82,7 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
     @Override
     public Boolean update(DictDto dictDto) {
         Dict dict = dictDtoMapper.toEntity(dictDto);
-        dict.setIsNew(false);
-        dictRepository.save(dict);
-        return true;
+        return dictRepository.save(dict);
     }
 
     @Override
@@ -100,9 +92,7 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
         dict.setValue(value);
         dict.setDescription(description);
         dict.setEnable(true);
-        dict.setIsNew(true);
-        dictRepository.save(dict);
-        return true;
+        return dictRepository.save(dict);
     }
 
     @Override
@@ -118,16 +108,11 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
 
     @Override
     public DataGridPageDto<DictDto> page(String key, Integer pageNum, Integer pageSize) {
-        SearchParamBuilder searchParamBuilder = SearchParamBuilder.builder();
-        if (!StringUtil.isBlank(key)) {
-            searchParamBuilder.append(SearchParam.of("key", Operator.EQ, key));
-        }
-        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
-        Page<Dict> page = dictRepository.findAll(searchParamBuilder, pageRequest);
+        IPage<Dict> page = dictRepository.page(key, pageNum, pageSize);
         DataGridPageDto<DictDto> dataGrid = new DataGridPageDto<>();
-        List<DictDto> dictDtoList = page.get().map(dictDtoMapper::toDto).collect(Collectors.toList());
+        List<DictDto> dictDtoList = page.getRecords().stream().map(dictDtoMapper::toDto).collect(Collectors.toList());
         dataGrid.setData(dictDtoList);
-        dataGrid.setRecordsTotal(page.getTotalElements());
+        dataGrid.setRecordsTotal(page.getTotal());
         return dataGrid;
     }
 

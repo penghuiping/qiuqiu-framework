@@ -1,7 +1,6 @@
 package com.php25.qiuqiu.admin.vo.out;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.php25.common.db.core.annotation.GeneratedValue;
 import lombok.Getter;
 import lombok.Setter;
 

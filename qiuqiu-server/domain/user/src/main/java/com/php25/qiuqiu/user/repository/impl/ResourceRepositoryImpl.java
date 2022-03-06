@@ -1,58 +1,148 @@
 package com.php25.qiuqiu.user.repository.impl;
 
-import com.php25.common.db.DbType;
-import com.php25.common.db.Queries;
-import com.php25.common.db.QueriesExecute;
-import com.php25.common.db.core.sql.SqlParams;
-import com.php25.common.db.repository.BaseDbRepositoryImpl;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Lists;
+import com.php25.qiuqiu.user.dao.ResourceDao;
+import com.php25.qiuqiu.user.dao.ResourcePermissionDao;
+import com.php25.qiuqiu.user.dao.po.ResourcePermissionPo;
+import com.php25.qiuqiu.user.dao.po.ResourcePo;
 import com.php25.qiuqiu.user.entity.Resource;
 import com.php25.qiuqiu.user.entity.ResourcePermission;
-import com.php25.qiuqiu.user.entity.RoleResourcePermission;
 import com.php25.qiuqiu.user.repository.ResourceRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author penghuiping
  * @date 2021/3/25 21:03
  */
+@RequiredArgsConstructor
 @Repository
-public class ResourceRepositoryImpl extends BaseDbRepositoryImpl<Resource, String> implements ResourceRepository {
+public class ResourceRepositoryImpl implements ResourceRepository {
+    private final ResourcePermissionDao resourcePermissionDao;
+    private final ResourceDao resourceDao;
 
-    public ResourceRepositoryImpl(JdbcTemplate jdbcTemplate, DbType dbType) {
-        super(jdbcTemplate, dbType);
-    }
 
     @Override
     public boolean deleteResourcePermissions(String resourceName) {
-        SqlParams sqlParams = Queries.of(dbType).from(ResourcePermission.class).whereEq("resource", resourceName).delete();
-        return QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).delete(sqlParams) > 0;
+        LambdaQueryWrapper<ResourcePermissionPo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(ResourcePermissionPo::getResource, resourceName);
+        return resourcePermissionDao.delete(lambdaQueryWrapper) > 0;
     }
 
     @Override
     public boolean createResourcePermissions(List<ResourcePermission> resourcePermissions) {
-        SqlParams sqlParams = Queries.of(dbType).from(ResourcePermission.class).insertBatch(resourcePermissions);
-        QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).insertBatch(sqlParams);
+        if (null != resourcePermissions && !resourcePermissions.isEmpty()) {
+            List<ResourcePermissionPo> resourcePermissionPos = resourcePermissions.stream()
+                    .map(resourcePermission -> {
+                        ResourcePermissionPo resourcePermissionPo = new ResourcePermissionPo();
+                        BeanUtils.copyProperties(resourcePermission, resourcePermissionPo);
+                        return resourcePermissionPo;
+                    }).collect(Collectors.toList());
+            resourcePermissionDao.insertBatch(resourcePermissionPos);
+        }
         return true;
     }
 
     @Override
     public boolean hasReferencedByRole(String resourceName) {
-        SqlParams sqlParams = Queries.of(dbType).from(RoleResourcePermission.class).whereEq("resource", resourceName).count();
-        return QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).count(sqlParams) > 0;
+        LambdaQueryWrapper<ResourcePermissionPo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(ResourcePermissionPo::getResource, resourceName);
+        return resourcePermissionDao.selectCount(lambdaQueryWrapper) > 0;
     }
 
     @Override
     public List<ResourcePermission> getAllResourcePermissions() {
-        SqlParams sqlParams = Queries.of(dbType).from(ResourcePermission.class).select();
-        return QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
+        LambdaQueryWrapper<ResourcePermissionPo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        List<ResourcePermissionPo> resourcePermissionPos = resourcePermissionDao.selectList(lambdaQueryWrapper);
+        if (null != resourcePermissionPos && !resourcePermissionPos.isEmpty()) {
+            return resourcePermissionPos.stream().map(resourcePermissionPo -> {
+                ResourcePermission resourcePermission = new ResourcePermission();
+                BeanUtils.copyProperties(resourcePermissionPo, resourcePermission);
+                return resourcePermission;
+            }).collect(Collectors.toList());
+        }
+        return Lists.newArrayList();
     }
 
     @Override
     public List<ResourcePermission> getResourcePermissionsByResourceName(String resourceName) {
-        SqlParams sqlParams = Queries.of(dbType).from(ResourcePermission.class).whereEq("resource",resourceName).select();
-        return QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
+        LambdaQueryWrapper<ResourcePermissionPo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(ResourcePermissionPo::getResource, resourceName);
+        List<ResourcePermissionPo> resourcePermissionPos = resourcePermissionDao.selectList(lambdaQueryWrapper);
+        if (null != resourcePermissionPos && !resourcePermissionPos.isEmpty()) {
+            return resourcePermissionPos.stream().map(resourcePermissionPo -> {
+                ResourcePermission resourcePermission = new ResourcePermission();
+                BeanUtils.copyProperties(resourcePermissionPo, resourcePermission);
+                return resourcePermission;
+            }).collect(Collectors.toList());
+        }
+        return Lists.newArrayList();
+    }
+
+    @Override
+    public boolean save(Resource resource, boolean isInsert) {
+        ResourcePo resourcePo = new ResourcePo();
+        if (isInsert) {
+            BeanUtils.copyProperties(resource, resourcePo);
+            return resourceDao.insert(resourcePo) > 0;
+        } else {
+            BeanUtils.copyProperties(resource, resourcePo);
+            return resourceDao.updateById(resourcePo) > 0;
+        }
+    }
+
+    @Override
+    public List<Resource> findAllEnabled() {
+        List<ResourcePo> resources = resourceDao.selectList(Wrappers.<ResourcePo>lambdaQuery().eq(ResourcePo::getEnable, true));
+        if (null != resources && !resources.isEmpty()) {
+            return resources.stream().map(resourcePo -> {
+                Resource resource = new Resource();
+                BeanUtils.copyProperties(resourcePo, resource);
+                return resource;
+            }).collect(Collectors.toList());
+        }
+        return Lists.newArrayList();
+    }
+
+    @Override
+    public Optional<Resource> findById(String id) {
+        ResourcePo resourcePo = resourceDao.selectById(id);
+        Resource resource = new Resource();
+        BeanUtils.copyProperties(resourcePo, resource);
+        return Optional.of(resource);
+    }
+
+    @Override
+    public boolean deleteById(String id) {
+        return resourceDao.deleteById(id) > 0;
+    }
+
+    @Override
+    public IPage<Resource> page(String resourceName, Integer pageNum, Integer pageSize) {
+        IPage<ResourcePo> iPage = resourceDao
+                .selectPage(new Page<>(pageNum, pageSize),
+                        Wrappers.<ResourcePo>lambdaQuery()
+                                .eq(ResourcePo::getName, resourceName));
+        List<ResourcePo> resourcePos = iPage.getRecords();
+        List<Resource> resources = resourcePos.stream().map(resourcePo -> {
+            Resource resource = new Resource();
+            BeanUtils.copyProperties(resourcePo, resource);
+            return resource;
+        }).collect(Collectors.toList());
+        IPage<Resource> resourceIPage = new Page<>();
+        resourceIPage.setCurrent(pageNum);
+        resourceIPage.setSize(pageSize);
+        resourceIPage.setTotal(iPage.getTotal());
+        resourceIPage.setRecords(resources);
+        return resourceIPage;
     }
 }

@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.user.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.mess.IdGenerator;
@@ -9,9 +10,6 @@ import com.php25.common.core.util.crypto.constant.SignAlgorithm;
 import com.php25.common.core.util.crypto.key.SecretKeyUtil;
 import com.php25.common.core.util.jwt.JwtUtil;
 import com.php25.common.core.util.jwt.UserRoleInfo;
-import com.php25.common.db.specification.Operator;
-import com.php25.common.db.specification.SearchParam;
-import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.qiuqiu.user.constant.DataAccessLevel;
 import com.php25.qiuqiu.user.constant.UserConstants;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
@@ -29,7 +27,6 @@ import com.php25.qiuqiu.user.entity.RoleResourcePermission;
 import com.php25.qiuqiu.user.entity.User;
 import com.php25.qiuqiu.user.entity.UserRole;
 import com.php25.qiuqiu.user.mapper.GroupDtoMapper;
-import com.php25.qiuqiu.user.mapper.PermissionDtoMapper;
 import com.php25.qiuqiu.user.mapper.RoleDtoMapper;
 import com.php25.qiuqiu.user.mapper.UserDtoMapper;
 import com.php25.qiuqiu.user.repository.GroupRepository;
@@ -40,9 +37,6 @@ import com.php25.qiuqiu.user.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AntPathMatcher;
@@ -237,20 +231,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public DataGridPageDto<UserPageDto> page(String username, Integer pageNum, Integer pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
-        SearchParamBuilder builder = SearchParamBuilder.builder();
-        if (!StringUtil.isBlank(username)) {
-            builder.append(SearchParam.of("username", Operator.EQ, username));
-        }
-        Page<User> userPage = userRepository.findAll(builder, pageRequest);
+        IPage<User> userPage = userRepository.page(username,pageNum,pageSize);
         DataGridPageDto<UserPageDto> res = new DataGridPageDto<>();
-        List<UserPageDto> list = userPage.get().map(user -> {
+        List<UserPageDto> list = userPage.getRecords().stream().map(user -> {
             UserPageDto userPageDto = userDtoMapper.toDto0(user);
             userPageDto.setEnable(user.getEnable());
             return userPageDto;
         }).collect(Collectors.toList());
         res.setData(list);
-        res.setRecordsTotal(userPage.getTotalElements());
+        res.setRecordsTotal(userPage.getTotal());
         return res;
     }
 
@@ -261,8 +250,7 @@ public class UserServiceImpl implements UserService {
         user.setCreateTime(LocalDateTime.now());
         user.setLastModifiedTime(LocalDateTime.now());
         user.setEnable(true);
-        user.setIsNew(true);
-        userRepository.save(user);
+        userRepository.save(user,true);
 
         List<UserRole> roleRefs = userCreateDto.getRoleIds().stream().map(roleId -> {
             UserRole roleRef = new UserRole();
@@ -280,8 +268,7 @@ public class UserServiceImpl implements UserService {
     public Boolean update(UserUpdateDto userUpdateDto) {
         User user = userDtoMapper.toEntity(userUpdateDto);
         user.setLastModifiedTime(LocalDateTime.now());
-        user.setIsNew(false);
-        userRepository.save(user);
+        userRepository.save(user,false);
         if (null != userUpdateDto.getRoleIds() && !userUpdateDto.getRoleIds().isEmpty()) {
             List<UserRole> roleRefs = userUpdateDto.getRoleIds().stream().map(roleId -> {
                 UserRole roleRef = new UserRole();

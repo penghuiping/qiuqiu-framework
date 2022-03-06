@@ -1,12 +1,9 @@
 package com.php25.qiuqiu.monitor.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.core.util.StringUtil;
-import com.php25.common.db.specification.Operator;
-import com.php25.common.db.specification.SearchParam;
-import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.common.mq.Message;
 import com.php25.common.mq.MessageQueueManager;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
@@ -17,9 +14,6 @@ import com.php25.qiuqiu.monitor.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,23 +54,17 @@ public class AuditLogServiceImpl implements AuditLogService, InitializingBean {
 
     private Boolean create0(AuditLogDto auditLogDto) {
         AuditLog auditLog = auditLogDtoMapper.toEntity(auditLogDto);
-        auditLog.setIsNew(true);
-        auditLogRepository.save(auditLog);
-        return true;
+        return auditLogRepository.save(auditLog);
     }
 
     @Override
     public DataGridPageDto<AuditLogDto> page(String username, Integer pageNum, Integer pageSize) {
-        SearchParamBuilder builder = SearchParamBuilder.builder();
-        if (!StringUtil.isBlank(username)) {
-            builder.append(SearchParam.of("username", Operator.EQ, username));
-        }
-        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
-        Page<AuditLog> page = auditLogRepository.findAll(builder, pageRequest);
+        IPage<AuditLog> page = auditLogRepository.page(username, pageNum, pageSize);
         DataGridPageDto<AuditLogDto> dataGrid = new DataGridPageDto<>();
-        List<AuditLogDto> data = page.get().map(auditLogDtoMapper::toDto).collect(Collectors.toList());
+        List<AuditLogDto> data = page.getRecords().stream().map(auditLogDtoMapper::toDto)
+                .collect(Collectors.toList());
         dataGrid.setData(data);
-        dataGrid.setRecordsTotal(page.getTotalElements());
+        dataGrid.setRecordsTotal(page.getTotal());
         return dataGrid;
     }
 }

@@ -1,12 +1,9 @@
 package com.php25.qiuqiu.user.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Lists;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.util.StringUtil;
-import com.php25.common.db.specification.Operator;
-import com.php25.common.db.specification.SearchParam;
-import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.resource.ResourceCreateDto;
 import com.php25.qiuqiu.user.dto.resource.ResourceDetailDto;
@@ -19,8 +16,6 @@ import com.php25.qiuqiu.user.mapper.ResourceDtoMapper;
 import com.php25.qiuqiu.user.repository.ResourceRepository;
 import com.php25.qiuqiu.user.service.ResourceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,8 +43,7 @@ public class ResourceServiceImpl implements ResourceService {
     public Boolean create(ResourceCreateDto resource) {
         Resource resource0 = resourceDtoMapper.toEntity(resource);
         resource0.setEnable(true);
-        resource0.setIsNew(true);
-        resourceRepository.save(resource0);
+        resourceRepository.save(resource0,true);
         List<ResourcePermissionDto> resourcePermissionDtos = resource.getResourcePermissions();
         if (null != resourcePermissionDtos && !resourcePermissionDtos.isEmpty()) {
             List<ResourcePermission> resourcePermissions = resourcePermissionDtos.stream().map(resourceDtoMapper::toEntity).collect(Collectors.toList());
@@ -62,8 +56,7 @@ public class ResourceServiceImpl implements ResourceService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean update(ResourceUpdateDto resource) {
         Resource resource0 = resourceDtoMapper.toEntity(resource);
-        resource0.setIsNew(false);
-        resourceRepository.save(resource0);
+        resourceRepository.save(resource0,false);
 
         List<ResourcePermissionDto> resourcePermissionDtos = resource.getResourcePermissions();
         if (null != resourcePermissionDtos && !resourcePermissionDtos.isEmpty()) {
@@ -88,16 +81,11 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public DataGridPageDto<ResourceDto> page(String resourceName, Integer pageNum, Integer pageSize) {
-        SearchParamBuilder builder = new SearchParamBuilder();
-        if (StringUtil.isNotBlank(resourceName)) {
-            builder.append(SearchParam.of("name", Operator.EQ, resourceName));
-        }
-        PageRequest pageRequest = PageRequest.of(pageNum, pageSize);
-        Page<Resource> page = this.resourceRepository.findAll(builder, pageRequest);
+        IPage<Resource> page = this.resourceRepository.page(resourceName, pageNum,pageSize);
         DataGridPageDto<ResourceDto> dataGrid = new DataGridPageDto<>();
-        List<ResourceDto> res = page.stream().map(resourceDtoMapper::toDto).collect(Collectors.toList());
+        List<ResourceDto> res = page.getRecords().stream().map(resourceDtoMapper::toDto).collect(Collectors.toList());
         dataGrid.setData(res);
-        dataGrid.setRecordsTotal(page.getTotalElements());
+        dataGrid.setRecordsTotal(page.getTotal());
         return dataGrid;
     }
 

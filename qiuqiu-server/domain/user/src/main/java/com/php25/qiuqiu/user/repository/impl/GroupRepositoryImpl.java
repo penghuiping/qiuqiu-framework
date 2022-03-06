@@ -1,44 +1,49 @@
 package com.php25.qiuqiu.user.repository.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.common.collect.Lists;
-import com.php25.common.db.DbType;
-import com.php25.common.db.Queries;
-import com.php25.common.db.QueriesExecute;
-import com.php25.common.db.core.sql.SqlParams;
-import com.php25.common.db.repository.BaseDbRepositoryImpl;
+import com.php25.qiuqiu.user.dao.GroupDao;
+import com.php25.qiuqiu.user.dao.po.GroupPo;
 import com.php25.qiuqiu.user.entity.Group;
 import com.php25.qiuqiu.user.repository.GroupRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author penghuiping
  * @date 2021/3/5 17:12
  */
+@RequiredArgsConstructor
 @Component
-public class GroupRepositoryImpl extends BaseDbRepositoryImpl<Group, Long> implements GroupRepository {
-
-    public GroupRepositoryImpl(JdbcTemplate jdbcTemplate, DbType dbType) {
-        super(jdbcTemplate, dbType);
-    }
+public class GroupRepositoryImpl implements GroupRepository {
+    private final GroupDao groupDao;
 
     @Override
     public List<Group> findDirectGroupByParentId(Long parentId) {
-        SqlParams sqlParams = Queries.of(dbType).from(Group.class).whereEq("parentId", parentId).select();
-        List<Group> groups = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
-        if (null != groups && !groups.isEmpty()) {
-            return groups;
+        LambdaQueryWrapper<GroupPo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(GroupPo::getParentId, parentId);
+        List<GroupPo> groupPos = groupDao.selectList(lambdaQueryWrapper);
+        if (null != groupPos && !groupPos.isEmpty()) {
+            return groupPos.stream().map(groupPo -> {
+                Group group = new Group();
+                BeanUtils.copyProperties(groupPo, group);
+                return group;
+            }).collect(Collectors.toList());
         }
         return Lists.newArrayList();
     }
 
     @Override
     public Long countByParentId(Long parentId) {
-        SqlParams sqlParams = Queries.of(dbType).from(Group.class).whereEq("parentId", parentId).count();
-        Long res = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).count(sqlParams);
+        LambdaQueryWrapper<GroupPo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(GroupPo::getParentId, parentId);
+        Long res = groupDao.selectCount(lambdaQueryWrapper);
         if (null != res) {
             return res;
         }
@@ -47,15 +52,59 @@ public class GroupRepositoryImpl extends BaseDbRepositoryImpl<Group, Long> imple
 
     @Override
     public List<Group> findEnabledGroupsByIds(List<Long> groupIds) {
+        List<GroupPo> groupPos = null;
         if (groupIds.size() == 1) {
-            Optional<Group> groupOptional = this.findByIdEnable(groupIds.get(0));
-            if (groupOptional.isPresent()) {
-                return Lists.newArrayList(groupOptional.get());
-            }
+            LambdaQueryWrapper<GroupPo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(GroupPo::getId, groupIds.get(0));
+            groupPos = groupDao.selectList(lambdaQueryWrapper);
         } else {
-            SqlParams sqlParams = Queries.of(dbType).from(Group.class).whereIn("groupId", groupIds).select();
-            return QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).select(sqlParams);
+            LambdaQueryWrapper<GroupPo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.in(GroupPo::getId, groupIds);
+            groupPos = groupDao.selectList(lambdaQueryWrapper);
+        }
+        if (null != groupPos && !groupPos.isEmpty()) {
+            return groupPos.stream().map(groupPo -> {
+                Group group = new Group();
+                BeanUtils.copyProperties(groupPo, group);
+                return group;
+            }).collect(Collectors.toList());
         }
         return Lists.newArrayList();
+    }
+
+    @Override
+    public Optional<Group> findById(Long groupId) {
+        GroupPo groupPo = groupDao.selectById(groupId);
+        if (null != groupPo) {
+            Group group = new Group();
+            BeanUtils.copyProperties(groupPo, group);
+            return Optional.of(group);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean save(Group group, boolean isInsert) {
+        GroupPo groupPo = new GroupPo();
+        BeanUtils.copyProperties(group, groupPo);
+        return groupDao.insert(groupPo) > 0;
+    }
+
+    @Override
+    public List<Group> findAll() {
+        List<GroupPo> groupPos = groupDao.selectList(Wrappers.lambdaQuery());
+        if (null != groupPos && !groupPos.isEmpty()) {
+            return groupPos.stream().map(groupPo -> {
+                Group group = new Group();
+                BeanUtils.copyProperties(groupPo, group);
+                return group;
+            }).collect(Collectors.toList());
+        }
+        return Lists.newArrayList();
+    }
+
+    @Override
+    public boolean deleteById(Long id) {
+        return groupDao.deleteById(id) > 0;
     }
 }

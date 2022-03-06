@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.php25.qiuqiu.user.dao.RoleResourcePermissionDao">
+
+
+    <insert id="insertBatch">
+        insert into t_role_resource_permission(role_id,resource,permission)
+        values
+        <foreach collection="roleResourcePermissionPoCollection" item="item" separator=",">
+            (#{item.roleId,jdbcType=NUMERIC},#{item.resource,jdbcType=VARCHAR},#{item.permission,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+</mapper>

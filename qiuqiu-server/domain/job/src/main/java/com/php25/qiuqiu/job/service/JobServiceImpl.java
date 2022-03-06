@@ -1,13 +1,10 @@
 package com.php25.qiuqiu.job.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.core.util.RandomUtil;
-import com.php25.common.core.util.StringUtil;
-import com.php25.common.db.specification.Operator;
-import com.php25.common.db.specification.SearchParam;
-import com.php25.common.db.specification.SearchParamBuilder;
 import com.php25.common.mq.Message;
 import com.php25.common.mq.MessageQueueManager;
 import com.php25.common.redis.RedisManager;
@@ -38,9 +35,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -98,26 +92,22 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     @Override
     public DataGridPageDto<JobDto> page(String username, String name, Integer pageNum, Integer pageSize) {
         List<Long> groupIds = groupService.findGroupsId(username);
-        SearchParamBuilder searchParamBuilder = new SearchParamBuilder();
-        if (!StringUtil.isBlank(name)) {
-            searchParamBuilder.append(SearchParam.of("name", Operator.EQ, name));
-        }
-        searchParamBuilder.append(SearchParam.of("groupId", Operator.IN, groupIds));
-        PageRequest request = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
-        Page<JobModel> page = jobModelRepository.findAll(searchParamBuilder, request);
-
-        List<JobDto> jobDtoList = page.get().map(jobDtoMapper::toDto).collect(Collectors.toList());
+        IPage<JobModel> page = jobModelRepository.page(groupIds, name, pageNum, pageSize);
+        List<JobDto> jobDtoList = page.getRecords()
+                .stream().map(jobDtoMapper::toDto)
+                .collect(Collectors.toList());
         DataGridPageDto<JobDto> dataGrid = new DataGridPageDto<>();
         dataGrid.setData(jobDtoList);
-        dataGrid.setRecordsTotal(page.getTotalElements());
+        dataGrid.setRecordsTotal(page.getTotal());
         return dataGrid;
     }
 
     @Override
     public List<JobDto> findAll(String username) {
-        SearchParamBuilder searchParamBuilder = groupService.getDataAccessScope(username);
-        List<JobModel> list = jobModelRepository.findAll(searchParamBuilder);
-        return list.stream().map(jobDtoMapper::toDto).collect(Collectors.toList());
+//        SearchParamBuilder searchParamBuilder = groupService.getDataAccessScope(username);
+//        List<JobModel> list = jobModelRepository.findAll(searchParamBuilder);
+//        return list.stream().map(jobDtoMapper::toDto).collect(Collectors.toList());
+        return null;
     }
 
     @Override
@@ -126,7 +116,6 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         JobModel jobModel = jobDtoMapper.toEntity(job);
         jobModel.setGroupId(groupId);
         jobModel.setId(RandomUtil.randomUUID());
-        jobModel.setIsNew(true);
         jobModelRepository.save(jobModel);
         return true;
     }
@@ -134,7 +123,6 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     @Override
     public Boolean update(String username, JobUpdateDto job) {
         JobModel jobModel = jobDtoMapper.toEntity(job);
-        jobModel.setIsNew(false);
         jobModelRepository.save(jobModel);
         return true;
     }
@@ -157,17 +145,13 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     @Override
     public DataGridPageDto<JobLogDto> pageJobLog(String username, String jobName, Integer pageNum, Integer pageSize) {
         List<Long> groupsId = groupService.findGroupsId(username);
-        SearchParamBuilder builder = SearchParamBuilder.builder();
-        if (StringUtil.isNotBlank(jobName)) {
-            builder.append(SearchParam.of("jobName", Operator.EQ, jobName));
-        }
-        builder.append(SearchParam.of("groupId", Operator.IN, groupsId));
-        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
-        Page<JobLog> page = jobLogRepository.findAll(builder, pageRequest);
+        IPage<JobLog> page = jobLogRepository.page(groupsId, jobName, pageNum, pageSize);
         DataGridPageDto<JobLogDto> dataGrid = new DataGridPageDto<>();
-        List<JobLogDto> jobLogDtoList = page.get().map(jobDtoMapper::toDto0).collect(Collectors.toList());
+        List<JobLogDto> jobLogDtoList = page.getRecords().stream()
+                .map(jobDtoMapper::toDto0)
+                .collect(Collectors.toList());
         dataGrid.setData(jobLogDtoList);
-        dataGrid.setRecordsTotal(page.getTotalElements());
+        dataGrid.setRecordsTotal(page.getTotal());
         return dataGrid;
     }
 
@@ -181,7 +165,6 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         JobModel jobModel = jobModelOptional.get();
         JobLog jobLog0 = jobDtoMapper.toEntity0(jobLog);
         jobLog0.setGroupId(jobModel.getGroupId());
-        jobLog0.setIsNew(true);
         jobLogRepository.save(jobLog0);
         return true;
     }
@@ -199,7 +182,6 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         jobExecution0.setTimerLoadedNumber(0);
         jobExecution0.setJobName(jobModelOptional.get().getName());
         jobExecution0.setId(RandomUtil.randomUUID());
-        jobExecution0.setIsNew(true);
         jobExecutionRepository.save(jobExecution0);
         return true;
     }
@@ -216,7 +198,6 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         if (groupIds.contains(groupId)) {
             //可以更新
             JobExecution jobExecution0 = jobDtoMapper.toEntity1(jobExecution);
-            jobExecution0.setIsNew(false);
             jobExecutionRepository.save(jobExecution0);
             return true;
         } else {
@@ -232,7 +213,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             return false;
         }
         JobExecution jobExecution = jobExecutionOptional.get();
-        if(timer.getAllLoadedExecutionIds().contains(jobExecution.getId())) {
+        if (timer.getAllLoadedExecutionIds().contains(jobExecution.getId())) {
             throw Exceptions.throwBusinessException(JobErrorCode.JOB_EXECUTION_HAS_LOADED_CANT_DELETE);
         }
         Long groupId = jobExecution.getGroupId();
@@ -245,16 +226,10 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     @Override
     public DataGridPageDto<JobExecutionDto> pageJobExecution(String username, String jobName, Integer pageNum, Integer pageSize) {
         List<Long> groupIds = groupService.findGroupsId(username);
-        SearchParamBuilder builder = SearchParamBuilder.builder();
-        if (StringUtil.isNotBlank(jobName)) {
-            builder.append(SearchParam.of("jobName", Operator.EQ, jobName));
-        }
-        builder.append(SearchParam.of("groupId", Operator.IN, groupIds));
-        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("id")));
-        Page<JobExecution> page = this.jobExecutionRepository.findAll(builder, pageRequest);
+        IPage<JobExecution> page = this.jobExecutionRepository.page(groupIds, jobName, pageNum, pageSize);
         DataGridPageDto<JobExecutionDto> dataGrid = new DataGridPageDto<>();
-        dataGrid.setRecordsTotal(page.getTotalElements());
-        dataGrid.setData(page.get().map(jobDtoMapper::toDto1).collect(Collectors.toList()));
+        dataGrid.setRecordsTotal(page.getTotal());
+        dataGrid.setData(page.getRecords().stream().map(jobDtoMapper::toDto1).collect(Collectors.toList()));
         return dataGrid;
     }
 
@@ -291,9 +266,9 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             String tmp = JsonUtil.toJson(message.getBody());
             log.info("JobExecutionStatisticReqDto为:{}", tmp);
             Set<String> executionIds = timer.getAllLoadedExecutionIds();
-            Map<String,Integer> res = new HashMap<>();
-            for(String executionId: executionIds) {
-                res.put(executionId,1);
+            Map<String, Integer> res = new HashMap<>();
+            for (String executionId : executionIds) {
+                res.put(executionId, 1);
             }
             JobExecutionStatisticResDto resDto = new JobExecutionStatisticResDto();
             resDto.setEntries(res);
@@ -304,7 +279,7 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
 
     private void mergeStatisticLoadedJobExecutionSubscribe() {
         messageQueueManager.subscribe("merge_statistic_loaded_job_execution", serverId, true, message -> {
-            JobExecutionStatisticResDto res = JsonUtil.fromJson(JsonUtil.toJson(message.getBody()),JobExecutionStatisticResDto.class );
+            JobExecutionStatisticResDto res = JsonUtil.fromJson(JsonUtil.toJson(message.getBody()), JobExecutionStatisticResDto.class);
             res.getEntries().forEach((key, value) -> {
                 Lock lock = redisManager.lock("merge_statistic_loaded_job_execution");
                 lock.lock();
@@ -315,10 +290,9 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
                         JobExecution jobExecution0 = new JobExecution();
                         jobExecution0.setId(jobExecution.getId());
                         jobExecution0.setTimerLoadedNumber(jobExecution.getTimerLoadedNumber() + value);
-                        jobExecution0.setIsNew(false);
                         jobExecutionRepository.save(jobExecution0);
                     }
-                }finally {
+                } finally {
                     lock.unlock();
                 }
             });
@@ -357,8 +331,8 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         Runnable task = null;
         try {
             Class<?> cls = Class.forName(className);
-            task = (BaseRunnable) cls.getDeclaredConstructor(String.class, String.class,String.class)
-                    .newInstance(jobModel.getId(), jobModel.getName(),executionId);
+            task = (BaseRunnable) cls.getDeclaredConstructor(String.class, String.class, String.class)
+                    .newInstance(jobModel.getId(), jobModel.getName(), executionId);
         } catch (Exception e) {
             log.error("定时任务对应的执行代码类加载出错", e);
             return;

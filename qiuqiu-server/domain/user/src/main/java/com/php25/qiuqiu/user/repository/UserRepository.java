@@ -1,8 +1,10 @@
 package com.php25.qiuqiu.user.repository;
 
-import com.php25.common.db.repository.BaseDbRepository;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.php25.qiuqiu.user.entity.User;
 import com.php25.qiuqiu.user.entity.UserRole;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +13,7 @@ import java.util.Optional;
  * @author penghuiping
  * @date 2021/2/3 13:32
  */
-public interface UserRepository extends BaseDbRepository<User, Long> {
+public interface UserRepository {
 
     /**
      * 根据用户名从数据库中查询用户信息
@@ -67,5 +69,41 @@ public interface UserRepository extends BaseDbRepository<User, Long> {
      * @return 在组中的用户数
      */
     Long countByGroupId(Long groupId);
+
+    /**
+     * 保存
+     *
+     * @param user     用户
+     * @param isInsert true:新增 false:更新
+     * @return true:成功
+     */
+    boolean save(User user, boolean isInsert);
+
+
+    /**
+     * 根据id主键获取用户
+     *
+     * @param id 主键
+     * @return 用户
+     */
+    Optional<User> findById(Long id);
+
+    /**
+     * 物理删除用户
+     *
+     * @param id 用户id
+     * @return true:删除成功
+     */
+    boolean deleteById(Long id);
+
+    /**
+     * 用户分页查询
+     *
+     * @param username 用户名
+     * @param pageNum  页码
+     * @param pageSize 页大小
+     * @return 用户分页数据
+     */
+    IPage<User> page(String username, Integer pageNum, Integer pageSize);
 
 }

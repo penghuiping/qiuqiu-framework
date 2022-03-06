@@ -1,14 +1,15 @@
 package com.php25.qiuqiu.job.repository;
 
-import com.php25.common.db.DbType;
-import com.php25.common.db.Queries;
-import com.php25.common.db.QueriesExecute;
-import com.php25.common.db.core.sql.SqlParams;
-import com.php25.common.db.repository.BaseDbRepositoryImpl;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.php25.qiuqiu.job.dao.JobExecutionDao;
+import com.php25.qiuqiu.job.dao.po.JobExecutionPo;
 import com.php25.qiuqiu.job.entity.JobExecution;
-import org.springframework.jdbc.core.JdbcTemplate;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -16,24 +17,46 @@ import java.util.Optional;
  * @date 2021/3/15 20:37
  */
 @Repository
-public class JobExecutionRepositoryImpl extends BaseDbRepositoryImpl<JobExecution, String> implements JobExecutionRepository {
-    public JobExecutionRepositoryImpl(JdbcTemplate jdbcTemplate, DbType dbType) {
-        super(jdbcTemplate, dbType);
-    }
+@RequiredArgsConstructor
+public class JobExecutionRepositoryImpl implements JobExecutionRepository {
 
+    private final JobExecutionDao jobExecutionDao;
 
     @Override
     public Optional<JobExecution> findByJobId(String jobId) {
-        SqlParams sqlParams = Queries.of(dbType).from(JobExecution.class).whereEq("jobId", jobId).single();
-        JobExecution jobExecution = QueriesExecute.of(dbType).singleJdbc().with(jdbcTemplate).single(sqlParams);
-        return Optional.ofNullable(jobExecution);
+        JobExecutionPo jobExecutionPo = jobExecutionDao.selectOne(Wrappers.<JobExecutionPo>lambdaQuery().eq(JobExecutionPo::getJobId, jobId));
+        JobExecution jobExecution = new JobExecution();
+        BeanUtils.copyProperties(jobExecutionPo, jobExecution);
+        return Optional.of(jobExecution);
     }
 
     @Override
     public Boolean resetTimerLoadedNumber() {
-        JobExecution jobExecution = new JobExecution();
-        jobExecution.setTimerLoadedNumber(0);
-        this.jdbcTemplate.update("update t_timer_job_execution set timer_loaded_number=0 where 1=1");
-        return true;
+        return jobExecutionDao.update(null,Wrappers.<JobExecutionPo>lambdaUpdate().set(JobExecutionPo::getTimerLoadedNumber,0))>0;
+    }
+
+    @Override
+    public Boolean save(JobExecution jobExecution) {
+        return null;
+    }
+
+    @Override
+    public Optional<JobExecution> findById(String id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Boolean deleteById(String id) {
+        return null;
+    }
+
+    @Override
+    public List<JobExecution> findAll() {
+        return null;
+    }
+
+    @Override
+    public IPage<JobExecution> page(List<Long> groupIds, String jobName, Integer pageNum, Integer pageSize) {
+        return null;
     }
 }

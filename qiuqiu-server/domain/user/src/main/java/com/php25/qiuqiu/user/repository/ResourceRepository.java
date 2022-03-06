@@ -1,16 +1,18 @@
 package com.php25.qiuqiu.user.repository;
 
-import com.php25.common.db.repository.BaseDbRepository;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.php25.qiuqiu.user.entity.Resource;
 import com.php25.qiuqiu.user.entity.ResourcePermission;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author penghuiping
  * @date 2021/3/25 20:12
  */
-public interface ResourceRepository extends BaseDbRepository<Resource, String> {
+public interface ResourceRepository {
 
     /**
      * 删除资源与权限关系
@@ -51,4 +53,46 @@ public interface ResourceRepository extends BaseDbRepository<Resource, String> {
      * @return 资源权限列表
      */
     List<ResourcePermission> getResourcePermissionsByResourceName(String resourceName);
+
+    /**
+     * 保存
+     *
+     * @param resource 资源
+     * @param isInsert true:新增 false:更新
+     * @return true:成功
+     */
+    boolean save(Resource resource, boolean isInsert);
+
+    /**
+     * 获取所有有效的资源
+     *
+     * @return 资源列表
+     */
+    List<Resource> findAllEnabled();
+
+    /**
+     * 根据资源id获取资源
+     *
+     * @param id 资源id
+     * @return 资源
+     */
+    Optional<Resource> findById(String id);
+
+    /**
+     * 物理删除资源
+     *
+     * @param id 主键id
+     * @return true:删除成功
+     */
+    boolean deleteById(String id);
+
+    /**
+     * 分页
+     *
+     * @param resourceName 资源名
+     * @param pageNum      页面
+     * @param pageSize     页记录数
+     * @return 分页数据
+     */
+    IPage<Resource> page(String resourceName, Integer pageNum, Integer pageSize);
 }
