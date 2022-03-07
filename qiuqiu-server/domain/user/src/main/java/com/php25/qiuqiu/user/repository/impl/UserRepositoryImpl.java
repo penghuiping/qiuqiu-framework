@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
+import com.php25.common.core.util.StringUtil;
+import com.php25.common.core.util.TimeUtil;
 import com.php25.qiuqiu.user.dao.UserDao;
 import com.php25.qiuqiu.user.dao.UserRoleDao;
 import com.php25.qiuqiu.user.dao.po.UserPo;
@@ -14,8 +16,11 @@ import com.php25.qiuqiu.user.entity.UserRole;
 import com.php25.qiuqiu.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,7 +35,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     private final UserDao userDao;
     private final UserRoleDao userRoleDao;
-
 
     @Override
     public Optional<User> findByUsername(String username) {
@@ -142,11 +146,14 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public IPage<User> page(String username, Integer pageNum, Integer pageSize) {
-        IPage<UserPo> page = userDao.selectPage(new Page<UserPo>(pageNum, pageSize), Wrappers.<UserPo>lambdaQuery().eq(UserPo::getUsername, username));
+        IPage<UserPo> page = userDao.selectPage(new Page<>(pageNum, pageSize),
+                Wrappers.<UserPo>lambdaQuery().eq(StringUtil.isNotBlank(username),UserPo::getUsername, username));
         Page<User> userPage = new Page<>();
         userPage.setRecords(page.getRecords().stream().map(userPo -> {
             User user = new User();
             BeanUtils.copyProperties(userPo, user);
+            user.setCreateTime(TimeUtil.toLocalDateTime(userPo.getCreateTime()));
+            user.setLastModifiedTime(TimeUtil.toLocalDateTime(userPo.getLastModifiedTime()));
             return user;
         }).collect(Collectors.toList()));
         userPage.setCurrent(pageNum);

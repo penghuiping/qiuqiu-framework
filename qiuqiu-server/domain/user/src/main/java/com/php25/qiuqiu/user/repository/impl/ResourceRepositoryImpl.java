@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
+import com.php25.common.core.util.StringUtil;
 import com.php25.qiuqiu.user.dao.ResourceDao;
 import com.php25.qiuqiu.user.dao.ResourcePermissionDao;
 import com.php25.qiuqiu.user.dao.po.ResourcePermissionPo;
@@ -131,18 +132,18 @@ public class ResourceRepositoryImpl implements ResourceRepository {
         IPage<ResourcePo> iPage = resourceDao
                 .selectPage(new Page<>(pageNum, pageSize),
                         Wrappers.<ResourcePo>lambdaQuery()
-                                .eq(ResourcePo::getName, resourceName));
+                                .eq(StringUtil.isNotBlank(resourceName),ResourcePo::getName, resourceName));
         List<ResourcePo> resourcePos = iPage.getRecords();
         List<Resource> resources = resourcePos.stream().map(resourcePo -> {
             Resource resource = new Resource();
             BeanUtils.copyProperties(resourcePo, resource);
             return resource;
         }).collect(Collectors.toList());
-        IPage<Resource> resourceIPage = new Page<>();
-        resourceIPage.setCurrent(pageNum);
-        resourceIPage.setSize(pageSize);
-        resourceIPage.setTotal(iPage.getTotal());
-        resourceIPage.setRecords(resources);
-        return resourceIPage;
+        IPage<Resource> resourcePage = new Page<>();
+        resourcePage.setCurrent(pageNum);
+        resourcePage.setSize(pageSize);
+        resourcePage.setTotal(iPage.getTotal());
+        resourcePage.setRecords(resources);
+        return resourcePage;
     }
 }

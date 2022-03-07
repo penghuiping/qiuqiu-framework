@@ -45,9 +45,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
     @Bean
     FilterRegistrationBean<WebLogFilter> loggingFilter() {
         FilterRegistrationBean<WebLogFilter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
-        filterFilterRegistrationBean.setFilter(new WebLogFilter(
-            contextPath+"/user/**"
-        ));
+        filterFilterRegistrationBean.setFilter(new WebLogFilter());
         filterFilterRegistrationBean.setOrder(1);
         filterFilterRegistrationBean.addUrlPatterns("/*");
         return filterFilterRegistrationBean;

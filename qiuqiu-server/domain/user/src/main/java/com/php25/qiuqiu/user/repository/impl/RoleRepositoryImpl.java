@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
+import com.php25.common.core.util.StringUtil;
 import com.php25.qiuqiu.user.dao.RoleDao;
 import com.php25.qiuqiu.user.dao.RoleResourcePermissionDao;
 import com.php25.qiuqiu.user.dao.po.RolePo;
@@ -152,8 +153,8 @@ public class RoleRepositoryImpl implements RoleRepository {
     @Override
     public IPage<Role> page(String roleName, Integer pageNum, Integer pageSize) {
         IPage<RolePo> page = roleDao
-                .selectPage(new Page<RolePo>(pageNum, pageSize),
-                        Wrappers.<RolePo>lambdaQuery().eq(RolePo::getName, roleName));
+                .selectPage(new Page<>(pageNum, pageSize),
+                        Wrappers.<RolePo>lambdaQuery().eq(StringUtil.isNotBlank(roleName),RolePo::getName, roleName));
         Page<Role> rolePage = new Page<>();
         rolePage.setRecords(page.getRecords().stream().map(rolePo -> {
             Role role = new Role();

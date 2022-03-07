@@ -3,6 +3,7 @@ package com.php25.qiuqiu.monitor.repository.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.php25.common.core.util.StringUtil;
 import com.php25.qiuqiu.monitor.dao.DictDao;
 import com.php25.qiuqiu.monitor.dao.po.DictPo;
 import com.php25.qiuqiu.monitor.entity.Dict;
@@ -58,7 +59,7 @@ public class DictRepositoryImpl implements DictRepository {
     @Override
     public IPage<Dict> page(String key, Integer pageNum, Integer pageSize) {
         IPage<DictPo> iPage = dictDao.selectPage(new Page<>(pageNum, pageSize)
-                , Wrappers.<DictPo>lambdaQuery().eq(DictPo::getKey, key));
+                , Wrappers.<DictPo>lambdaQuery().eq(StringUtil.isNotBlank(key),DictPo::getKey, key));
         IPage<Dict> result = new Page<Dict>();
         List<Dict> dictList = iPage.getRecords().stream().map(dictPo -> {
             Dict dict = new Dict();

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
+import com.php25.common.core.util.StringUtil;
 import com.php25.qiuqiu.user.dao.PermissionDao;
 import com.php25.qiuqiu.user.dao.ResourcePermissionDao;
 import com.php25.qiuqiu.user.dao.po.PermissionPo;
@@ -67,7 +68,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
         IPage<PermissionPo> page = permissionDao
                 .selectPage(new Page<>(pageNum, pageSize),
                         Wrappers.<PermissionPo>lambdaQuery()
-                                .eq(PermissionPo::getName, permissionName));
+                                .eq(StringUtil.isNotBlank(permissionName),PermissionPo::getName, permissionName));
         List<Permission> permissions = new ArrayList<>();
         if (null != page.getRecords() && !page.getRecords().isEmpty()) {
             permissions = page.getRecords().stream().map(permissionPo -> {

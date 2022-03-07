@@ -20,7 +20,6 @@ public class ResourcePo {
      * 资源名
      */
     @TableId(type = IdType.INPUT)
-    @TableField
     private String name;
 
     /**

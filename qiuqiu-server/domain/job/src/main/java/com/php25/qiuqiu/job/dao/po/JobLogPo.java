@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 任务执行日志
@@ -42,7 +43,7 @@ public class JobLogPo {
      * 任务执行时间
      */
     @TableField("execute_time")
-    private LocalDateTime executeTime;
+    private Date executeTime;
 
     /**
      * 任务执行 0:失败 1:成功

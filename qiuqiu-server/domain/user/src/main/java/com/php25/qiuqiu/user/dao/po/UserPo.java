@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author penghuiping
@@ -45,13 +46,13 @@ public class UserPo {
      * 创建时间
      */
     @TableField(value = "create_time")
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /**
      * 最后修改时间
      */
     @TableField("last_modified_time")
-    private LocalDateTime lastModifiedTime;
+    private Date lastModifiedTime;
 
 
     @TableField("group_id")
