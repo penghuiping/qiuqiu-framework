@@ -1,10 +1,6 @@
 package com.php25.qiuqiu.admin.config;
 
-import com.php25.common.mq.MessageQueueManager;
-import com.php25.common.mq.rabbit.RabbitMessageListener;
-import com.php25.common.mq.rabbit.RabbitMessageQueueManager;
-import com.php25.common.mq.redis.RedisMessageQueueManager;
-import com.php25.common.redis.RedisManager;
+
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.RabbitConnectionFactoryBean;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -13,6 +9,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.integration.channel.BroadcastCapableChannel;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.channel.PublishSubscribeChannel;
+import org.springframework.integration.core.MessagingTemplate;
 
 /**
  * @author penghuiping
@@ -23,18 +23,46 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class MqConfig {
 
-    @Profile(value = {"local","local1"})
     @Bean
-    MessageQueueManager messageQueueManager0(RedisManager redisManager) {
-        return new RedisMessageQueueManager(redisManager);
+    MessagingTemplate messagingTemplate() {
+        return new MessagingTemplate();
     }
 
-
-    @Profile(value = {"dev", "test"})
     @Bean
-    MessageQueueManager messageQueueManager(RabbitTemplate rabbitTemplate) {
-        return new RabbitMessageQueueManager(rabbitTemplate, new RabbitMessageListener(rabbitTemplate));
+    DirectChannel auditLogChannel() {
+        return new DirectChannel();
     }
+
+    @Bean
+    BroadcastCapableChannel dictChannel() {
+        return new PublishSubscribeChannel();
+    }
+
+    @Bean
+    DirectChannel timerJobEnabledChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    DirectChannel timerJobDisabledChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    DirectChannel mergeStatisticLoadedJobExecutionChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    PublishSubscribeChannel statisticLoadedJobExecutionChannel() {
+        return new PublishSubscribeChannel();
+    }
+
+    @Bean
+    PublishSubscribeChannel wsSessionChannel() {
+        return new PublishSubscribeChannel();
+    }
+
 
     @Profile(value = {"dev", "test"})
     @Bean

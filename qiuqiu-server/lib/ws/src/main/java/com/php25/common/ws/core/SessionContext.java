@@ -3,8 +3,6 @@ package com.php25.common.ws.core;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.core.util.StringUtil;
-import com.php25.common.mq.Message;
-import com.php25.common.mq.MessageQueueManager;
 import com.php25.common.redis.RList;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.timer.Job;
@@ -19,6 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.integration.channel.BroadcastCapableChannel;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -48,8 +49,6 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
 
     private final RedisManager redisManager;
 
-    private final MessageQueueManager messageQueueManager;
-
     private final String serverId;
 
     private final SecurityAuthentication securityAuthentication;
@@ -57,6 +56,8 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
     private final ExecutorService executorService;
 
     private final MsgDispatcher msgDispatcher;
+
+    private final BroadcastCapableChannel wsSessionChannel;
 
     private final MsgSerializer msgSerializer = new VueMsgSerializer();
 
@@ -72,14 +73,14 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
                           String serverId,
                           MsgDispatcher msgDispatcher,
                           Timer timer,
-                          MessageQueueManager messageQueueManager) {
+                          BroadcastCapableChannel broadcastCapableChannel) {
         this.retryMsgManager = retryMsgManager;
         this.redisManager = redisService;
         this.serverId = serverId;
         this.securityAuthentication = securityAuthentication;
         this.msgDispatcher = msgDispatcher;
         this.timer = timer;
-        this.messageQueueManager = messageQueueManager;
+        this.wsSessionChannel = broadcastCapableChannel;
         int cpuNum = Runtime.getRuntime().availableProcessors();
         this.executorService = new ThreadPoolExecutor(1, 2 * cpuNum,
                 60L, TimeUnit.SECONDS,
@@ -104,13 +105,13 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.messageQueueManager.subscribe("ws_session", serverId, true, message -> {
+        this.wsSessionChannel.subscribe(message -> {
             for (String key : sessions.keySet()) {
                 try {
                     WebSocketSession socketSession = sessions.get(key).getWebSocketSession();
-                    socketSession.sendMessage(new TextMessage(message.getBody().toString()));
+                    socketSession.sendMessage(new TextMessage(message.getPayload().toString()));
                 } catch (Exception e) {
-                    log.info("通过websocket发送消息失败,消息为:{}", message.getBody().toString(), e);
+                    log.info("通过websocket发送消息失败,消息为:{}", message.getPayload().toString(), e);
                 }
             }
         });
@@ -212,8 +213,8 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
         try {
             if (StringUtil.isBlank(sid)) {
                 //没有指定sid,则认为进行全局广播，并且广播消息不会重试
-                Message message = new Message(RandomUtil.randomUUID(), msgSerializer.from(baseMsg));
-                messageQueueManager.send("ws_session", message);
+                Message<String> message = new GenericMessage<>(msgSerializer.from(baseMsg));
+                wsSessionChannel.send(message);
             } else {
                 //现看看sid是否本地存在
                 if (this.sessions.containsKey(sid)) {

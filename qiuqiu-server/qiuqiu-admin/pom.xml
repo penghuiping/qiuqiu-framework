@@ -41,10 +41,6 @@
         </dependency>
         <dependency>
             <groupId>com.php25</groupId>
-            <artifactId>mq</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.php25</groupId>
             <artifactId>timer</artifactId>
         </dependency>
         <dependency>
@@ -133,13 +129,13 @@
                 <configuration>
                     <mainClass>com.php25.qiuqiu.admin.QiuQiuAdminApplication</mainClass>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>build-image</goal>
-                        </goals>
-                    </execution>
-                </executions>
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>build-image</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

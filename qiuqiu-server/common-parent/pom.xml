@@ -324,12 +324,6 @@
             </dependency>
             <dependency>
                 <groupId>com.php25</groupId>
-                <artifactId>mq</artifactId>
-                <version>${mq}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.php25</groupId>
                 <artifactId>timer</artifactId>
                 <version>${timer}</version>
                 <scope>compile</scope>

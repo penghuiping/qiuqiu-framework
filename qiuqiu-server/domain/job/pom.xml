@@ -32,10 +32,6 @@
             <artifactId>timer</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.php25</groupId>
-            <artifactId>mq</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.php25.qiuqiu</groupId>
             <artifactId>user</artifactId>
         </dependency>

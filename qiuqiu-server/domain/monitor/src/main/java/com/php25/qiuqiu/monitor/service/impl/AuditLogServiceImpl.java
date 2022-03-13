@@ -2,10 +2,7 @@ package com.php25.qiuqiu.monitor.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.mq.Message;
-import com.php25.common.mq.MessageQueueManager;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.entity.AuditLog;
 import com.php25.qiuqiu.monitor.mapper.AuditLogDtoMapper;
@@ -14,6 +11,10 @@ import com.php25.qiuqiu.monitor.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.SubscribableChannel;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,28 +29,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuditLogServiceImpl implements AuditLogService, InitializingBean {
 
-    private final MessageQueueManager messageQueueManager;
-
-    private final IdGenerator idGenerator;
-
     private final AuditLogRepository auditLogRepository;
 
     private final AuditLogDtoMapper auditLogDtoMapper;
 
+    private final SubscribableChannel auditLogChannel;
+
     @Override
     public void afterPropertiesSet() throws Exception {
-        messageQueueManager.subscribe("audit_log", message -> {
-            String body = JsonUtil.toJson(message.getBody());
-            log.info("msg body:{}", body);
-            AuditLogDto auditLogDto = JsonUtil.fromJson(body, AuditLogDto.class);
+        auditLogChannel.subscribe(message -> {
+            log.info("msg body:{}", message.getPayload());
+            AuditLogDto auditLogDto = JsonUtil.fromJson(message.getPayload().toString(), AuditLogDto.class);
             this.create0(auditLogDto);
         });
     }
 
     @Override
     public Boolean create(AuditLogDto auditLogDto) {
-        Message message = new Message(idGenerator.getUUID(), auditLogDto);
-        return messageQueueManager.send("audit_log", message);
+        Message<String> message = new GenericMessage<>(JsonUtil.toJson(auditLogDto));
+        return auditLogChannel.send(message);
     }
 
     private Boolean create0(AuditLogDto auditLogDto) {

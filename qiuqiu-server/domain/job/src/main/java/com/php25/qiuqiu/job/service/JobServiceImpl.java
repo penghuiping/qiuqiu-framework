@@ -1,12 +1,12 @@
 package com.php25.qiuqiu.job.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.collect.Lists;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.core.util.RandomUtil;
-import com.php25.common.mq.Message;
-import com.php25.common.mq.MessageQueueManager;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.timer.CronExpression;
 import com.php25.common.timer.Job;
@@ -35,6 +35,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.integration.channel.BroadcastCapableChannel;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.SubscribableChannel;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -66,11 +70,15 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
 
     private final Timer timer;
 
-    private final MessageQueueManager messageQueueManager;
-
     private final JobDtoMapper jobDtoMapper;
 
     private final RedisManager redisManager;
+
+    private final SubscribableChannel timerJobEnabledChannel;
+    private final SubscribableChannel timerJobDisabledChannel;
+    private final SubscribableChannel mergeStatisticLoadedJobExecutionChannel;
+    private final BroadcastCapableChannel statisticLoadedJobExecutionChannel;
+
 
     @Value("${server.id}")
     private String serverId;
@@ -240,19 +248,18 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             return false;
         }
         JobExecution jobExecution = jobExecutionOptional.get();
+        Message<String> message = new GenericMessage<>(JsonUtil.toJson(Lists.newArrayList(RandomUtil.randomUUID(), executionId)));
         if (jobExecution.getEnable()) {
-            Message message = new Message(RandomUtil.randomUUID(), executionId);
-            messageQueueManager.send("timer_job_enabled", message);
+            timerJobEnabledChannel.send(message);
         } else {
-            Message message = new Message(RandomUtil.randomUUID(), executionId);
-            messageQueueManager.send("timer_job_disabled", message);
+            timerJobDisabledChannel.send(message);
         }
         return true;
     }
 
     @Override
     public Boolean refreshAll(String username) {
-        List<JobExecution> jobExecutions = (List<JobExecution>) this.jobExecutionRepository.findAll();
+        List<JobExecution> jobExecutions = this.jobExecutionRepository.findAll();
         if (!jobExecutions.isEmpty()) {
             for (JobExecution jobExecution : jobExecutions) {
                 this.refresh(username, jobExecution.getId());
@@ -262,9 +269,8 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     }
 
     private void statisticLoadedJobExecutionSubscribe() {
-        messageQueueManager.subscribe("statistic_loaded_job_execution", serverId, true, message -> {
-            String tmp = JsonUtil.toJson(message.getBody());
-            log.info("JobExecutionStatisticReqDto为:{}", tmp);
+        statisticLoadedJobExecutionChannel.subscribe(message -> {
+            log.info("JobExecutionStatisticReqDto为:{}", message.getPayload().toString());
             Set<String> executionIds = timer.getAllLoadedExecutionIds();
             Map<String, Integer> res = new HashMap<>();
             for (String executionId : executionIds) {
@@ -272,14 +278,14 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
             }
             JobExecutionStatisticResDto resDto = new JobExecutionStatisticResDto();
             resDto.setEntries(res);
-            Message message0 = new Message(RandomUtil.randomUUID(), resDto);
-            messageQueueManager.send("merge_statistic_loaded_job_execution", serverId, message0);
+            Message<String> message0 = new GenericMessage<>(JsonUtil.toJson(resDto));
+            mergeStatisticLoadedJobExecutionChannel.send(message0);
         });
     }
 
     private void mergeStatisticLoadedJobExecutionSubscribe() {
-        messageQueueManager.subscribe("merge_statistic_loaded_job_execution", serverId, true, message -> {
-            JobExecutionStatisticResDto res = JsonUtil.fromJson(JsonUtil.toJson(message.getBody()), JobExecutionStatisticResDto.class);
+        mergeStatisticLoadedJobExecutionChannel.subscribe( message -> {
+            JobExecutionStatisticResDto res = JsonUtil.fromJson(message.getPayload().toString(), JobExecutionStatisticResDto.class);
             res.getEntries().forEach((key, value) -> {
                 Lock lock = redisManager.lock("merge_statistic_loaded_job_execution");
                 lock.lock();
@@ -301,9 +307,9 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
 
     @Override
     public void statisticLoadedJobExecutionInfo() {
-        Message message = new Message(RandomUtil.randomUUID(), "");
+        Message<String> message = new GenericMessage<>(RandomUtil.randomUUID());
         jobExecutionRepository.resetTimerLoadedNumber();
-        messageQueueManager.send("statistic_loaded_job_execution", message);
+        statisticLoadedJobExecutionChannel.send(message);
     }
 
     private void loadExecution(String executionId) {
@@ -356,17 +362,21 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
     }
 
     private void subscribeRefreshJobEnabled() {
-        messageQueueManager.subscribe("timer_job_enabled", serverId, true, message -> {
+        timerJobEnabledChannel.subscribe(message -> {
             log.info("timer_job_enabled:{}", JsonUtil.toJson(message));
-            String executionId = (String) message.getBody();
+            List<String> params = JsonUtil.fromJson((String) message.getPayload(), new TypeReference<List<String>>() {
+            });
+            String executionId = params.get(1);
             loadExecution(executionId);
         });
     }
 
     private void subscribeRefreshJobDisabled() {
-        messageQueueManager.subscribe("timer_job_disabled", serverId, true, message -> {
+        timerJobDisabledChannel.subscribe(message -> {
             log.info("timer_job_disabled:{}", JsonUtil.toJson(message));
-            String executionId = (String) message.getBody();
+            List<String> params = JsonUtil.fromJson((String) message.getPayload(), new TypeReference<List<String>>() {
+            });
+            String executionId = params.get(1);
             this.timer.stop(executionId);
         });
     }

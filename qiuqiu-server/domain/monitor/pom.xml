@@ -25,10 +25,6 @@
         </dependency>
         <dependency>
             <groupId>com.php25</groupId>
-            <artifactId>mq</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.php25</groupId>
             <artifactId>redis</artifactId>
         </dependency>
         <dependency>

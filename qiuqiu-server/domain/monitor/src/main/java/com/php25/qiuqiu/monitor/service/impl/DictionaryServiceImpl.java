@@ -2,10 +2,7 @@ package com.php25.qiuqiu.monitor.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.core.util.JsonUtil;
-import com.php25.common.mq.Message;
-import com.php25.common.mq.MessageQueueManager;
 import com.php25.qiuqiu.monitor.dto.DictDto;
 import com.php25.qiuqiu.monitor.entity.Dict;
 import com.php25.qiuqiu.monitor.mapper.DictDtoMapper;
@@ -16,6 +13,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.integration.channel.BroadcastCapableChannel;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,9 +37,7 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
 
     private final Map<String, DictDto> cache = new ConcurrentHashMap<>(256);
 
-    private final MessageQueueManager messageQueueManager;
-
-    private final IdGenerator idGenerator;
+    private final BroadcastCapableChannel dictChannel;
 
     private final DictDtoMapper dictDtoMapper;
 
@@ -48,9 +46,9 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        messageQueueManager.subscribe("dict", serverId, true, message -> {
+        dictChannel.subscribe(message -> {
             log.info("刷新缓存:{}", JsonUtil.toJson(message));
-            String key = message.getBody().toString();
+            String key = message.getPayload().toString();
             this.removeCache0(key);
         });
     }
@@ -97,8 +95,8 @@ public class DictionaryServiceImpl implements DictionaryService, InitializingBea
 
     @Override
     public Boolean removeCache(String key) {
-        Message message = new Message(idGenerator.getUUID(), key);
-        return messageQueueManager.send("dict", message);
+        Message<String> message = new GenericMessage<>(key);
+        return dictChannel.send( message);
     }
 
     @Override
