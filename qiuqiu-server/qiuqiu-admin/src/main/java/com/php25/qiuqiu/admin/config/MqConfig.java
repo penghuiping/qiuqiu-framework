@@ -4,6 +4,7 @@ package com.php25.qiuqiu.admin.config;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.RabbitConnectionFactoryBean;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.integration.channel.BroadcastCapableChannel;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.PublishSubscribeChannel;
-import org.springframework.integration.core.MessagingTemplate;
+import org.springframework.messaging.SubscribableChannel;
 
 /**
  * @author penghuiping
@@ -24,12 +25,7 @@ import org.springframework.integration.core.MessagingTemplate;
 public class MqConfig {
 
     @Bean
-    MessagingTemplate messagingTemplate() {
-        return new MessagingTemplate();
-    }
-
-    @Bean
-    DirectChannel auditLogChannel() {
+    SubscribableChannel auditLogChannel(@Value("spring.profiles.active") String activeProfile) {
         return new DirectChannel();
     }
 
@@ -39,22 +35,22 @@ public class MqConfig {
     }
 
     @Bean
-    DirectChannel timerJobEnabledChannel() {
+    SubscribableChannel timerJobEnabledChannel() {
         return new DirectChannel();
     }
 
     @Bean
-    DirectChannel timerJobDisabledChannel() {
+    SubscribableChannel timerJobDisabledChannel() {
         return new DirectChannel();
     }
 
     @Bean
-    DirectChannel mergeStatisticLoadedJobExecutionChannel() {
+    SubscribableChannel mergeStatisticLoadedJobExecutionChannel() {
         return new DirectChannel();
     }
 
     @Bean
-    PublishSubscribeChannel statisticLoadedJobExecutionChannel() {
+    BroadcastCapableChannel statisticLoadedJobExecutionChannel() {
         return new PublishSubscribeChannel();
     }
 
