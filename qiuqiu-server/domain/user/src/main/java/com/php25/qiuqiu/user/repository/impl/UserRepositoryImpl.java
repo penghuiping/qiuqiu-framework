@@ -16,11 +16,10 @@ import com.php25.qiuqiu.user.entity.UserRole;
 import com.php25.qiuqiu.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -118,7 +117,15 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean save(User user, boolean isInsert) {
         UserPo userPo = new UserPo();
-        BeanUtils.copyProperties(userPo, user);
+        BeanUtils.copyProperties(user, userPo);
+        if (null != user.getCreateTime()) {
+            userPo.setCreateTime(Date.from(user.getCreateTime()
+                    .toInstant(ZoneOffset.ofHours(8))));
+        }
+        if (null != user.getLastModifiedTime()) {
+            userPo.setLastModifiedTime(Date.from(user.getLastModifiedTime()
+                    .toInstant(ZoneOffset.ofHours(8))));
+        }
         if (isInsert) {
             //新增
             return userDao.insert(userPo) > 0;
@@ -147,13 +154,13 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public IPage<User> page(String username, Integer pageNum, Integer pageSize) {
         IPage<UserPo> page = userDao.selectPage(new Page<>(pageNum, pageSize),
-                Wrappers.<UserPo>lambdaQuery().eq(StringUtil.isNotBlank(username),UserPo::getUsername, username));
+                Wrappers.<UserPo>lambdaQuery().eq(StringUtil.isNotBlank(username), UserPo::getUsername, username));
         Page<User> userPage = new Page<>();
         userPage.setRecords(page.getRecords().stream().map(userPo -> {
             User user = new User();
             BeanUtils.copyProperties(userPo, user);
-            user.setCreateTime(TimeUtil.toLocalDateTime(userPo.getCreateTime()));
-            user.setLastModifiedTime(TimeUtil.toLocalDateTime(userPo.getLastModifiedTime()));
+            user.setCreateTime(null != userPo.getCreateTime() ? TimeUtil.toLocalDateTime(userPo.getCreateTime()) : null);
+            user.setLastModifiedTime(null != userPo.getLastModifiedTime() ? TimeUtil.toLocalDateTime(userPo.getLastModifiedTime()) : null);
             return user;
         }).collect(Collectors.toList()));
         userPage.setCurrent(pageNum);

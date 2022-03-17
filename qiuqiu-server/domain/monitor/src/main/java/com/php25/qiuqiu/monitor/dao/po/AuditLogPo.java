@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.monitor.dao.po;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -21,7 +22,7 @@ public class AuditLogPo {
     /**
      * 日志id
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
