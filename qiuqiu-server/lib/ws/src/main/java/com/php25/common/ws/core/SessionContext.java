@@ -7,6 +7,7 @@ import com.php25.common.redis.RList;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.timer.Job;
 import com.php25.common.timer.Timer;
+import com.php25.common.ws.mq.WsChannelProcessor;
 import com.php25.common.ws.protocal.BaseMsg;
 import com.php25.common.ws.protocal.SecurityAuthentication;
 import com.php25.common.ws.serializer.InternalMsgSerializer;
@@ -14,10 +15,9 @@ import com.php25.common.ws.serializer.MsgSerializer;
 import com.php25.common.ws.serializer.VueMsgSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
-import org.springframework.integration.channel.BroadcastCapableChannel;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.web.socket.TextMessage;
@@ -32,7 +32,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class SessionContext implements InitializingBean, ApplicationListener<ContextClosedEvent> {
+public class SessionContext implements ApplicationListener<ContextClosedEvent> {
     /**
      * 此session缓存用于缓存自定义的sessionId与WebSocket对应关系,全局应用sessionId
      */
@@ -57,7 +57,7 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
 
     private final MsgDispatcher msgDispatcher;
 
-    private final BroadcastCapableChannel wsSessionChannel;
+    private final WsChannelProcessor wsChannelProcessor;
 
     private final MsgSerializer msgSerializer = new VueMsgSerializer();
 
@@ -73,14 +73,14 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
                           String serverId,
                           MsgDispatcher msgDispatcher,
                           Timer timer,
-                          BroadcastCapableChannel broadcastCapableChannel) {
+                          WsChannelProcessor wsChannelProcessor) {
         this.retryMsgManager = retryMsgManager;
         this.redisManager = redisService;
         this.serverId = serverId;
         this.securityAuthentication = securityAuthentication;
         this.msgDispatcher = msgDispatcher;
         this.timer = timer;
-        this.wsSessionChannel = broadcastCapableChannel;
+        this.wsChannelProcessor = wsChannelProcessor;
         int cpuNum = Runtime.getRuntime().availableProcessors();
         this.executorService = new ThreadPoolExecutor(1, 2 * cpuNum,
                 60L, TimeUnit.SECONDS,
@@ -103,18 +103,16 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
         }
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.wsSessionChannel.subscribe(message -> {
+    @StreamListener(value = WsChannelProcessor.INPUT)
+    private void wsSessionChannel(Message<String> message) {
             for (String key : sessions.keySet()) {
                 try {
                     WebSocketSession socketSession = sessions.get(key).getWebSocketSession();
-                    socketSession.sendMessage(new TextMessage(message.getPayload().toString()));
+                    socketSession.sendMessage(new TextMessage(message.getPayload()));
                 } catch (Exception e) {
-                    log.info("通过websocket发送消息失败,消息为:{}", message.getPayload().toString(), e);
+                    log.info("通过websocket发送消息失败,消息为:{}", message.getPayload(), e);
                 }
             }
-        });
     }
 
     public void init(SidUid sidUid) {
@@ -214,7 +212,7 @@ public class SessionContext implements InitializingBean, ApplicationListener<Con
             if (StringUtil.isBlank(sid)) {
                 //没有指定sid,则认为进行全局广播，并且广播消息不会重试
                 Message<String> message = new GenericMessage<>(msgSerializer.from(baseMsg));
-                wsSessionChannel.send(message);
+                wsChannelProcessor.output().send(message);
             } else {
                 //现看看sid是否本地存在
                 if (this.sessions.containsKey(sid)) {

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.exception.Exceptions;
+import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.redis.RedisManager;
@@ -26,18 +27,19 @@ import com.php25.qiuqiu.job.entity.JobExecution;
 import com.php25.qiuqiu.job.entity.JobLog;
 import com.php25.qiuqiu.job.entity.JobModel;
 import com.php25.qiuqiu.job.mapper.JobDtoMapper;
+import com.php25.qiuqiu.job.mq.MergeStatisticLoadedJobProcessor;
+import com.php25.qiuqiu.job.mq.StatisticLoadedJobProcessor;
+import com.php25.qiuqiu.job.mq.TimeJobDisabledProcessor;
+import com.php25.qiuqiu.job.mq.TimeJobEnabledProcessor;
 import com.php25.qiuqiu.job.repository.JobExecutionRepository;
 import com.php25.qiuqiu.job.repository.JobLogRepository;
 import com.php25.qiuqiu.job.repository.JobModelRepository;
 import com.php25.qiuqiu.user.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.integration.channel.BroadcastCapableChannel;
+import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.SubscribableChannel;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +60,7 @@ import java.util.stream.Collectors;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class JobServiceImpl implements JobService, InitializingBean, DisposableBean {
+public class JobServiceImpl implements JobService {
 
     private final JobModelRepository jobModelRepository;
 
@@ -74,28 +76,13 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
 
     private final RedisManager redisManager;
 
-    private final SubscribableChannel timerJobEnabledChannel;
-    private final SubscribableChannel timerJobDisabledChannel;
-    private final SubscribableChannel mergeStatisticLoadedJobExecutionChannel;
-    private final BroadcastCapableChannel statisticLoadedJobExecutionChannel;
-
+    private final TimeJobEnabledProcessor timeJobEnabledProcessor;
+    private final TimeJobDisabledProcessor timeJobDisabledProcessor;
+    private final MergeStatisticLoadedJobProcessor mergeStatisticLoadedJobProcessor;
+    private final StatisticLoadedJobProcessor statisticLoadedJobProcessor;
 
     @Value("${server.id}")
     private String serverId;
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.subscribeRefreshJobDisabled();
-        this.subscribeRefreshJobEnabled();
-
-        this.statisticLoadedJobExecutionSubscribe();
-        this.mergeStatisticLoadedJobExecutionSubscribe();
-    }
-
-    @Override
-    public void destroy() throws Exception {
-
-    }
 
     @Override
     public DataGridPageDto<JobDto> page(String username, String name, Integer pageNum, Integer pageSize) {
@@ -112,10 +99,9 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
 
     @Override
     public List<JobDto> findAll(String username) {
-//        SearchParamBuilder searchParamBuilder = groupService.getDataAccessScope(username);
-//        List<JobModel> list = jobModelRepository.findAll(searchParamBuilder);
-//        return list.stream().map(jobDtoMapper::toDto).collect(Collectors.toList());
-        return null;
+        List<Long> groupIds = groupService.findGroupsId(username);
+        List<JobModel> list = jobModelRepository.findAll(groupIds);
+        return list.stream().map(jobDtoMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
@@ -250,9 +236,9 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         JobExecution jobExecution = jobExecutionOptional.get();
         Message<String> message = new GenericMessage<>(JsonUtil.toJson(Lists.newArrayList(RandomUtil.randomUUID(), executionId)));
         if (jobExecution.getEnable()) {
-            timerJobEnabledChannel.send(message);
+            timeJobEnabledProcessor.output().send(message);
         } else {
-            timerJobDisabledChannel.send(message);
+            timeJobDisabledProcessor.output().send(message);
         }
         return true;
     }
@@ -268,48 +254,11 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         return true;
     }
 
-    private void statisticLoadedJobExecutionSubscribe() {
-        statisticLoadedJobExecutionChannel.subscribe(message -> {
-            log.info("JobExecutionStatisticReqDto为:{}", message.getPayload().toString());
-            Set<String> executionIds = timer.getAllLoadedExecutionIds();
-            Map<String, Integer> res = new HashMap<>();
-            for (String executionId : executionIds) {
-                res.put(executionId, 1);
-            }
-            JobExecutionStatisticResDto resDto = new JobExecutionStatisticResDto();
-            resDto.setEntries(res);
-            Message<String> message0 = new GenericMessage<>(JsonUtil.toJson(resDto));
-            mergeStatisticLoadedJobExecutionChannel.send(message0);
-        });
-    }
-
-    private void mergeStatisticLoadedJobExecutionSubscribe() {
-        mergeStatisticLoadedJobExecutionChannel.subscribe( message -> {
-            JobExecutionStatisticResDto res = JsonUtil.fromJson(message.getPayload().toString(), JobExecutionStatisticResDto.class);
-            res.getEntries().forEach((key, value) -> {
-                Lock lock = redisManager.lock("merge_statistic_loaded_job_execution");
-                lock.lock();
-                try {
-                    Optional<JobExecution> jobExecutionOptional = jobExecutionRepository.findById(key);
-                    if (jobExecutionOptional.isPresent()) {
-                        JobExecution jobExecution = jobExecutionOptional.get();
-                        JobExecution jobExecution0 = new JobExecution();
-                        jobExecution0.setId(jobExecution.getId());
-                        jobExecution0.setTimerLoadedNumber(jobExecution.getTimerLoadedNumber() + value);
-                        jobExecutionRepository.save(jobExecution0);
-                    }
-                } finally {
-                    lock.unlock();
-                }
-            });
-        });
-    }
-
     @Override
     public void statisticLoadedJobExecutionInfo() {
         Message<String> message = new GenericMessage<>(RandomUtil.randomUUID());
         jobExecutionRepository.resetTimerLoadedNumber();
-        statisticLoadedJobExecutionChannel.send(message);
+        statisticLoadedJobProcessor.output().send(message);
     }
 
     private void loadExecution(String executionId) {
@@ -361,23 +310,58 @@ public class JobServiceImpl implements JobService, InitializingBean, DisposableB
         return jobExecutionOptional.map(jobDtoMapper::toDto1).orElse(null);
     }
 
-    private void subscribeRefreshJobEnabled() {
-        timerJobEnabledChannel.subscribe(message -> {
+
+    @StreamListener(value = TimeJobEnabledProcessor.INPUT)
+    private void timerJobEnabledChannel(Message<String> message) {
             log.info("timer_job_enabled:{}", JsonUtil.toJson(message));
-            List<String> params = JsonUtil.fromJson((String) message.getPayload(), new TypeReference<List<String>>() {
+            List<String> params = JsonUtil.fromJson(message.getPayload(), new TypeReference<List<String>>() {
             });
             String executionId = params.get(1);
             loadExecution(executionId);
-        });
     }
 
-    private void subscribeRefreshJobDisabled() {
-        timerJobDisabledChannel.subscribe(message -> {
-            log.info("timer_job_disabled:{}", JsonUtil.toJson(message));
-            List<String> params = JsonUtil.fromJson((String) message.getPayload(), new TypeReference<List<String>>() {
-            });
-            String executionId = params.get(1);
-            this.timer.stop(executionId);
+
+    @StreamListener(value = TimeJobDisabledProcessor.INPUT)
+    private void  timerJobDisabledChannel(Message<String> message) {
+        log.info("timer_job_disabled:{}", JsonUtil.toJson(message));
+        List<String> params = JsonUtil.fromJson( message.getPayload(), new TypeReference<List<String>>() {
         });
+        String executionId = params.get(1);
+        this.timer.stop(executionId);
+    }
+
+    @StreamListener(value = MergeStatisticLoadedJobProcessor.INPUT)
+    private void mergeStatisticLoadedJobExecutionChannel(Message<String> message) {
+            JobExecutionStatisticResDto res = JsonUtil.fromJson(message.getPayload().toString(), JobExecutionStatisticResDto.class);
+            res.getEntries().forEach((key, value) -> {
+                Lock lock = redisManager.lock("merge_statistic_loaded_job_execution");
+                lock.lock();
+                try {
+                    Optional<JobExecution> jobExecutionOptional = jobExecutionRepository.findById(key);
+                    if (jobExecutionOptional.isPresent()) {
+                        JobExecution jobExecution = jobExecutionOptional.get();
+                        JobExecution jobExecution0 = new JobExecution();
+                        jobExecution0.setId(jobExecution.getId());
+                        jobExecution0.setTimerLoadedNumber(jobExecution.getTimerLoadedNumber() + value);
+                        jobExecutionRepository.save(jobExecution0);
+                    }
+                } finally {
+                    lock.unlock();
+                }
+            });
+    }
+
+    @StreamListener(value = StatisticLoadedJobProcessor.INPUT)
+    private void statisticLoadedJobExecutionChannel(Message<String> message) {
+            log.info("JobExecutionStatisticReqDto为:{}", message.getPayload());
+            Set<String> executionIds = timer.getAllLoadedExecutionIds();
+            Map<String, Integer> res = new HashMap<>();
+            for (String executionId : executionIds) {
+                res.put(executionId, 1);
+            }
+            JobExecutionStatisticResDto resDto = new JobExecutionStatisticResDto();
+            resDto.setEntries(res);
+            Message<String> message0 = new GenericMessage<>(JsonUtil.toJson(resDto));
+            mergeStatisticLoadedJobProcessor.output().send(message0);
     }
 }

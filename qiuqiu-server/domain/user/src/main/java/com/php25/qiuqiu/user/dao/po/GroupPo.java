@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.user.dao.po;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -20,7 +21,7 @@ public class GroupPo  {
     /**
      * id,自增
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

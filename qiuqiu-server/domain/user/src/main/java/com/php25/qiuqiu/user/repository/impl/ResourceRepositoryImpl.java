@@ -94,7 +94,8 @@ public class ResourceRepositoryImpl implements ResourceRepository {
         ResourcePo resourcePo = new ResourcePo();
         if (isInsert) {
             BeanUtils.copyProperties(resource, resourcePo);
-            return resourceDao.insert(resourcePo) > 0;
+            int res = resourceDao.insert(resourcePo);
+            return res>0;
         } else {
             BeanUtils.copyProperties(resource, resourcePo);
             return resourceDao.updateById(resourcePo) > 0;

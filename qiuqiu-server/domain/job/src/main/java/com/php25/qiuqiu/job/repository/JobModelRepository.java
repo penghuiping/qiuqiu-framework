@@ -46,4 +46,10 @@ public interface JobModelRepository {
      * @return 分页数据
      */
     IPage<JobModel> page(List<Long> groupIds, String name, Integer pageNum, Integer pageSize);
+
+    /**
+     * 获取所有的任务
+     * @return
+     */
+    List<JobModel> findAll(List<Long> groupIds);
 }

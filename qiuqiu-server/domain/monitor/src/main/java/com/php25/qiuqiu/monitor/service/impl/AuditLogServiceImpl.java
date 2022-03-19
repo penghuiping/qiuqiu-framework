@@ -6,14 +6,13 @@ import com.php25.common.core.util.JsonUtil;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.entity.AuditLog;
 import com.php25.qiuqiu.monitor.mapper.AuditLogDtoMapper;
+import com.php25.qiuqiu.monitor.mq.AuditLogProcessor;
 import com.php25.qiuqiu.monitor.repository.AuditLogRepository;
 import com.php25.qiuqiu.monitor.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.integration.channel.DirectChannel;
+import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.SubscribableChannel;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 
@@ -27,27 +26,26 @@ import java.util.stream.Collectors;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class AuditLogServiceImpl implements AuditLogService, InitializingBean {
+public class AuditLogServiceImpl implements AuditLogService {
 
     private final AuditLogRepository auditLogRepository;
 
     private final AuditLogDtoMapper auditLogDtoMapper;
 
-    private final SubscribableChannel auditLogChannel;
+    private final AuditLogProcessor auditLogProcessor;
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        auditLogChannel.subscribe(message -> {
-            log.info("msg body:{}", message.getPayload());
-            AuditLogDto auditLogDto = JsonUtil.fromJson(message.getPayload().toString(), AuditLogDto.class);
+    @StreamListener(value = AuditLogProcessor.INPUT)
+    private void auditLogChannel(Message<AuditLogDto> message) {
+            log.info("msg body:{}", JsonUtil.toJson(message.getPayload()));
+            AuditLogDto auditLogDto = message.getPayload();
             this.create0(auditLogDto);
-        });
     }
 
     @Override
     public Boolean create(AuditLogDto auditLogDto) {
-        Message<String> message = new GenericMessage<>(JsonUtil.toJson(auditLogDto));
-        return auditLogChannel.send(message);
+        Message<AuditLogDto> message = new GenericMessage<AuditLogDto>(auditLogDto);
+        auditLogProcessor.output().send(message);
+        return true;
     }
 
     private Boolean create0(AuditLogDto auditLogDto) {

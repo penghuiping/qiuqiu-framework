@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  mysql:
+    image: mysql:5.7
+    ports:
+       - 33306:3306
+    volumes:
+      - "./data/mysql/volume:/var/lib/mysql"
+    command: mysqld -uroot --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES utf8mb4;' --innodb-flush-log-at-trx-commit=0
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "false"
+      MYSQL_ROOT_PASSWORD: "123456"
+  redis:
+    image: redis:5.0.4-alpine
+    ports:
+      - 36379:6379
+    volumes:
+      - "./data/redis/data:/data"
+  rabbitmq:
+    image: rabbitmq:3.7.17-management-alpine
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "61613:61613"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest

@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.monitor.dao.po;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -18,14 +19,14 @@ public class DictPo  {
     /**
      * 自增id
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
      * 键
      */
-    @TableField("key0")
-    private String key;
+    @TableField
+    private String key0;
 
     /**
      * 值

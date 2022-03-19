@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
+import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +31,7 @@ public class JobLogRepositoryImpl implements JobLogRepository {
     public Boolean save(JobLog jobLog) {
         JobLogPo jobLogPo = new JobLogPo();
         BeanUtils.copyProperties(jobLog, jobLogPo);
+        jobLogPo.setExecuteTime(Date.from(jobLog.getExecuteTime().toInstant(ZoneOffset.ofHours(8))));
         if (null == jobLog.getId()) {
             //新增
             return jobLogDao.insert(jobLogPo) > 0;
@@ -43,12 +46,12 @@ public class JobLogRepositoryImpl implements JobLogRepository {
         IPage<JobLogPo> iPage = jobLogDao.selectPage(new Page<>(pageNum, pageSize)
                 , Wrappers.<JobLogPo>lambdaQuery()
                         .eq(StringUtil.isNotBlank(jobName),JobLogPo::getJobName, jobName)
-                        .in(null != groupIds && !groupIds.isEmpty(),JobLogPo::getGroupId, groupIds));
+                        .in(null != groupIds && !groupIds.isEmpty(),JobLogPo::getGroupId, groupIds).orderByDesc(JobLogPo::getId));
         IPage<JobLog> result = new Page<>();
         List<JobLog> jobLogs = iPage.getRecords().stream().map(jobLogPo -> {
             JobLog auditLog = new JobLog();
             BeanUtils.copyProperties(jobLogPo, auditLog);
-            auditLog.setExecuteTime(TimeUtil.toLocalDateTime(jobLogPo.getExecuteTime()));
+            auditLog.setExecuteTime(null != jobLogPo.getExecuteTime()?TimeUtil.toLocalDateTime(jobLogPo.getExecuteTime()):null);
             return auditLog;
         }).collect(Collectors.toList());
         result.setRecords(jobLogs);

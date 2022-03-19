@@ -3,6 +3,7 @@ package com.php25.qiuqiu.job.repository;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Lists;
 import com.php25.common.core.util.StringUtil;
 import com.php25.qiuqiu.job.dao.JobModelDao;
 import com.php25.qiuqiu.job.dao.po.JobModelPo;
@@ -72,5 +73,19 @@ public class JobModelRepositoryImpl implements JobModelRepository {
         result.setCurrent(pageNum);
         result.setSize(pageSize);
         return result;
+    }
+
+    @Override
+    public List<JobModel> findAll(List<Long> groupIds) {
+        List<JobModelPo> jobModelPos = jobModelDao.selectList(Wrappers.<JobModelPo>lambdaQuery()
+                .in(JobModelPo::getGroupId,groupIds));
+        if(null != jobModelPos && !jobModelPos.isEmpty()) {
+            return jobModelPos.stream().map(jobModelPo -> {
+               JobModel jobModel = new JobModel();
+               BeanUtils.copyProperties(jobModelPo,jobModel);
+               return jobModel;
+            }).collect(Collectors.toList());
+        }
+        return Lists.newArrayList();
     }
 }

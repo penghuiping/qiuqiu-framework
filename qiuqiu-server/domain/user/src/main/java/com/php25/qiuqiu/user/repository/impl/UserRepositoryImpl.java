@@ -128,7 +128,9 @@ public class UserRepositoryImpl implements UserRepository {
         }
         if (isInsert) {
             //新增
-            return userDao.insert(userPo) > 0;
+            int res = userDao.insert(userPo);
+            user.setId(userPo.getId());
+            return res>0;
         } else {
             //更新
             return userDao.updateById(userPo) > 0;

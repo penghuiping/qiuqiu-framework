@@ -90,7 +90,7 @@ public class DbConfig {
         mybatisSqlSessionFactoryBean.setDataSource(dataSource);
         mybatisSqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/mapper/**/*.xml"));
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.SQLITE));
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         mybatisSqlSessionFactoryBean.setPlugins(interceptor);
         return mybatisSqlSessionFactoryBean.getObject();
     }

@@ -87,7 +87,17 @@ public class GroupRepositoryImpl implements GroupRepository {
     public boolean save(Group group, boolean isInsert) {
         GroupPo groupPo = new GroupPo();
         BeanUtils.copyProperties(group, groupPo);
-        return groupDao.insert(groupPo) > 0;
+        if(isInsert) {
+            //新增
+            int res = groupDao.insert(groupPo);
+            group.setId(groupPo.getId());
+            return res>0;
+        }else {
+            //更新
+            return groupDao.updateById(groupPo)>0;
+        }
+
+
     }
 
     @Override

@@ -1,16 +1,38 @@
 ########################################################
 ###common
 ########################################################
-jasypt:
-  encryptor:
-    ## 不安全 生产用 -Djasypt.encryptor.password=123456 方式
-    password: '@WSXcft6#EDCvgy7'
+#jasypt:
+#  encryptor:
+#    ## 不安全 生产用 -Djasypt.encryptor.password=123456 方式
+#    password: '@WSXcft6#EDCvgy7'
+#app:
+#  db:
+#    ip: localhost
+#    port: 33306
+#    username: ENC(DySsEJn1LgKl6VqxdP7mTw==)
+#    password: ENC(znfy5SdaY3e0hXjTpZQv1w==)
+#    name: test
+#  filesever:
+#    host: localhost
+#    path: /tmp
+#    thumbPath: /tmp/testUpload/image
+#  redis:
+#    host: localhost
+#    port: 36379
+#    password: ENC(zGb6Ots9lRMd7RLIy6w12A==)
+#    database: 0
+#  rabbitmq:
+#    ip: localhost
+#    port: 5672
+#    username: ENC(Esk0at/quBKVrWD6PKHwAg==)
+#    password: ENC(GqHPMo3jAyV25ZAv5Zejnw==)
+#    virtualHost: /
 app:
   db:
     ip: localhost
     port: 33306
-    username: ENC(DySsEJn1LgKl6VqxdP7mTw==)
-    password: ENC(znfy5SdaY3e0hXjTpZQv1w==)
+    username: root
+    password: 123456
     name: test
   filesever:
     host: localhost
@@ -19,13 +41,13 @@ app:
   redis:
     host: localhost
     port: 36379
-    password: ENC(zGb6Ots9lRMd7RLIy6w12A==)
+    password: 123456
     database: 0
   rabbitmq:
     ip: localhost
     port: 5672
-    username: ENC(Esk0at/quBKVrWD6PKHwAg==)
-    password: ENC(GqHPMo3jAyV25ZAv5Zejnw==)
+    username: guest
+    password: guest
     virtualHost: /
 ########################################################
 ### static resources and upload load file
@@ -88,6 +110,103 @@ spring:
     username: ${app.rabbitmq.username}
     password: ${app.rabbitmq.password}
     virtual-host: ${app.rabbitmq.virtualHost}
+  cloud:
+    stream:
+      bindings:
+        dict_input:
+          destination: dict-exchange
+          contentType: application/json
+          consumer:
+            max-attempts: 1
+        dict_output:
+          destination: dict-exchange
+          contentType: application/json
+        ws_channel_input:
+          destination: ws_channel-exchange
+          contentType: application/json
+          consumer:
+            max-attempts: 1
+        ws_channel_output:
+          destination: ws_channel-exchange
+          contentType: application/json
+        audit_log_input:
+          group: audit_log
+          destination: audit_log-exchange
+          contentType: application/json
+          consumer:
+            max-attempts: 3
+            backOffInitialInterval: 2000
+            backOffMaxInterval: 10000
+            backOffMultiplier: 2
+        audit_log_output:
+          destination: audit_log-exchange
+          contentType: application/json
+        statistic_loaded_job_input:
+          destination: statistic_loaded_job-exchange
+          contentType: application/json
+          consumer:
+            max-attempts: 1
+        statistic_loaded_job_output:
+          destination: statistic_loaded_job-exchange
+          contentType: application/json
+        merge_statistic_loaded_job_input:
+          group: merge_statistic_loaded_job
+          destination: merge_statistic_loaded_job-exchange
+          contentType: application/json
+          consumer:
+            max-attempts: 3
+            backOffInitialInterval: 2000
+            backOffMaxInterval: 10000
+            backOffMultiplier: 2
+        merge_statistic_loaded_job_output:
+          destination: merge_statistic_loaded_job-exchange
+          contentType: application/json
+        time_job_disabled_input:
+          group: time_job_disabled
+          destination: time_job_disabled-exchange
+          contentType: application/json
+          consumer:
+            max-attempts: 3
+            backOffInitialInterval: 2000
+            backOffMaxInterval: 10000
+            backOffMultiplier: 2
+        time_job_disabled_output:
+          destination: time_job_disabled-exchange
+          contentType: application/json
+        time_job_enabled_input:
+          group: time_job_enabled
+          destination: time_job_enabled-exchange
+          contentType: application/json
+          consumer:
+            max-attempts: 3
+            backOffInitialInterval: 2000
+            backOffMaxInterval: 10000
+            backOffMultiplier: 2
+        time_job_enabled_output:
+          destination: time_job_enabled-exchange
+          contentType: application/json
+        rabbit:
+          bindings:
+            audit_log_input:
+              consumer:
+                acknowledgeMode: AUTO
+                auto-bind-dlq: true
+                republish-to-dlq: true
+            merge_statistic_loaded_job_input:
+              consumer:
+                acknowledgeMode: AUTO
+                auto-bind-dlq: true
+                republish-to-dlq: true
+            time_job_disabled_input:
+              consumer:
+                acknowledgeMode: AUTO
+                auto-bind-dlq: true
+                republish-to-dlq: true
+            time_job_enabled_input:
+              consumer:
+                acknowledgeMode: AUTO
+                auto-bind-dlq: true
+                republish-to-dlq: true
   ########################################################
   ### servlet
   ########################################################

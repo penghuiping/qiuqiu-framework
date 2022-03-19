@@ -27,18 +27,19 @@ public class DictRepositoryImpl implements DictRepository {
 
     @Override
     public Optional<Dict> findByKey(String key) {
-        DictPo dictPo = dictDao.selectOne(Wrappers.<DictPo>lambdaQuery().eq(DictPo::getKey, key));
+        DictPo dictPo = dictDao.selectOne(Wrappers.<DictPo>lambdaQuery().eq(DictPo::getKey0, key));
         if (null == dictPo) {
             return Optional.empty();
         }
         Dict dict = new Dict();
         BeanUtils.copyProperties(dictPo, dict);
+        dict.setKey(dictPo.getKey0());
         return Optional.of(dict);
     }
 
     @Override
     public Boolean deleteByKey(String key) {
-        return dictDao.delete(Wrappers.<DictPo>lambdaQuery().eq(DictPo::getKey, key)) > 0;
+        return dictDao.delete(Wrappers.<DictPo>lambdaQuery().eq(DictPo::getKey0, key)) > 0;
     }
 
     @Override
@@ -47,11 +48,13 @@ public class DictRepositoryImpl implements DictRepository {
             //新增
             DictPo dictPo = new DictPo();
             BeanUtils.copyProperties(dict, dictPo);
+            dictPo.setKey0(dict.getKey());
             return dictDao.insert(dictPo) > 0;
         } else {
             //更新
             DictPo dictPo = new DictPo();
             BeanUtils.copyProperties(dict, dictPo);
+            dictPo.setKey0(dict.getKey());
             return dictDao.updateById(dictPo) > 0;
         }
     }
@@ -59,11 +62,12 @@ public class DictRepositoryImpl implements DictRepository {
     @Override
     public IPage<Dict> page(String key, Integer pageNum, Integer pageSize) {
         IPage<DictPo> iPage = dictDao.selectPage(new Page<>(pageNum, pageSize)
-                , Wrappers.<DictPo>lambdaQuery().eq(StringUtil.isNotBlank(key),DictPo::getKey, key));
+                , Wrappers.<DictPo>lambdaQuery().eq(StringUtil.isNotBlank(key),DictPo::getKey0, key));
         IPage<Dict> result = new Page<Dict>();
         List<Dict> dictList = iPage.getRecords().stream().map(dictPo -> {
             Dict dict = new Dict();
             BeanUtils.copyProperties(dictPo, dict);
+            dict.setKey(dictPo.getKey0());
             return dict;
         }).collect(Collectors.toList());
         result.setRecords(dictList);

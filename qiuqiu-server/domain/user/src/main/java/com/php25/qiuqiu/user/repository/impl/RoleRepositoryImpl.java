@@ -111,7 +111,9 @@ public class RoleRepositoryImpl implements RoleRepository {
         BeanUtils.copyProperties(role, rolePo);
         if (isInsert) {
             //新增
-            return roleDao.insert(rolePo) > 0;
+            int res =  roleDao.insert(rolePo);
+            role.setId(rolePo.getId());
+            return res>0;
         } else {
             //更新
             return roleDao.updateById(rolePo) > 0;

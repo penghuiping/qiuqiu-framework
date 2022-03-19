@@ -47,8 +47,13 @@ public class JobExecutionRepositoryImpl implements JobExecutionRepository {
             //新增
             return jobExecutionDao.insert(jobExecutionPo)>0;
         }else {
-            //更新
-            return jobExecutionDao.updateById(jobExecutionPo)>0;
+            Long count = jobExecutionDao.selectCount(Wrappers.<JobExecutionPo>lambdaQuery().eq(JobExecutionPo::getId,jobExecution.getId()));
+            if(count>0L) {
+                //更新
+                return jobExecutionDao.updateById(jobExecutionPo)>0;
+            }
+            //新增
+            return jobExecutionDao.insert(jobExecutionPo)>0;
         }
     }
 
