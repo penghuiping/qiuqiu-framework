@@ -22,11 +22,12 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
+      border
       :data="tableData">
       <el-table-column
         label="执行id"
         prop="id"
-        width="150">
+        width="0">
       </el-table-column>
       <el-table-column
         label="cron表达式"
@@ -51,7 +52,7 @@
       <el-table-column
         label="是否有效"
         prop="enable"
-        width="50">
+        width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.enable ? '有效' : '无效' }}</span>
         </template>

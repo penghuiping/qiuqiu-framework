@@ -10,6 +10,7 @@ import com.php25.qiuqiu.monitor.mq.DictProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthContributorAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration;
@@ -26,13 +27,20 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication(exclude = {
         ReactiveUserDetailsServiceAutoConfiguration.class,
         RedisAutoConfiguration.class,
-//        RabbitAutoConfiguration.class,
+        RabbitAutoConfiguration.class,
         ZipkinAutoConfiguration.class,
         DataSourceHealthContributorAutoConfiguration.class
 })
 @EnableTransactionManagement
 @EnableScheduling
-@EnableBinding({DictProcessor.class, AuditLogProcessor.class, MergeStatisticLoadedJobProcessor.class, StatisticLoadedJobProcessor.class, TimeJobDisabledProcessor.class, TimeJobEnabledProcessor.class, WsChannelProcessor.class})
+@EnableBinding({
+        DictProcessor.class,
+        AuditLogProcessor.class,
+        MergeStatisticLoadedJobProcessor.class,
+        StatisticLoadedJobProcessor.class,
+        TimeJobDisabledProcessor.class,
+        TimeJobEnabledProcessor.class,
+        WsChannelProcessor.class})
 @ComponentScan(basePackages = {"com.php25"})
 public class QiuQiuAdminApplication {
     public static void main(String[] args) {

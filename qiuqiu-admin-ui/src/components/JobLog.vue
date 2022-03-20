@@ -16,6 +16,7 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
+      border
       :data="tableData">
       <el-table-column
         fixed
@@ -41,7 +42,7 @@
       <el-table-column
         label="结果描述"
         prop="resultMessage"
-        width="300">
+        width="0">
       </el-table-column>
     </el-table>
     <!---分页--->

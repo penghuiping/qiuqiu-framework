@@ -20,6 +20,7 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
+      border
       :data="tableData">
       <el-table-column
         fixed
@@ -30,7 +31,7 @@
       <el-table-column
         label="用户名"
         prop="username"
-        width="150">
+        width="0">
       </el-table-column>
       <el-table-column
         label="昵称"
@@ -40,17 +41,17 @@
       <el-table-column
         label="创建时间"
         prop="createTime"
-        width="150">
+        width="200">
       </el-table-column>
       <el-table-column
         label="更新时间"
         prop="lastModifiedTime"
-        width="150">
+        width="200">
       </el-table-column>
       <el-table-column
         label="是否有效"
         prop="enable"
-        width="50">
+        width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.enable? '有效' : '无效' }}</span>
         </template>

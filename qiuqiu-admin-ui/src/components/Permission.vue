@@ -10,6 +10,7 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
+      border
       :data="tableData">
       <el-table-column
         label="权限名"
@@ -19,12 +20,12 @@
       <el-table-column
         label="描述"
         prop="description"
-        width="150">
+        width="0">
       </el-table-column>
       <el-table-column
         label="是否有效"
         prop="enable"
-        width="50">
+        width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.enable ? '有效' : '无效' }}</span>
         </template>

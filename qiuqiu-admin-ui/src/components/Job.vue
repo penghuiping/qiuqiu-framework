@@ -20,6 +20,7 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
+      border
       :data="tableData">
       <el-table-column
         label="任务id"
@@ -34,7 +35,7 @@
       <el-table-column
         label="描述"
         prop="description"
-        width="150">
+        width="0">
       </el-table-column>
       <el-table-column
         label="对应代码类"

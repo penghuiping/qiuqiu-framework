@@ -16,12 +16,13 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
+      border
       :data="tableData">
       <el-table-column
         fixed
         label="ID"
         prop="id"
-        width="50">
+        width="0">
       </el-table-column>
       <el-table-column
         label="用户名"
@@ -41,7 +42,7 @@
       <el-table-column
         label="创建时间"
         prop="createTime"
-        width="150">
+        width="200">
       </el-table-column>
     </el-table>
     <!---分页--->
