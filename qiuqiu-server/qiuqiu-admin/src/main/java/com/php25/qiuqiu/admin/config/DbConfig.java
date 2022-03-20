@@ -5,8 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -24,11 +27,11 @@ import javax.sql.DataSource;
  * @author penghuiping
  * @date 2021/2/3 10:29
  */
+@Slf4j
 @Configuration
 public class DbConfig {
 
     @Profile(value = {"local1"})
-    @Primary
     @Bean
     public DataSource sqLiteDataSource() {
         SQLiteDataSource sqLiteDataSource = new SQLiteDataSource();
@@ -37,7 +40,6 @@ public class DbConfig {
     }
 
     @Profile(value = {"local", "dev", "test"})
-    @Primary
     @Bean
     public DataSource hikariDataSource(DbProperties dbProperties) {
         HikariDataSource hikariDataSource = new HikariDataSource();
@@ -52,6 +54,7 @@ public class DbConfig {
         hikariDataSource.setMaxLifetime(dbProperties.getMaxLifetime());
         hikariDataSource.setMaximumPoolSize(dbProperties.getMaximumPoolSize());
         hikariDataSource.setPoolName(dbProperties.getPoolName());
+        hikariDataSource.setConnectionTestQuery("select 'x' from dual");
         return hikariDataSource;
     }
 
@@ -94,4 +97,5 @@ public class DbConfig {
         mybatisSqlSessionFactoryBean.setPlugins(interceptor);
         return mybatisSqlSessionFactoryBean.getObject();
     }
+
 }

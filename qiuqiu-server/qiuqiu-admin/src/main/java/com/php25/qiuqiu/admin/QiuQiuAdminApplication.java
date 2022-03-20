@@ -8,8 +8,10 @@ import com.php25.qiuqiu.job.mq.TimeJobEnabledProcessor;
 import com.php25.qiuqiu.monitor.mq.AuditLogProcessor;
 import com.php25.qiuqiu.monitor.mq.DictProcessor;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthContributorAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration;
 import org.springframework.cloud.sleuth.autoconfig.zipkin2.ZipkinAutoConfiguration;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -25,7 +27,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         ReactiveUserDetailsServiceAutoConfiguration.class,
         RedisAutoConfiguration.class,
 //        RabbitAutoConfiguration.class,
-        ZipkinAutoConfiguration.class
+        ZipkinAutoConfiguration.class,
+        DataSourceHealthContributorAutoConfiguration.class
 })
 @EnableTransactionManagement
 @EnableScheduling

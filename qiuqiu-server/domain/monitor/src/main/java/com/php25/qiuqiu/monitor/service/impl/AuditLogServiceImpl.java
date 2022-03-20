@@ -36,9 +36,9 @@ public class AuditLogServiceImpl implements AuditLogService {
 
     @StreamListener(value = AuditLogProcessor.INPUT)
     private void auditLogChannel(Message<AuditLogDto> message) {
-            log.info("msg body:{}", JsonUtil.toJson(message.getPayload()));
-            AuditLogDto auditLogDto = message.getPayload();
-            this.create0(auditLogDto);
+        log.info("msg body:{}", JsonUtil.toJson(message.getPayload()));
+        AuditLogDto auditLogDto = message.getPayload();
+        this.create0(auditLogDto);
     }
 
     @Override

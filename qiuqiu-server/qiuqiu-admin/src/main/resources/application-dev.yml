@@ -185,28 +185,28 @@ spring:
         time_job_enabled_output:
           destination: time_job_enabled-exchange
           contentType: application/json
-        rabbit:
-          bindings:
-            audit_log_input:
-              consumer:
-                acknowledgeMode: AUTO
-                auto-bind-dlq: true
-                republish-to-dlq: true
-            merge_statistic_loaded_job_input:
-              consumer:
-                acknowledgeMode: AUTO
-                auto-bind-dlq: true
-                republish-to-dlq: true
-            time_job_disabled_input:
-              consumer:
-                acknowledgeMode: AUTO
-                auto-bind-dlq: true
-                republish-to-dlq: true
-            time_job_enabled_input:
-              consumer:
-                acknowledgeMode: AUTO
-                auto-bind-dlq: true
-                republish-to-dlq: true
+      rabbit:
+        bindings:
+          audit_log_input:
+            consumer:
+              acknowledgeMode: AUTO
+              auto-bind-dlq: true
+              republish-to-dlq: true
+          merge_statistic_loaded_job_input:
+            consumer:
+              acknowledgeMode: AUTO
+              auto-bind-dlq: true
+              republish-to-dlq: true
+          time_job_disabled_input:
+            consumer:
+              acknowledgeMode: AUTO
+              auto-bind-dlq: true
+              republish-to-dlq: true
+          time_job_enabled_input:
+            consumer:
+              acknowledgeMode: AUTO
+              auto-bind-dlq: true
+              republish-to-dlq: true
   ########################################################
   ### servlet
   ########################################################
