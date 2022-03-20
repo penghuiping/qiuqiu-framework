@@ -33,7 +33,7 @@
             <!-- 设置当前日志的文件的大小，决定日志翻滚 -->
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- 除按日志记录之外，还配置了日志文件不能超过10M(默认)，若超过maxFileSize，日志文件会以索引0开始， -->
-                <maxFileSize>100MB</maxFileSize>
+                <maxFileSize>1000MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -58,7 +58,7 @@
             <!-- 设置当前日志的文件的大小，决定日志翻滚 -->
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- 除按日志记录之外，还配置了日志文件不能超过10M(默认)，若超过maxFileSize，日志文件会以索引0开始， -->
-                <maxFileSize>100MB</maxFileSize>
+                <maxFileSize>1000MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -104,7 +104,7 @@
     <root level="INFO">
         <!-- 生产的话，请移除CONSOLE-->
         <appender-ref ref="ASYNC-CONSOLE"/>
-<!--        <appender-ref ref="ASYNC-FILE"/>-->
-<!--        <appender-ref ref="ASYNC-FILE-ERROR"/>-->
+        <appender-ref ref="ASYNC-FILE"/>
+        <appender-ref ref="ASYNC-FILE-ERROR"/>
     </root>
 </configuration>

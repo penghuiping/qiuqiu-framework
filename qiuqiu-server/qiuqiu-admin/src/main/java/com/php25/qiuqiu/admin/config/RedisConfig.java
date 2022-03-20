@@ -29,20 +29,20 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @EnableConfigurationProperties({RedisProperties.class})
 @Configuration
 public class RedisConfig {
-    @Profile(value = {"local","local1"})
+    @Profile(value = {"local"})
     @Bean
     public RedisManager redisManager1() {
         return new LocalRedisManager(1024);
     }
 
-    @Profile(value = {"dev", "test"})
+    @Profile(value = {"dev"})
     @Bean
     public RedisManager redisManager(StringRedisTemplate stringRedisTemplate) {
         return new RedisManagerImpl(stringRedisTemplate);
     }
 
 
-    @Profile(value = {"dev", "test"})
+    @Profile(value = {"dev"})
     @Bean
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         StringRedisTemplate template = new StringRedisTemplate();
@@ -103,7 +103,7 @@ public class RedisConfig {
         return new LettuceConnectionFactory(config, clientConfiguration);
     }
 
-    @Profile(value = {"test0"})
+    @Profile(value = {"product"})
     @Bean(destroyMethod = "destroy")
     public LettuceConnectionFactory redisConnectionFactory2(RedisProperties redisProperties) {
         RedisProperties.Sentinel sentinelProperties = redisProperties.getSentinel();

@@ -91,7 +91,6 @@ public class DbShardingConfig {
         return ShardingDataSourceFactory.createDataSource(map, shardingRuleConfig,new Properties() );
     }
 
-    @Primary
     @Bean
     public DataSourceHealthIndicator dataSourceHealthIndicator(DataSource dataSource) {
         return new DataSourceHealthIndicator(dataSource, "select 'x' from dual");

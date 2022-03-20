@@ -32,9 +32,6 @@ public class WebConfig extends WebMvcConfigurationSupport {
     @Autowired
     JwtAuthInterceptor jwtAuthInterceptor;
 
-    @Value("${server.servlet.context-path}")
-    private String contextPath;
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtAuthInterceptor).addPathPatterns("/**").excludePathPatterns("/user/login", "/user/refresh", "/user/img_code", "/loan/**");

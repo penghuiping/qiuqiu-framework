@@ -8,8 +8,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -31,7 +29,7 @@ import javax.sql.DataSource;
 @Configuration
 public class DbConfig {
 
-    @Profile(value = {"local1"})
+    @Profile(value = {"local"})
     @Bean
     public DataSource sqLiteDataSource() {
         SQLiteDataSource sqLiteDataSource = new SQLiteDataSource();
@@ -39,7 +37,7 @@ public class DbConfig {
         return sqLiteDataSource;
     }
 
-    @Profile(value = {"local", "dev", "test"})
+    @Profile(value = {"dev"})
     @Bean
     public DataSource hikariDataSource(DbProperties dbProperties) {
         HikariDataSource hikariDataSource = new HikariDataSource();
@@ -58,19 +56,16 @@ public class DbConfig {
         return hikariDataSource;
     }
 
-    @Primary
     @Bean
     public PlatformTransactionManager transactionManager(DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
-    @Primary
     @Bean
     public TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
         return new TransactionTemplate(transactionManager);
     }
 
-    @Primary
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
