@@ -286,6 +286,15 @@ export default class Job extends BaseVue {
   margin-left: 1em;
 }
 
+.el-table {
+  width: 100%;
+  margin-top: 1em;
+}
+
+.el-button-group, #pagination, #searchBtn {
+  margin-top: 1em;
+}
+
 .el-button-group {
   margin-top: 1em;
 }

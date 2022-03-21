@@ -122,6 +122,15 @@ export default class AuditLog extends BaseVue {
   height: 80vh;
 }
 
+.el-table {
+  width: 100%;
+  margin-top: 1em;
+}
+
+.el-button-group, #pagination, #searchBtn {
+  margin-top: 1em;
+}
+
 #searchBtn {
   margin-left: 1em;
 }

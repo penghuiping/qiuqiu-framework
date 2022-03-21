@@ -38,7 +38,7 @@
                 || permissionExists(resources.JOB_LOG,permissions.PAGE)
        ">
           <template slot="title">
-            <i class="el-icon-s-tools"></i>
+            <i class="el-icon-timer"></i>
             <span slot="title">任务管理</span>
           </template>
           <el-menu-item index="4-1" @click="menuClick('job')" v-if="permissionExists(resources.JOB,permissions.PAGE)">任务列表</el-menu-item>

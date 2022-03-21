@@ -243,4 +243,13 @@ export default class Resource extends BaseVue {
   font-size: 2em;
   height: 80vh;
 }
+
+.el-table {
+  width: 100%;
+  margin-top: 1em;
+}
+
+.el-button-group, #pagination, #searchBtn {
+  margin-top: 1em;
+}
 </style>
