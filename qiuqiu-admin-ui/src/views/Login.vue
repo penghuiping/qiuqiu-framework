@@ -13,7 +13,7 @@
       <el-form-item label="验证码:" prop="code">
         <el-row  justify="space-between" type="flex">
           <el-input v-model=loginForm.code></el-input>
-          <img id="code_img" src="http://localhost:8081/qiuqiu_admin/user/img_code" alt="" width="100px" height="40px"/>
+          <img id="code_img" :src="loginForm.imgCodeSrc" alt="" width="100px" height="40px" />
         </el-row>
       </el-form-item>
       <el-row justify="space-between" type="flex">
@@ -47,7 +47,8 @@ export default class Login extends BaseVue {
     username: '',
     password: '',
     code: '',
-    checked: false
+    checked: false,
+    imgCodeSrc: 'http://localhost:8081/qiuqiu_admin/user/img_code?imgCodeId=' + this.randomId()
   }
 
   private rules = {
@@ -64,11 +65,32 @@ export default class Login extends BaseVue {
     ]
   }
 
+  randomId () {
+    let uuid: string = this.uuid()
+    uuid = uuid.replaceAll('-', '')
+    return uuid
+  }
+
+  uuid () {
+    const s: string[] = []
+    const hexDigits = '0123456789abcdef'
+    for (let i = 0; i < 36; i++) {
+      s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
+    }
+    s[14] = '4' // bits 12-15 of the time_hi_and_version field to 0010
+    s[19] = hexDigits.substr((parseInt(s[19]) & 0x3) | 0x8, 1) // bits 6-7 of the clock_seq_hi_and_reserved to 01
+    s[8] = s[13] = s[18] = s[23] = '-'
+
+    const uuid = s.join('')
+    return uuid
+  }
+
   login () {
     (this.$refs.form as ElForm).validate(async valid => {
       if (valid) {
         const loading = this.showLoading()
-        const res = await UserApi.login(this.loginForm.username, this.loginForm.password, this.loginForm.code)
+        const imgCodeId: string = this.loginForm.imgCodeSrc.substr(this.loginForm.imgCodeSrc.length - 32, this.loginForm.imgCodeSrc.length)
+        const res = await UserApi.login(this.loginForm.username, this.loginForm.password, this.loginForm.code, imgCodeId)
         this.closeLoading(loading)
         const jsonResponse = res.data
         if (jsonResponse.code === '00000') {

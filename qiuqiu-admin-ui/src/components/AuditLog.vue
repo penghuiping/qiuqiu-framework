@@ -22,7 +22,7 @@
         fixed
         label="ID"
         prop="id"
-        width="0">
+        width="50">
       </el-table-column>
       <el-table-column
         label="用户名"
@@ -42,7 +42,7 @@
       <el-table-column
         label="创建时间"
         prop="createTime"
-        width="200">
+        width="0">
       </el-table-column>
     </el-table>
     <!---分页--->
@@ -127,7 +127,7 @@ export default class AuditLog extends BaseVue {
   margin-top: 1em;
 }
 
-.el-button-group, #pagination, #searchBtn {
+.el-button-group, #pagination {
   margin-top: 1em;
 }
 

@@ -20,6 +20,11 @@ public class JobLog  {
     private Long id;
 
     /**
+     * 执行id
+     */
+    private String executionId;
+
+    /**
      * 任务id
      */
     private String jobId;

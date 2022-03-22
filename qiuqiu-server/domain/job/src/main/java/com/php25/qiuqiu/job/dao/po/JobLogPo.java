@@ -28,6 +28,12 @@ public class JobLogPo {
     private Long id;
 
     /**
+     * 执行id
+     */
+    @TableField("execution_id")
+    private String executionId;
+
+    /**
      * 任务id
      */
     @TableField("job_id")

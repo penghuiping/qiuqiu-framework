@@ -35,6 +35,7 @@ public abstract class BaseRunnable implements Runnable {
             JobExecutionDto jobExecutionDto = this.jobService.findOne(jobExecutionId);
             this.run0(jobExecutionDto.getParams());
             JobLogCreateDto jobLogCreateDto = new JobLogCreateDto();
+            jobLogCreateDto.setExecutionId(jobExecutionId);
             jobLogCreateDto.setJobId(this.jobId);
             jobLogCreateDto.setJobName(this.jobName);
             jobLogCreateDto.setExecuteTime(now);
@@ -44,6 +45,7 @@ public abstract class BaseRunnable implements Runnable {
         } catch (Exception e) {
             log.error("系统通知出错!", e);
             JobLogCreateDto jobLogCreateDto = new JobLogCreateDto();
+            jobLogCreateDto.setExecutionId(jobExecutionId);
             jobLogCreateDto.setJobId(this.jobId);
             jobLogCreateDto.setJobName(this.jobName);
             jobLogCreateDto.setExecuteTime(now);

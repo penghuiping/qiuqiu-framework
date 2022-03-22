@@ -136,6 +136,7 @@ drop table if exists t_timer_job_log;
 create table t_timer_job_log
 (
     id             bigint primary key auto_increment comment '定时任务执行日志id',
+    execution_id       varchar(255) comment '执行id',
     job_name       varchar(255) comment '定时任务名',
     execute_time   datetime comment '定时任务执行时间',
     result_code    int comment '执行结果码',

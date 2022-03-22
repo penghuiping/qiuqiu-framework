@@ -2,6 +2,7 @@ package com.php25.qiuqiu.admin.vo.in;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 
@@ -30,4 +31,11 @@ public class LoginVo {
      */
     @NotBlank
     private String code;
+
+    /**
+     * 验证码id
+     */
+    @NotBlank
+    @Length(max = 32)
+    private String imgCodeId;
 }

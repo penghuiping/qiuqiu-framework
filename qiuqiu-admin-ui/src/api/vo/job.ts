@@ -34,13 +34,15 @@ class JobCreateVo {
 
 class JobLogVo {
   id: number
+  executionId: string
   jobName: string
   executeTime: string
   resultCode: number
   resultMessage: string
 
-  constructor (id: number, jobName: string, executeTime: string, resultCode: number, resultMessage: string) {
+  constructor (id: number, executionId: string, jobName: string, executeTime: string, resultCode: number, resultMessage: string) {
     this.id = id
+    this.executionId = executionId
     this.jobName = jobName
     this.executeTime = executeTime
     this.resultCode = resultCode
@@ -48,7 +50,7 @@ class JobLogVo {
   }
 
   static newInstant (): JobLogVo {
-    return new JobLogVo(-1, '', '', -1, '')
+    return new JobLogVo(-1, '', '', '', -1, '')
   }
 }
 

@@ -19,6 +19,11 @@ public class JobLogVo {
     private Long id;
 
     /**
+     * 执行id
+     */
+    private String executionId;
+
+    /**
      * 任务id
      */
     private String jobName;

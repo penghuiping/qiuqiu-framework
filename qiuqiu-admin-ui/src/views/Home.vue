@@ -31,6 +31,7 @@
           </template>
           <el-menu-item index="3-1" @click="menuClick('auditLog')" v-if="permissionExists(resources.AUDIT_LOG,permissions.PAGE)">审计日志</el-menu-item>
           <el-menu-item index="3-2" @click="menuClick('dict')" v-if="permissionExists(resources.DICT,permissions.PAGE)">数据字典</el-menu-item>
+          <el-menu-item index="3-3" @click="menuClick('sysMonitor')" v-if="permissionExists(resources.DICT,permissions.PAGE)">系统监控</el-menu-item>
         </el-submenu>
 
         <el-submenu index="4" v-if="permissionExists(resources.JOB,permissions.PAGE)
@@ -92,6 +93,7 @@
             <PermissionView v-if="item.key==='permission'"/>
             <AuditLogView v-if="item.key==='auditLog'"/>
             <DictView v-if="item.key==='dict'"/>
+            <SysMonitor v-if="item.key==='sysMonitor'"/>
             <JobView v-if="item.key==='job'"/>
             <JobLogView v-if="item.key==='jobLog'"/>
             <JobExecutionView v-if="item.key==='jobExecution'"/>
@@ -123,6 +125,7 @@ import JobView from '@/components/Job.vue'
 import JobLogView from '@/components/JobLog.vue'
 import JobExecutionView from '@/components/JobExeuction.vue'
 import RuleView from '@/components/Rule.vue'
+import SysMonitor from '@/components/SysMonitor.vue'
 
 class TabItem {
   title: string
@@ -146,6 +149,7 @@ class TabItem {
     PermissionView,
     AuditLogView,
     DictView,
+    SysMonitor,
     JobView,
     JobLogView,
     JobExecutionView,
@@ -256,6 +260,10 @@ export default class Home extends BaseVue {
       }
       case 'dict': {
         this.addTab('dict', '数据字典')
+        break
+      }
+      case 'sysMonitor': {
+        this.addTab('sysMonitor', '系统监控')
         break
       }
       case 'job': {

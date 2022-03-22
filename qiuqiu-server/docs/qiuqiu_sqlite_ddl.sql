@@ -102,6 +102,7 @@ create table t_timer_job_log
     id integer
         constraint t_timer_jog_log_pk
         primary key autoincrement,
+    execution_id varchar
     job_name varchar,
     execute_time datetime,
     result_code int,

@@ -4,11 +4,12 @@ import { ApiConstant } from '@/api/index'
 import { TokenVo, UserCreateVo, UserDetailVo, UserListVo, UserUpdateVo } from '@/api/vo/user'
 
 class UserApi {
-  public static login (username: string, password: string, code: string): Promise<AxiosResponse<JsonResponse<TokenVo>>> {
+  public static login (username: string, password: string, code: string, imgCodeId: string): Promise<AxiosResponse<JsonResponse<TokenVo>>> {
     return axios.post(ApiConstant.LOGIN, {
       username: username,
       password: password,
-      code: code
+      code: code,
+      imgCodeId: imgCodeId
     })
   }
 

@@ -25,6 +25,11 @@
         width="50">
       </el-table-column>
       <el-table-column
+        label="执行id"
+        prop="executionId"
+        width="300">
+      </el-table-column>
+      <el-table-column
         label="任务名"
         prop="jobName"
         width="250">
@@ -127,7 +132,7 @@ export default class JobLog extends BaseVue {
   margin-top: 1em;
 }
 
-.el-button-group, #pagination, #searchBtn {
+.el-button-group, #pagination {
   margin-top: 1em;
 }
 

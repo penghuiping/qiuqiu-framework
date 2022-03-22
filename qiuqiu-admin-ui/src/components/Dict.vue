@@ -342,7 +342,7 @@ export default class Dict extends BaseVue {
   margin-top: 1em;
 }
 
-.el-button-group, #pagination, #searchBtn {
+.el-button-group, #pagination {
   margin-top: 1em;
 }
 

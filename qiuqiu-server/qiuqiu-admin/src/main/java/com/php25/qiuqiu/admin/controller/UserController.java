@@ -6,6 +6,8 @@ import com.php25.common.core.util.RandomUtil;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.redis.RedisManager;
+import com.php25.qiuqiu.admin.constant.AdminErrorCode;
 import com.php25.qiuqiu.admin.mapper.UserVoMapper;
 import com.php25.qiuqiu.admin.vo.in.LoginVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserCreateVo;
@@ -32,11 +34,13 @@ import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 import com.php25.qiuqiu.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
@@ -73,6 +77,8 @@ public class UserController extends JSONController {
 
     private final ImageService imageService;
 
+    private final RedisManager redisManager;
+
     /**
      * 登入接口
      *
@@ -83,6 +89,10 @@ public class UserController extends JSONController {
     @PostMapping(value = "/login",headers = {"version=v1"})
     public JSONResponse<TokenVo> login(HttpServletResponse response,
                                        @Valid @RequestBody LoginVo loginVo) {
+        String rightCode = redisManager.string().get(loginVo.getImgCodeId(),String.class);
+        if(null == rightCode || !rightCode.equals(loginVo.getCode())) {
+            throw Exceptions.throwBusinessException(AdminErrorCode.IMAGE_VALIDATION_CODE_ERROR);
+        }
         TokenDto tokenDto = userService.login(loginVo.getUsername(), loginVo.getPassword());
         TokenVo tokenVo = new TokenVo();
         tokenVo.setToken(tokenDto.getAccessToken());
@@ -99,8 +109,10 @@ public class UserController extends JSONController {
      * 获取登入验证码
      */
     @GetMapping(value = "/img_code")
-    public void getImgCode(HttpServletResponse response) {
+    public void getImgCode(@NotBlank @Length(max = 32) @RequestParam String imgCodeId, HttpServletResponse response) {
         String code = RandomUtil.getRandomNumbersAndLetters(6);
+        //验证码过期时间5分钟
+        redisManager.string().set(imgCodeId,code,300L);
         try (
                 ReadableByteChannel readableByteChannel = imageService.getCode(code);
                 WritableByteChannel writableByteChannel = Channels.newChannel(response.getOutputStream());

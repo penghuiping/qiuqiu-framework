@@ -14,6 +14,11 @@ import java.time.LocalDateTime;
 public class JobLogCreateDto {
 
     /**
+     * 执行id
+     */
+    private String executionId;
+
+    /**
      * 任务id
      */
     private String jobId;
