@@ -25,3 +25,25 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - "./data/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./data/grafana/grafana.ini:/etc/grafana/grafana.ini"
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - 9411:9411
+  app:
+    image: penghuiping/qiuqiu-admin:latest
+    ports:
+      - "8081:8081"
+      - "9091:9091"

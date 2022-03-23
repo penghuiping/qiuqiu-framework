@@ -415,7 +415,7 @@
                     <version>2.8.0</version>
                     <configuration>
                         <from>
-                            <image>docker://openjdk:alpine</image>
+                            <image>docker://openjdk:8u322-jdk-oracle</image>
                         </from>
                         <to>
                             <image>docker.io/penghuiping/${project.artifactId}</image>
@@ -431,7 +431,7 @@
                             <!--                                <jvmFlag>-Xmx2g</jvmFlag>-->
                             <!--                            </jvmFlags>-->
                             <!--非root用户启动容器-->
-                            <user>nobody:nogroup</user>
+<!--                            <user>nobody:nogroup</user>-->
                         </container>
                     </configuration>
                     <executions>

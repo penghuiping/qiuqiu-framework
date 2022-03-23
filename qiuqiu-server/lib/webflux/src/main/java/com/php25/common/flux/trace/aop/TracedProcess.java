@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -26,7 +28,7 @@ import java.time.temporal.ChronoField;
  * @date 2019/8/5 13:35
  */
 @Aspect
-@ConditionalOnBean(value = {Tracer.class})
+@ConditionalOnProperty(value = { "spring.sleuth.enabled", "spring.zipkin.enabled" })
 @Component
 public class TracedProcess {
 
@@ -44,8 +46,7 @@ public class TracedProcess {
         ScopedSpan span;
         long start = Instant.now().getLong(ChronoField.MILLI_OF_SECOND);
         Method method = ((MethodSignature) pjp.getSignature()).getMethod();
-        long end = Instant.now().getLong(ChronoField.MILLI_OF_SECOND);
-        log.info("Traced:{},方法名:{},耗时:{}ms", tracer.currentSpan(), method.getName(), end - start);
+
         Traced traced = method.getDeclaredAnnotation(Traced.class);
         if (null == traced || StringUtil.isBlank(traced.spanName())) {
             span = tracer.startScopedSpan(method.getName());
@@ -60,6 +61,8 @@ public class TracedProcess {
             throw e;
         } finally {
             span.finish();
+            long end = Instant.now().getLong(ChronoField.MILLI_OF_SECOND);
+            log.info("Traced:{},方法名:{},耗时:{}ms", tracer.currentSpan(), method.getName(), end - start);
         }
     }
 }

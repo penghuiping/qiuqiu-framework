@@ -7,7 +7,7 @@ import com.php25.qiuqiu.job.dto.BaseRunnable;
 import com.php25.qiuqiu.monitor.dto.MetricsDto;
 import com.php25.qiuqiu.monitor.service.DictionaryService;
 import com.php25.qiuqiu.monitor.service.SystemMonitorService;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -15,12 +15,11 @@ import java.util.List;
  * @author penghuiping
  * @date 2021/3/13 19:35
  */
-@Log4j2
+@Slf4j
 public class SystemMonitorInfoPrintJob extends BaseRunnable {
 
     private final DictionaryService dictionaryService;
     private final SystemMonitorService systemMonitorService;
-
 
     public SystemMonitorInfoPrintJob(String jobId,String jobName,String jobExecutionId) {
         super(jobId,jobName,jobExecutionId);

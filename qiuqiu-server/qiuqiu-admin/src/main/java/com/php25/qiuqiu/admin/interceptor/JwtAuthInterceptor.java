@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +28,9 @@ public class JwtAuthInterceptor implements AsyncHandlerInterceptor {
     @Autowired
     private UserService userService;
 
-    private String[] excludeUris = new String[]{"/user/info", "/user/logout"};
+    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+    private String[] excludeUris = new String[]{"/**/user/info","/**/user/logout"};
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -44,16 +47,15 @@ public class JwtAuthInterceptor implements AsyncHandlerInterceptor {
         String username = userService.getUsernameFromJwt(jwt);
         request.setAttribute("username", username);
 
-        //2. 在认证权限
         String uri = request.getRequestURI();
-
         //在例外中的uri不需要校验权限
         for (String excludeUri : excludeUris) {
-            if (uri.endsWith(excludeUri)) {
+            if (antPathMatcher.match(excludeUri,uri)) {
                 return true;
             }
         }
 
+        //2. 在认证权限
         boolean hasPermission = userService.hasPermission(jwt, uri);
         if (!hasPermission) {
             throw Exceptions.throwBusinessException(UserErrorCode.HAS_NO_PERMISSION);

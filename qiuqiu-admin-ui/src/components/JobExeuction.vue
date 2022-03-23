@@ -234,8 +234,8 @@ export default class JobExecution extends BaseVue {
         })
       } else {
         this.$message({
-          type: 'info',
-          message: '删除失败'
+          type: 'error',
+          message: '删除失败:' + res.data.message
         })
       }
     }).catch(() => {
@@ -261,8 +261,8 @@ export default class JobExecution extends BaseVue {
         })
       } else {
         this.$message({
-          type: 'info',
-          message: '重新加载失败'
+          type: 'error',
+          message: '重新加载失败:' + res.data.message
         })
       }
     }).catch(() => {

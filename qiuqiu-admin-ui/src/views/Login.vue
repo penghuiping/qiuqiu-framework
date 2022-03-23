@@ -13,7 +13,7 @@
       <el-form-item label="验证码:" prop="code">
         <el-row  justify="space-between" type="flex">
           <el-input v-model=loginForm.code></el-input>
-          <img id="code_img" :src="loginForm.imgCodeSrc" alt="" width="100px" height="40px" />
+          <img id="code_img" :src="loginForm.imgCodeSrc" alt="" width="100px" height="40px"/>
         </el-row>
       </el-form-item>
       <el-row justify="space-between" type="flex">

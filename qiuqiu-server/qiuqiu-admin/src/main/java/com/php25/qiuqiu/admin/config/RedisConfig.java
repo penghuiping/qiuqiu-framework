@@ -5,9 +5,13 @@ import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.redis.impl.RedisManagerImpl;
 import com.php25.common.redis.local.LocalRedisManager;
+import io.lettuce.core.ClientOptions;
+import io.lettuce.core.SocketOptions;
+import io.lettuce.core.TimeoutOptions;
+import io.lettuce.core.resource.ClientResources;
+import io.lettuce.core.resource.DefaultClientResources;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +31,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  * @date 2021/2/3 10:29
  */
 @EnableConfigurationProperties({RedisProperties.class})
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class RedisConfig {
     @Profile(value = {"local"})
     @Bean
@@ -35,14 +39,21 @@ public class RedisConfig {
         return new LocalRedisManager(1024);
     }
 
-    @Profile(value = {"dev"})
+
+    @Bean(destroyMethod = "shutdown")
+    @ConditionalOnMissingBean(ClientResources.class)
+    DefaultClientResources lettuceClientResources() {
+        return DefaultClientResources.create();
+    }
+
+    @Profile(value = {"dev","docker"})
     @Bean
     public RedisManager redisManager(StringRedisTemplate stringRedisTemplate) {
         return new RedisManagerImpl(stringRedisTemplate);
     }
 
 
-    @Profile(value = {"dev"})
+    @Profile(value = {"dev","docker"})
     @Bean
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         StringRedisTemplate template = new StringRedisTemplate();
@@ -53,7 +64,7 @@ public class RedisConfig {
 
     @Profile(value = {"test"})
     @Bean(destroyMethod = "destroy")
-    public LettuceConnectionFactory redisConnectionFactory(RedisProperties redisProperties) {
+    public LettuceConnectionFactory redisConnectionFactory(RedisProperties redisProperties,ClientResources clientResources) {
         RedisProperties.Cluster clusterProperties = redisProperties.getCluster();
         RedisClusterConfiguration config = new RedisClusterConfiguration(
                 clusterProperties.getNodes());
@@ -74,14 +85,18 @@ public class RedisConfig {
         RedisProperties.Pool properties = redisProperties.getLettuce().getPool();
         LettuceClientConfiguration clientConfiguration = builder
                 .commandTimeout((redisProperties.getTimeout()))
+                .clientResources(clientResources)
+                .clientOptions(ClientOptions.builder()
+                        .socketOptions(SocketOptions.builder().connectTimeout(redisProperties.getConnectTimeout()).build())
+                        .timeoutOptions(TimeoutOptions.enabled()).build())
                 .poolConfig(getPoolConfig(properties)).build();
         return new LettuceConnectionFactory(config, clientConfiguration);
     }
 
 
-    @Profile(value = {"dev"})
+    @Profile(value = {"dev","docker"})
     @Bean(destroyMethod = "destroy")
-    public LettuceConnectionFactory redisConnectionFactory1(RedisProperties redisProperties) {
+    public LettuceConnectionFactory redisConnectionFactory1(RedisProperties redisProperties,ClientResources clientResources) {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName(redisProperties.getHost());
         config.setPort(redisProperties.getPort());
@@ -90,7 +105,8 @@ public class RedisConfig {
             config.setPassword(redisProperties.getPassword());
         }
 
-        LettucePoolingClientConfiguration.LettucePoolingClientConfigurationBuilder builder = LettucePoolingClientConfiguration.builder();
+        LettucePoolingClientConfiguration.LettucePoolingClientConfigurationBuilder builder =
+                LettucePoolingClientConfiguration.builder();
 
         if (redisProperties.isSsl()) {
             builder.useSsl();
@@ -99,13 +115,17 @@ public class RedisConfig {
         RedisProperties.Pool properties = redisProperties.getLettuce().getPool();
         LettuceClientConfiguration clientConfiguration = builder
                 .commandTimeout((redisProperties.getTimeout()))
+                .clientResources(clientResources)
+                .clientOptions(ClientOptions.builder()
+                        .socketOptions(SocketOptions.builder().connectTimeout(redisProperties.getConnectTimeout()).build())
+                        .timeoutOptions(TimeoutOptions.enabled()).build())
                 .poolConfig(getPoolConfig(properties)).build();
         return new LettuceConnectionFactory(config, clientConfiguration);
     }
 
     @Profile(value = {"product"})
     @Bean(destroyMethod = "destroy")
-    public LettuceConnectionFactory redisConnectionFactory2(RedisProperties redisProperties) {
+    public LettuceConnectionFactory redisConnectionFactory2(RedisProperties redisProperties,ClientResources clientResources) {
         RedisProperties.Sentinel sentinelProperties = redisProperties.getSentinel();
         RedisSentinelConfiguration config = new RedisSentinelConfiguration(
                 sentinelProperties.getMaster(), Sets.newHashSet(sentinelProperties.getNodes()));
@@ -127,6 +147,10 @@ public class RedisConfig {
         RedisProperties.Pool properties = redisProperties.getLettuce().getPool();
         LettuceClientConfiguration clientConfiguration = builder
                 .commandTimeout((redisProperties.getTimeout()))
+                .clientResources(clientResources)
+                .clientOptions(ClientOptions.builder()
+                        .socketOptions(SocketOptions.builder().connectTimeout(redisProperties.getConnectTimeout()).build())
+                                .timeoutOptions(TimeoutOptions.enabled()).build())
                 .poolConfig(getPoolConfig(properties)).build();
         return new LettuceConnectionFactory(config, clientConfiguration);
     }

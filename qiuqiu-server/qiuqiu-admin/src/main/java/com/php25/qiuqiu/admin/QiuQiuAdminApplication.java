@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         ReactiveUserDetailsServiceAutoConfiguration.class,
         RedisAutoConfiguration.class,
         RabbitAutoConfiguration.class,
-        ZipkinAutoConfiguration.class,
+//        ZipkinAutoConfiguration.class,
         DataSourceHealthContributorAutoConfiguration.class
 })
 @EnableTransactionManagement

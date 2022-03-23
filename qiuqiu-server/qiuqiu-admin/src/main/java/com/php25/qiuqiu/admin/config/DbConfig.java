@@ -10,7 +10,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -37,7 +36,7 @@ public class DbConfig {
         return sqLiteDataSource;
     }
 
-    @Profile(value = {"dev"})
+    @Profile(value = {"dev","docker"})
     @Bean
     public DataSource hikariDataSource(DbProperties dbProperties) {
         HikariDataSource hikariDataSource = new HikariDataSource();

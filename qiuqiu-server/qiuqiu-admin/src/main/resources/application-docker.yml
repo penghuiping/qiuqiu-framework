@@ -1,36 +1,10 @@
 ########################################################
 ###common
 ########################################################
-#jasypt:
-#  encryptor:
-#    ## 不安全 生产用 -Djasypt.encryptor.password=123456 方式
-#    password: '@WSXcft6#EDCvgy7'
-#app:
-#  db:
-#    ip: localhost
-#    port: 33306
-#    username: ENC(DySsEJn1LgKl6VqxdP7mTw==)
-#    password: ENC(znfy5SdaY3e0hXjTpZQv1w==)
-#    name: test
-#  filesever:
-#    host: localhost
-#    path: /tmp
-#    thumbPath: /tmp/testUpload/image
-#  redis:
-#    host: localhost
-#    port: 36379
-#    password: ENC(zGb6Ots9lRMd7RLIy6w12A==)
-#    database: 0
-#  rabbitmq:
-#    ip: localhost
-#    port: 5672
-#    username: ENC(Esk0at/quBKVrWD6PKHwAg==)
-#    password: ENC(GqHPMo3jAyV25ZAv5Zejnw==)
-#    virtualHost: /
 app:
   db:
-    ip: localhost
-    port: 33306
+    ip: mysql
+    port: 3306
     username: root
     password: 123456
     name: test
@@ -39,19 +13,16 @@ app:
     path: /tmp
     thumbPath: /tmp/testUpload/image
   redis:
-    host: localhost
-    port: 36379
+    host: redis
+    port: 6379
     password: 123456
     database: 0
   rabbitmq:
-    ip: localhost
+    ip: rabbitmq
     port: 5672
     username: guest
     password: guest
     virtualHost: /
-  zipkin:
-    host: localhost
-    port: 9411
 ########################################################
 ### static resources and upload load file
 ########################################################
@@ -104,7 +75,6 @@ spring:
         max-wait: 5s
         min-idle: 0
     timeout: 5s
-    connect-timeout: 5s
   ########################################################
   ### rabbitmq
   ########################################################
@@ -218,20 +188,6 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 20MB
-  ########################################################
-  ### 调用链
-  ########################################################
-  zipkin:
-    base-url: http://${app.zipkin.host}:${app.zipkin.port}
-    service.name: qiuqiu-admin
-    sender.type: web
-    enabled: true
-    discovery-client-enabled: false
-  sleuth:
-    sampler:
-      probability: 1.0
-    traceId128: true
-    enabled: true
 ########################################################
 ### 服务器运行时信息
 ########################################################

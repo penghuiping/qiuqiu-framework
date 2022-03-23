@@ -3,7 +3,7 @@ package com.php25.common.flux.trace;
 import brave.ScopedSpan;
 import brave.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * @author penghuiping
  * @date 2019/8/5 17:24
  */
-@ConditionalOnBean(value = {Tracer.class})
+@ConditionalOnProperty(value = { "spring.sleuth.enabled", "spring.zipkin.enabled" })
 @Component
 public class TracedWrapper {
 
