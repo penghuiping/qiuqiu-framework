@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration;
-import org.springframework.cloud.sleuth.autoconfig.zipkin2.ZipkinAutoConfiguration;
+import org.springframework.cloud.sleuth.autoconfig.brave.instrument.redis.BraveRedisAutoConfiguration;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -28,7 +28,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         RedisAutoConfiguration.class,
         RabbitAutoConfiguration.class,
 //        ZipkinAutoConfiguration.class,
-        DataSourceHealthContributorAutoConfiguration.class
+        DataSourceHealthContributorAutoConfiguration.class,
+        BraveRedisAutoConfiguration.class
 })
 @EnableTransactionManagement
 @EnableScheduling

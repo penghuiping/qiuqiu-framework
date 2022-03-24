@@ -49,6 +49,7 @@
         <jmh.version>1.21</jmh.version>
         <jfairy.version>0.5.9</jfairy.version>
         <assertj>3.17.2</assertj>
+        <brave.version>5.13.7</brave.version>
         <core>V.2.5.1</core>
         <redis>V.2.5.1</redis>
         <db>V.2.5.1</db>
@@ -96,6 +97,13 @@
                 <version>${bouncycastle.version}</version>
                 <scope>compile</scope>
             </dependency>
+                <dependency>
+                    <groupId>io.zipkin.brave</groupId>
+                    <artifactId>brave-bom</artifactId>
+                    <version>${brave.version}</version>
+                    <type>pom</type>
+                    <scope>import</scope>
+                </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
@@ -291,7 +299,6 @@
                 <artifactId>sharding-jdbc-core</artifactId>
                 <version>4.1.1</version>
             </dependency>
-
             <dependency>
                 <groupId>com.php25</groupId>
                 <artifactId>core</artifactId>
