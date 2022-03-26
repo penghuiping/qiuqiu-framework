@@ -134,6 +134,10 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.github.mweirauch</groupId>
+            <artifactId>micrometer-jvm-extras</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.zipkin.brave</groupId>
             <artifactId>brave-instrumentation-mysql8</artifactId>
         </dependency>

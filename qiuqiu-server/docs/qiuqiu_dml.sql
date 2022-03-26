@@ -1,4 +1,4 @@
-INSERT INTO t_user (id, nickname, username, password, data_access_level, create_time, last_modified_time, group_id, enable) VALUES (1, '超级管理员', 'admin', '123456','GROUP_DATA', null, null, 1, 1);
+INSERT INTO t_user (id, nickname, username, password, data_access_level, create_time, last_modified_time, group_id, enable) VALUES (1, '超级管理员', 'admin', '123456','GROUP_DATA', now(), now(), 1, 1);
 INSERT INTO t_user_role (user_id, role_id) VALUES (1, 1);
 INSERT INTO t_role (id, name, description, enable) VALUES (1, 'admin', '超级管理员', 1);
 
@@ -11,6 +11,8 @@ INSERT INTO t_resource (name, description, enable) VALUES ('job', '定时任务'
 INSERT INTO t_resource (name, description, enable) VALUES ('job_log', '任务日志', 1);
 INSERT INTO t_resource (name, description, enable) VALUES ('job_execution', '执行计划', 1);
 INSERT INTO t_resource (name, description, enable) VALUES ('dict', '数据字典', 1);
+INSERT INTO t_resource (name, description, enable) VALUES ('sys_monitor', '系统监控', 1);
+INSERT INTO t_resource (name, description, enable) VALUES ('tracing', '调用链监控', 1);
 INSERT INTO t_resource (name, description, enable) VALUES ('audit_log', '审计日志', 1);
 
 INSERT INTO t_permission (name, description, enable) VALUES ('detail', '获取详情', 1);
@@ -56,6 +58,8 @@ INSERT INTO t_resource_permission(resource,permission) VALUES ('dict','create');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('dict','update');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('dict','delete');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('dict','refresh');
+INSERT INTO t_resource_permission(resource,permission) VALUES ('sys_monitor','page');
+INSERT INTO t_resource_permission(resource,permission) VALUES ('tracing','page');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('job','page');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('job','create');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('job','update');
@@ -103,6 +107,8 @@ INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'d
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'dict','update');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'dict','delete');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'dict','refresh');
+INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'sys_monitor','page');
+INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'tracing','page');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'job','page');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'job','create');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'job','update');

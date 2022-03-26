@@ -121,7 +121,7 @@ export default class Login extends BaseVue {
   .loginFormWrapper {
     width: 100vw;
     height: 100vh;
-    background-color: midnightblue;
+    background-color: black;
     text-align: center;
   }
 

@@ -24,14 +24,17 @@
         </el-submenu>
 
         <el-submenu index="3" v-if="permissionExists(resources.AUDIT_LOG,permissions.PAGE)
-        || permissionExists(resources.DICT,permissions.PAGE)">
+        || permissionExists(resources.DICT,permissions.PAGE)
+        || permissionExists(resources.SYS_MONITOR,permissions.PAGE)
+        || permissionExists(resources.TRACING,permissions.PAGE)">
           <template slot="title">
             <i class="el-icon-s-tools"></i>
             <span slot="title">系统管理</span>
           </template>
           <el-menu-item index="3-1" @click="menuClick('auditLog')" v-if="permissionExists(resources.AUDIT_LOG,permissions.PAGE)">审计日志</el-menu-item>
           <el-menu-item index="3-2" @click="menuClick('dict')" v-if="permissionExists(resources.DICT,permissions.PAGE)">数据字典</el-menu-item>
-          <el-menu-item index="3-3" @click="menuClick('sysMonitor')" v-if="permissionExists(resources.DICT,permissions.PAGE)">系统监控</el-menu-item>
+          <el-menu-item index="3-3" @click="menuClick('sysMonitor')" v-if="permissionExists(resources.SYS_MONITOR,permissions.PAGE)">系统监控</el-menu-item>
+          <el-menu-item index="3-4" @click="menuClick('tracing')" v-if="permissionExists(resources.TRACING,permissions.PAGE)">调用链监控</el-menu-item>
         </el-submenu>
 
         <el-submenu index="4" v-if="permissionExists(resources.JOB,permissions.PAGE)
@@ -94,6 +97,7 @@
             <AuditLogView v-if="item.key==='auditLog'"/>
             <DictView v-if="item.key==='dict'"/>
             <SysMonitor v-if="item.key==='sysMonitor'"/>
+            <Tracing v-if="item.key==='tracing'"/>
             <JobView v-if="item.key==='job'"/>
             <JobLogView v-if="item.key==='jobLog'"/>
             <JobExecutionView v-if="item.key==='jobExecution'"/>
@@ -126,6 +130,7 @@ import JobLogView from '@/components/JobLog.vue'
 import JobExecutionView from '@/components/JobExeuction.vue'
 import RuleView from '@/components/Rule.vue'
 import SysMonitor from '@/components/SysMonitor.vue'
+import Tracing from '@/components/Tracing.vue'
 
 class TabItem {
   title: string
@@ -141,6 +146,7 @@ class TabItem {
 
 @Component({
   components: {
+    Tracing,
     IndexView,
     UserView,
     RoleView,
@@ -264,6 +270,10 @@ export default class Home extends BaseVue {
       }
       case 'sysMonitor': {
         this.addTab('sysMonitor', '系统监控')
+        break
+      }
+      case 'tracing': {
+        this.addTab('tracing', '调用链监控')
         break
       }
       case 'job': {

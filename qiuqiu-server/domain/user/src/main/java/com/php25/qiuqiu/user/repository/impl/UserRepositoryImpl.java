@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.core.util.TimeUtil;
+import com.php25.qiuqiu.user.constant.DataAccessLevel;
 import com.php25.qiuqiu.user.dao.UserDao;
 import com.php25.qiuqiu.user.dao.UserRoleDao;
 import com.php25.qiuqiu.user.dao.po.UserPo;
@@ -43,9 +44,7 @@ public class UserRepositoryImpl implements UserRepository {
         if (null == userPo) {
             return Optional.empty();
         }
-        User user = new User();
-        BeanUtils.copyProperties(userPo, user);
-        return Optional.of(user);
+        return Optional.of(toUser(userPo));
     }
 
     @Override
@@ -58,9 +57,7 @@ public class UserRepositoryImpl implements UserRepository {
         if (null == userPo) {
             return Optional.empty();
         }
-        User user = new User();
-        BeanUtils.copyProperties(userPo, user);
-        return Optional.of(user);
+        return Optional.of(toUser(userPo));
     }
 
     @Override
@@ -116,18 +113,10 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean save(User user, boolean isInsert) {
-        UserPo userPo = new UserPo();
-        BeanUtils.copyProperties(user, userPo);
-        if (null != user.getCreateTime()) {
-            userPo.setCreateTime(Date.from(user.getCreateTime()
-                    .toInstant(ZoneOffset.ofHours(8))));
-        }
-        if (null != user.getLastModifiedTime()) {
-            userPo.setLastModifiedTime(Date.from(user.getLastModifiedTime()
-                    .toInstant(ZoneOffset.ofHours(8))));
-        }
+        UserPo userPo = fromUser(user);
         if (isInsert) {
             //新增
+            userPo.setDataAccessLevel(DataAccessLevel.GROUP_DATA.name());
             int res = userDao.insert(userPo);
             user.setId(userPo.getId());
             return res>0;
@@ -141,9 +130,7 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findById(Long id) {
         UserPo userPo = userDao.selectById(id);
         if (null != userPo) {
-            User user = new User();
-            BeanUtils.copyProperties(userPo, user);
-            return Optional.of(user);
+            return Optional.of(toUser(userPo));
         }
         return Optional.empty();
     }
@@ -158,16 +145,36 @@ public class UserRepositoryImpl implements UserRepository {
         IPage<UserPo> page = userDao.selectPage(new Page<>(pageNum, pageSize),
                 Wrappers.<UserPo>lambdaQuery().eq(StringUtil.isNotBlank(username), UserPo::getUsername, username));
         Page<User> userPage = new Page<>();
-        userPage.setRecords(page.getRecords().stream().map(userPo -> {
-            User user = new User();
-            BeanUtils.copyProperties(userPo, user);
-            user.setCreateTime(null != userPo.getCreateTime() ? TimeUtil.toLocalDateTime(userPo.getCreateTime()) : null);
-            user.setLastModifiedTime(null != userPo.getLastModifiedTime() ? TimeUtil.toLocalDateTime(userPo.getLastModifiedTime()) : null);
-            return user;
-        }).collect(Collectors.toList()));
+        userPage.setRecords(page.getRecords().stream().map(this::toUser).collect(Collectors.toList()));
         userPage.setCurrent(pageNum);
         userPage.setTotal(page.getTotal());
         userPage.setSize(pageSize);
         return userPage;
+    }
+
+    private User toUser(UserPo userPo) {
+        User user = new User();
+        BeanUtils.copyProperties(userPo, user);
+        if(null != userPo.getCreateTime()) {
+            user.setCreateTime(TimeUtil.toLocalDateTime(userPo.getCreateTime()));
+        }
+        if (null != userPo.getLastModifiedTime()) {
+            user.setLastModifiedTime(TimeUtil.toLocalDateTime(userPo.getLastModifiedTime()));
+        }
+        return user;
+    }
+
+    private UserPo fromUser(User user) {
+        UserPo userPo = new UserPo();
+        BeanUtils.copyProperties(user, userPo);
+        if (null != user.getCreateTime()) {
+            userPo.setCreateTime(Date.from(user.getCreateTime()
+                    .toInstant(ZoneOffset.ofHours(8))));
+        }
+        if (null != user.getLastModifiedTime()) {
+            userPo.setLastModifiedTime(Date.from(user.getLastModifiedTime()
+                    .toInstant(ZoneOffset.ofHours(8))));
+        }
+        return userPo;
     }
 }

@@ -45,7 +45,7 @@ public class RedisConfig {
     @Bean(destroyMethod = "shutdown")
     ClientResources lettuceClientResources() {
         return DefaultClientResources.create().mutate()
-                .tracing(BraveTracing.builder().tracing(Tracing.current()).build()).build();
+                .tracing(BraveTracing.builder().serviceName("redis-lettuce").tracing(Tracing.current()).build()).build();
     }
 
     @Profile(value = {"dev","docker"})
