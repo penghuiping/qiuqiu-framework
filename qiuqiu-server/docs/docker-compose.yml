@@ -45,22 +45,35 @@ services:
   elasticsearch:
     image: elasticsearch:5.6
     environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx1024m"
+      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
+      - "discovery.type=single-node"
     volumes:
       - "./data/elasticsearch:/usr/share/elasticsearch/data"
-    restart: always
     ports:
       - "9200:9200"
       - "9300:9300"
+  # bin/elasticsearch-reset-password -u elastic
+  # bin/elasticsearch-create-enrollment-token -s kibana
   kibana:
     image: kibana:5.6
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
     depends_on:
       - elasticsearch
-    restart: always
     ports:
       - "5601:5601"
+  logstash:
+    image: logstash:5.6
+    command: logstash -f /etc/logstash/conf.d/logstash.conf
+    volumes:
+      - ./data/logstash/conf.d:/etc/logstash/conf.d
+      #- ./data/logstash/logst:/tmp
+    depends_on:
+      - elasticsearch
+    ports:
+      - "7001-7005:7001-7005"
+      - "4560:4560"
+      - "9600:9600"
   app:
     image: penghuiping/qiuqiu-admin:latest
     ports:

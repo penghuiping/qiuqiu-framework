@@ -26,6 +26,9 @@ app:
   zipkin:
     host: zipkin
     port: 9411
+  logstash:
+    host: logstash
+    port: 4560
 ########################################################
 ### static resources and upload load file
 ########################################################
@@ -236,3 +239,9 @@ httpClient:
   connectionTimeout: 5000
   readTimeout: 5000
   writeTimeout: 5000
+########################################################
+### logstash 集中日志
+########################################################
+logstash:
+  ip: ${app.logstash.host}
+  port: ${app.logstash.port}

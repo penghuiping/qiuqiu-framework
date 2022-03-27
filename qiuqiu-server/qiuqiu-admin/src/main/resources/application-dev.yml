@@ -52,6 +52,9 @@ app:
   zipkin:
     host: localhost
     port: 9411
+  logstash:
+    host: localhost
+    port: 4560
 ########################################################
 ### static resources and upload load file
 ########################################################
@@ -63,7 +66,7 @@ base_thumb_path: ${app.filesever.thumbPath}/${spring.application.name}/
 ### LOG
 ########################################################
 logging:
-  config: classpath:logback.xml
+#  config: classpath:logback.xml
   level:
     root: INFO
     org.springframework.web: INFO
@@ -262,3 +265,9 @@ httpClient:
   connectionTimeout: 5000
   readTimeout: 5000
   writeTimeout: 5000
+########################################################
+### logstash 集中日志
+########################################################
+logstash:
+  ip: ${app.logstash.host}
+  port: ${app.logstash.port}
