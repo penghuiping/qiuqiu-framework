@@ -4,6 +4,7 @@ package com.php25.common.flux.web;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.php25.common.core.util.JsonUtil;
+import com.php25.common.flux.mask.MaskManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -38,8 +39,16 @@ public class WebLogFilter extends OncePerRequestFilter {
 
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-    public WebLogFilter(String ...excludeUriPatterns) {
+    private static final MaskManager maskManager = new MaskManager();
+
+    public void setExcludeUriPatterns(String... excludeUriPatterns) {
         this.excludeUriPatterns = Lists.newArrayList(excludeUriPatterns);
+    }
+
+    public void setMaskPattern(String... maskPatterns) {
+        for (int i = 0; i < maskPatterns.length; i++) {
+            maskManager.addMaskPattern(maskPatterns[i]);
+        }
     }
 
     @Override
@@ -49,10 +58,10 @@ public class WebLogFilter extends OncePerRequestFilter {
         String contentType = request.getContentType();
         String uri = request.getRequestURI();
         //如果是excludeUri则直接略过
-        for(int i=0;i<excludeUriPatterns.size();i++) {
+        for (int i = 0; i < excludeUriPatterns.size(); i++) {
             String pattern = excludeUriPatterns.get(i);
-            boolean isExcluded = antPathMatcher.match(pattern,uri);
-            if(isExcluded) {
+            boolean isExcluded = antPathMatcher.match(pattern, uri);
+            if (isExcluded) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -70,12 +79,14 @@ public class WebLogFilter extends OncePerRequestFilter {
             log.info("request params为:{}", JsonUtil.toJson(request.getParameterMap()));
             filterChain.doFilter(contentCachingRequestWrapper, contentCachingResponseWrapper);
             String respContentType = response.getContentType();
-            response.getOutputStream().write(contentCachingResponseWrapper.getContentAsByteArray());
-            response.getOutputStream().flush();
-            if(MediaType.APPLICATION_JSON_VALUE.equals(respContentType)
+            String result = new String(contentCachingResponseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
+            if (MediaType.APPLICATION_JSON_VALUE.equals(respContentType)
                     || MediaType.APPLICATION_JSON_UTF8_VALUE.equals(respContentType)) {
-                log.info("response params为:{}", new String(contentCachingResponseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8));
+                result = maskManager.maskMessage(result);
+                log.info("response params为:{}", result);
             }
+            response.getOutputStream().write(result.getBytes(StandardCharsets.UTF_8));
+            response.getOutputStream().flush();
         } else {
             filterChain.doFilter(request, response);
         }
@@ -110,6 +121,7 @@ public class WebLogFilter extends OncePerRequestFilter {
             }
 
             String requestBody = new String(content.toString().getBytes(Charsets.ISO_8859_1), Charsets.UTF_8);
+            requestBody = maskManager.maskMessage(requestBody);
             log.info("request body为:{}", requestBody);
             final ByteArrayInputStream bis = new ByteArrayInputStream(requestBody.getBytes(Charsets.UTF_8));
             return new ServletInputStream() {

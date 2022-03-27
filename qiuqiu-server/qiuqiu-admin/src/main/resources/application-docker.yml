@@ -40,7 +40,7 @@ base_thumb_path: ${app.filesever.thumbPath}/${spring.application.name}/
 ### LOG
 ########################################################
 logging:
-  config: classpath:logback.xml
+#  config: classpath:logback.xml
   level:
     root: INFO
     org.springframework.web: INFO

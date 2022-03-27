@@ -42,7 +42,10 @@ public class WebConfig extends WebMvcConfigurationSupport {
     @Bean
     FilterRegistrationBean<WebLogFilter> loggingFilter() {
         FilterRegistrationBean<WebLogFilter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
-        filterFilterRegistrationBean.setFilter(new WebLogFilter());
+        WebLogFilter webLogFilter = new WebLogFilter();
+        webLogFilter.setMaskPattern("password.{1,2}:.{1,2}([A-Za-z0-9]{6,}).{1,2},");
+        webLogFilter.setExcludeUriPatterns();
+        filterFilterRegistrationBean.setFilter(webLogFilter);
         filterFilterRegistrationBean.setOrder(1);
         filterFilterRegistrationBean.addUrlPatterns("/*");
         return filterFilterRegistrationBean;

@@ -67,7 +67,7 @@ services:
     command: logstash -f /etc/logstash/conf.d/logstash.conf
     volumes:
       - ./data/logstash/conf.d:/etc/logstash/conf.d
-      #- ./data/logstash/logst:/tmp
+      - ./data/logstash/logst:/tmp
     depends_on:
       - elasticsearch
     ports:
