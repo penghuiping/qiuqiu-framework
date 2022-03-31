@@ -78,10 +78,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public TokenDto login(String username, String password) {
-        Optional<User> userOptional = userRepository.findByUsernameAndPassword(username, password);
+        Optional<User> userOptional = userRepository.findByUsername(username);
         if (!userOptional.isPresent()) {
             throw Exceptions.throwBusinessException(UserErrorCode.USER_NOT_FOUND);
         }
+
+        if(!userOptional.get().getPassword().equals(password)) {
+            throw Exceptions.throwBusinessException(UserErrorCode.WRONG_PASSWORD);
+        }
+
         return generateToken(username, "");
     }
 

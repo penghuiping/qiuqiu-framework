@@ -4,7 +4,7 @@ import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.StringUtil;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.service.UserService;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author penghuiping
  * @date 2021/2/4 10:00
  */
-@Log4j2
+@Slf4j
 @Component
 public class JwtAuthInterceptor implements AsyncHandlerInterceptor {
 

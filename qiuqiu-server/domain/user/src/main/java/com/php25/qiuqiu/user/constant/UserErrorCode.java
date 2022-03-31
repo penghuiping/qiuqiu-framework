@@ -23,7 +23,8 @@ public enum UserErrorCode implements BusinessErrorStatus {
     PERMISSION_DATA_NOT_EXISTS("A1112", "查询的权限数据不存在"),
     RESOURCE_HAS_BEEN_REFERENCED_BY_ROLE("A1113", "资源被角色所引用无法删除"),
     RESOURCE_DATA_NOT_EXISTS("A1114", "查询的资源数据不存在"),
-    REFRESH_TOKEN_ILLEGAL("A1115", "刷新token不合法,无法完成刷新操作");
+    REFRESH_TOKEN_ILLEGAL("A1115", "刷新token不合法,无法完成刷新操作"),
+    WRONG_PASSWORD("A1116", "登入密码错误");
 
 
 

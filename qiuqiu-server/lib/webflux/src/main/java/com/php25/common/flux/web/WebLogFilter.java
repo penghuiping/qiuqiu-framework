@@ -121,7 +121,6 @@ public class WebLogFilter extends OncePerRequestFilter {
             }
 
             String requestBody = new String(content.toString().getBytes(Charsets.ISO_8859_1), Charsets.UTF_8);
-            requestBody = maskManager.maskMessage(requestBody);
             log.info("request body为:{}", requestBody);
             final ByteArrayInputStream bis = new ByteArrayInputStream(requestBody.getBytes(Charsets.UTF_8));
             return new ServletInputStream() {

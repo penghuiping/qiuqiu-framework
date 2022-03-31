@@ -33,7 +33,7 @@ import com.php25.qiuqiu.user.dto.user.UserPageDto;
 import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 import com.php25.qiuqiu.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,7 +65,7 @@ import java.util.stream.Collectors;
  * @author penghuiping
  * @date 2021/2/3 10:23
  */
-@Log4j2
+@Slf4j
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -79,83 +79,6 @@ public class UserController extends JSONController {
 
     private final RedisManager redisManager;
 
-    /**
-     * 登入接口
-     *
-     * @ignoreParams response
-     * @since v1
-     */
-    @AuditLog
-    @PostMapping(value = "/login",headers = {"version=v1"})
-    public JSONResponse<TokenVo> login(HttpServletResponse response,
-                                       @Valid @RequestBody LoginVo loginVo) {
-        String rightCode = redisManager.string().get(loginVo.getImgCodeId(),String.class);
-        if(null == rightCode || !rightCode.equals(loginVo.getCode())) {
-            throw Exceptions.throwBusinessException(AdminErrorCode.IMAGE_VALIDATION_CODE_ERROR);
-        }
-        TokenDto tokenDto = userService.login(loginVo.getUsername(), loginVo.getPassword());
-        TokenVo tokenVo = new TokenVo();
-        tokenVo.setToken(tokenDto.getAccessToken());
-        tokenVo.setExpireTime(tokenDto.getExpireTime());
-        Cookie cookie = new Cookie(UserConstants.REFRESH_TOKEN, tokenDto.getRefreshToken());
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-        return succeed(tokenVo);
-    }
-
-    /**
-     * 获取登入验证码
-     */
-    @GetMapping(value = "/img_code")
-    public void getImgCode(@NotBlank @Length(max = 32) @RequestParam String imgCodeId, HttpServletResponse response) {
-        String code = RandomUtil.getRandomNumbersAndLetters(6);
-        //验证码过期时间5分钟
-        redisManager.string().set(imgCodeId,code,300L);
-        try (
-                ReadableByteChannel readableByteChannel = imageService.getCode(code);
-                WritableByteChannel writableByteChannel = Channels.newChannel(response.getOutputStream());
-        ) {
-            ByteBuffer buffer = ByteBuffer.allocate(512);
-            while (true) {
-                buffer.clear();
-                int size = readableByteChannel.read(buffer);
-                if (size <= 0) {
-                    break;
-                }
-                buffer.flip();
-                writableByteChannel.write(buffer);
-            }
-        } catch (Exception e) {
-            throw Exceptions.throwIllegalStateException("获取验证码失败", e);
-        }
-    }
-
-    /**
-     * 刷新token接口
-     *
-     * @ignoreParams request
-     */
-    @AuditLog
-    @PostMapping(value = "/refresh",headers = {"version=v1"})
-    public JSONResponse<TokenVo> refresh(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (null != cookies) {
-            Optional<Cookie> cookieOptional = Arrays.stream(cookies)
-                    .filter(cookie -> UserConstants.REFRESH_TOKEN.equals(cookie.getName()))
-                    .findFirst();
-            if (cookieOptional.isPresent()) {
-                Cookie cookie = cookieOptional.get();
-                TokenDto tokenDto = userService.refreshToken(cookie.getValue());
-                TokenVo tokenVo = new TokenVo();
-                tokenVo.setToken(tokenDto.getAccessToken());
-                tokenVo.setExpireTime(tokenDto.getExpireTime());
-                return succeed(tokenVo);
-            }
-        }
-        throw Exceptions.throwBusinessException(UserErrorCode.REFRESH_TOKEN_ILLEGAL);
-    }
 
     /**
      * 获取用户信息接口
@@ -194,7 +117,7 @@ public class UserController extends JSONController {
     }
 
     /**
-     * 获取用户信息接口
+     * 获取用户详细信息接口
      *
      * @ignoreParams username
      * @since v1
@@ -283,14 +206,5 @@ public class UserController extends JSONController {
             userService.delete(userId);
         }
         return succeed(true);
-    }
-
-    /**
-     * 登出接口
-     */
-    @AuditLog
-    @PostMapping(value = "/logout",headers = {"version=v1"})
-    public JSONResponse<Boolean> logout(@RequestAttribute @NotBlank String username) {
-        return succeed(userService.logout(username));
     }
 }

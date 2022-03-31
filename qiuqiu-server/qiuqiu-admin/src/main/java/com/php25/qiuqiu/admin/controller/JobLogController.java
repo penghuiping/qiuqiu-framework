@@ -10,7 +10,7 @@ import com.php25.qiuqiu.admin.vo.out.job.JobLogVo;
 import com.php25.qiuqiu.job.dto.JobLogDto;
 import com.php25.qiuqiu.job.service.JobService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/job_log")
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class JobLogController extends JSONController {
 
     private final JobService jobService;

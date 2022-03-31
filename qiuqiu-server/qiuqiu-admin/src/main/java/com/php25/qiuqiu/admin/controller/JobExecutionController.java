@@ -3,12 +3,12 @@ package com.php25.qiuqiu.admin.controller;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.qiuqiu.admin.mapper.JobExecutionVoMapper;
 import com.php25.qiuqiu.admin.vo.in.job.JobExecutionCreateVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobExecutionIdVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobExecutionPageVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobExecutionUpdateVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobIdVo;
-import com.php25.qiuqiu.admin.mapper.JobExecutionVoMapper;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.job.JobExecutionVo;
 import com.php25.qiuqiu.job.dto.JobExecutionCreateDto;
@@ -17,7 +17,7 @@ import com.php25.qiuqiu.job.dto.JobExecutionUpdateDto;
 import com.php25.qiuqiu.job.service.JobService;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/job_execution")
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class JobExecutionController extends JSONController {
 
     private final JobService jobService;

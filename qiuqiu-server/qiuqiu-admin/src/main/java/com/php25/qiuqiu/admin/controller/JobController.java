@@ -4,11 +4,11 @@ import com.google.common.collect.Lists;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
+import com.php25.qiuqiu.admin.mapper.JobVoMapper;
 import com.php25.qiuqiu.admin.vo.in.job.JobCreateVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobIdVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobPageVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobUpdateVo;
-import com.php25.qiuqiu.admin.mapper.JobVoMapper;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.job.JobVo;
 import com.php25.qiuqiu.job.dto.JobCreateDto;
@@ -17,7 +17,7 @@ import com.php25.qiuqiu.job.dto.JobUpdateDto;
 import com.php25.qiuqiu.job.service.JobService;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/job")
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class JobController extends JSONController {
 
     private final JobService jobService;
