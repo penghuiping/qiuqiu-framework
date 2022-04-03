@@ -30,7 +30,7 @@ public class JwtAuthInterceptor implements AsyncHandlerInterceptor {
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-    private String[] excludeUris = new String[]{"/**/user/info","/**/user/logout"};
+    private String[] excludeUris = new String[]{"/**/user/info","/**/other/logout"};
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

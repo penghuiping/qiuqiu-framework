@@ -48,7 +48,7 @@ export default class Login extends BaseVue {
     password: '',
     code: '',
     checked: false,
-    imgCodeSrc: 'http://localhost:8081/qiuqiu_admin/user/img_code?imgCodeId=' + this.randomId()
+    imgCodeSrc: 'http://localhost:8081/qiuqiu_admin/other/img_code?imgCodeId=' + this.randomId()
   }
 
   private rules = {

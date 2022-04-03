@@ -15,7 +15,9 @@ export default class Tracing extends BaseVue {
   mounted () {
     const oIframe = document.getElementById('tracingIFrame')
     const deviceHeight = document.documentElement.clientHeight
-    oIframe.style.height = (Number(deviceHeight) - 140) + 'px' // 数字是页面布局高度差
+    if (oIframe) {
+      oIframe.style.height = (Number(deviceHeight) - 140) + 'px' // 数字是页面布局高度差
+    }
   }
 }
 </script>
