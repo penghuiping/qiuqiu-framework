@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.admin.controller;
 
+import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.flux.web.JSONController;
@@ -7,9 +8,12 @@ import com.php25.common.flux.web.JSONResponse;
 import com.php25.common.redis.RedisManager;
 import com.php25.qiuqiu.admin.constant.AdminErrorCode;
 import com.php25.qiuqiu.admin.vo.in.LoginVo;
+import com.php25.qiuqiu.admin.vo.out.DictVo;
 import com.php25.qiuqiu.admin.vo.out.TokenVo;
 import com.php25.qiuqiu.media.service.ImageService;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
+import com.php25.qiuqiu.monitor.dto.DictDto;
+import com.php25.qiuqiu.monitor.service.DictionaryService;
 import com.php25.qiuqiu.user.constant.UserConstants;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.user.TokenDto;
@@ -17,6 +21,7 @@ import com.php25.qiuqiu.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -35,7 +40,9 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author penghuiping
@@ -52,6 +59,8 @@ public class OtherController extends JSONController {
     private final UserService userService;
 
     private final ImageService imageService;
+
+    private final DictionaryService dictionaryService;
 
     /**
      * 登入接口
@@ -138,5 +147,23 @@ public class OtherController extends JSONController {
             }
         }
         throw Exceptions.throwBusinessException(UserErrorCode.REFRESH_TOKEN_ILLEGAL);
+    }
+
+    /**
+     * 获取系统启动初始化配置项
+     * @return 系统启动初始化配置项列表
+     */
+    @PostMapping(value = "/get_init_config",headers = {"version=v1"})
+    public JSONResponse<List<DictVo>>  getInitConfig() {
+        List<DictDto> dictDtoList = dictionaryService.getAllInitConfig();
+        if(dictDtoList.isEmpty()) {
+            return succeed(Lists.newArrayList());
+        }
+
+        return succeed(dictDtoList.stream().map(dictDto -> {
+            DictVo dictVo = new DictVo();
+            BeanUtils.copyProperties(dictDto,dictVo);
+            return dictVo;
+        }).collect(Collectors.toList()));
     }
 }

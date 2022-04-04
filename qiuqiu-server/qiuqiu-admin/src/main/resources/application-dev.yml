@@ -73,6 +73,7 @@ logging:
     org.springframework.jdbc: INFO
     com.php25: INFO
     org.springframework.security: INFO
+    com.php25.qiuqiu.monitor.dao: INFO
   file:
     name: /tmp/logs/qiuqiu-admin.log
 spring:

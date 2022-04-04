@@ -3,6 +3,8 @@ package com.php25.qiuqiu.monitor.service;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.qiuqiu.monitor.dto.DictDto;
 
+import java.util.List;
+
 /**
  * 系统数据字典配置服务
  * 可以通过后台直接刷新运行时系统配置参数，达到系统开关的目的
@@ -66,4 +68,10 @@ public interface DictionaryService {
      * @return 分页信息
      */
     DataGridPageDto<DictDto> page(String key, Integer pageNum, Integer pageSize);
+
+    /**
+     * 获取系统启动所需要初始化配置项
+     * @return 系统初始化配置项
+     */
+    List<DictDto> getAllInitConfig();
 }

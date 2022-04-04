@@ -3,6 +3,7 @@ package com.php25.qiuqiu.monitor.repository.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Lists;
 import com.php25.common.core.util.StringUtil;
 import com.php25.qiuqiu.monitor.dao.DictDao;
 import com.php25.qiuqiu.monitor.dao.po.DictPo;
@@ -75,5 +76,19 @@ public class DictRepositoryImpl implements DictRepository {
         result.setCurrent(pageNum);
         result.setSize(pageSize);
         return result;
+    }
+
+    @Override
+    public List<Dict> findAllLikeRightKey(String key) {
+        List<DictPo> list = dictDao.selectList(Wrappers.<DictPo>lambdaQuery().likeRight(DictPo::getKey0,key));
+        if(list.isEmpty()) {
+            return Lists.newArrayList();
+        }
+        return list.stream().map(dictPo -> {
+            Dict dict = new Dict();
+            BeanUtils.copyProperties(dictPo, dict);
+            dict.setKey(dictPo.getKey0());
+            return dict;
+        }).collect(Collectors.toList());
     }
 }

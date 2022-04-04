@@ -179,6 +179,7 @@ export default class Home extends BaseVue {
     Permission.mapToLocalPermissions(res.data.data.resourcePermissions)
     this.isCollapse = true
     this.addTab('index', '首页')
+    await this.getInitConfig()
     this.toggleCollapse()
     this.initWS()
   }
@@ -328,6 +329,14 @@ export default class Home extends BaseVue {
     if (res.data.data) {
       this.$store.commit('logout')
       this.$router.push('/')
+    }
+  }
+
+  async getInitConfig () {
+    const res = await UserApi.getInitConfig()
+    if (res.data.data) {
+      this.$store.commit('setInitConfig', res.data.data)
+      console.log('store:', this.$store)
     }
   }
 

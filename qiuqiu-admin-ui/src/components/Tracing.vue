@@ -10,7 +10,7 @@ import { BaseVue } from '@/BaseVue'
 
 @Component
 export default class Tracing extends BaseVue {
-  private iframeSrc='http://localhost:9411/'
+  private iframeSrc=this.findConfigItemByKey('zipkin')
 
   mounted () {
     const oIframe = document.getElementById('tracingIFrame')

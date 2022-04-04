@@ -67,6 +67,15 @@ class BaseVue extends Vue {
   permissionExists (resource: string, permission: string): boolean {
     return Permission.exists(resource, permission)
   }
+
+  findConfigItemByKey (key: string) {
+    for (const index in this.$store.state.config) {
+      const configItem = this.$store.state.config[index]
+      if (configItem.key.indexOf(key) > 0) {
+        return configItem.value
+      }
+    }
+  }
 }
 
 export { BaseVue }

@@ -34,6 +34,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        jwtAuthInterceptor.setExcludeUris(new String[]{"/**/user/info","/**/other/logout","/**/other/get_init_config"});
         registry.addInterceptor(jwtAuthInterceptor).addPathPatterns("/**").excludePathPatterns("/other/login", "/other/refresh", "/other/img_code");
 
     }

@@ -10,7 +10,7 @@ import { BaseVue } from '@/BaseVue'
 
 @Component
 export default class Tracing extends BaseVue {
-  private iframeSrc='http://localhost:5601/goto/1768dac7a3341d76b56a7d602f8469e8'
+  private iframeSrc=this.findConfigItemByKey('kibana')
 
   mounted () {
     const oIframe = document.getElementById('logIFrame')

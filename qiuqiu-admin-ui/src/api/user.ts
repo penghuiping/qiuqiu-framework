@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 import { JsonResponse, PageVo } from '@/api/vo'
 import { ApiConstant } from '@/api/index'
 import { TokenVo, UserCreateVo, UserDetailVo, UserListVo, UserUpdateVo } from '@/api/vo/user'
+import { DictVo } from '@/api/vo/dict'
 
 class UserApi {
   public static login (username: string, password: string, code: string, imgCodeId: string): Promise<AxiosResponse<JsonResponse<TokenVo>>> {
@@ -19,6 +20,10 @@ class UserApi {
 
   public static info (): Promise<AxiosResponse<JsonResponse<UserDetailVo>>> {
     return axios.post(ApiConstant.USER_INFO)
+  }
+
+  public static getInitConfig (): Promise<AxiosResponse<JsonResponse<DictVo>>> {
+    return axios.post(ApiConstant.GET_INIT_CONFIG)
   }
 
   public static detail (userId: number): Promise<AxiosResponse<JsonResponse<UserDetailVo>>> {

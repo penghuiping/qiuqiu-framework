@@ -3,6 +3,7 @@ package com.php25.qiuqiu.monitor.repository;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.php25.qiuqiu.monitor.entity.Dict;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -44,4 +45,11 @@ public interface DictRepository {
      * @return 分页数据
      */
     IPage<Dict> page(String key, Integer pageNum, Integer pageSize);
+
+    /**
+     * key前缀模糊匹配查询
+     * @param key 键前缀
+     * @return  字典列表
+     */
+    List<Dict> findAllLikeRightKey(String key);
 }

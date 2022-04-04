@@ -9,7 +9,8 @@ export default new Vuex.Store({
     token: '',
     user: {},
     userPermissions: new Map<string, Set<string>>(),
-    ws: {}
+    ws: {},
+    config: []
   },
   mutations: {
     login (state, payload) {
@@ -24,6 +25,9 @@ export default new Vuex.Store({
     },
     loginUserPermissions (state, payload) {
       state.userPermissions = payload
+    },
+    setInitConfig (state, payload) {
+      state.config = payload
     }
   },
   actions: {},

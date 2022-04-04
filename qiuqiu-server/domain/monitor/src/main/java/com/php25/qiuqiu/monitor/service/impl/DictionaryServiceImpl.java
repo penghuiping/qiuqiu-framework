@@ -1,6 +1,7 @@
 package com.php25.qiuqiu.monitor.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.google.common.collect.Lists;
 import com.php25.common.core.dto.DataGridPageDto;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.qiuqiu.monitor.dto.DictDto;
@@ -11,6 +12,7 @@ import com.php25.qiuqiu.monitor.repository.DictRepository;
 import com.php25.qiuqiu.monitor.service.DictionaryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -115,5 +117,18 @@ public class DictionaryServiceImpl implements DictionaryService, DisposableBean 
     private boolean removeCache0(String key) {
         this.cache.remove(key);
         return true;
+    }
+
+    @Override
+    public List<DictDto> getAllInitConfig() {
+        List<Dict> list = dictRepository.findAllLikeRightKey("init");
+        if(list.isEmpty()) {
+            return Lists.newArrayList();
+        }
+        return list.stream().map(dict -> {
+            DictDto dictDto = new DictDto();
+            BeanUtils.copyProperties(dict,dictDto);
+            return dictDto;
+        }).collect(Collectors.toList());
     }
 }
