@@ -3,12 +3,12 @@ package com.php25.qiuqiu.admin.controller;
 import com.google.common.collect.Lists;
 import com.php25.common.core.tree.TreeNode;
 import com.php25.common.core.tree.Trees;
-import com.php25.common.flux.web.JSONController;
-import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.web.JsonController;
+import com.php25.common.web.JsonResponse;
+import com.php25.qiuqiu.admin.mapper.GroupVoMapper;
 import com.php25.qiuqiu.admin.vo.in.group.GroupCreateVo;
 import com.php25.qiuqiu.admin.vo.in.group.GroupDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.group.GroupUpdateVo;
-import com.php25.qiuqiu.admin.mapper.GroupVoMapper;
 import com.php25.qiuqiu.admin.vo.out.TreeVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.group.GroupCreateDto;
@@ -32,7 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/group")
 @RequiredArgsConstructor
-public class GroupController extends JSONController {
+public class GroupController extends JsonController {
 
     private final GroupService groupService;
 
@@ -44,7 +44,7 @@ public class GroupController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/get_all",headers = {"version=v1"})
-    public JSONResponse<TreeVo> getAll() {
+    public JsonResponse<TreeVo> getAll() {
         TreeNode<GroupDto> res = groupService.getAllGroupTree();
         TreeVo root = new TreeVo();
         buildTree(root, res);
@@ -58,7 +58,7 @@ public class GroupController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/create",headers = {"version=v1"})
-    public JSONResponse<Boolean> create(@Valid @RequestBody GroupCreateVo groupCreateVo) {
+    public JsonResponse<Boolean> create(@Valid @RequestBody GroupCreateVo groupCreateVo) {
         GroupCreateDto groupCreateDto = groupVoMapper.toCreateDto(groupCreateVo);
         return succeed(groupService.create(groupCreateDto));
     }
@@ -70,7 +70,7 @@ public class GroupController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/update",headers = {"version=v1"})
-    public JSONResponse<Boolean> create(@Valid @RequestBody GroupUpdateVo groupUpdateVo) {
+    public JsonResponse<Boolean> create(@Valid @RequestBody GroupUpdateVo groupUpdateVo) {
         GroupDto groupDto = groupVoMapper.toGroupDto(groupUpdateVo);
         return succeed(groupService.update(groupDto));
     }
@@ -82,7 +82,7 @@ public class GroupController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/delete",headers = {"version=v1"})
-    public JSONResponse<Boolean> delete(@Valid @RequestBody GroupDeleteVo groupDeleteVo) {
+    public JsonResponse<Boolean> delete(@Valid @RequestBody GroupDeleteVo groupDeleteVo) {
         return succeed(groupService.delete(groupDeleteVo.getGroupId()));
     }
 

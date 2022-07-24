@@ -50,7 +50,7 @@
         <ws>V.2.5.1</ws>
         <mq>V.2.5.1</mq>
         <validation>V.2.7.1</validation>
-        <webflux>V.2.5.1</webflux>
+        <web>V.2.7.1</web>
         <timer>V.2.5.1</timer>
     </properties>
 
@@ -231,8 +231,8 @@
             </dependency>
             <dependency>
                 <groupId>com.php25</groupId>
-                <artifactId>webflux</artifactId>
-                <version>${webflux}</version>
+                <artifactId>web</artifactId>
+                <version>${web}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>

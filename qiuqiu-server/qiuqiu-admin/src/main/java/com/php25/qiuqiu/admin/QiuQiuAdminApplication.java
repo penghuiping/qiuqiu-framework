@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.admin;
 
+import com.php25.common.config.EnableWeb;
 import com.php25.common.redis.config.EnableRedisManager;
 import com.php25.common.timer.config.EnableTimer;
 import com.php25.common.ws.mq.WsChannelProcessor;
@@ -43,9 +44,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         TimeJobDisabledProcessor.class,
         TimeJobEnabledProcessor.class,
         WsChannelProcessor.class})
+@EnableWeb
 @EnableTimer
 @EnableRedisManager
-@ComponentScan(basePackages = {"com.php25"})
+@ComponentScan(basePackages = {"com.php25.qiuqiu","com.php25.common"})
 public class QiuQiuAdminApplication {
     public static void main(String[] args) {
         SpringApplication.run(QiuQiuAdminApplication.class, args);

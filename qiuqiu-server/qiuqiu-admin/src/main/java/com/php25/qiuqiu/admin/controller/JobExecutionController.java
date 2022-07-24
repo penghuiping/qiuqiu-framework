@@ -1,8 +1,8 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.PageDto;
-import com.php25.common.flux.web.JSONController;
-import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.web.JsonController;
+import com.php25.common.web.JsonResponse;
 import com.php25.qiuqiu.admin.mapper.JobExecutionVoMapper;
 import com.php25.qiuqiu.admin.vo.in.job.JobExecutionCreateVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobExecutionIdVo;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/job_execution")
 @RequiredArgsConstructor
 @Slf4j
-public class JobExecutionController extends JSONController {
+public class JobExecutionController extends JsonController {
 
     private final JobService jobService;
 
@@ -51,7 +51,7 @@ public class JobExecutionController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/page", headers = {"version=v1"})
-    public JSONResponse<PageResultVo<JobExecutionVo>> page(@RequestAttribute String username, @Valid @RequestBody JobExecutionPageVo pageVo) {
+    public JsonResponse<PageResultVo<JobExecutionVo>> page(@RequestAttribute String username, @Valid @RequestBody JobExecutionPageVo pageVo) {
         PageDto<JobExecutionDto> dataGrid = jobService.pageJobExecution(username, pageVo.getJobName(), pageVo.getPageNum(), pageVo.getPageSize());
         PageResultVo<JobExecutionVo> result = new PageResultVo<>();
         List<JobExecutionVo> list = dataGrid.getData().stream().map(jobExecutionVoMapper::toJobExecutionVo).collect(Collectors.toList());
@@ -69,7 +69,7 @@ public class JobExecutionController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/create", headers = {"version=v1"})
-    public JSONResponse<Boolean> create(@RequestAttribute String username, @Valid @RequestBody JobExecutionCreateVo jobExecution) {
+    public JsonResponse<Boolean> create(@RequestAttribute String username, @Valid @RequestBody JobExecutionCreateVo jobExecution) {
         JobExecutionCreateDto jobExecutionCreateDto = jobExecutionVoMapper.toJobExecutionDto(jobExecution);
         return succeed(jobService.createJobExecution(username, jobExecutionCreateDto));
     }
@@ -82,7 +82,7 @@ public class JobExecutionController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/update", headers = {"version=v1"})
-    public JSONResponse<Boolean> update(@RequestAttribute String username, @Valid @RequestBody JobExecutionUpdateVo jobExecution) {
+    public JsonResponse<Boolean> update(@RequestAttribute String username, @Valid @RequestBody JobExecutionUpdateVo jobExecution) {
         JobExecutionUpdateDto jobExecutionUpdateDto = jobExecutionVoMapper.toJobExecutionDto(jobExecution);
         return succeed(jobService.updateJobExecution(username, jobExecutionUpdateDto));
     }
@@ -95,7 +95,7 @@ public class JobExecutionController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/delete", headers = {"version=v1"})
-    public JSONResponse<Boolean> delete(@RequestAttribute String username, @Valid @RequestBody JobExecutionIdVo jobExecutionIdVo) {
+    public JsonResponse<Boolean> delete(@RequestAttribute String username, @Valid @RequestBody JobExecutionIdVo jobExecutionIdVo) {
         return succeed(jobService.deleteJobExecution(username, jobExecutionIdVo.getId()));
     }
 
@@ -107,7 +107,7 @@ public class JobExecutionController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/refresh", headers = {"version=v1"})
-    public JSONResponse<Boolean> refresh(@RequestAttribute String username, @Valid @RequestBody JobIdVo jobIdVo) {
+    public JsonResponse<Boolean> refresh(@RequestAttribute String username, @Valid @RequestBody JobIdVo jobIdVo) {
         return succeed(jobService.refresh(username, jobIdVo.getJobId()));
     }
 
@@ -119,7 +119,7 @@ public class JobExecutionController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/refresh_all", headers = {"version=v1"})
-    public JSONResponse<Boolean> refreshAll(@RequestAttribute String username) {
+    public JsonResponse<Boolean> refreshAll(@RequestAttribute String username) {
         return succeed(jobService.refreshAll(username));
     }
 
@@ -131,7 +131,7 @@ public class JobExecutionController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/statistic",headers = {"version=v1"})
-    public JSONResponse<Boolean> statistic(@RequestAttribute String username) {
+    public JsonResponse<Boolean> statistic(@RequestAttribute String username) {
         jobService.statisticLoadedJobExecutionInfo();
         return succeed(true);
     }

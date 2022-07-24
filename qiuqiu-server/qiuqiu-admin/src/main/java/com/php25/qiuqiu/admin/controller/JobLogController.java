@@ -1,8 +1,8 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.PageDto;
-import com.php25.common.flux.web.JSONController;
-import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.web.JsonController;
+import com.php25.common.web.JsonResponse;
 import com.php25.qiuqiu.admin.mapper.JobLogVoMapper;
 import com.php25.qiuqiu.admin.vo.in.job.JobLogPageVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/job_log")
 @RequiredArgsConstructor
 @Slf4j
-public class JobLogController extends JSONController {
+public class JobLogController extends JsonController {
 
     private final JobService jobService;
 
@@ -44,7 +44,7 @@ public class JobLogController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/page", headers = {"version=v1"})
-    public JSONResponse<PageResultVo<JobLogVo>> page(@RequestAttribute String username, @Valid @RequestBody JobLogPageVo jobLogPageVo) {
+    public JsonResponse<PageResultVo<JobLogVo>> page(@RequestAttribute String username, @Valid @RequestBody JobLogPageVo jobLogPageVo) {
         PageDto<JobLogDto> dataGrid = jobService.pageJobLog(username, jobLogPageVo.getJobName(), jobLogPageVo.getPageNum(), jobLogPageVo.getPageSize());
         PageResultVo<JobLogVo> result = new PageResultVo<>();
         List<JobLogDto> list = dataGrid.getData();

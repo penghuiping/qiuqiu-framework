@@ -1,8 +1,8 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.PageDto;
-import com.php25.common.flux.web.JSONController;
-import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.web.JsonController;
+import com.php25.common.web.JsonResponse;
 import com.php25.qiuqiu.admin.mapper.ResourceVoMapper;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceCreateVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceDeleteVo;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/resource")
 @RequiredArgsConstructor
-public class ResourceController extends JSONController {
+public class ResourceController extends JsonController {
 
     private final ResourceService resourceService;
 
@@ -50,7 +50,7 @@ public class ResourceController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/create",headers = {"version=v1"})
-    public JSONResponse<Boolean> create(@Valid @RequestBody ResourceCreateVo resourceCreateVo) {
+    public JsonResponse<Boolean> create(@Valid @RequestBody ResourceCreateVo resourceCreateVo) {
         ResourceCreateDto resourceCreateDto = resourceVoMapper.toDto(resourceCreateVo);
         List<String> permissions = resourceCreateVo.getPermissions();
         List<ResourcePermissionDto> resourcePermissionDtos = permissions.stream().map(permission -> {
@@ -70,7 +70,7 @@ public class ResourceController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/update",headers = {"version=v1"})
-    public JSONResponse<Boolean> update(@Valid @RequestBody ResourceUpdateVo resourceUpdateVo) {
+    public JsonResponse<Boolean> update(@Valid @RequestBody ResourceUpdateVo resourceUpdateVo) {
         ResourceUpdateDto resourceUpdateDto = resourceVoMapper.toDto(resourceUpdateVo);
         List<String> permissions = resourceUpdateVo.getPermissions();
         List<ResourcePermissionDto> resourcePermissionDtos = permissions.stream().map(permission -> {
@@ -91,7 +91,7 @@ public class ResourceController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/delete",headers = {"version=v1"})
-    public JSONResponse<Boolean> delete(@Valid @RequestBody ResourceDeleteVo resourceDeleteVo) {
+    public JsonResponse<Boolean> delete(@Valid @RequestBody ResourceDeleteVo resourceDeleteVo) {
         List<String> resources = resourceDeleteVo.getResources();
         for (String resource : resources) {
             resourceService.delete(resource);
@@ -106,7 +106,7 @@ public class ResourceController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/page",headers = {"version=v1"})
-    public JSONResponse<List<ResourceVo>> page() {
+    public JsonResponse<List<ResourceVo>> page() {
         PageDto<ResourceDto> dataGrid = resourceService.page("", 1, 200);
         List<ResourceVo> res = dataGrid.getData().stream().map(resourceVoMapper::toVo).collect(Collectors.toList());
         return succeed(res);
@@ -118,7 +118,7 @@ public class ResourceController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/get_all",headers = {"version=v1"})
-    public JSONResponse<List<ResourcePermissionVo>> getAll() {
+    public JsonResponse<List<ResourcePermissionVo>> getAll() {
         List<ResourceDetailDto> permissions = resourceService.getAll();
         List<ResourcePermissionVo> resourcePermissionVos = permissions.stream().map(resourceDetailDto -> {
             ResourcePermissionVo resourcePermissionVo = new ResourcePermissionVo();
@@ -137,7 +137,7 @@ public class ResourceController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/detail",headers = {"version=v1"})
-    public JSONResponse<ResourceDetailVo> detail(@Valid @RequestBody ResourceIdVo resourceIdVo) {
+    public JsonResponse<ResourceDetailVo> detail(@Valid @RequestBody ResourceIdVo resourceIdVo) {
         ResourceDetailDto resourceDetailDto = resourceService.detail(resourceIdVo.getName());
         ResourceDetailVo resourceDetailVo = resourceVoMapper.toVo(resourceDetailDto);
         List<String> permissions = resourceDetailDto.getResourcePermissions().stream().map(ResourcePermissionDto::getPermission).collect(Collectors.toList());

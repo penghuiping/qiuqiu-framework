@@ -3,9 +3,9 @@ package com.php25.qiuqiu.admin.controller;
 import com.google.common.collect.Lists;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.RandomUtil;
-import com.php25.common.flux.web.JSONController;
-import com.php25.common.flux.web.JSONResponse;
 import com.php25.common.redis.RedisManager;
+import com.php25.common.web.JsonController;
+import com.php25.common.web.JsonResponse;
 import com.php25.qiuqiu.admin.constant.AdminErrorCode;
 import com.php25.qiuqiu.admin.vo.in.LoginVo;
 import com.php25.qiuqiu.admin.vo.out.DictVo;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/other")
 @RequiredArgsConstructor
-public class OtherController extends JSONController {
+public class OtherController extends JsonController {
 
     private final RedisManager redisManager;
 
@@ -70,7 +70,7 @@ public class OtherController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/login",headers = {"version=v1"})
-    public JSONResponse<TokenVo> login(HttpServletResponse response,
+    public JsonResponse<TokenVo> login(HttpServletResponse response,
                                        @Valid @RequestBody LoginVo loginVo) {
         String rightCode = redisManager.string().get(loginVo.getImgCodeId(),String.class);
         if(null == rightCode || !rightCode.equals(loginVo.getCode())) {
@@ -93,7 +93,7 @@ public class OtherController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/logout",headers = {"version=v1"})
-    public JSONResponse<Boolean> logout(@RequestAttribute @NotBlank String username) {
+    public JsonResponse<Boolean> logout(@RequestAttribute @NotBlank String username) {
         return succeed(userService.logout(username));
     }
 
@@ -131,7 +131,7 @@ public class OtherController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/refresh",headers = {"version=v1"})
-    public JSONResponse<TokenVo> refresh(HttpServletRequest request) {
+    public JsonResponse<TokenVo> refresh(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (null != cookies) {
             Optional<Cookie> cookieOptional = Arrays.stream(cookies)
@@ -154,7 +154,7 @@ public class OtherController extends JSONController {
      * @return 系统启动初始化配置项列表
      */
     @PostMapping(value = "/get_init_config",headers = {"version=v1"})
-    public JSONResponse<List<DictVo>>  getInitConfig() {
+    public JsonResponse<List<DictVo>>  getInitConfig() {
         List<DictDto> dictDtoList = dictionaryService.getAllInitConfig();
         if(dictDtoList.isEmpty()) {
             return succeed(Lists.newArrayList());

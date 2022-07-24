@@ -2,9 +2,9 @@ package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.util.StringUtil;
-import com.php25.common.flux.web.JSONController;
-import com.php25.common.flux.web.JSONResponse;
 import com.php25.common.redis.RedisManager;
+import com.php25.common.web.JsonController;
+import com.php25.common.web.JsonResponse;
 import com.php25.qiuqiu.admin.mapper.UserVoMapper;
 import com.php25.qiuqiu.admin.vo.in.user.UserCreateVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserDeleteVo;
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-public class UserController extends JSONController {
+public class UserController extends JsonController {
 
     private final UserService userService;
 
@@ -67,7 +67,7 @@ public class UserController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/info",headers = {"version=v1"})
-    public JSONResponse<UserVo> getUserInfo(@RequestAttribute @NotBlank String username) {
+    public JsonResponse<UserVo> getUserInfo(@RequestAttribute @NotBlank String username) {
         UserDto userDto = userService.getUserInfo(username);
         UserVo userVo = userVoMapper.toVo(userDto);
         List<String> roleNames = userDto.getRoles().stream().map(RoleDto::getDescription).collect(Collectors.toList());
@@ -103,7 +103,7 @@ public class UserController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/detail",headers = {"version=v1"})
-    public JSONResponse<UserVo> detail(@RequestAttribute @NotBlank String username, @RequestBody UserDetailVo user) {
+    public JsonResponse<UserVo> detail(@RequestAttribute @NotBlank String username, @RequestBody UserDetailVo user) {
         UserDto userDto = userService.detail(user.getUserId());
         UserVo userVo = userVoMapper.toVo(userDto);
         List<String> roleNames = userDto.getRoles().stream().map(RoleDto::getDescription).collect(Collectors.toList());
@@ -139,7 +139,7 @@ public class UserController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/page",headers = {"version=v1"})
-    public JSONResponse<PageResultVo<UserPageOutVo>> page(@RequestAttribute @NotBlank String username, @Valid @RequestBody UserPageVo userPageVo) {
+    public JsonResponse<PageResultVo<UserPageOutVo>> page(@RequestAttribute @NotBlank String username, @Valid @RequestBody UserPageVo userPageVo) {
         PageDto<UserPageDto> result = userService.page(userPageVo.getUsername(), userPageVo.getPageNum(), userPageVo.getPageSize());
         PageResultVo<UserPageOutVo> resultVo = new PageResultVo<>();
         resultVo.setCurrentPage(userPageVo.getPageNum());
@@ -156,7 +156,7 @@ public class UserController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/create",headers = {"version=v1"})
-    public JSONResponse<Boolean> create(@Valid @RequestBody UserCreateVo userCreateVo) {
+    public JsonResponse<Boolean> create(@Valid @RequestBody UserCreateVo userCreateVo) {
         UserCreateDto userCreateDto = userVoMapper.toDto(userCreateVo);
         return succeed(userService.create(userCreateDto));
     }
@@ -168,7 +168,7 @@ public class UserController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/update",headers = {"version=v1"})
-    public JSONResponse<Boolean> update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
+    public JsonResponse<Boolean> update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
         UserUpdateDto userUpdateDto = userVoMapper.toDto(userUpdateVo);
         if (StringUtil.isBlank(userUpdateDto.getPassword())) {
             userUpdateDto.setPassword(null);
@@ -181,7 +181,7 @@ public class UserController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/delete",headers = {"version=v1"})
-    public JSONResponse<Boolean> delete(@Valid @RequestBody UserDeleteVo userDeleteVo) {
+    public JsonResponse<Boolean> delete(@Valid @RequestBody UserDeleteVo userDeleteVo) {
         for (Long userId : userDeleteVo.getUserIds()) {
             userService.delete(userId);
         }

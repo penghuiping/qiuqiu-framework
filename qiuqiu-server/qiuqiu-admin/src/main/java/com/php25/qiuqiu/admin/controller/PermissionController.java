@@ -1,8 +1,8 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.PageDto;
-import com.php25.common.flux.web.JSONController;
-import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.web.JsonController;
+import com.php25.common.web.JsonResponse;
 import com.php25.qiuqiu.admin.mapper.PermissionVoMapper;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionCreateVo;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionDeleteVo;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/permission")
 @RequiredArgsConstructor
-public class PermissionController extends JSONController {
+public class PermissionController extends JsonController {
 
     private final PermissionService permissionService;
 
@@ -47,7 +47,7 @@ public class PermissionController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/page",headers = {"version=v1"})
-    public JSONResponse<List<PermissionVo>> page(@RequestAttribute @NotBlank String username) {
+    public JsonResponse<List<PermissionVo>> page(@RequestAttribute @NotBlank String username) {
         PageDto<PermissionDto> page = permissionService.page("", 1, 100);
         List<PermissionVo> permissionVos = page.getData().stream().map(permissionVoMapper::toVo).collect(Collectors.toList());
         return succeed(permissionVos);
@@ -57,7 +57,7 @@ public class PermissionController extends JSONController {
      * 获取所有有效的权限列表
      */
     @PostMapping(value = "/get_all",headers = {"version=v1"})
-    public JSONResponse<List<PermissionVo>> getAll() {
+    public JsonResponse<List<PermissionVo>> getAll() {
         List<PermissionDto> permissionDtos = permissionService.getAll();
         return succeed(permissionDtos.stream().map(permissionVoMapper::toVo).collect(Collectors.toList()));
     }
@@ -69,7 +69,7 @@ public class PermissionController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/update",headers = {"version=v1"})
-    public JSONResponse<Boolean> update(@Valid @RequestBody PermissionUpdateVo permissionVo) {
+    public JsonResponse<Boolean> update(@Valid @RequestBody PermissionUpdateVo permissionVo) {
         PermissionDto permissionDto = permissionVoMapper.toDto(permissionVo);
         return succeed(permissionService.update(permissionDto));
     }
@@ -81,7 +81,7 @@ public class PermissionController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/create",headers = {"version=v1"})
-    public JSONResponse<Boolean> create(@Valid @RequestBody PermissionCreateVo permissionVo) {
+    public JsonResponse<Boolean> create(@Valid @RequestBody PermissionCreateVo permissionVo) {
         PermissionCreateDto permissionDto = permissionVoMapper.toCreateDto(permissionVo);
         return succeed(permissionService.create(permissionDto));
     }
@@ -93,7 +93,7 @@ public class PermissionController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/delete",headers = {"version=v1"})
-    public JSONResponse<Boolean> delete(@Valid @RequestBody PermissionDeleteVo permissionVo) {
+    public JsonResponse<Boolean> delete(@Valid @RequestBody PermissionDeleteVo permissionVo) {
         return succeed(permissionService.delete(permissionVo.getPermission()));
     }
 }

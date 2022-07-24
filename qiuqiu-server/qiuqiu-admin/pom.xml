@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>com.php25</groupId>
-            <artifactId>webflux</artifactId>
+            <artifactId>web</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>

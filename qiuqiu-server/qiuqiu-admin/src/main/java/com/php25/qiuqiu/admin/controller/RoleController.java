@@ -1,14 +1,14 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.PageDto;
-import com.php25.common.flux.web.JSONController;
-import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.web.JsonController;
+import com.php25.common.web.JsonResponse;
+import com.php25.qiuqiu.admin.mapper.RoleVoMapper;
 import com.php25.qiuqiu.admin.vo.in.role.RoleCreateVo;
 import com.php25.qiuqiu.admin.vo.in.role.RoleDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.role.RoleDetailVo;
 import com.php25.qiuqiu.admin.vo.in.role.RolePageVo;
 import com.php25.qiuqiu.admin.vo.in.role.RoleUpdateVo;
-import com.php25.qiuqiu.admin.mapper.RoleVoMapper;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.role.RoleDetailOutVo;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/role")
 @RequiredArgsConstructor
-public class RoleController extends JSONController {
+public class RoleController extends JsonController {
 
     private final RoleService roleService;
 
@@ -54,7 +54,7 @@ public class RoleController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/get_all",headers = {"version=v1"})
-    public JSONResponse<List<RoleVo>> getAll() {
+    public JsonResponse<List<RoleVo>> getAll() {
         List<RoleDto> roleDtoList = roleService.getAllRoles();
         List<RoleVo> roleVos = roleDtoList.stream().map(roleVoMapper::toVo).collect(Collectors.toList());
         return succeed(roleVos);
@@ -67,7 +67,7 @@ public class RoleController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/create",headers = {"version=v1"})
-    public JSONResponse<Boolean> create(@Valid @RequestBody RoleCreateVo roleCreateVo) {
+    public JsonResponse<Boolean> create(@Valid @RequestBody RoleCreateVo roleCreateVo) {
         List<ResourcePermissionVo> resourcePermissionVos = roleCreateVo.getResourcePermissions();
         List<ResourcePermissionDto> resourcePermissionDtos = new ArrayList<>();
         if (null != resourcePermissionVos && !resourcePermissionVos.isEmpty()) {
@@ -96,7 +96,7 @@ public class RoleController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/update",headers = "version=v1")
-    public JSONResponse<Boolean> update(@Valid @RequestBody RoleUpdateVo roleUpdateVo) {
+    public JsonResponse<Boolean> update(@Valid @RequestBody RoleUpdateVo roleUpdateVo) {
         List<ResourcePermissionVo> resourcePermissionVos = roleUpdateVo.getResourcePermissions();
         List<ResourcePermissionDto> resourcePermissionDtos = new ArrayList<>();
         if (null != resourcePermissionVos && !resourcePermissionVos.isEmpty()) {
@@ -125,7 +125,7 @@ public class RoleController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/delete",headers = {"version=v1"})
-    public JSONResponse<Boolean> delete(@Valid @RequestBody RoleDeleteVo roleDeleteVo) {
+    public JsonResponse<Boolean> delete(@Valid @RequestBody RoleDeleteVo roleDeleteVo) {
         return succeed(roleService.delete(roleDeleteVo.getRoleIds()));
     }
 
@@ -135,7 +135,7 @@ public class RoleController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/detail",headers = {"version=v1"})
-    public JSONResponse<RoleDetailOutVo> detail(@Valid @RequestBody RoleDetailVo roleDetailVo) {
+    public JsonResponse<RoleDetailOutVo> detail(@Valid @RequestBody RoleDetailVo roleDetailVo) {
         RoleDetailDto roleDetailDto = roleService.detail(roleDetailVo.getRoleId());
         RoleDetailOutVo roleDetailOutVo = roleVoMapper.toVo(roleDetailDto);
         List<ResourcePermissionDto> permissionDtos = roleDetailDto.getResourcePermissions();
@@ -165,7 +165,7 @@ public class RoleController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/page",headers = {"version=v1"})
-    public JSONResponse<PageResultVo<RolePageOutVo>> page(@Valid @RequestBody RolePageVo rolePageVo) {
+    public JsonResponse<PageResultVo<RolePageOutVo>> page(@Valid @RequestBody RolePageVo rolePageVo) {
         PageDto<RolePageDto> page = roleService.page(rolePageVo.getRoleName(), rolePageVo.getPageNum(), rolePageVo.getPageSize());
         PageResultVo<RolePageOutVo> res = new PageResultVo<>();
         List<RolePageOutVo> rolePageOutVos = page.getData().stream().map(roleVoMapper::toVo).collect(Collectors.toList());

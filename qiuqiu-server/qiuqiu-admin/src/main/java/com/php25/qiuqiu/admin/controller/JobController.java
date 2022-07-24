@@ -2,8 +2,8 @@ package com.php25.qiuqiu.admin.controller;
 
 import com.google.common.collect.Lists;
 import com.php25.common.core.dto.PageDto;
-import com.php25.common.flux.web.JSONController;
-import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.web.JsonController;
+import com.php25.common.web.JsonResponse;
 import com.php25.qiuqiu.admin.mapper.JobVoMapper;
 import com.php25.qiuqiu.admin.vo.in.job.JobCreateVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobIdVo;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/job")
 @RequiredArgsConstructor
 @Slf4j
-public class JobController extends JSONController {
+public class JobController extends JsonController {
 
     private final JobService jobService;
 
@@ -51,7 +51,7 @@ public class JobController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/page",headers = {"version=v1"})
-    public JSONResponse<PageResultVo<JobVo>> page(@RequestAttribute String username, @Valid @RequestBody JobPageVo jobPageVo) {
+    public JsonResponse<PageResultVo<JobVo>> page(@RequestAttribute String username, @Valid @RequestBody JobPageVo jobPageVo) {
         PageDto<JobDto> dataGrid = jobService.page(username, jobPageVo.getJobName(),
                 jobPageVo.getPageNum(), jobPageVo.getPageSize());
         PageResultVo<JobVo> res = new PageResultVo<>();
@@ -70,7 +70,7 @@ public class JobController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/create",headers = {"version=v1"})
-    public JSONResponse<Boolean> create(@RequestAttribute String username, @Valid @RequestBody JobCreateVo jobCreateVo) {
+    public JsonResponse<Boolean> create(@RequestAttribute String username, @Valid @RequestBody JobCreateVo jobCreateVo) {
         JobCreateDto jobCreateDto = jobVoMapper.toJobCreateDto(jobCreateVo);
         return succeed(jobService.create(username, jobCreateDto));
     }
@@ -83,7 +83,7 @@ public class JobController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/update",headers = {"version=v1"})
-    public JSONResponse<Boolean> update(@RequestAttribute String username, @Valid @RequestBody JobUpdateVo jobUpdateVo) {
+    public JsonResponse<Boolean> update(@RequestAttribute String username, @Valid @RequestBody JobUpdateVo jobUpdateVo) {
         JobUpdateDto jobUpdateDto = jobVoMapper.toJobUpdateDto(jobUpdateVo);
         return succeed(jobService.update(username, jobUpdateDto));
     }
@@ -96,7 +96,7 @@ public class JobController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/delete",headers = {"version=v1"})
-    public JSONResponse<Boolean> delete(@RequestAttribute String username, @Valid @RequestBody JobIdVo jobIdVo) {
+    public JsonResponse<Boolean> delete(@RequestAttribute String username, @Valid @RequestBody JobIdVo jobIdVo) {
         return succeed(jobService.delete(username, jobIdVo.getJobId()));
     }
 
@@ -107,7 +107,7 @@ public class JobController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/get_all",headers = {"version=v1"})
-    public JSONResponse<List<JobVo>> findAll(@RequestAttribute String username) {
+    public JsonResponse<List<JobVo>> findAll(@RequestAttribute String username) {
         List<JobDto> jobDtoList = jobService.findAll(username);
         if (null != jobDtoList && !jobDtoList.isEmpty()) {
             List<JobVo> res = jobDtoList.stream().map(jobVoMapper::toJobVo).collect(Collectors.toList());

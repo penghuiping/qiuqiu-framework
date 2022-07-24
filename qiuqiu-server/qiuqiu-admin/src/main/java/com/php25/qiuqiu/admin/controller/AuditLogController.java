@@ -1,10 +1,10 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.PageDto;
-import com.php25.common.flux.web.JSONController;
-import com.php25.common.flux.web.JSONResponse;
-import com.php25.qiuqiu.admin.vo.in.AuditLogPageVo;
+import com.php25.common.web.JsonController;
+import com.php25.common.web.JsonResponse;
 import com.php25.qiuqiu.admin.mapper.AuditLogVoMapper;
+import com.php25.qiuqiu.admin.vo.in.AuditLogPageVo;
 import com.php25.qiuqiu.admin.vo.out.AuditLogPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/audit_log")
 @RequiredArgsConstructor
-public class AuditLogController extends JSONController {
+public class AuditLogController extends JsonController {
 
     private final AuditLogService auditLogService;
 
@@ -38,7 +38,7 @@ public class AuditLogController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/page",headers = {"version=v1"})
-    public JSONResponse<PageResultVo<AuditLogPageOutVo>> page(@Valid @RequestBody AuditLogPageVo auditLogPageVo) {
+    public JsonResponse<PageResultVo<AuditLogPageOutVo>> page(@Valid @RequestBody AuditLogPageVo auditLogPageVo) {
         PageDto<AuditLogDto> dataGrid = auditLogService.page(auditLogPageVo.getUsername(),auditLogPageVo.getPageNum(), auditLogPageVo.getPageSize());
         List<AuditLogDto> list = dataGrid.getData();
         PageResultVo<AuditLogPageOutVo> res = new PageResultVo<>();

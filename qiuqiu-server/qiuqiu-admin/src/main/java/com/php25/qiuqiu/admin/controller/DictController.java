@@ -1,13 +1,13 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.php25.common.core.dto.PageDto;
-import com.php25.common.flux.web.JSONController;
-import com.php25.common.flux.web.JSONResponse;
+import com.php25.common.web.JsonController;
+import com.php25.common.web.JsonResponse;
+import com.php25.qiuqiu.admin.mapper.DictVoMapper;
 import com.php25.qiuqiu.admin.vo.in.DictPageVo;
 import com.php25.qiuqiu.admin.vo.in.dict.DictCreateVo;
 import com.php25.qiuqiu.admin.vo.in.dict.DictKeyVo;
 import com.php25.qiuqiu.admin.vo.in.dict.DictUpdateVo;
-import com.php25.qiuqiu.admin.mapper.DictVoMapper;
 import com.php25.qiuqiu.admin.vo.out.DictVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/dict")
 @RequiredArgsConstructor
-public class DictController extends JSONController {
+public class DictController extends JsonController {
 
     private final DictionaryService dictionaryService;
 
@@ -44,7 +44,7 @@ public class DictController extends JSONController {
      * @since v1
      */
     @PostMapping(value = "/page",headers = {"version=v1"})
-    public JSONResponse<PageResultVo<DictVo>> page(@Valid @RequestBody DictPageVo dictPageVo) {
+    public JsonResponse<PageResultVo<DictVo>> page(@Valid @RequestBody DictPageVo dictPageVo) {
         PageDto<DictDto> dataGrid = dictionaryService.page(dictPageVo.getKey(), dictPageVo.getPageNum(), dictPageVo.getPageSize());
         List<DictDto> list = dataGrid.getData();
         PageResultVo<DictVo> res = new PageResultVo<>();
@@ -61,7 +61,7 @@ public class DictController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/create",headers = {"version=v1"})
-    public JSONResponse<Boolean> create(@Valid @RequestBody DictCreateVo dictCreateVo) {
+    public JsonResponse<Boolean> create(@Valid @RequestBody DictCreateVo dictCreateVo) {
         return succeed(dictionaryService.create(
                 dictCreateVo.getKey(),
                 dictCreateVo.getValue(),
@@ -75,7 +75,7 @@ public class DictController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/update",headers = {"version=v1"})
-    public JSONResponse<Boolean> update(@Valid @RequestBody DictUpdateVo dictUpdateVo) {
+    public JsonResponse<Boolean> update(@Valid @RequestBody DictUpdateVo dictUpdateVo) {
         DictDto dictDto = dictVoMapper.toDictDto(dictUpdateVo);
         return succeed(dictionaryService.update(dictDto));
 
@@ -88,7 +88,7 @@ public class DictController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/delete",headers = {"version=v1"})
-    public JSONResponse<Boolean> delete(@Valid @RequestBody DictKeyVo dictKeyVo) {
+    public JsonResponse<Boolean> delete(@Valid @RequestBody DictKeyVo dictKeyVo) {
         return succeed(dictionaryService.delete(dictKeyVo.getKey()));
     }
 
@@ -99,7 +99,7 @@ public class DictController extends JSONController {
      */
     @AuditLog
     @PostMapping(value = "/refresh",headers = {"version=v1"})
-    public JSONResponse<Boolean> refresh(@Valid @RequestBody DictKeyVo dictKeyVo) {
+    public JsonResponse<Boolean> refresh(@Valid @RequestBody DictKeyVo dictKeyVo) {
         return succeed(dictionaryService.removeCache(dictKeyVo.getKey()));
     }
 }
