@@ -38,17 +38,14 @@
         <disruptor>3.4.4</disruptor>
         <mybatis-plus>3.5.0</mybatis-plus>
 
-        <oracle>11.2.0.3</oracle>
         <sqlite-jdbc.verison>3.36.0.3</sqlite-jdbc.verison>
         <mapstruct>1.4.2.Final</mapstruct>
         <lombok>1.18.24</lombok>
         <lombok-mapstruct-binding>0.2.0</lombok-mapstruct-binding>
-        <caffeine>2.9.0</caffeine>
-        <quartz.version>2.3.2</quartz.version>
         <jasypt-spring-boot-starter.version>2.1.1</jasypt-spring-boot-starter.version>
         <brave.version>5.13.7</brave.version>
         <core>V.2.7.1</core>
-        <redis>V.2.5.1</redis>
+        <redis>V.2.7.1</redis>
         <db>V.2.5.1</db>
         <ws>V.2.5.1</ws>
         <mq>V.2.5.1</mq>
@@ -157,19 +154,9 @@
                 <version>${mapstruct}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.ben-manes.caffeine</groupId>
-                <artifactId>caffeine</artifactId>
-                <version>${caffeine}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-zipkin</artifactId>
                 <version>2.2.8.RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz</artifactId>
-                <version>${quartz.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jsoup</groupId>
@@ -192,11 +179,6 @@
                 <version>${jasypt-spring-boot-starter.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.lmax</groupId>
                 <artifactId>disruptor</artifactId>
                 <version>${disruptor}</version>
@@ -216,6 +198,13 @@
                 <artifactId>micrometer-jvm-extras</artifactId>
                 <version>0.2.2</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus</artifactId>
+                <version>${mybatis-plus}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.php25</groupId>
                 <artifactId>core</artifactId>
@@ -227,11 +216,6 @@
                 <artifactId>validation</artifactId>
                 <version>${validation}</version>
                 <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus</artifactId>
-                <version>3.5.0</version>
             </dependency>
             <dependency>
                 <groupId>com.php25</groupId>
@@ -257,6 +241,7 @@
                 <version>${timer}</version>
                 <scope>compile</scope>
             </dependency>
+
             <dependency>
                 <groupId>com.php25.qiuqiu</groupId>
                 <artifactId>user</artifactId>

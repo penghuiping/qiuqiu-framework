@@ -76,8 +76,8 @@ public class DbConfig {
         mapperScannerConfigurer
                 .setBasePackage("com.php25.qiuqiu.user.dao," +
                                 "com.php25.qiuqiu.job.dao," +
-                                "com.php25.qiuqiu.monitor.dao," +
-                                "com.php25.common.timer.dao");
+                                "com.php25.qiuqiu.monitor.dao," );
+//                                "com.php25.common.timer.dao");
         return mapperScannerConfigurer;
     }
 

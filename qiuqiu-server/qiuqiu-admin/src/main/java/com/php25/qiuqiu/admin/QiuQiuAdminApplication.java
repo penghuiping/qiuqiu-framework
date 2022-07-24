@@ -1,5 +1,7 @@
 package com.php25.qiuqiu.admin;
 
+import com.php25.common.redis.config.EnableRedisManager;
+import com.php25.common.timer.config.EnableTimer;
 import com.php25.common.ws.mq.WsChannelProcessor;
 import com.php25.qiuqiu.job.mq.MergeStatisticLoadedJobProcessor;
 import com.php25.qiuqiu.job.mq.StatisticLoadedJobProcessor;
@@ -41,6 +43,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         TimeJobDisabledProcessor.class,
         TimeJobEnabledProcessor.class,
         WsChannelProcessor.class})
+@EnableTimer
+@EnableRedisManager
 @ComponentScan(basePackages = {"com.php25"})
 public class QiuQiuAdminApplication {
     public static void main(String[] args) {

@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.php25</groupId>
   <artifactId>redis</artifactId>
-  <version>V.2.5.1</version>
+  <version>V.2.7.1</version>
   <parent>
     <groupId>com.php25</groupId>
     <artifactId>common-parent</artifactId>
@@ -17,15 +17,6 @@
       <artifactId>core</artifactId>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-redis</artifactId>
     </dependency>
@@ -34,8 +25,12 @@
       <artifactId>spring-integration-redis</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.lmax</groupId>
-      <artifactId>disruptor</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-pool2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.zipkin.brave</groupId>
+      <artifactId>brave</artifactId>
     </dependency>
   </dependencies>
 </project>
