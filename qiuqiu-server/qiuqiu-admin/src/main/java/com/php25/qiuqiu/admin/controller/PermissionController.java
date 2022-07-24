@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.admin.controller;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.mapper.PermissionVoMapper;
@@ -48,7 +48,7 @@ public class PermissionController extends JSONController {
      */
     @PostMapping(value = "/page",headers = {"version=v1"})
     public JSONResponse<List<PermissionVo>> page(@RequestAttribute @NotBlank String username) {
-        DataGridPageDto<PermissionDto> page = permissionService.page("", 1, 100);
+        PageDto<PermissionDto> page = permissionService.page("", 1, 100);
         List<PermissionVo> permissionVos = page.getData().stream().map(permissionVoMapper::toVo).collect(Collectors.toList());
         return succeed(permissionVos);
     }

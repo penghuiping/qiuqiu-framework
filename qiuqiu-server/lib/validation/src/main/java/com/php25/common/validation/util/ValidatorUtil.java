@@ -1,5 +1,6 @@
 package com.php25.common.validation.util;
 
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -16,8 +17,8 @@ import java.util.Set;
  */
 public class ValidatorUtil {
 
-    private static Validator validator;
-    private static ExecutableValidator executableValidator;
+    private static final Validator validator;
+    private static final ExecutableValidator executableValidator;
 
     static {
         validator = Validation.buildDefaultValidatorFactory().getValidator();

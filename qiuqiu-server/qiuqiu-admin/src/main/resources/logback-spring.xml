@@ -19,16 +19,6 @@
         </encoder>
     </appender>
 
-<!--    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">-->
-<!--        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">-->
-<!--            <layout class="com.php25.common.core.mess.MaskingPatternLayout">-->
-<!--                <pattern>${CONSOLE_LOG_PATTERN}</pattern>-->
-<!--                <charset>UTF-8</charset>-->
-<!--                <maskPattern>\\\"password\\\"\s*:\s*\\\"(.*?)\\\"</maskPattern>-->
-<!--            </layout>-->
-<!--        </encoder>-->
-<!--    </appender>-->
-
     <appender name="FILE"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--获取比info级别高(包括info级别)但除error级别的日志-->

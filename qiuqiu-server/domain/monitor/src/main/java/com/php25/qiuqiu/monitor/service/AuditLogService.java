@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.monitor.service;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 
 /**
@@ -27,5 +27,5 @@ public interface AuditLogService {
      * @param pageSize 每页条数
      * @return 分页列表
      */
-    DataGridPageDto<AuditLogDto> page(String username,Integer pageNum, Integer pageSize);
+    PageDto<AuditLogDto> page(String username, Integer pageNum, Integer pageSize);
 }

@@ -1,7 +1,7 @@
 package com.php25.qiuqiu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
@@ -123,12 +123,12 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
     }
 
     @Override
-    public DataGridPageDto<RolePageDto> page(String roleName, Integer pageNum, Integer pageSize) {
+    public PageDto<RolePageDto> page(String roleName, Integer pageNum, Integer pageSize) {
         IPage<Role> page = roleRepository.page(roleName, pageNum, pageSize);
-        DataGridPageDto<RolePageDto> res = new DataGridPageDto<>();
+        PageDto<RolePageDto> res = new PageDto<>();
         List<RolePageDto> roleDtos = page.getRecords().stream().map(roleDtoMapper::toDto)
                 .collect(Collectors.toList());
-        res.setRecordsTotal(page.getTotal());
+        res.setTotal(page.getTotal());
         res.setData(roleDtos);
         return res;
     }

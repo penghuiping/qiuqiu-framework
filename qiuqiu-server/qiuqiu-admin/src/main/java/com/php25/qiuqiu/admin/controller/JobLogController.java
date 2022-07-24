@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.admin.controller;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.mapper.JobLogVoMapper;
@@ -45,12 +45,12 @@ public class JobLogController extends JSONController {
      */
     @PostMapping(value = "/page", headers = {"version=v1"})
     public JSONResponse<PageResultVo<JobLogVo>> page(@RequestAttribute String username, @Valid @RequestBody JobLogPageVo jobLogPageVo) {
-        DataGridPageDto<JobLogDto> dataGrid = jobService.pageJobLog(username, jobLogPageVo.getJobName(), jobLogPageVo.getPageNum(), jobLogPageVo.getPageSize());
+        PageDto<JobLogDto> dataGrid = jobService.pageJobLog(username, jobLogPageVo.getJobName(), jobLogPageVo.getPageNum(), jobLogPageVo.getPageSize());
         PageResultVo<JobLogVo> result = new PageResultVo<>();
         List<JobLogDto> list = dataGrid.getData();
         List<JobLogVo> list0 = list.stream().map(jobLogVoMapper::toVo).collect(Collectors.toList());
         result.setData(list0);
-        result.setTotal(dataGrid.getRecordsTotal());
+        result.setTotal(dataGrid.getTotal());
         result.setCurrentPage(jobLogPageVo.getPageNum());
         return succeed(result);
     }

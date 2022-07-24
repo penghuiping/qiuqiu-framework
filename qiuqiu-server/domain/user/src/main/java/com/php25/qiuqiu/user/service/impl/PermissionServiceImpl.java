@@ -1,7 +1,7 @@
 package com.php25.qiuqiu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.permission.PermissionCreateDto;
@@ -58,9 +58,9 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public DataGridPageDto<PermissionDto> page(String permissionName, Integer pageNum, Integer pageSize) {
+    public PageDto<PermissionDto> page(String permissionName, Integer pageNum, Integer pageSize) {
         IPage<Permission> page = permissionRepository.page(permissionName, pageNum, pageSize);
-        DataGridPageDto<PermissionDto> dataGridPageDto = new DataGridPageDto<>();
+        PageDto<PermissionDto> dataGridPageDto = new PageDto<>();
         List<PermissionDto> permissionDtos = page.getRecords().stream()
                 .map(permissionDtoMapper::toDto).collect(Collectors.toList());
         dataGridPageDto.setData(permissionDtos);

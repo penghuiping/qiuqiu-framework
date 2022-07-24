@@ -1,32 +1,24 @@
 package com.php25.qiuqiu.admin.controller;
 
-import com.php25.common.core.dto.DataGridPageDto;
-import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.util.RandomUtil;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.common.redis.RedisManager;
-import com.php25.qiuqiu.admin.constant.AdminErrorCode;
 import com.php25.qiuqiu.admin.mapper.UserVoMapper;
-import com.php25.qiuqiu.admin.vo.in.LoginVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserCreateVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserDetailVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserPageVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserUpdateVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
-import com.php25.qiuqiu.admin.vo.out.TokenVo;
 import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserVo;
 import com.php25.qiuqiu.media.service.ImageService;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
-import com.php25.qiuqiu.user.constant.UserConstants;
-import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
-import com.php25.qiuqiu.user.dto.user.TokenDto;
 import com.php25.qiuqiu.user.dto.user.UserCreateDto;
 import com.php25.qiuqiu.user.dto.user.UserDto;
 import com.php25.qiuqiu.user.dto.user.UserPageDto;
@@ -34,28 +26,16 @@ import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 import com.php25.qiuqiu.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -160,10 +140,10 @@ public class UserController extends JSONController {
      */
     @PostMapping(value = "/page",headers = {"version=v1"})
     public JSONResponse<PageResultVo<UserPageOutVo>> page(@RequestAttribute @NotBlank String username, @Valid @RequestBody UserPageVo userPageVo) {
-        DataGridPageDto<UserPageDto> result = userService.page(userPageVo.getUsername(), userPageVo.getPageNum(), userPageVo.getPageSize());
+        PageDto<UserPageDto> result = userService.page(userPageVo.getUsername(), userPageVo.getPageNum(), userPageVo.getPageSize());
         PageResultVo<UserPageOutVo> resultVo = new PageResultVo<>();
         resultVo.setCurrentPage(userPageVo.getPageNum());
-        resultVo.setTotal(result.getRecordsTotal());
+        resultVo.setTotal(result.getTotal());
         List<UserPageOutVo> list = result.getData().stream().map(userVoMapper::toVo).collect(Collectors.toList());
         resultVo.setData(list);
         return succeed(resultVo);

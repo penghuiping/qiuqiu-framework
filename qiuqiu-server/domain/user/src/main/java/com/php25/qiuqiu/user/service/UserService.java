@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.user.service;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.qiuqiu.user.dto.user.TokenDto;
 import com.php25.qiuqiu.user.dto.user.UserCreateDto;
 import com.php25.qiuqiu.user.dto.user.UserDto;
@@ -89,7 +89,7 @@ public interface UserService {
      * @param pageSize 每页条数
      * @return 分页数据结果
      */
-    DataGridPageDto<UserPageDto> page(String username, Integer pageNum, Integer pageSize);
+    PageDto<UserPageDto> page(String username, Integer pageNum, Integer pageSize);
 
     /**
      * 创建用户

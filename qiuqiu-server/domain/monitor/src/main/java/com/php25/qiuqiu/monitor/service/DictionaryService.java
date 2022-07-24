@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.monitor.service;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.qiuqiu.monitor.dto.DictDto;
 
 import java.util.List;
@@ -67,7 +67,7 @@ public interface DictionaryService {
      * @param pageSize 每页几条记录
      * @return 分页信息
      */
-    DataGridPageDto<DictDto> page(String key, Integer pageNum, Integer pageSize);
+    PageDto<DictDto> page(String key, Integer pageNum, Integer pageSize);
 
     /**
      * 获取系统启动所需要初始化配置项

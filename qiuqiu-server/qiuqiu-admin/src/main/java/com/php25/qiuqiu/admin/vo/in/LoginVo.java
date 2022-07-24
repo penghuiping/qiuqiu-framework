@@ -1,9 +1,11 @@
 package com.php25.qiuqiu.admin.vo.in;
 
+import com.php25.common.validation.annotation.Mobile;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 
 /**

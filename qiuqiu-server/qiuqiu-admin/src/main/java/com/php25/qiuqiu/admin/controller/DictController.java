@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.admin.controller;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.DictPageVo;
@@ -45,11 +45,11 @@ public class DictController extends JSONController {
      */
     @PostMapping(value = "/page",headers = {"version=v1"})
     public JSONResponse<PageResultVo<DictVo>> page(@Valid @RequestBody DictPageVo dictPageVo) {
-        DataGridPageDto<DictDto> dataGrid = dictionaryService.page(dictPageVo.getKey(), dictPageVo.getPageNum(), dictPageVo.getPageSize());
+        PageDto<DictDto> dataGrid = dictionaryService.page(dictPageVo.getKey(), dictPageVo.getPageNum(), dictPageVo.getPageSize());
         List<DictDto> list = dataGrid.getData();
         PageResultVo<DictVo> res = new PageResultVo<>();
         res.setData(list.stream().map(dictVoMapper::toDictVo).collect(Collectors.toList()));
-        res.setTotal(dataGrid.getRecordsTotal());
+        res.setTotal(dataGrid.getTotal());
         res.setCurrentPage(dictPageVo.getPageNum());
         return succeed(res);
     }

@@ -1,11 +1,12 @@
 package com.php25.qiuqiu.notify.service.impl;
 
-import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.ws.core.SessionContext;
 import com.php25.qiuqiu.notify.service.MsgNotifyService;
 import com.php25.qiuqiu.notify.dto.ws.NotifyTextMsg;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 /**
  * 消息通知-websocket方式
@@ -19,12 +20,11 @@ public class WsMsgNotifyService implements MsgNotifyService {
 
     private final SessionContext globalSession;
 
-    private final IdGenerator idGenerator;
 
     @Override
     public boolean broadcastTextMsg(String msg) {
         NotifyTextMsg notifyTextMsg = new NotifyTextMsg();
-        notifyTextMsg.setMsgId(idGenerator.getUUID());
+        notifyTextMsg.setMsgId(UUID.randomUUID().toString());
         notifyTextMsg.setContent(msg);
         notifyTextMsg.setSessionId(null);
         notifyTextMsg.setTimestamp(System.currentTimeMillis());

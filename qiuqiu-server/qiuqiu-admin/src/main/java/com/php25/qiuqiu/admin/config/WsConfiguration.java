@@ -2,8 +2,6 @@ package com.php25.qiuqiu.admin.config;
 
 
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.mess.IdGenerator;
-import com.php25.common.core.mess.IdGeneratorImpl;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.timer.Timer;
@@ -18,14 +16,13 @@ import com.php25.common.ws.protocal.SecurityAuthentication;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.channel.BroadcastCapableChannel;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
@@ -41,9 +38,11 @@ public class WsConfiguration implements WebSocketConfigurer {
     @Value("${server.id}")
     private String serverId;
 
+    @Lazy
     @Autowired
     private WebsocketHandler websocketHandler;
 
+    @Lazy
     @Autowired
     private MsgDispatcher msgDispatcher;
 
@@ -123,10 +122,5 @@ public class WsConfiguration implements WebSocketConfigurer {
                 throw Exceptions.throwBusinessException(UserErrorCode.JWT_ILLEGAL);
             }
         };
-    }
-
-    @Bean
-    public IdGenerator idGenerator() {
-        return new IdGeneratorImpl();
     }
 }

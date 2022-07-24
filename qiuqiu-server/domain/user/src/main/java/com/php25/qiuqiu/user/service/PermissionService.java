@@ -1,9 +1,8 @@
 package com.php25.qiuqiu.user.service;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.qiuqiu.user.dto.permission.PermissionCreateDto;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
-import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 
 import java.util.List;
 
@@ -46,7 +45,7 @@ public interface PermissionService {
      * @param pageSize       每页几条数据
      * @return 权限列表
      */
-    DataGridPageDto<PermissionDto> page(String permissionName, Integer pageNum, Integer pageSize);
+    PageDto<PermissionDto> page(String permissionName, Integer pageNum, Integer pageSize);
 
     /**
      * 获取所有有效的权限列表

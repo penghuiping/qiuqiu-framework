@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.user.service;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleCreateDto;
 import com.php25.qiuqiu.user.dto.role.RoleDetailDto;
@@ -49,7 +49,7 @@ public interface RoleService {
      * @param pageSize 每页记录数
      * @return 列表数据
      */
-    DataGridPageDto<RolePageDto> page(String roleName, Integer pageNum, Integer pageSize);
+    PageDto<RolePageDto> page(String roleName, Integer pageNum, Integer pageSize);
 
 
     /**

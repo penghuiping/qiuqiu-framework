@@ -1,9 +1,8 @@
 package com.php25.qiuqiu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.mess.IdGenerator;
 import com.php25.common.core.util.DigestUtil;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.core.util.crypto.constant.SignAlgorithm;
@@ -40,6 +39,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.IdGenerator;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -47,6 +47,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -63,8 +64,6 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     private final GroupRepository groupRepository;
-
-    private final IdGenerator idGenerator;
 
     private final AntPathMatcher antPathMatcher;
 
@@ -92,7 +91,7 @@ public class UserServiceImpl implements UserService {
 
 
     private TokenDto generateToken(String username, String refreshToken) {
-        String jti = idGenerator.getUUID();
+        String jti = UUID.randomUUID().toString();
         RSAPrivateKey privateKey = (RSAPrivateKey) SecretKeyUtil.generatePrivateKey(SignAlgorithm.SHA256withRSA.getValue(), DigestUtil.decodeBase64(UserConstants.JWT_PRIVATE_KEY));
         UserDto userDto = this.getUserInfo(username);
 
@@ -101,7 +100,7 @@ public class UserServiceImpl implements UserService {
         String accessToken = JwtUtil.generateToken(jti, username, roles, 1800L, "QiuQiu", privateKey);
 
         if (StringUtil.isBlank(refreshToken)) {
-            refreshToken = JwtUtil.generateRefreshToken(idGenerator.getUUID(), username, 3600L * 24 * 7, "QiuQiu", privateKey);
+            refreshToken = JwtUtil.generateRefreshToken(UUID.randomUUID().toString(), username, 3600L * 24 * 7, "QiuQiu", privateKey);
         }
         return new TokenDto(accessToken, refreshToken, 1800L);
     }
@@ -235,16 +234,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public DataGridPageDto<UserPageDto> page(String username, Integer pageNum, Integer pageSize) {
+    public PageDto<UserPageDto> page(String username, Integer pageNum, Integer pageSize) {
         IPage<User> userPage = userRepository.page(username,pageNum,pageSize);
-        DataGridPageDto<UserPageDto> res = new DataGridPageDto<>();
+        PageDto<UserPageDto> res = new PageDto<>();
         List<UserPageDto> list = userPage.getRecords().stream().map(user -> {
             UserPageDto userPageDto = userDtoMapper.toDto0(user);
             userPageDto.setEnable(user.getEnable());
             return userPageDto;
         }).collect(Collectors.toList());
         res.setData(list);
-        res.setRecordsTotal(userPage.getTotal());
+        res.setTotal(userPage.getTotal());
         return res;
     }
 

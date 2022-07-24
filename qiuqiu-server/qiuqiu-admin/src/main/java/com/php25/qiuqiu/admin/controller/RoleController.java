@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.admin.controller;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.vo.in.role.RoleCreateVo;
@@ -166,11 +166,11 @@ public class RoleController extends JSONController {
      */
     @PostMapping(value = "/page",headers = {"version=v1"})
     public JSONResponse<PageResultVo<RolePageOutVo>> page(@Valid @RequestBody RolePageVo rolePageVo) {
-        DataGridPageDto<RolePageDto> page = roleService.page(rolePageVo.getRoleName(), rolePageVo.getPageNum(), rolePageVo.getPageSize());
+        PageDto<RolePageDto> page = roleService.page(rolePageVo.getRoleName(), rolePageVo.getPageNum(), rolePageVo.getPageSize());
         PageResultVo<RolePageOutVo> res = new PageResultVo<>();
         List<RolePageOutVo> rolePageOutVos = page.getData().stream().map(roleVoMapper::toVo).collect(Collectors.toList());
         res.setCurrentPage(rolePageVo.getPageNum());
-        res.setTotal(page.getRecordsTotal());
+        res.setTotal(page.getTotal());
         res.setData(rolePageOutVos);
         return succeed(res);
     }

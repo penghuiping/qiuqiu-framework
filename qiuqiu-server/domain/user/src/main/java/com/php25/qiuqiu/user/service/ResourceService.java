@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.user.service;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.qiuqiu.user.dto.resource.ResourceCreateDto;
 import com.php25.qiuqiu.user.dto.resource.ResourceDetailDto;
 import com.php25.qiuqiu.user.dto.resource.ResourceDto;
@@ -48,7 +48,7 @@ public interface ResourceService {
      * @param pageSize     每页多少条
      * @return 资源列表
      */
-    DataGridPageDto<ResourceDto> page(String resourceName, Integer pageNum, Integer pageSize);
+    PageDto<ResourceDto> page(String resourceName, Integer pageNum, Integer pageSize);
 
     /**
      * 获取系统所有资源

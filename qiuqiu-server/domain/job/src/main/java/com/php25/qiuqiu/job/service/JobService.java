@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.job.service;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.qiuqiu.job.dto.JobCreateDto;
 import com.php25.qiuqiu.job.dto.JobDto;
 import com.php25.qiuqiu.job.dto.JobExecutionCreateDto;
@@ -27,7 +27,7 @@ public interface JobService {
      * @param pageSize 当前第几页
      * @return job分页列表
      */
-    DataGridPageDto<JobDto> page(String username, String name, Integer pageNum, Integer pageSize);
+    PageDto<JobDto> page(String username, String name, Integer pageNum, Integer pageSize);
 
     /**
      * 获取属于当前用户的所有job列表
@@ -74,7 +74,7 @@ public interface JobService {
      * @param pageSize 每页大小
      * @return 任务日志分页结果
      */
-    DataGridPageDto<JobLogDto> pageJobLog(String username, String jobName, Integer pageNum, Integer pageSize);
+    PageDto<JobLogDto> pageJobLog(String username, String jobName, Integer pageNum, Integer pageSize);
 
 
     /**
@@ -122,7 +122,7 @@ public interface JobService {
      * @param pageSize 每页几条数据
      * @return 任务执行计划分页信息
      */
-    DataGridPageDto<JobExecutionDto> pageJobExecution(String username, String jobName, Integer pageNum, Integer pageSize);
+    PageDto<JobExecutionDto> pageJobExecution(String username, String jobName, Integer pageNum, Integer pageSize);
 
 
     /**

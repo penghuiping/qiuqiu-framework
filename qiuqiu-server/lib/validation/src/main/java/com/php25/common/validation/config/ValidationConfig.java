@@ -1,5 +1,6 @@
 package com.php25.common.validation.config;
 
+import org.hibernate.validator.BaseHibernateValidatorConfiguration;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +20,7 @@ public class ValidationConfig {
     public Validator validator() {
         ValidatorFactory validatorFactory = Validation.byProvider(HibernateValidator.class)
                 .configure()
-                .addProperty("hibernate.validator.fail_fast", "true")
+                .addProperty(BaseHibernateValidatorConfiguration.FAIL_FAST, "true")
                 .buildValidatorFactory();
         Validator validator = validatorFactory.getValidator();
         return validator;

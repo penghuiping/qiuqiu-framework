@@ -1,7 +1,7 @@
 package com.php25.qiuqiu.monitor.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.entity.AuditLog;
@@ -54,13 +54,13 @@ public class AuditLogServiceImpl implements AuditLogService {
     }
 
     @Override
-    public DataGridPageDto<AuditLogDto> page(String username, Integer pageNum, Integer pageSize) {
+    public PageDto<AuditLogDto> page(String username, Integer pageNum, Integer pageSize) {
         IPage<AuditLog> page = auditLogRepository.page(username, pageNum, pageSize);
-        DataGridPageDto<AuditLogDto> dataGrid = new DataGridPageDto<>();
+        PageDto<AuditLogDto> dataGrid = new PageDto<>();
         List<AuditLogDto> data = page.getRecords().stream().map(auditLogDtoMapper::toDto)
                 .collect(Collectors.toList());
         dataGrid.setData(data);
-        dataGrid.setRecordsTotal(page.getTotal());
+        dataGrid.setTotal(page.getTotal());
         return dataGrid;
     }
 }

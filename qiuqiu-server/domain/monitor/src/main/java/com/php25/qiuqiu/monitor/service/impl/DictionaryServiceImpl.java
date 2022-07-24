@@ -2,7 +2,7 @@ package com.php25.qiuqiu.monitor.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Lists;
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.qiuqiu.monitor.dto.DictDto;
 import com.php25.qiuqiu.monitor.entity.Dict;
@@ -105,12 +105,12 @@ public class DictionaryServiceImpl implements DictionaryService, DisposableBean 
     }
 
     @Override
-    public DataGridPageDto<DictDto> page(String key, Integer pageNum, Integer pageSize) {
+    public PageDto<DictDto> page(String key, Integer pageNum, Integer pageSize) {
         IPage<Dict> page = dictRepository.page(key, pageNum, pageSize);
-        DataGridPageDto<DictDto> dataGrid = new DataGridPageDto<>();
+        PageDto<DictDto> dataGrid = new PageDto<>();
         List<DictDto> dictDtoList = page.getRecords().stream().map(dictDtoMapper::toDto).collect(Collectors.toList());
         dataGrid.setData(dictDtoList);
-        dataGrid.setRecordsTotal(page.getTotal());
+        dataGrid.setTotal(page.getTotal());
         return dataGrid;
     }
 

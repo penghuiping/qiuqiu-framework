@@ -3,9 +3,8 @@ package com.php25.qiuqiu.job.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.specification.SearchParamBuilder;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.redis.RedisManager;
@@ -85,15 +84,15 @@ public class JobServiceImpl implements JobService {
     private String serverId;
 
     @Override
-    public DataGridPageDto<JobDto> page(String username, String name, Integer pageNum, Integer pageSize) {
+    public PageDto<JobDto> page(String username, String name, Integer pageNum, Integer pageSize) {
         List<Long> groupIds = groupService.findGroupsId(username);
         IPage<JobModel> page = jobModelRepository.page(groupIds, name, pageNum, pageSize);
         List<JobDto> jobDtoList = page.getRecords()
                 .stream().map(jobDtoMapper::toDto)
                 .collect(Collectors.toList());
-        DataGridPageDto<JobDto> dataGrid = new DataGridPageDto<>();
+        PageDto<JobDto> dataGrid = new PageDto<>();
         dataGrid.setData(jobDtoList);
-        dataGrid.setRecordsTotal(page.getTotal());
+        dataGrid.setTotal(page.getTotal());
         return dataGrid;
     }
 
@@ -137,15 +136,15 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public DataGridPageDto<JobLogDto> pageJobLog(String username, String jobName, Integer pageNum, Integer pageSize) {
+    public PageDto<JobLogDto> pageJobLog(String username, String jobName, Integer pageNum, Integer pageSize) {
         List<Long> groupsId = groupService.findGroupsId(username);
         IPage<JobLog> page = jobLogRepository.page(groupsId, jobName, pageNum, pageSize);
-        DataGridPageDto<JobLogDto> dataGrid = new DataGridPageDto<>();
+        PageDto<JobLogDto> dataGrid = new PageDto<>();
         List<JobLogDto> jobLogDtoList = page.getRecords().stream()
                 .map(jobDtoMapper::toDto0)
                 .collect(Collectors.toList());
         dataGrid.setData(jobLogDtoList);
-        dataGrid.setRecordsTotal(page.getTotal());
+        dataGrid.setTotal(page.getTotal());
         return dataGrid;
     }
 
@@ -218,11 +217,11 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public DataGridPageDto<JobExecutionDto> pageJobExecution(String username, String jobName, Integer pageNum, Integer pageSize) {
+    public PageDto<JobExecutionDto> pageJobExecution(String username, String jobName, Integer pageNum, Integer pageSize) {
         List<Long> groupIds = groupService.findGroupsId(username);
         IPage<JobExecution> page = this.jobExecutionRepository.page(groupIds, jobName, pageNum, pageSize);
-        DataGridPageDto<JobExecutionDto> dataGrid = new DataGridPageDto<>();
-        dataGrid.setRecordsTotal(page.getTotal());
+        PageDto<JobExecutionDto> dataGrid = new PageDto<>();
+        dataGrid.setTotal(page.getTotal());
         dataGrid.setData(page.getRecords().stream().map(jobDtoMapper::toDto1).collect(Collectors.toList()));
         return dataGrid;
     }

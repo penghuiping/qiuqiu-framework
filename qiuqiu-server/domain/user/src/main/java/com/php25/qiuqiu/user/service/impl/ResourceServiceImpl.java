@@ -2,7 +2,7 @@ package com.php25.qiuqiu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Lists;
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.resource.ResourceCreateDto;
@@ -80,12 +80,12 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public DataGridPageDto<ResourceDto> page(String resourceName, Integer pageNum, Integer pageSize) {
+    public PageDto<ResourceDto> page(String resourceName, Integer pageNum, Integer pageSize) {
         IPage<Resource> page = this.resourceRepository.page(resourceName, pageNum,pageSize);
-        DataGridPageDto<ResourceDto> dataGrid = new DataGridPageDto<>();
+        PageDto<ResourceDto> dataGrid = new PageDto<>();
         List<ResourceDto> res = page.getRecords().stream().map(resourceDtoMapper::toDto).collect(Collectors.toList());
         dataGrid.setData(res);
-        dataGrid.setRecordsTotal(page.getTotal());
+        dataGrid.setTotal(page.getTotal());
         return dataGrid;
     }
 

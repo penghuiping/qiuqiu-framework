@@ -1,6 +1,6 @@
 package com.php25.qiuqiu.admin.controller;
 
-import com.php25.common.core.dto.DataGridPageDto;
+import com.php25.common.core.dto.PageDto;
 import com.php25.common.flux.web.JSONController;
 import com.php25.common.flux.web.JSONResponse;
 import com.php25.qiuqiu.admin.mapper.ResourceVoMapper;
@@ -107,7 +107,7 @@ public class ResourceController extends JSONController {
      */
     @PostMapping(value = "/page",headers = {"version=v1"})
     public JSONResponse<List<ResourceVo>> page() {
-        DataGridPageDto<ResourceDto> dataGrid = resourceService.page("", 1, 200);
+        PageDto<ResourceDto> dataGrid = resourceService.page("", 1, 200);
         List<ResourceVo> res = dataGrid.getData().stream().map(resourceVoMapper::toVo).collect(Collectors.toList());
         return succeed(res);
     }
