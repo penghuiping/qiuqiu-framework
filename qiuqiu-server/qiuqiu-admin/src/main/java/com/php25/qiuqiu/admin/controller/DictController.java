@@ -13,6 +13,8 @@ import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.monitor.dto.DictDto;
 import com.php25.qiuqiu.monitor.service.DictionaryService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,8 +31,9 @@ import java.util.stream.Collectors;
  * @author penghuiping
  * @date 2021/3/11 16:50
  */
+@Api(tags = "数据字段")
 @RestController
-@RequestMapping("/dict")
+@RequestMapping(value = "/api/dict",consumes = {"application/json"},produces = {"application/json"})
 @RequiredArgsConstructor
 public class DictController extends JsonController {
 
@@ -38,12 +41,9 @@ public class DictController extends JsonController {
 
     private final DictVoMapper dictVoMapper;
 
-    /**
-     * 数据字典分页查询
-     *
-     * @since v1
-     */
-    @PostMapping(value = "/page",headers = {"version=v1"})
+
+    @ApiOperation("数据字典分页查询")
+    @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<DictVo>> page(@Valid @RequestBody DictPageVo dictPageVo) {
         PageDto<DictDto> dataGrid = dictionaryService.page(dictPageVo.getKey(), dictPageVo.getPageNum(), dictPageVo.getPageSize());
         List<DictDto> list = dataGrid.getData();
@@ -54,13 +54,9 @@ public class DictController extends JsonController {
         return succeed(res);
     }
 
-    /**
-     * 创建字典记录
-     *
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/create",headers = {"version=v1"})
+    @ApiOperation("创建字典记录")
+    @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody DictCreateVo dictCreateVo) {
         return succeed(dictionaryService.create(
                 dictCreateVo.getKey(),
@@ -68,37 +64,25 @@ public class DictController extends JsonController {
                 dictCreateVo.getDescription()));
     }
 
-    /**
-     * 更新字典记录
-     *
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/update",headers = {"version=v1"})
+    @ApiOperation("更新字典记录")
+    @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody DictUpdateVo dictUpdateVo) {
         DictDto dictDto = dictVoMapper.toDictDto(dictUpdateVo);
         return succeed(dictionaryService.update(dictDto));
 
     }
 
-    /**
-     * 删除字典记录
-     *
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/delete",headers = {"version=v1"})
+    @ApiOperation("删除字典记录")
+    @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody DictKeyVo dictKeyVo) {
         return succeed(dictionaryService.delete(dictKeyVo.getKey()));
     }
 
-    /**
-     * 刷新缓存
-     *
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/refresh",headers = {"version=v1"})
+    @ApiOperation("刷新缓存")
+    @PostMapping(value = "/refresh",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> refresh(@Valid @RequestBody DictKeyVo dictKeyVo) {
         return succeed(dictionaryService.removeCache(dictKeyVo.getKey()));
     }

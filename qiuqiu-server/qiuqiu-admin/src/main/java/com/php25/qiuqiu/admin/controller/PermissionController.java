@@ -12,15 +12,15 @@ import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.permission.PermissionCreateDto;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import com.php25.qiuqiu.user.service.PermissionService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,8 +30,9 @@ import java.util.stream.Collectors;
  * @author penghuiping
  * @date 2021/3/9 13:53
  */
+@Api(tags = "权限管理")
 @RestController
-@RequestMapping("/permission")
+@RequestMapping(value = "/api/permission",consumes = {"application/json"},produces = {"application/json"})
 @RequiredArgsConstructor
 public class PermissionController extends JsonController {
 
@@ -39,60 +40,40 @@ public class PermissionController extends JsonController {
 
     private final PermissionVoMapper permissionVoMapper;
 
-
-    /**
-     * 获取权限列表，用于table页面展示
-     *
-     * @ignoreParams username
-     * @since v1
-     */
-    @PostMapping(value = "/page",headers = {"version=v1"})
-    public JsonResponse<List<PermissionVo>> page(@RequestAttribute @NotBlank String username) {
+    @ApiOperation("获取权限列表，用于table页面展示")
+    @PostMapping(value = "/page",headers = {"version=v1","jwt"})
+    public JsonResponse<List<PermissionVo>> page() {
         PageDto<PermissionDto> page = permissionService.page("", 1, 100);
         List<PermissionVo> permissionVos = page.getData().stream().map(permissionVoMapper::toVo).collect(Collectors.toList());
         return succeed(permissionVos);
     }
 
-    /**
-     * 获取所有有效的权限列表
-     */
-    @PostMapping(value = "/get_all",headers = {"version=v1"})
+    @ApiOperation("获取所有有效的权限列表")
+    @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
     public JsonResponse<List<PermissionVo>> getAll() {
         List<PermissionDto> permissionDtos = permissionService.getAll();
         return succeed(permissionDtos.stream().map(permissionVoMapper::toVo).collect(Collectors.toList()));
     }
 
-    /**
-     * 更新权限信息
-     *
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/update",headers = {"version=v1"})
+    @ApiOperation("更新权限信息")
+    @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody PermissionUpdateVo permissionVo) {
         PermissionDto permissionDto = permissionVoMapper.toDto(permissionVo);
         return succeed(permissionService.update(permissionDto));
     }
 
-    /**
-     * 创建权限信息
-     *
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/create",headers = {"version=v1"})
+    @ApiOperation("创建权限信息")
+    @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody PermissionCreateVo permissionVo) {
         PermissionCreateDto permissionDto = permissionVoMapper.toCreateDto(permissionVo);
         return succeed(permissionService.create(permissionDto));
     }
 
-    /**
-     * 删除权限信息
-     *
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/delete",headers = {"version=v1"})
+    @ApiOperation("删除权限信息")
+    @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody PermissionDeleteVo permissionVo) {
         return succeed(permissionService.delete(permissionVo.getPermission()));
     }

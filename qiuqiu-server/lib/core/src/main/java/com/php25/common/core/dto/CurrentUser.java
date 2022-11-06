@@ -1,4 +1,4 @@
-package com.php25.common.web;
+package com.php25.common.core.dto;
 
 import java.util.List;
 
@@ -23,6 +23,14 @@ public abstract class CurrentUser {
      * 角色
      */
     private List<String> roles;
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
 
     public String getUsername() {
         return username;

@@ -1,7 +1,10 @@
 package com.php25.qiuqiu.admin.interceptor;
 
+import com.php25.common.core.dto.CurrentUser;
+import com.php25.common.core.dto.CurrentUserDto;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.StringUtil;
+import com.php25.common.web.RequestUtil;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +52,9 @@ public class JwtAuthInterceptor implements AsyncHandlerInterceptor {
             throw Exceptions.throwBusinessException(UserErrorCode.JWT_ILLEGAL);
         }
         String username = userService.getUsernameFromJwt(jwt);
-        request.setAttribute("username", username);
+        CurrentUser currentUser = new CurrentUserDto();
+        currentUser.setUsername(username);
+        RequestUtil.setCurrentUser(currentUser);
 
         String uri = request.getRequestURI();
         //在例外中的uri不需要校验权限

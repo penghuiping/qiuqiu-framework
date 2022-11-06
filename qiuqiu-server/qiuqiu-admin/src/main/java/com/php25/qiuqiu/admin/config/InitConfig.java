@@ -7,6 +7,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import java.time.ZoneId;
@@ -33,6 +34,16 @@ public class InitConfig extends WebMvcConfigurationSupport implements Applicatio
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         jwtAuthInterceptor.setExcludeUris(new String[]{"/**/user/info","/**/other/logout","/**/other/get_init_config"});
-        registry.addInterceptor(jwtAuthInterceptor).addPathPatterns("/**").excludePathPatterns("/other/login", "/other/refresh", "/other/img_code");
+        registry.addInterceptor(jwtAuthInterceptor).addPathPatterns("/api/**").excludePathPatterns("/api/other/login", "/api/other/refresh", "/api/other/img_code");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("doc.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }

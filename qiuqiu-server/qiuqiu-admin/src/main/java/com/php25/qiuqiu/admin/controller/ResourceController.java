@@ -18,6 +18,8 @@ import com.php25.qiuqiu.user.dto.resource.ResourceDto;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.resource.ResourceUpdateDto;
 import com.php25.qiuqiu.user.service.ResourceService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,8 +36,9 @@ import java.util.stream.Collectors;
  * @author penghuiping
  * @date 2021/3/26 13:56
  */
+@Api(tags = "资管管理")
 @RestController
-@RequestMapping("/resource")
+@RequestMapping(value = "/api/resource",consumes = {"application/json"},produces = {"application/json"})
 @RequiredArgsConstructor
 public class ResourceController extends JsonController {
 
@@ -43,13 +46,10 @@ public class ResourceController extends JsonController {
 
     private final ResourceVoMapper resourceVoMapper;
 
-    /**
-     * 创建资源
-     *
-     * @since v1
-     */
+
+    @ApiOperation("创建资源")
     @AuditLog
-    @PostMapping(value = "/create",headers = {"version=v1"})
+    @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody ResourceCreateVo resourceCreateVo) {
         ResourceCreateDto resourceCreateDto = resourceVoMapper.toDto(resourceCreateVo);
         List<String> permissions = resourceCreateVo.getPermissions();
@@ -63,13 +63,9 @@ public class ResourceController extends JsonController {
         return succeed(resourceService.create(resourceCreateDto));
     }
 
-    /**
-     * 更新资源
-     *
-     * @since v1
-     */
+    @ApiOperation("更新资源")
     @AuditLog
-    @PostMapping(value = "/update",headers = {"version=v1"})
+    @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody ResourceUpdateVo resourceUpdateVo) {
         ResourceUpdateDto resourceUpdateDto = resourceVoMapper.toDto(resourceUpdateVo);
         List<String> permissions = resourceUpdateVo.getPermissions();
@@ -84,13 +80,9 @@ public class ResourceController extends JsonController {
         return succeed(true);
     }
 
-    /**
-     * 删除资源
-     *
-     * @since v1
-     */
+    @ApiOperation("删除资源")
     @AuditLog
-    @PostMapping(value = "/delete",headers = {"version=v1"})
+    @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody ResourceDeleteVo resourceDeleteVo) {
         List<String> resources = resourceDeleteVo.getResources();
         for (String resource : resources) {
@@ -100,24 +92,16 @@ public class ResourceController extends JsonController {
     }
 
 
-    /**
-     * 分页查询资源列表
-     *
-     * @since v1
-     */
-    @PostMapping(value = "/page",headers = {"version=v1"})
+    @ApiOperation("分页查询资源列表")
+    @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<List<ResourceVo>> page() {
         PageDto<ResourceDto> dataGrid = resourceService.page("", 1, 200);
         List<ResourceVo> res = dataGrid.getData().stream().map(resourceVoMapper::toVo).collect(Collectors.toList());
         return succeed(res);
     }
 
-    /**
-     * 获取系统中所有内置资源
-     *
-     * @since v1
-     */
-    @PostMapping(value = "/get_all",headers = {"version=v1"})
+    @ApiOperation("获取系统中所有内置资源")
+    @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
     public JsonResponse<List<ResourcePermissionVo>> getAll() {
         List<ResourceDetailDto> permissions = resourceService.getAll();
         List<ResourcePermissionVo> resourcePermissionVos = permissions.stream().map(resourceDetailDto -> {
@@ -131,12 +115,8 @@ public class ResourceController extends JsonController {
         return succeed(resourcePermissionVos);
     }
 
-    /**
-     * 获取资源详情
-     *
-     * @since v1
-     */
-    @PostMapping(value = "/detail",headers = {"version=v1"})
+    @ApiOperation("获取资源详情")
+    @PostMapping(value = "/detail",headers = {"version=v1","jwt"})
     public JsonResponse<ResourceDetailVo> detail(@Valid @RequestBody ResourceIdVo resourceIdVo) {
         ResourceDetailDto resourceDetailDto = resourceService.detail(resourceIdVo.getName());
         ResourceDetailVo resourceDetailVo = resourceVoMapper.toVo(resourceDetailDto);

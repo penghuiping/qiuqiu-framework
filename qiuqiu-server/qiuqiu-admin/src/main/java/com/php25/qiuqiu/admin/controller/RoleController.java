@@ -22,6 +22,8 @@ import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.role.RolePageDto;
 import com.php25.qiuqiu.user.dto.role.RoleUpdateDto;
 import com.php25.qiuqiu.user.service.RoleService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,8 +41,9 @@ import java.util.stream.Collectors;
  * @author penghuiping
  * @date 2021/3/6 17:20
  */
+@Api(tags = "角色管理")
 @RestController
-@RequestMapping("/role")
+@RequestMapping(value = "/api/role",consumes = {"application/json"},produces = {"application/json"})
 @RequiredArgsConstructor
 public class RoleController extends JsonController {
 
@@ -48,25 +51,19 @@ public class RoleController extends JsonController {
 
     private final RoleVoMapper roleVoMapper;
 
-    /**
-     * 获取系统中所有角色列表
-     *
-     * @since v1
-     */
-    @PostMapping(value = "/get_all",headers = {"version=v1"})
+
+    @ApiOperation("获取系统中所有角色列表")
+    @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
     public JsonResponse<List<RoleVo>> getAll() {
         List<RoleDto> roleDtoList = roleService.getAllRoles();
         List<RoleVo> roleVos = roleDtoList.stream().map(roleVoMapper::toVo).collect(Collectors.toList());
         return succeed(roleVos);
     }
 
-    /**
-     * 新增角色
-     *
-     * @since v1
-     */
+
     @AuditLog
-    @PostMapping(value = "/create",headers = {"version=v1"})
+    @ApiOperation("新增角色")
+    @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody RoleCreateVo roleCreateVo) {
         List<ResourcePermissionVo> resourcePermissionVos = roleCreateVo.getResourcePermissions();
         List<ResourcePermissionDto> resourcePermissionDtos = new ArrayList<>();
@@ -89,13 +86,9 @@ public class RoleController extends JsonController {
         return succeed(roleService.create(roleCreateDto));
     }
 
-    /**
-     * 更新角色
-     *
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/update",headers = "version=v1")
+    @ApiOperation("更新角色")
+    @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody RoleUpdateVo roleUpdateVo) {
         List<ResourcePermissionVo> resourcePermissionVos = roleUpdateVo.getResourcePermissions();
         List<ResourcePermissionDto> resourcePermissionDtos = new ArrayList<>();
@@ -118,23 +111,16 @@ public class RoleController extends JsonController {
         return succeed(roleService.update(roleUpdateDto));
     }
 
-    /**
-     * 删除角色
-     *
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/delete",headers = {"version=v1"})
+    @ApiOperation("删除角色")
+    @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody RoleDeleteVo roleDeleteVo) {
         return succeed(roleService.delete(roleDeleteVo.getRoleIds()));
     }
 
-    /**
-     * 获取角色信息接口
-     *
-     * @since v1
-     */
-    @PostMapping(value = "/detail",headers = {"version=v1"})
+
+    @ApiOperation("获取角色信息接口")
+    @PostMapping(value = "/detail",headers = {"version=v1","jwt"})
     public JsonResponse<RoleDetailOutVo> detail(@Valid @RequestBody RoleDetailVo roleDetailVo) {
         RoleDetailDto roleDetailDto = roleService.detail(roleDetailVo.getRoleId());
         RoleDetailOutVo roleDetailOutVo = roleVoMapper.toVo(roleDetailDto);
@@ -159,12 +145,8 @@ public class RoleController extends JsonController {
         return succeed(roleDetailOutVo);
     }
 
-    /**
-     * 获取角色分页列表接口
-     *
-     * @since v1
-     */
-    @PostMapping(value = "/page",headers = {"version=v1"})
+    @ApiOperation("获取角色分页列表接口")
+    @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<RolePageOutVo>> page(@Valid @RequestBody RolePageVo rolePageVo) {
         PageDto<RolePageDto> page = roleService.page(rolePageVo.getRoleName(), rolePageVo.getPageNum(), rolePageVo.getPageSize());
         PageResultVo<RolePageOutVo> res = new PageResultVo<>();

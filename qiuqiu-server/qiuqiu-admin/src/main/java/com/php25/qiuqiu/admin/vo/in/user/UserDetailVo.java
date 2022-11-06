@@ -1,5 +1,7 @@
 package com.php25.qiuqiu.admin.vo.in.user;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,5 +21,6 @@ public class UserDetailVo {
      */
     @NotNull
     @Positive
+    @ApiModelProperty("用户id")
     private Long userId;
 }

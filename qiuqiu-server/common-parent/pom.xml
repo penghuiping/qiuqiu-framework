@@ -206,6 +206,13 @@
             </dependency>
 
             <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <!--使用Swagger2-->
+                <artifactId>knife4j-spring-boot-starter</artifactId>
+                <version>2.0.9</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.php25</groupId>
                 <artifactId>core</artifactId>
                 <version>${core}</version>
@@ -348,27 +355,6 @@
                             <phase>install</phase>
                             <goals>
                                 <goal>dockerBuild</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>com.github.shalousun</groupId>
-                    <artifactId>smart-doc-maven-plugin</artifactId>
-                    <version>2.1.0</version>
-                    <configuration>
-                        <!--指定生成文档的使用的配置文件,配置文件放在自己的项目中-->
-                        <configFile>./src/main/resources/smart-doc.json</configFile>
-                        <!--指定项目名称-->
-                        <projectName>${project.artifactId}</projectName>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <!--如果不需要在执行编译时启动smart-doc，则将phase注释掉-->
-                            <phase>compile</phase>
-                            <goals>
-                                <!--smart-doc提供了html、openapi、markdown等goal，可按需配置-->
-                                <goal>html</goal>
                             </goals>
                         </execution>
                     </executions>

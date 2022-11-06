@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.admin.vo.out.resource;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,10 +17,12 @@ public class ResourcePermissionVo {
     /**
      * 资源
      */
+    @ApiModelProperty("资源")
     private String resource;
 
     /**
      * 资源对应的权限
      */
+    @ApiModelProperty("资源对应的权限")
     private List<String> permissions;
 }

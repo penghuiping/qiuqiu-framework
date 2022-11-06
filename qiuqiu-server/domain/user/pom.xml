@@ -28,6 +28,10 @@
             <artifactId>redis</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.php25</groupId>
+            <artifactId>web</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>

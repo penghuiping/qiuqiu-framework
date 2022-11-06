@@ -1,9 +1,11 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.google.common.collect.Lists;
+import com.php25.common.core.dto.CurrentUser;
 import com.php25.common.core.dto.PageDto;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
+import com.php25.common.web.RequestUtil;
 import com.php25.qiuqiu.admin.mapper.JobVoMapper;
 import com.php25.qiuqiu.admin.vo.in.job.JobCreateVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobIdVo;
@@ -16,6 +18,8 @@ import com.php25.qiuqiu.job.dto.JobDto;
 import com.php25.qiuqiu.job.dto.JobUpdateDto;
 import com.php25.qiuqiu.job.service.JobService;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,25 +38,23 @@ import java.util.stream.Collectors;
  * @author penghuiping
  * @date 2021/3/9 10:29
  */
-@RestController
-@RequestMapping("/job")
-@RequiredArgsConstructor
 @Slf4j
+@Api(tags = "定时任务")
+@RestController
+@RequestMapping(value = "/api/job",consumes = {"application/json"},produces = {"application/json"})
+@RequiredArgsConstructor
 public class JobController extends JsonController {
 
     private final JobService jobService;
 
     private final JobVoMapper jobVoMapper;
 
-    /**
-     * 分页查询定时任务列表
-     *
-     * @ignoreParams username
-     * @since v1
-     */
-    @PostMapping(value = "/page",headers = {"version=v1"})
-    public JsonResponse<PageResultVo<JobVo>> page(@RequestAttribute String username, @Valid @RequestBody JobPageVo jobPageVo) {
-        PageDto<JobDto> dataGrid = jobService.page(username, jobPageVo.getJobName(),
+
+    @ApiOperation("分页查询定时任务列表")
+    @PostMapping(value = "/page",headers = {"version=v1","jwt"})
+    public JsonResponse<PageResultVo<JobVo>> page(@Valid @RequestBody JobPageVo jobPageVo) {
+        CurrentUser currentUser = RequestUtil.getCurrentUser();
+        PageDto<JobDto> dataGrid = jobService.page(currentUser.getUsername(), jobPageVo.getJobName(),
                 jobPageVo.getPageNum(), jobPageVo.getPageSize());
         PageResultVo<JobVo> res = new PageResultVo<>();
         List<JobVo> jobVos = dataGrid.getData().stream().map(jobVoMapper::toVo).collect(Collectors.toList());
@@ -62,53 +64,38 @@ public class JobController extends JsonController {
         return succeed(res);
     }
 
-    /**
-     * 创建定时任务
-     *
-     * @ignoreParams username
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/create",headers = {"version=v1"})
-    public JsonResponse<Boolean> create(@RequestAttribute String username, @Valid @RequestBody JobCreateVo jobCreateVo) {
+    @ApiOperation("创建定时任务")
+    @PostMapping(value = "/create",headers = {"version=v1","jwt"})
+    public JsonResponse<Boolean> create(@Valid @RequestBody JobCreateVo jobCreateVo) {
+        CurrentUser currentUser = RequestUtil.getCurrentUser();
         JobCreateDto jobCreateDto = jobVoMapper.toJobCreateDto(jobCreateVo);
-        return succeed(jobService.create(username, jobCreateDto));
+        return succeed(jobService.create(currentUser.getUsername(), jobCreateDto));
     }
 
-    /**
-     * 更新定时任务
-     *
-     * @ignoreParams username
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/update",headers = {"version=v1"})
-    public JsonResponse<Boolean> update(@RequestAttribute String username, @Valid @RequestBody JobUpdateVo jobUpdateVo) {
+    @ApiOperation("更新定时任务")
+    @PostMapping(value = "/update",headers = {"version=v1","jwt"})
+    public JsonResponse<Boolean> update(@Valid @RequestBody JobUpdateVo jobUpdateVo) {
+        CurrentUser currentUser = RequestUtil.getCurrentUser();
         JobUpdateDto jobUpdateDto = jobVoMapper.toJobUpdateDto(jobUpdateVo);
-        return succeed(jobService.update(username, jobUpdateDto));
+        return succeed(jobService.update(currentUser.getUsername(), jobUpdateDto));
     }
 
-    /**
-     * 删除定时任务
-     *
-     * @ignoreParams username
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/delete",headers = {"version=v1"})
-    public JsonResponse<Boolean> delete(@RequestAttribute String username, @Valid @RequestBody JobIdVo jobIdVo) {
-        return succeed(jobService.delete(username, jobIdVo.getJobId()));
+    @ApiOperation("删除定时任务")
+    @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
+    public JsonResponse<Boolean> delete(@Valid @RequestBody JobIdVo jobIdVo) {
+        CurrentUser currentUser = RequestUtil.getCurrentUser();
+        return succeed(jobService.delete(currentUser.getUsername(), jobIdVo.getJobId()));
     }
 
-    /**
-     * 获取所有任务列表
-     *
-     * @ignoreParams username
-     * @since v1
-     */
-    @PostMapping(value = "/get_all",headers = {"version=v1"})
-    public JsonResponse<List<JobVo>> findAll(@RequestAttribute String username) {
-        List<JobDto> jobDtoList = jobService.findAll(username);
+
+    @ApiOperation("获取所有任务列表")
+    @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
+    public JsonResponse<List<JobVo>> findAll() {
+        CurrentUser currentUser = RequestUtil.getCurrentUser();
+        List<JobDto> jobDtoList = jobService.findAll(currentUser.getUsername());
         if (null != jobDtoList && !jobDtoList.isEmpty()) {
             List<JobVo> res = jobDtoList.stream().map(jobVoMapper::toJobVo).collect(Collectors.toList());
             return succeed(res);

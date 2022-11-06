@@ -1,11 +1,13 @@
 package com.php25.qiuqiu.admin.controller;
 
 import com.google.common.collect.Lists;
+import com.php25.common.core.dto.CurrentUser;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
+import com.php25.common.web.RequestUtil;
 import com.php25.qiuqiu.admin.constant.AdminErrorCode;
 import com.php25.qiuqiu.admin.vo.in.LoginVo;
 import com.php25.qiuqiu.admin.vo.out.DictVo;
@@ -18,6 +20,8 @@ import com.php25.qiuqiu.user.constant.UserConstants;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.user.TokenDto;
 import com.php25.qiuqiu.user.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
@@ -49,8 +53,9 @@ import java.util.stream.Collectors;
  * @date 2022/3/31 22:02
  */
 @Slf4j
+@Api(tags = "其他")
 @RestController
-@RequestMapping("/other")
+@RequestMapping(value = "/api/other",consumes = {"application/json"},produces = {"application/json"})
 @RequiredArgsConstructor
 public class OtherController extends JsonController {
 
@@ -62,13 +67,8 @@ public class OtherController extends JsonController {
 
     private final DictionaryService dictionaryService;
 
-    /**
-     * 登入接口
-     *
-     * @ignoreParams response
-     * @since v1
-     */
     @AuditLog
+    @ApiOperation("登入接口")
     @PostMapping(value = "/login",headers = {"version=v1"})
     public JsonResponse<TokenVo> login(HttpServletResponse response,
                                        @Valid @RequestBody LoginVo loginVo) {
@@ -88,18 +88,15 @@ public class OtherController extends JsonController {
         return succeed(tokenVo);
     }
 
-    /**
-     * 登出接口
-     */
     @AuditLog
-    @PostMapping(value = "/logout",headers = {"version=v1"})
-    public JsonResponse<Boolean> logout(@RequestAttribute @NotBlank String username) {
-        return succeed(userService.logout(username));
+    @ApiOperation("登出接口")
+    @PostMapping(value = "/logout",headers = {"version=v1","jwt"})
+    public JsonResponse<Boolean> logout() {
+        CurrentUser currentUser = RequestUtil.getCurrentUser();
+        return succeed(userService.logout(currentUser.getUsername()));
     }
 
-    /**
-     * 获取登入验证码
-     */
+    @ApiOperation("获取登入验证码")
     @GetMapping(value = "/img_code")
     public void getImgCode(@NotBlank @Length(max = 32) @RequestParam String imgCodeId, HttpServletResponse response) {
         String code = RandomUtil.getRandomNumbersAndLetters(6);
@@ -124,12 +121,8 @@ public class OtherController extends JsonController {
         }
     }
 
-    /**
-     * 刷新token接口
-     *
-     * @ignoreParams request
-     */
     @AuditLog
+    @ApiOperation("刷新token接口")
     @PostMapping(value = "/refresh",headers = {"version=v1"})
     public JsonResponse<TokenVo> refresh(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -149,11 +142,8 @@ public class OtherController extends JsonController {
         throw Exceptions.throwBusinessException(UserErrorCode.REFRESH_TOKEN_ILLEGAL);
     }
 
-    /**
-     * 获取系统启动初始化配置项
-     * @return 系统启动初始化配置项列表
-     */
-    @PostMapping(value = "/get_init_config",headers = {"version=v1"})
+    @ApiOperation("获取系统启动初始化配置项")
+    @PostMapping(value = "/get_init_config",headers = {"version=v1","jwt"})
     public JsonResponse<List<DictVo>>  getInitConfig() {
         List<DictDto> dictDtoList = dictionaryService.getAllInitConfig();
         if(dictDtoList.isEmpty()) {

@@ -14,6 +14,8 @@ import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.group.GroupCreateDto;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
 import com.php25.qiuqiu.user.service.GroupService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,8 +31,9 @@ import java.util.List;
  * @author penghuiping
  * @date 2021/3/6 21:36
  */
+@Api(tags = "用户组")
 @RestController
-@RequestMapping("/group")
+@RequestMapping(value = "/api/group",consumes = {"application/json"},produces = {"application/json"})
 @RequiredArgsConstructor
 public class GroupController extends JsonController {
 
@@ -38,12 +41,9 @@ public class GroupController extends JsonController {
 
     private final GroupVoMapper groupVoMapper;
 
-    /**
-     * 获取系统中所有组列表
-     *
-     * @since v1
-     */
-    @PostMapping(value = "/get_all",headers = {"version=v1"})
+
+    @ApiOperation("获取系统中所有组列表")
+    @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
     public JsonResponse<TreeVo> getAll() {
         TreeNode<GroupDto> res = groupService.getAllGroupTree();
         TreeVo root = new TreeVo();
@@ -51,37 +51,25 @@ public class GroupController extends JsonController {
         return succeed(root);
     }
 
-    /**
-     * 创建用户组
-     *
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/create",headers = {"version=v1"})
+    @ApiOperation("创建用户组")
+    @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody GroupCreateVo groupCreateVo) {
         GroupCreateDto groupCreateDto = groupVoMapper.toCreateDto(groupCreateVo);
         return succeed(groupService.create(groupCreateDto));
     }
 
-    /**
-     * 更新用户组
-     *
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/update",headers = {"version=v1"})
+    @ApiOperation("更新用户组")
+    @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody GroupUpdateVo groupUpdateVo) {
         GroupDto groupDto = groupVoMapper.toGroupDto(groupUpdateVo);
         return succeed(groupService.update(groupDto));
     }
 
-    /**
-     * 删除用户组
-     *
-     * @since v1
-     */
     @AuditLog
-    @PostMapping(value = "/delete",headers = {"version=v1"})
+    @ApiOperation("删除用户组")
+    @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody GroupDeleteVo groupDeleteVo) {
         return succeed(groupService.delete(groupDeleteVo.getGroupId()));
     }
