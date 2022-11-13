@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 @Api(tags = "审计日志")
 @RestController
-@RequestMapping(value = "/api/audit_log",consumes = {"application/json"},produces = {"application/json"})
+@RequestMapping(value = "/api/audit_log",produces = {"application/json"})
 @RequiredArgsConstructor
 public class AuditLogController extends JsonController {
 

@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/user",consumes = {"application/json"},produces = {"application/json"})
+@RequestMapping(value = "/api/user",produces = {"application/json"})
 @RequiredArgsConstructor
 @Api(tags = "角色管理")
 public class UserController extends JsonController {

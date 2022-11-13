@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Api(tags = "定时任务执行计划")
 @RestController
-@RequestMapping(value = "/api/job_execution",consumes = {"application/json"},produces = {"application/json"})
+@RequestMapping(value = "/api/job_execution",produces = {"application/json"})
 @RequiredArgsConstructor
 public class JobExecutionController extends JsonController {
 

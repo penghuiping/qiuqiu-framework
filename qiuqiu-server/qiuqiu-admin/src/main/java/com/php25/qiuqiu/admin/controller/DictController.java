@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @Api(tags = "数据字段")
 @RestController
-@RequestMapping(value = "/api/dict",consumes = {"application/json"},produces = {"application/json"})
+@RequestMapping(value = "/api/dict",produces = {"application/json"})
 @RequiredArgsConstructor
 public class DictController extends JsonController {
 

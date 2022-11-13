@@ -11,6 +11,7 @@
         <module>lib</module>
         <module>domain</module>
         <module>qiuqiu-admin</module>
+        <module>qiuqiu-media</module>
     </modules>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

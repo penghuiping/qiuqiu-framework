@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Api(tags = "其他")
 @RestController
-@RequestMapping(value = "/api/other",consumes = {"application/json"},produces = {"application/json"})
+@RequestMapping(value = "/api/other")
 @RequiredArgsConstructor
 public class OtherController extends JsonController {
 

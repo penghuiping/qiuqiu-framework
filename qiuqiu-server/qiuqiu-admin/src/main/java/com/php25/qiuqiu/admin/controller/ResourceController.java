@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  */
 @Api(tags = "资管管理")
 @RestController
-@RequestMapping(value = "/api/resource",consumes = {"application/json"},produces = {"application/json"})
+@RequestMapping(value = "/api/resource",produces = {"application/json"})
 @RequiredArgsConstructor
 public class ResourceController extends JsonController {
 

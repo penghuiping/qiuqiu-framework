@@ -6,4 +6,4 @@ target
 logs
 test.db
 docs/data
-
+*.jpg

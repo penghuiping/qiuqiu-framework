@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  */
 @Api(tags = "权限管理")
 @RestController
-@RequestMapping(value = "/api/permission",consumes = {"application/json"},produces = {"application/json"})
+@RequestMapping(value = "/api/permission",produces = {"application/json"})
 @RequiredArgsConstructor
 public class PermissionController extends JsonController {
 

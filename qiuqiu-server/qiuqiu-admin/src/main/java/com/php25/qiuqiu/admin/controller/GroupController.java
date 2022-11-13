@@ -33,7 +33,7 @@ import java.util.List;
  */
 @Api(tags = "用户组")
 @RestController
-@RequestMapping(value = "/api/group",consumes = {"application/json"},produces = {"application/json"})
+@RequestMapping(value = "/api/group",produces = {"application/json"})
 @RequiredArgsConstructor
 public class GroupController extends JsonController {
 
