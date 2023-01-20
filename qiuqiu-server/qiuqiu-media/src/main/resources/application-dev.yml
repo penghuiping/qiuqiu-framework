@@ -1,0 +1,53 @@
+########################################################
+### LOG
+########################################################
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.jdbc: INFO
+    com.php25: INFO
+    org.springframework.security: INFO
+    com.php25.qiuqiu.monitor.dao: INFO
+  file:
+    name: /tmp/logs/qiuqiu-admin.log
+spring:
+  webflux:
+    base-path: qiuqiu_media
+  ########################################################
+  ### redis
+  ########################################################
+  redis:
+    host: ${app.redis.host}
+    port: ${app.redis.port}
+    database: ${app.redis.database}
+    #password: ${app.redis.password}
+    ssl: false
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: 5s
+        min-idle: 0
+    timeout: 5s
+    connect-timeout: 5s
+########################################################
+### 服务器运行时信息
+########################################################
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  server:
+    port: 9092
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+server:
+  port: 8082

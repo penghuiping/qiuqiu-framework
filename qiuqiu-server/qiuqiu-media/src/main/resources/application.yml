@@ -1,0 +1,22 @@
+###############################################
+## common配置
+###############################################
+spring:
+  profiles:
+    active: dev
+  application:
+    name: qiuqiu-media
+  main:
+    allow-bean-definition-overriding: true
+  mvc:
+    static-path-pattern: /static/*
+  webflux:
+    static-path-pattern: /static/*
+  data:
+    redis:
+      repositories:
+        enabled: false
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+server:
+  shutdown: graceful
