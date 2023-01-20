@@ -1,11 +1,19 @@
 package com.php25.qiuqiu.admin.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.injector.AbstractMethod;
+import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.extension.injector.methods.InsertBatchSomeColumn;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.logging.slf4j.Slf4jImpl;
+import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +27,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.sqlite.SQLiteDataSource;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 /**
  * @author penghuiping
@@ -89,7 +98,21 @@ public class DbConfig {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         mybatisSqlSessionFactoryBean.setPlugins(interceptor);
+        GlobalConfig globalConfig = new GlobalConfig();
+        globalConfig.setSqlInjector(new SqlInjectorPlus());
+        mybatisSqlSessionFactoryBean.setGlobalConfig(globalConfig);
         return mybatisSqlSessionFactoryBean.getObject();
     }
+}
 
+class SqlInjectorPlus extends DefaultSqlInjector {
+
+    @Override
+    public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
+        //继承原有方法
+        List<AbstractMethod> methodList = super.getMethodList(mapperClass,tableInfo);
+        //注入新方法
+        methodList.add(new InsertBatchSomeColumn());
+        return methodList;
+    }
 }

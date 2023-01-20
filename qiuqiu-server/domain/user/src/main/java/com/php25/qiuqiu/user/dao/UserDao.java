@@ -10,6 +10,6 @@ import com.php25.qiuqiu.user.dao.po.UserPo;
  * @author penghuiping
  * @date 2022/2/12 13:50
  */
-public interface UserDao extends BaseMapper<UserPo> {
+public interface UserDao extends BaseMapperPlus<UserPo> {
     int insertBatch(@Param("userPoCollection") Collection<UserPo> userPoCollection);
 }

@@ -79,7 +79,8 @@ public class UserRepositoryImpl implements UserRepository {
             BeanUtils.copyProperties(userRole, userRolePo);
             return userRolePo;
         }).collect(Collectors.toList());
-        userRoleDao.insertBatch(userRolePoList);
+//        userRoleDao.insertBatch(userRolePoList);
+        userRoleDao.insertBatchSomeColumn(userRolePoList);
         return true;
     }
 
