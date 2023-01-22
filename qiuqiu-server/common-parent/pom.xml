@@ -335,7 +335,7 @@
                     <version>2.8.0</version>
                     <configuration>
                         <from>
-                            <image>docker://openjdk:8u322-jdk-oracle</image>
+                            <image>docker://openjdk:17-ea-oracle</image>
                         </from>
                         <to>
                             <image>docker.io/penghuiping/${project.artifactId}</image>
