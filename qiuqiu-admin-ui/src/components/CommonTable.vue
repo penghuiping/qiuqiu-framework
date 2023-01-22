@@ -92,10 +92,12 @@
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
 import { BaseVue } from '@/BaseVue'
+import { DictApi } from '@/api/dict'
+import { DictVo } from '@/api/vo/dict'
 
 @Component
 export default class Dict extends BaseVue {
-  private tableData: []
+  private tableData: DictVo[] | undefined
   private loading = false
   private hideOnSinglePage = false
   private currentPage = 1
@@ -137,7 +139,7 @@ export default class Dict extends BaseVue {
     console.log('.')
   }
 
-  update (row) {
+  update (row: any) {
     console.log('.')
   }
 
