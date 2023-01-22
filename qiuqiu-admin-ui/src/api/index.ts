@@ -40,7 +40,7 @@ axios.interceptors.response.use(
 )
 
 class ApiConstant {
-  static BASE = '/api'
+  static BASE = '/qiuqiu_admin/api'
   static LOGIN = ApiConstant.BASE + '/other/login'
   static LOGOUT = ApiConstant.BASE + '/other/logout'
   static GET_INIT_CONFIG = ApiConstant.BASE + '/other/get_init_config'
