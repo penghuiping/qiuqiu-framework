@@ -1,14 +1,11 @@
 package com.php25.common.repeat;
 
 import com.php25.common.core.exception.Exceptions;
-import com.php25.common.core.util.DigestUtil;
-import com.php25.common.core.util.JsonUtil;
 import com.php25.common.web.ApiErrorCode;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -16,7 +13,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.integration.redis.util.RedisLockRegistry;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -45,11 +41,8 @@ public class AvoidRepeatAop {
 
     @Around("annotation()")
     public Object traceThing(ProceedingJoinPoint pjp) throws Throwable {
-         Method method = ((MethodSignature) pjp.getSignature()).getMethod();
-         String className = method.getDeclaringClass().getName();
-         String methodName = method.getName();
-         Object[] obj = new Object[]{className,methodName,pjp.getArgs()};
-         String key = DigestUtil.shaStr(JsonUtil.toJson(obj));
+         GetKeyStrategy getKeyStrategy = new ShaHashKeyStrategy();
+         String key = getKeyStrategy.getKey(new Context(pjp));
          Lock lock = lockRegistry.obtain(key);
          boolean flag = true;
          try {
