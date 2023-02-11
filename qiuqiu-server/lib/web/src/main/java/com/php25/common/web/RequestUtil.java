@@ -4,6 +4,7 @@ import com.php25.common.core.dto.CurrentUser;
 import com.php25.common.core.exception.Exceptions;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,12 +18,14 @@ public class RequestUtil {
     private RequestUtil() {
     }
 
-    public static String getBasePath(HttpServletRequest request) {
+    public static String getBasePath() {
+        HttpServletRequest request  = getRequest();
         String path = request.getContextPath();
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
     }
 
-    public static String getRemoteIP(HttpServletRequest request) {
+    public static String getRemoteIP() {
+        HttpServletRequest request  = getRequest();
         String ip = request.getHeader("x-forwarded-for");
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
@@ -38,12 +41,13 @@ public class RequestUtil {
 
     /**
      * 获取当前登录用户
+     *
      * @return 当前登录用户
      */
     public static CurrentUser getCurrentUser() {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-        Object object = requestAttributes.getAttribute(CURRENT_USER,0);
-        if(null == object) {
+        Object object = requestAttributes.getAttribute(CURRENT_USER, 0);
+        if (null == object) {
             throw Exceptions.throwIllegalStateException("无法获取当前登录用户");
         }
         return (CurrentUser) object;
@@ -51,10 +55,16 @@ public class RequestUtil {
 
     /**
      * 设置当前登录用户
+     *
      * @param currentUser 当前登录用户
      */
     public static void setCurrentUser(CurrentUser currentUser) {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-        requestAttributes.setAttribute(CURRENT_USER,currentUser,0);
+        requestAttributes.setAttribute(CURRENT_USER, currentUser, 0);
+    }
+
+    public static HttpServletRequest getRequest() {
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes)RequestContextHolder.currentRequestAttributes();
+        return requestAttributes.getRequest();
     }
 }
