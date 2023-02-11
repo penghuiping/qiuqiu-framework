@@ -6,6 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -13,6 +14,9 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.integration.redis.util.RedisLockRegistry;
 import org.springframework.stereotype.Component;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -21,7 +25,6 @@ import java.util.concurrent.locks.Lock;
  * @date 2023/2/11 21:26
  */
 @Aspect
-@ConditionalOnBean(RedisConnectionFactory.class)
 @Component
 public class AvoidRepeatAop {
 
@@ -41,20 +44,24 @@ public class AvoidRepeatAop {
 
     @Around("annotation()")
     public Object traceThing(ProceedingJoinPoint pjp) throws Throwable {
-         GetKeyStrategy getKeyStrategy = new ShaHashKeyStrategy();
-         String key = getKeyStrategy.getKey(new Context(pjp));
-         Lock lock = lockRegistry.obtain(key);
-         boolean flag = true;
-         try {
-             flag = lock.tryLock(1, TimeUnit.SECONDS);
-             if(!flag) {
-                 throw Exceptions.throwBusinessException(ApiErrorCode.AVOID_REPEAT);
-             }
-             return pjp.proceed();
-         }finally {
-             if(flag) {
-                 lock.unlock();
-             }
+        Method method = ((MethodSignature) pjp.getSignature()).getMethod();
+        Annotation[] annotations = method.getDeclaredAnnotations();
+        AvoidRepeat annotation0 = (AvoidRepeat) Arrays.stream(annotations).filter(annotation -> annotation instanceof AvoidRepeat).findFirst().get();
+        Class<? extends GetKeyStrategy> cls = annotation0.keyStrategy();
+        GetKeyStrategy getKeyStrategy = cls.getDeclaredConstructor().newInstance();
+        String key = getKeyStrategy.getKey(new Context(pjp));
+        Lock lock = lockRegistry.obtain(key);
+        boolean flag = true;
+        try {
+         flag = lock.tryLock(1, TimeUnit.SECONDS);
+         if(!flag) {
+             throw Exceptions.throwBusinessException(ApiErrorCode.AVOID_REPEAT);
          }
+         return pjp.proceed();
+        }finally {
+         if(flag) {
+             lock.unlock();
+         }
+        }
     }
 }

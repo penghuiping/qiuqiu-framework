@@ -5,6 +5,7 @@ import com.php25.common.core.dto.CurrentUser;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.RandomUtil;
 import com.php25.common.redis.RedisManager;
+import com.php25.common.repeat.AvoidRepeat;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
 import com.php25.common.web.RequestUtil;
@@ -67,6 +68,7 @@ public class OtherController extends JsonController {
 
     private final DictionaryService dictionaryService;
 
+    @AvoidRepeat
     @AuditLog
     @ApiOperation("登入接口")
     @PostMapping(value = "/login",headers = {"version=v1"})
