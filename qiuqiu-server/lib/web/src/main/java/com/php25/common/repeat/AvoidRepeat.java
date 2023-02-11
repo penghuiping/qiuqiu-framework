@@ -13,4 +13,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AvoidRepeat {
      Class<? extends GetKeyStrategy> keyStrategy() default ShaHashKeyStrategy.class ;
+
+     /**
+      * spring spEL表达式获取 请求唯一key {@link com.php25.common.repeat.SpElKeyStrategy}
+      *
+      * @return 请求唯一key
+      */
+     String expression() default "";
 }
