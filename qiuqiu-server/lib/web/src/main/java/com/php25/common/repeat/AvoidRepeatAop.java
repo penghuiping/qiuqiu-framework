@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -27,15 +29,21 @@ import java.util.concurrent.locks.Lock;
 @Aspect
 @Component
 public class AvoidRepeatAop {
-
     private final static Logger log = LoggerFactory.getLogger(AvoidRepeatAop.class);
 
-    private final RedisConnectionFactory redisConnectionFactory;
     private final RedisLockRegistry lockRegistry;
+    private final Map<Class<? extends GetKeyStrategy>,GetKeyStrategy> cache = new HashMap<>();
 
     public AvoidRepeatAop(RedisConnectionFactory redisConnectionFactory) {
-        this.redisConnectionFactory = redisConnectionFactory;
-        this.lockRegistry = new RedisLockRegistry(redisConnectionFactory,"ar_lock",10000);
+        this.lockRegistry = new RedisLockRegistry(redisConnectionFactory, "ar_lock", 10000);
+        this.init();
+    }
+
+    private void init() {
+        ShaHashKeyStrategy shaHashKeyStrategy = new ShaHashKeyStrategy();
+        SpElKeyStrategy spElKeyStrategy = new SpElKeyStrategy();
+        cache.put(ShaHashKeyStrategy.class,shaHashKeyStrategy);
+        cache.put(SpElKeyStrategy.class,spElKeyStrategy);
     }
 
     @Pointcut("@annotation(com.php25.common.repeat.AvoidRepeat)")
@@ -48,20 +56,20 @@ public class AvoidRepeatAop {
         Annotation[] annotations = method.getDeclaredAnnotations();
         AvoidRepeat annotation0 = (AvoidRepeat) Arrays.stream(annotations).filter(annotation -> annotation instanceof AvoidRepeat).findFirst().get();
         Class<? extends GetKeyStrategy> cls = annotation0.keyStrategy();
-        GetKeyStrategy getKeyStrategy = cls.getDeclaredConstructor().newInstance();
+        GetKeyStrategy getKeyStrategy = cache.get(cls);
         String key = getKeyStrategy.getKey(new Context(pjp));
         Lock lock = lockRegistry.obtain(key);
         boolean flag = true;
         try {
-         flag = lock.tryLock(1, TimeUnit.SECONDS);
-         if(!flag) {
-             throw Exceptions.throwBusinessException(ApiErrorCode.AVOID_REPEAT);
-         }
-         return pjp.proceed();
-        }finally {
-         if(flag) {
-             lock.unlock();
-         }
+            flag = lock.tryLock(1, TimeUnit.SECONDS);
+            if (!flag) {
+                throw Exceptions.throwBusinessException(ApiErrorCode.AVOID_REPEAT);
+            }
+            return pjp.proceed();
+        } finally {
+            if (flag) {
+                lock.unlock();
+            }
         }
     }
 }
