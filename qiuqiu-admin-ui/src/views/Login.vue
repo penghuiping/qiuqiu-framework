@@ -13,7 +13,7 @@
       <el-form-item label="验证码:" prop="code">
         <el-row  justify="space-between" type="flex">
           <el-input v-model=loginForm.code></el-input>
-          <img id="code_img" :src="loginForm.imgCodeSrc" alt="" width="100px" height="40px"/>
+          <img id="code_img"  alt="" width="100px" height="40px" @click="codeImage()"/>
         </el-row>
       </el-form-item>
       <el-row justify="space-between" type="flex">
@@ -48,7 +48,7 @@ export default class Login extends BaseVue {
     password: '',
     code: '',
     checked: false,
-    imgCodeSrc: './qiuqiu_admin/api/other/img_code?imgCodeId=' + this.randomId()
+    imgCodeId: ''
   }
 
   private rules = {
@@ -63,6 +63,10 @@ export default class Login extends BaseVue {
       { required: true, message: '请输入图形验证码', trigger: 'change' },
       { min: 6, max: 6, message: '长度6字符', trigger: 'change' }
     ]
+  }
+
+  mounted () {
+    this.codeImage()
   }
 
   randomId () {
@@ -89,8 +93,8 @@ export default class Login extends BaseVue {
     (this.$refs.form as ElForm).validate(async valid => {
       if (valid) {
         const loading = this.showLoading()
-        const imgCodeId: string = this.loginForm.imgCodeSrc.substr(this.loginForm.imgCodeSrc.length - 32, this.loginForm.imgCodeSrc.length)
-        const res = await UserApi.login(this.loginForm.username, this.loginForm.password, this.loginForm.code, imgCodeId)
+        this.loginForm.imgCodeId = this.loginForm.imgCodeId.substr(this.loginForm.imgCodeId.length - 32, this.loginForm.imgCodeId.length)
+        const res = await UserApi.login(this.loginForm.username, this.loginForm.password, this.loginForm.code, this.loginForm.imgCodeId)
         this.closeLoading(loading)
         const jsonResponse = res.data
         if (jsonResponse.code === '00000') {
@@ -109,8 +113,20 @@ export default class Login extends BaseVue {
     })
   }
 
+  codeImage () {
+    const codeImg = document.getElementById('code_img')
+    if (codeImg) {
+      this.loginForm.imgCodeId = this.codeImageUrl();
+      (codeImg as HTMLImageElement).src = this.loginForm.imgCodeId
+    }
+  }
+
   forgetPwd () {
     console.log('forgetPwd')
+  }
+
+  codeImageUrl () {
+    return './qiuqiu_admin/api/other/img_code?imgCodeId=' + this.randomId()
   }
 }
 </script>
