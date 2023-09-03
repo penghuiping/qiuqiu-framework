@@ -100,7 +100,7 @@ public class DictionaryServiceImpl implements DictionaryService, DisposableBean 
     @Override
     public Boolean removeCache(String key) {
         Message<String> message = new GenericMessage<>(key);
-        return streamBridge.send("dictChannel-in-0",message);
+        return streamBridge.send("dictChannel-out-0",message);
     }
 
     @Override

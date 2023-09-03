@@ -230,9 +230,9 @@ public class JobServiceImpl implements JobService {
         JobExecution jobExecution = jobExecutionOptional.get();
         Message<String> message = new GenericMessage<>(JsonUtil.toJson(Lists.newArrayList(RandomUtil.randomUUID(), executionId)));
         if (jobExecution.getEnable()) {
-            streamBridge.send("timerJobEnabledChannel-in-0",message);
+            streamBridge.send("timerJobEnabledChannel-out-0",message);
         } else {
-            streamBridge.send("timerJobDisabledChannel-in-0",message);
+            streamBridge.send("timerJobDisabledChannel-out-0",message);
         }
         return true;
     }
@@ -252,7 +252,7 @@ public class JobServiceImpl implements JobService {
     public void statisticLoadedJobExecutionInfo() {
         Message<String> message = new GenericMessage<>(RandomUtil.randomUUID());
         jobExecutionRepository.resetTimerLoadedNumber();
-        streamBridge.send("statisticLoadedJobExecutionChannel-in-0",message);
+        streamBridge.send("statisticLoadedJobExecutionChannel-out-0",message);
     }
 
     private void loadExecution(String executionId) {
@@ -365,7 +365,7 @@ public class JobServiceImpl implements JobService {
             JobExecutionStatisticResDto resDto = new JobExecutionStatisticResDto();
             resDto.setEntries(res);
             Message<String> message0 = new GenericMessage<>(JsonUtil.toJson(resDto));
-            streamBridge.send("mergeStatisticLoadedJobExecutionChannel-in-0",message0);
+            streamBridge.send("mergeStatisticLoadedJobExecutionChannel-out-0",message0);
         };
 
     }

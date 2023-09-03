@@ -47,7 +47,7 @@ public class AuditLogServiceImpl implements AuditLogService {
     @Override
     public Boolean create(AuditLogDto auditLogDto) {
         Message<AuditLogDto> message = new GenericMessage<AuditLogDto>(auditLogDto);
-        streamBridge.send("auditLogChannel-in-0",message);
+        streamBridge.send("auditLogChannel-out-0",message);
         return true;
     }
 

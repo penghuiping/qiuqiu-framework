@@ -23,10 +23,13 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.messaging.Message;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
+
+import java.util.function.Consumer;
 
 
 @Slf4j
@@ -95,6 +98,11 @@ public class WsConfiguration implements WebSocketConfigurer {
                 msgDispatcher,
                 timer,
                 streamBridge);
+    }
+
+    @Bean
+    public Consumer<Message<String>> wsSessionChannel(SessionContext sessionContext) {
+        return sessionContext.wsSessionChannel();
     }
 
     @Bean
