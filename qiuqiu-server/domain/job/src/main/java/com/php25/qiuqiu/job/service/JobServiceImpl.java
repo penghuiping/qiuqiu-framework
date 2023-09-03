@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -73,7 +74,6 @@ public class JobServiceImpl implements JobService {
     private final RedisManager redisManager;
 
     private final StreamBridge streamBridge;
-
 
     @Value("${server.id}")
     private String serverId;
@@ -306,26 +306,32 @@ public class JobServiceImpl implements JobService {
 
 
     @Bean
-    void timerJobEnabledChannel(Message<String> message) {
+    Consumer<Message<String>> timerJobEnabledChannel() {
+        return message -> {
             log.info("timer_job_enabled:{}", JsonUtil.toJson(message));
             List<String> params = JsonUtil.fromJson(message.getPayload(), new TypeReference<List<String>>() {
             });
             String executionId = params.get(1);
             loadExecution(executionId);
+        };
+
     }
 
 
     @Bean
-    void  timerJobDisabledChannel(Message<String> message) {
-        log.info("timer_job_disabled:{}", JsonUtil.toJson(message));
-        List<String> params = JsonUtil.fromJson( message.getPayload(), new TypeReference<List<String>>() {
-        });
-        String executionId = params.get(1);
-        this.timer.stop(executionId);
+    Consumer<Message<String>> timerJobDisabledChannel() {
+        return message -> {
+            log.info("timer_job_disabled:{}", JsonUtil.toJson(message));
+            List<String> params = JsonUtil.fromJson( message.getPayload(), new TypeReference<List<String>>() {
+            });
+            String executionId = params.get(1);
+            this.timer.stop(executionId);
+        };
     }
 
     @Bean
-    void mergeStatisticLoadedJobExecutionChannel(Message<String> message) {
+    Consumer<Message<String>> mergeStatisticLoadedJobExecutionChannel() {
+        return message -> {
             JobExecutionStatisticResDto res = JsonUtil.fromJson(message.getPayload().toString(), JobExecutionStatisticResDto.class);
             res.getEntries().forEach((key, value) -> {
                 Lock lock = redisManager.lock("merge_statistic_loaded_job_execution");
@@ -343,10 +349,12 @@ public class JobServiceImpl implements JobService {
                     lock.unlock();
                 }
             });
+        };
     }
 
     @Bean
-    void statisticLoadedJobExecutionChannel(Message<String> message) {
+    Consumer<Message<String>> statisticLoadedJobExecutionChannel() {
+        return message -> {
             log.info("JobExecutionStatisticReqDto为:{}", message.getPayload());
             Set<String> executionIds = timer.getAllLoadedExecutionIds();
             Map<String, Integer> res = new HashMap<>();
@@ -357,5 +365,7 @@ public class JobServiceImpl implements JobService {
             resDto.setEntries(res);
             Message<String> message0 = new GenericMessage<>(JsonUtil.toJson(resDto));
             streamBridge.send("merge_statistic_loaded_job_input",message0);
+        };
+
     }
 }
