@@ -4,10 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Mod11Check;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 /**
  * @author penghuiping

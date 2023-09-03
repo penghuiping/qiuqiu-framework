@@ -3,6 +3,8 @@ package com.php25.qiuqiu.monitor.aop;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.service.AuditLogService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -13,8 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;

@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ServerWebInputException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintDeclarationException;
-import javax.validation.ConstraintViolationException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintDeclarationException;
+import jakarta.validation.ConstraintViolationException;
 
 /**
  * 统一异常处理

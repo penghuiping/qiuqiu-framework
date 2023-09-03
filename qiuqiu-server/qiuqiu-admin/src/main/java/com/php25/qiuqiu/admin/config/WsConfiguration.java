@@ -11,7 +11,6 @@ import com.php25.common.ws.core.RetryMsgManager;
 import com.php25.common.ws.core.SessionContext;
 import com.php25.common.ws.core.WebsocketHandler;
 import com.php25.common.ws.handler.RegisterHandlerConfig;
-import com.php25.common.ws.mq.WsChannelProcessor;
 import com.php25.common.ws.protocal.SecurityAuthentication;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.service.UserService;
@@ -19,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -86,7 +86,7 @@ public class WsConfiguration implements WebSocketConfigurer {
                                          SecurityAuthentication securityAuthentication,
                                          RetryMsgManager retryMsgManager,
                                          Timer timer,
-                                         WsChannelProcessor wsChannelProcessor
+                                         StreamBridge streamBridge
     ) {
         return new SessionContext(retryMsgManager,
                 redisManager,
@@ -94,7 +94,7 @@ public class WsConfiguration implements WebSocketConfigurer {
                 serverId,
                 msgDispatcher,
                 timer,
-                wsChannelProcessor);
+                streamBridge);
     }
 
     @Bean

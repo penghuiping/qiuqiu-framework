@@ -123,11 +123,11 @@ INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'j
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'job_execution','delete');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'job_execution','statistic');
 
-INSERT INTO t_dict (id, key0, value, description, enable) VALUES (1, '127.0.0.1:9091', 'http://127.0.0.1:9091/actuator/prometheus', '本机状态监控信息', 1);
-INSERT INTO t_dict (id, key0, value, description, enable) VALUES (2, 'apps_ip_port', '["127.0.0.1:9091"]', '应用服务器监控端口列表', 1);
-INSERT INTO t_dict (id, key0, value, description, enable) VALUES (3, 'init:url:kibana', 'http://localhost:5601/goto/1768dac7a3341d76b56a7d602f8469e8', 'kibana的url地址', 1);
-INSERT INTO t_dict (id, key0, value, description, enable) VALUES (4, 'init:url:grafana', 'http://localhost:3000/d/QUKIKSynz/jvm-micrometer?orgId=1&refresh=30s&kiosk=tv', 'grafana的url地址', 1);
-INSERT INTO t_dict (id, key0, value, description, enable) VALUES (5, 'init:url:zipkin', 'http://localhost:9411/', 'zipkin的url地址', 1);
+INSERT INTO t_dict (id, code, value, description, enable) VALUES (1, '127.0.0.1:9091', 'http://127.0.0.1:9091/actuator/prometheus', '本机状态监控信息', 1);
+INSERT INTO t_dict (id, code, value, description, enable) VALUES (2, 'apps_ip_port', '["127.0.0.1:9091"]', '应用服务器监控端口列表', 1);
+INSERT INTO t_dict (id, code, value, description, enable) VALUES (3, 'init:url:kibana', 'http://localhost:5601/goto/1768dac7a3341d76b56a7d602f8469e8', 'kibana的url地址', 1);
+INSERT INTO t_dict (id, code, value, description, enable) VALUES (4, 'init:url:grafana', 'http://localhost:3000/d/QUKIKSynz/jvm-micrometer?orgId=1&refresh=30s&kiosk=tv', 'grafana的url地址', 1);
+INSERT INTO t_dict (id, code, value, description, enable) VALUES (5, 'init:url:zipkin', 'http://localhost:9411/', 'zipkin的url地址', 1);
 
 INSERT INTO t_group (id, name, description, parent_id, enable) VALUES (1, 'root', '总部', null, 1);
 

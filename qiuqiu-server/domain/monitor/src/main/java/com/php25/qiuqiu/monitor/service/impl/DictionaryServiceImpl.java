@@ -7,7 +7,6 @@ import com.php25.common.core.util.JsonUtil;
 import com.php25.qiuqiu.monitor.dto.DictDto;
 import com.php25.qiuqiu.monitor.entity.Dict;
 import com.php25.qiuqiu.monitor.mapper.DictDtoMapper;
-import com.php25.qiuqiu.monitor.mq.DictProcessor;
 import com.php25.qiuqiu.monitor.repository.DictRepository;
 import com.php25.qiuqiu.monitor.service.DictionaryService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
@@ -39,14 +38,14 @@ public class DictionaryServiceImpl implements DictionaryService, DisposableBean 
 
     private final Map<String, DictDto> cache = new ConcurrentHashMap<>(256);
 
-    private final DictProcessor dictProcessor;
+    private final StreamBridge streamBridge;
 
     private final DictDtoMapper dictDtoMapper;
 
     @Value("${server.id}")
     private String serverId;
 
-    @StreamListener(value = DictProcessor.INPUT, condition = "headers['type']=='DictionaryServiceImpl.dictChannel'")
+
     private void dictChannel(Message<String> message) {
         log.info("刷新缓存:{}", JsonUtil.toJson(message));
         String key = message.getPayload();
@@ -96,7 +95,7 @@ public class DictionaryServiceImpl implements DictionaryService, DisposableBean 
     @Override
     public Boolean removeCache(String key) {
         Message<String> message = new GenericMessage<>(key);
-        return dictProcessor.output().send(message);
+        return streamBridge.send("dict_input",message);
     }
 
     @Override

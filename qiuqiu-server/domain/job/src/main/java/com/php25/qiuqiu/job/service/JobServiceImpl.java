@@ -26,10 +26,6 @@ import com.php25.qiuqiu.job.entity.JobExecution;
 import com.php25.qiuqiu.job.entity.JobLog;
 import com.php25.qiuqiu.job.entity.JobModel;
 import com.php25.qiuqiu.job.mapper.JobDtoMapper;
-import com.php25.qiuqiu.job.mq.MergeStatisticLoadedJobProcessor;
-import com.php25.qiuqiu.job.mq.StatisticLoadedJobProcessor;
-import com.php25.qiuqiu.job.mq.TimeJobDisabledProcessor;
-import com.php25.qiuqiu.job.mq.TimeJobEnabledProcessor;
 import com.php25.qiuqiu.job.repository.JobExecutionRepository;
 import com.php25.qiuqiu.job.repository.JobLogRepository;
 import com.php25.qiuqiu.job.repository.JobModelRepository;
@@ -37,7 +33,8 @@ import com.php25.qiuqiu.user.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
@@ -75,10 +72,8 @@ public class JobServiceImpl implements JobService {
 
     private final RedisManager redisManager;
 
-    private final TimeJobEnabledProcessor timeJobEnabledProcessor;
-    private final TimeJobDisabledProcessor timeJobDisabledProcessor;
-    private final MergeStatisticLoadedJobProcessor mergeStatisticLoadedJobProcessor;
-    private final StatisticLoadedJobProcessor statisticLoadedJobProcessor;
+    private final StreamBridge streamBridge;
+
 
     @Value("${server.id}")
     private String serverId;
@@ -235,9 +230,9 @@ public class JobServiceImpl implements JobService {
         JobExecution jobExecution = jobExecutionOptional.get();
         Message<String> message = new GenericMessage<>(JsonUtil.toJson(Lists.newArrayList(RandomUtil.randomUUID(), executionId)));
         if (jobExecution.getEnable()) {
-            timeJobEnabledProcessor.output().send(message);
+            streamBridge.send("time_job_enabled_input",message);
         } else {
-            timeJobDisabledProcessor.output().send(message);
+            streamBridge.send("time_job_disabled_input",message);
         }
         return true;
     }
@@ -257,7 +252,7 @@ public class JobServiceImpl implements JobService {
     public void statisticLoadedJobExecutionInfo() {
         Message<String> message = new GenericMessage<>(RandomUtil.randomUUID());
         jobExecutionRepository.resetTimerLoadedNumber();
-        statisticLoadedJobProcessor.output().send(message);
+        streamBridge.send("statistic_loaded_job_input",message);
     }
 
     private void loadExecution(String executionId) {
@@ -310,8 +305,8 @@ public class JobServiceImpl implements JobService {
     }
 
 
-    @StreamListener(value = TimeJobEnabledProcessor.INPUT)
-    private void timerJobEnabledChannel(Message<String> message) {
+    @Bean
+    void timerJobEnabledChannel(Message<String> message) {
             log.info("timer_job_enabled:{}", JsonUtil.toJson(message));
             List<String> params = JsonUtil.fromJson(message.getPayload(), new TypeReference<List<String>>() {
             });
@@ -320,8 +315,8 @@ public class JobServiceImpl implements JobService {
     }
 
 
-    @StreamListener(value = TimeJobDisabledProcessor.INPUT)
-    private void  timerJobDisabledChannel(Message<String> message) {
+    @Bean
+    void  timerJobDisabledChannel(Message<String> message) {
         log.info("timer_job_disabled:{}", JsonUtil.toJson(message));
         List<String> params = JsonUtil.fromJson( message.getPayload(), new TypeReference<List<String>>() {
         });
@@ -329,8 +324,8 @@ public class JobServiceImpl implements JobService {
         this.timer.stop(executionId);
     }
 
-    @StreamListener(value = MergeStatisticLoadedJobProcessor.INPUT)
-    private void mergeStatisticLoadedJobExecutionChannel(Message<String> message) {
+    @Bean
+    void mergeStatisticLoadedJobExecutionChannel(Message<String> message) {
             JobExecutionStatisticResDto res = JsonUtil.fromJson(message.getPayload().toString(), JobExecutionStatisticResDto.class);
             res.getEntries().forEach((key, value) -> {
                 Lock lock = redisManager.lock("merge_statistic_loaded_job_execution");
@@ -350,8 +345,8 @@ public class JobServiceImpl implements JobService {
             });
     }
 
-    @StreamListener(value = StatisticLoadedJobProcessor.INPUT)
-    private void statisticLoadedJobExecutionChannel(Message<String> message) {
+    @Bean
+    void statisticLoadedJobExecutionChannel(Message<String> message) {
             log.info("JobExecutionStatisticReqDto为:{}", message.getPayload());
             Set<String> executionIds = timer.getAllLoadedExecutionIds();
             Map<String, Integer> res = new HashMap<>();
@@ -361,6 +356,6 @@ public class JobServiceImpl implements JobService {
             JobExecutionStatisticResDto resDto = new JobExecutionStatisticResDto();
             resDto.setEntries(res);
             Message<String> message0 = new GenericMessage<>(JsonUtil.toJson(resDto));
-            mergeStatisticLoadedJobProcessor.output().send(message0);
+            streamBridge.send("merge_statistic_loaded_job_input",message0);
     }
 }

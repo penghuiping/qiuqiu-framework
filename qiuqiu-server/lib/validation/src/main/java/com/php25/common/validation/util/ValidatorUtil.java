@@ -4,11 +4,11 @@ package com.php25.common.validation.util;
 import org.hibernate.validator.BaseHibernateValidatorConfiguration;
 import org.hibernate.validator.HibernateValidator;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.executable.ExecutableValidator;
-import javax.validation.groups.Default;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.executable.ExecutableValidator;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;

@@ -2,7 +2,7 @@
   <el-row align="middle" class="loginFormWrapper" justify="center" type="flex">
     <el-form ref="form" :rules="rules" :model="loginForm" class="loginForm" label-width="80px">
       <el-form-item>
-        <label class="loginFormTitle">登入后台管理系统</label>
+        <label class="loginFormTitle">登录后台管理系统</label>
       </el-form-item>
       <el-form-item label="用户名:" prop="username">
         <el-input v-model=loginForm.username></el-input>

@@ -6,12 +6,11 @@ import com.php25.common.core.util.JsonUtil;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.entity.AuditLog;
 import com.php25.qiuqiu.monitor.mapper.AuditLogDtoMapper;
-import com.php25.qiuqiu.monitor.mq.AuditLogProcessor;
 import com.php25.qiuqiu.monitor.repository.AuditLogRepository;
 import com.php25.qiuqiu.monitor.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
@@ -32,9 +31,8 @@ public class AuditLogServiceImpl implements AuditLogService {
 
     private final AuditLogDtoMapper auditLogDtoMapper;
 
-    private final AuditLogProcessor auditLogProcessor;
+    private final StreamBridge streamBridge;
 
-    @StreamListener(value = AuditLogProcessor.INPUT)
     private void auditLogChannel(Message<AuditLogDto> message) {
         log.info("msg body:{}", JsonUtil.toJson(message.getPayload()));
         AuditLogDto auditLogDto = message.getPayload();
@@ -44,7 +42,7 @@ public class AuditLogServiceImpl implements AuditLogService {
     @Override
     public Boolean create(AuditLogDto auditLogDto) {
         Message<AuditLogDto> message = new GenericMessage<AuditLogDto>(auditLogDto);
-        auditLogProcessor.output().send(message);
+        streamBridge.send("audit_log_input",message);
         return true;
     }
 

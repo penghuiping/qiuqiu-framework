@@ -4,6 +4,9 @@ import com.php25.common.core.dto.CurrentUser;
 import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RedisManager;
+import com.php25.common.repeat.AvoidRepeat;
+import com.php25.common.repeat.ShaHashKeyStrategy;
+import com.php25.common.repeat.SpElKeyStrategy;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
 import com.php25.common.web.RequestUtil;
@@ -35,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -140,6 +143,7 @@ public class UserController extends JsonController {
         return succeed(resultVo);
     }
 
+    @AvoidRepeat(keyStrategy = SpElKeyStrategy.class,expression = "#userCreateVo.username")
     @AuditLog
     @ApiOperation("创建用户")
     @PostMapping(value = "/create",headers = {"version=v1","jwt"})

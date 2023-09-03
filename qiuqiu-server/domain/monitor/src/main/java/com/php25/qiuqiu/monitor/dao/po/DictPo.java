@@ -25,7 +25,7 @@ public class DictPo  {
     /**
      * 键
      */
-    @TableField
+    @TableField("code")
     private String key0;
 
     /**
