@@ -15,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -46,10 +48,13 @@ public class DictionaryServiceImpl implements DictionaryService, DisposableBean 
     private String serverId;
 
 
-    private void dictChannel(Message<String> message) {
-        log.info("刷新缓存:{}", JsonUtil.toJson(message));
-        String key = message.getPayload();
-        this.removeCache0(key);
+    @Bean
+    Consumer<Message<String>> dictChannel() {
+        return message -> {
+            log.info("刷新缓存:{}", JsonUtil.toJson(message));
+            String key = message.getPayload();
+            this.removeCache0(key);
+        };
     }
 
     @Override
@@ -95,7 +100,7 @@ public class DictionaryServiceImpl implements DictionaryService, DisposableBean 
     @Override
     public Boolean removeCache(String key) {
         Message<String> message = new GenericMessage<>(key);
-        return streamBridge.send("dict_input",message);
+        return streamBridge.send("dictChannel-in-0",message);
     }
 
     @Override

@@ -11,11 +11,13 @@ import com.php25.qiuqiu.monitor.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -33,16 +35,19 @@ public class AuditLogServiceImpl implements AuditLogService {
 
     private final StreamBridge streamBridge;
 
-    private void auditLogChannel(Message<AuditLogDto> message) {
-        log.info("msg body:{}", JsonUtil.toJson(message.getPayload()));
-        AuditLogDto auditLogDto = message.getPayload();
-        this.create0(auditLogDto);
+    @Bean
+    Consumer<Message<AuditLogDto>> auditLogChannel() {
+        return message->{
+            log.info("msg body:{}", JsonUtil.toJson(message.getPayload()));
+            AuditLogDto auditLogDto = message.getPayload();
+            this.create0(auditLogDto);
+        };
     }
 
     @Override
     public Boolean create(AuditLogDto auditLogDto) {
         Message<AuditLogDto> message = new GenericMessage<AuditLogDto>(auditLogDto);
-        streamBridge.send("audit_log_input",message);
+        streamBridge.send("auditLogChannel-in-0",message);
         return true;
     }
 

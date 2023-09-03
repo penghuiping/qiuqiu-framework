@@ -120,26 +120,29 @@ spring:
     username: ${app.rabbitmq.username}
     password: ${app.rabbitmq.password}
     virtual-host: ${app.rabbitmq.virtualHost}
+
   cloud:
+    function:
+      definition: timerJobEnabledChannel;auditLogChannel;timerJobDisabledChannel; mergeStatisticLoadedJobExecutionChannel;statisticLoadedJobExecutionChannel;dictChannel;wsSessionChannel;
     stream:
       bindings:
-        dict_input:
+        dictChannel-in-0:
           destination: dict-exchange
           contentType: application/json
           consumer:
             max-attempts: 1
-        dict_output:
+        dictChannel-out-0:
           destination: dict-exchange
           contentType: application/json
-        ws_channel_input:
+        wsSessionChannel-in-0:
           destination: ws_channel-exchange
           contentType: application/json
           consumer:
             max-attempts: 1
-        ws_channel_output:
+        wsSessionChannel-out-0:
           destination: ws_channel-exchange
           contentType: application/json
-        audit_log_input:
+        auditLogChannel-in-0:
           group: audit_log
           destination: audit_log-exchange
           contentType: application/json
@@ -148,18 +151,18 @@ spring:
             backOffInitialInterval: 2000
             backOffMaxInterval: 10000
             backOffMultiplier: 2
-        audit_log_output:
+        auditLogChannel-out-0:
           destination: audit_log-exchange
           contentType: application/json
-        statistic_loaded_job_input:
+        statisticLoadedJobExecutionChannel-in-0:
           destination: statistic_loaded_job-exchange
           contentType: application/json
           consumer:
             max-attempts: 1
-        statistic_loaded_job_output:
+        statisticLoadedJobExecutionChannel-out-0:
           destination: statistic_loaded_job-exchange
           contentType: application/json
-        merge_statistic_loaded_job_input:
+        mergeStatisticLoadedJobExecutionChannel-in-0:
           group: merge_statistic_loaded_job
           destination: merge_statistic_loaded_job-exchange
           contentType: application/json
@@ -168,10 +171,10 @@ spring:
             backOffInitialInterval: 2000
             backOffMaxInterval: 10000
             backOffMultiplier: 2
-        merge_statistic_loaded_job_output:
+        mergeStatisticLoadedJobExecutionChannel-out-0:
           destination: merge_statistic_loaded_job-exchange
           contentType: application/json
-        time_job_disabled_input:
+        timerJobDisabledChannel-in-0:
           group: time_job_disabled
           destination: time_job_disabled-exchange
           contentType: application/json
@@ -180,10 +183,10 @@ spring:
             backOffInitialInterval: 2000
             backOffMaxInterval: 10000
             backOffMultiplier: 2
-        time_job_disabled_output:
+        timerJobDisabledChannel-out-0:
           destination: time_job_disabled-exchange
           contentType: application/json
-        time_job_enabled_input:
+        timerJobEnabledChannel-in-0:
           group: time_job_enabled
           destination: time_job_enabled-exchange
           contentType: application/json
@@ -192,27 +195,27 @@ spring:
             backOffInitialInterval: 2000
             backOffMaxInterval: 10000
             backOffMultiplier: 2
-        time_job_enabled_output:
+        timerJobEnabledChannel-out-0:
           destination: time_job_enabled-exchange
           contentType: application/json
       rabbit:
         bindings:
-          audit_log_input:
+          auditLogChannel-in-0:
             consumer:
               acknowledgeMode: AUTO
               auto-bind-dlq: true
               republish-to-dlq: true
-          merge_statistic_loaded_job_input:
+          mergeStatisticLoadedJobExecutionChannel-in-0:
             consumer:
               acknowledgeMode: AUTO
               auto-bind-dlq: true
               republish-to-dlq: true
-          time_job_disabled_input:
+          timerJobDisabledChannel-in-0:
             consumer:
               acknowledgeMode: AUTO
               auto-bind-dlq: true
               republish-to-dlq: true
-          time_job_enabled_input:
+          timerJobEnabledChannel-in-0:
             consumer:
               acknowledgeMode: AUTO
               auto-bind-dlq: true

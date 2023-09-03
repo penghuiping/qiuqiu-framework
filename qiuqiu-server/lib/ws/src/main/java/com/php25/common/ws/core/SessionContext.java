@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
@@ -29,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @Slf4j
 public class SessionContext implements ApplicationListener<ContextClosedEvent> {
@@ -102,7 +104,9 @@ public class SessionContext implements ApplicationListener<ContextClosedEvent> {
         }
     }
 
-    private void wsSessionChannel(Message<String> message) {
+    @Bean
+    Consumer<Message<String>> wsSessionChannel() {
+        return message -> {
             for (String key : sessions.keySet()) {
                 try {
                     WebSocketSession socketSession = sessions.get(key).getWebSocketSession();
@@ -111,6 +115,7 @@ public class SessionContext implements ApplicationListener<ContextClosedEvent> {
                     log.info("通过websocket发送消息失败,消息为:{}", message.getPayload(), e);
                 }
             }
+        };
     }
 
     public void init(SidUid sidUid) {
@@ -210,7 +215,7 @@ public class SessionContext implements ApplicationListener<ContextClosedEvent> {
             if (StringUtil.isBlank(sid)) {
                 //没有指定sid,则认为进行全局广播，并且广播消息不会重试
                 Message<String> message = new GenericMessage<>(msgSerializer.from(baseMsg));
-                streamBridge.send("ws_channel_input",message);
+                streamBridge.send("wsSessionChannel-in-0",message);
             } else {
                 //现看看sid是否本地存在
                 if (this.sessions.containsKey(sid)) {

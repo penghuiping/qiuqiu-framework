@@ -230,9 +230,9 @@ public class JobServiceImpl implements JobService {
         JobExecution jobExecution = jobExecutionOptional.get();
         Message<String> message = new GenericMessage<>(JsonUtil.toJson(Lists.newArrayList(RandomUtil.randomUUID(), executionId)));
         if (jobExecution.getEnable()) {
-            streamBridge.send("time_job_enabled_input",message);
+            streamBridge.send("timerJobEnabledChannel-in-0",message);
         } else {
-            streamBridge.send("time_job_disabled_input",message);
+            streamBridge.send("timerJobDisabledChannel-in-0",message);
         }
         return true;
     }
@@ -252,7 +252,7 @@ public class JobServiceImpl implements JobService {
     public void statisticLoadedJobExecutionInfo() {
         Message<String> message = new GenericMessage<>(RandomUtil.randomUUID());
         jobExecutionRepository.resetTimerLoadedNumber();
-        streamBridge.send("statistic_loaded_job_input",message);
+        streamBridge.send("statisticLoadedJobExecutionChannel-in-0",message);
     }
 
     private void loadExecution(String executionId) {
@@ -306,7 +306,7 @@ public class JobServiceImpl implements JobService {
 
 
     @Bean
-    Consumer<Message<String>> timerJobEnabledChannel() {
+    public Consumer<Message<String>> timerJobEnabledChannel() {
         return message -> {
             log.info("timer_job_enabled:{}", JsonUtil.toJson(message));
             List<String> params = JsonUtil.fromJson(message.getPayload(), new TypeReference<List<String>>() {
@@ -352,6 +352,7 @@ public class JobServiceImpl implements JobService {
         };
     }
 
+
     @Bean
     Consumer<Message<String>> statisticLoadedJobExecutionChannel() {
         return message -> {
@@ -364,7 +365,7 @@ public class JobServiceImpl implements JobService {
             JobExecutionStatisticResDto resDto = new JobExecutionStatisticResDto();
             resDto.setEntries(res);
             Message<String> message0 = new GenericMessage<>(JsonUtil.toJson(resDto));
-            streamBridge.send("merge_statistic_loaded_job_input",message0);
+            streamBridge.send("mergeStatisticLoadedJobExecutionChannel-in-0",message0);
         };
 
     }
