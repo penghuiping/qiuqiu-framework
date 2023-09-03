@@ -22,15 +22,15 @@ import com.php25.qiuqiu.user.dto.role.RoleDto;
 import com.php25.qiuqiu.user.dto.role.RolePageDto;
 import com.php25.qiuqiu.user.dto.role.RoleUpdateDto;
 import com.php25.qiuqiu.user.service.RoleService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  * @author penghuiping
  * @date 2021/3/6 17:20
  */
-@Api(tags = "角色管理")
+@Tag(name = "角色管理")
 @RestController
 @RequestMapping(value = "/api/role",produces = {"application/json"})
 @RequiredArgsConstructor
@@ -52,7 +52,7 @@ public class RoleController extends JsonController {
     private final RoleVoMapper roleVoMapper;
 
 
-    @ApiOperation("获取系统中所有角色列表")
+    @Operation(description = "获取系统中所有角色列表")
     @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
     public JsonResponse<List<RoleVo>> getAll() {
         List<RoleDto> roleDtoList = roleService.getAllRoles();
@@ -62,7 +62,7 @@ public class RoleController extends JsonController {
 
 
     @AuditLog
-    @ApiOperation("新增角色")
+    @Operation(description = "新增角色")
     @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody RoleCreateVo roleCreateVo) {
         List<ResourcePermissionVo> resourcePermissionVos = roleCreateVo.getResourcePermissions();
@@ -87,7 +87,7 @@ public class RoleController extends JsonController {
     }
 
     @AuditLog
-    @ApiOperation("更新角色")
+    @Operation(description = "更新角色")
     @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody RoleUpdateVo roleUpdateVo) {
         List<ResourcePermissionVo> resourcePermissionVos = roleUpdateVo.getResourcePermissions();
@@ -112,14 +112,14 @@ public class RoleController extends JsonController {
     }
 
     @AuditLog
-    @ApiOperation("删除角色")
+    @Operation(description = "删除角色")
     @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody RoleDeleteVo roleDeleteVo) {
         return succeed(roleService.delete(roleDeleteVo.getRoleIds()));
     }
 
 
-    @ApiOperation("获取角色信息接口")
+    @Operation(description = "获取角色信息接口")
     @PostMapping(value = "/detail",headers = {"version=v1","jwt"})
     public JsonResponse<RoleDetailOutVo> detail(@Valid @RequestBody RoleDetailVo roleDetailVo) {
         RoleDetailDto roleDetailDto = roleService.detail(roleDetailVo.getRoleId());
@@ -145,7 +145,7 @@ public class RoleController extends JsonController {
         return succeed(roleDetailOutVo);
     }
 
-    @ApiOperation("获取角色分页列表接口")
+    @Operation(description = "获取角色分页列表接口")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<RolePageOutVo>> page(@Valid @RequestBody RolePageVo rolePageVo) {
         PageDto<RolePageDto> page = roleService.page(rolePageVo.getRoleName(), rolePageVo.getPageNum(), rolePageVo.getPageSize());

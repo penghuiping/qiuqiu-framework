@@ -16,12 +16,14 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  * @date 2022/7/24 18:30
  */
 public class RedisManagerAutoConfiguration {
+    
 
     @ConditionalOnMissingBean(ClientResources.class)
     @Bean(destroyMethod = "shutdown")
     ClientResources lettuceClientResources() {
         return DefaultClientResources.create().mutate()
-                .tracing(BraveTracing.builder().serviceName("redis-lettuce").tracing(Tracing.current()).build()).build();
+//                .tracing(BraveTracing.builder().serviceName("redis-lettuce").tracing(Tracing.current()).build())
+                .build();
     }
 
     @Bean

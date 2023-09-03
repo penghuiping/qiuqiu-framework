@@ -11,8 +11,8 @@ import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.job.JobLogVo;
 import com.php25.qiuqiu.job.dto.JobLogDto;
 import com.php25.qiuqiu.job.service.JobService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @date 2021/3/27 00:32
  */
 @Slf4j
-@Api(tags = "任务日志")
+@Tag(name = "任务日志")
 @RestController
 @RequestMapping(value = "/api/job_log",produces = {"application/json"})
 @RequiredArgsConstructor
@@ -42,7 +42,7 @@ public class JobLogController extends JsonController {
     private final JobLogVoMapper jobLogVoMapper;
 
 
-    @ApiOperation("任务日志分页查询")
+    @Operation(description = "任务日志分页查询")
     @PostMapping(value = "/page", headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<JobLogVo>> page(@Valid @RequestBody JobLogPageVo jobLogPageVo) {
         CurrentUser currentUser = RequestUtil.getCurrentUser();

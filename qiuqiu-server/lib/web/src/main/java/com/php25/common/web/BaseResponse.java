@@ -1,6 +1,6 @@
 package com.php25.common.web;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @author penghuiping
@@ -10,19 +10,19 @@ public abstract class BaseResponse<T> {
     /**
      * 错误码
      */
-    @ApiModelProperty("错误码,00000:成功,非零:表示有错误")
+    @Schema(description = "错误码,00000:成功,非零:表示有错误")
     private String code;
 
     /**
      * 接口返回数据
      */
-    @ApiModelProperty("接口返回数据")
+    @Schema(description = "接口返回数据")
     private T data;
 
     /**
      * 对应错误码的提示信息
      */
-    @ApiModelProperty("对应错误码的提示信息")
+    @Schema(description = "对应错误码的提示信息")
     private String message;
 
     public String getCode() {

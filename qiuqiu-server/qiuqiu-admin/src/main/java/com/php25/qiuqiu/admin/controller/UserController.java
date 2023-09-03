@@ -5,7 +5,6 @@ import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.redis.RedisManager;
 import com.php25.common.repeat.AvoidRepeat;
-import com.php25.common.repeat.ShaHashKeyStrategy;
 import com.php25.common.repeat.SpElKeyStrategy;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
@@ -29,8 +28,9 @@ import com.php25.qiuqiu.user.dto.user.UserDto;
 import com.php25.qiuqiu.user.dto.user.UserPageDto;
 import com.php25.qiuqiu.user.dto.user.UserUpdateDto;
 import com.php25.qiuqiu.user.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +38,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -54,7 +53,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/api/user",produces = {"application/json"})
 @RequiredArgsConstructor
-@Api(tags = "角色管理")
+@Tag(name = "角色管理")
 public class UserController extends JsonController {
 
     private final UserService userService;
@@ -66,7 +65,7 @@ public class UserController extends JsonController {
     private final RedisManager redisManager;
 
 
-    @ApiOperation("获取用户信息接口")
+    @Operation(description = "获取用户信息接口")
     @PostMapping(value = "/info",headers = {"version=v1","jwt"})
     public JsonResponse<UserVo> getUserInfo() {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
@@ -99,7 +98,7 @@ public class UserController extends JsonController {
     }
 
 
-    @ApiOperation("获取用户详细信息接口")
+    @Operation(description = "获取用户详细信息接口")
     @PostMapping(value = "/detail",headers = {"version=v1","jwt"})
     public JsonResponse<UserVo> detail(@RequestBody UserDetailVo user) {
         UserDto userDto = userService.detail(user.getUserId());
@@ -131,7 +130,7 @@ public class UserController extends JsonController {
     }
 
 
-    @ApiOperation("用户列表分页查询")
+    @Operation(description = "用户列表分页查询")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<UserPageOutVo>> page(@Valid @RequestBody UserPageVo userPageVo) {
         PageDto<UserPageDto> result = userService.page(userPageVo.getUsername(), userPageVo.getPageNum(), userPageVo.getPageSize());
@@ -145,7 +144,7 @@ public class UserController extends JsonController {
 
     @AvoidRepeat(keyStrategy = SpElKeyStrategy.class,expression = "#userCreateVo.username")
     @AuditLog
-    @ApiOperation("创建用户")
+    @Operation(description = "创建用户")
     @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody UserCreateVo userCreateVo) {
         UserCreateDto userCreateDto = userVoMapper.toDto(userCreateVo);
@@ -153,7 +152,7 @@ public class UserController extends JsonController {
     }
 
     @AuditLog
-    @ApiOperation("更新用户")
+    @Operation(description = "更新用户")
     @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
         UserUpdateDto userUpdateDto = userVoMapper.toDto(userUpdateVo);
@@ -164,7 +163,7 @@ public class UserController extends JsonController {
     }
 
     @AuditLog
-    @ApiOperation("删除用户")
+    @Operation(description = "删除用户")
     @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody UserDeleteVo userDeleteVo) {
         for (Long userId : userDeleteVo.getUserIds()) {

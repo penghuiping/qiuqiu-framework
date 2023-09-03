@@ -37,7 +37,7 @@
         <trie>1.2.2</trie>
         <jsoup>1.14.2</jsoup>
         <disruptor>3.4.4</disruptor>
-        <mybatis-plus>3.5.0</mybatis-plus>
+        <mybatis-plus>3.5.3</mybatis-plus>
 
         <sqlite-jdbc.verison>3.36.0.3</sqlite-jdbc.verison>
         <mapstruct>1.4.2.Final</mapstruct>
@@ -155,11 +155,6 @@
                 <version>${mapstruct}</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-zipkin</artifactId>
-                <version>2.2.8.RELEASE</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
                 <version>${jsoup}</version>
@@ -199,18 +194,15 @@
                 <artifactId>micrometer-jvm-extras</artifactId>
                 <version>0.2.2</version>
             </dependency>
-
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus</artifactId>
                 <version>${mybatis-plus}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
-                <!--使用Swagger2-->
-                <artifactId>knife4j-spring-boot-starter</artifactId>
-                <version>2.0.9</version>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>4.3.0</version>
             </dependency>
             <dependency>
                 <groupId>p6spy</groupId>

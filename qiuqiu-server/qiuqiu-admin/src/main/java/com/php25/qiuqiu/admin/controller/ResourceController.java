@@ -18,15 +18,15 @@ import com.php25.qiuqiu.user.dto.resource.ResourceDto;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.resource.ResourceUpdateDto;
 import com.php25.qiuqiu.user.service.ResourceService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * @author penghuiping
  * @date 2021/3/26 13:56
  */
-@Api(tags = "资管管理")
+@Tag(name = "资管管理")
 @RestController
 @RequestMapping(value = "/api/resource",produces = {"application/json"})
 @RequiredArgsConstructor
@@ -47,7 +47,7 @@ public class ResourceController extends JsonController {
     private final ResourceVoMapper resourceVoMapper;
 
 
-    @ApiOperation("创建资源")
+    @Operation(description = "创建资源")
     @AuditLog
     @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody ResourceCreateVo resourceCreateVo) {
@@ -63,7 +63,7 @@ public class ResourceController extends JsonController {
         return succeed(resourceService.create(resourceCreateDto));
     }
 
-    @ApiOperation("更新资源")
+    @Operation(description = "更新资源")
     @AuditLog
     @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody ResourceUpdateVo resourceUpdateVo) {
@@ -80,7 +80,7 @@ public class ResourceController extends JsonController {
         return succeed(true);
     }
 
-    @ApiOperation("删除资源")
+    @Operation(description = "删除资源")
     @AuditLog
     @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody ResourceDeleteVo resourceDeleteVo) {
@@ -92,7 +92,7 @@ public class ResourceController extends JsonController {
     }
 
 
-    @ApiOperation("分页查询资源列表")
+    @Operation(description = "分页查询资源列表")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<List<ResourceVo>> page() {
         PageDto<ResourceDto> dataGrid = resourceService.page("", 1, 200);
@@ -100,7 +100,7 @@ public class ResourceController extends JsonController {
         return succeed(res);
     }
 
-    @ApiOperation("获取系统中所有内置资源")
+    @Operation(description = "获取系统中所有内置资源")
     @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
     public JsonResponse<List<ResourcePermissionVo>> getAll() {
         List<ResourceDetailDto> permissions = resourceService.getAll();
@@ -115,7 +115,7 @@ public class ResourceController extends JsonController {
         return succeed(resourcePermissionVos);
     }
 
-    @ApiOperation("获取资源详情")
+    @Operation(description = "获取资源详情")
     @PostMapping(value = "/detail",headers = {"version=v1","jwt"})
     public JsonResponse<ResourceDetailVo> detail(@Valid @RequestBody ResourceIdVo resourceIdVo) {
         ResourceDetailDto resourceDetailDto = resourceService.detail(resourceIdVo.getName());

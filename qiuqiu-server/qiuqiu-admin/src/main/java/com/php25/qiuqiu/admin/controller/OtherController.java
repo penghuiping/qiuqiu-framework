@@ -20,8 +20,8 @@ import com.php25.qiuqiu.user.constant.UserConstants;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.user.TokenDto;
 import com.php25.qiuqiu.user.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  * @date 2022/3/31 22:02
  */
 @Slf4j
-@Api(tags = "其他")
+@Tag(name = "其他")
 @RestController
 @RequestMapping(value = "/api/other")
 @RequiredArgsConstructor
@@ -67,7 +67,7 @@ public class OtherController extends JsonController {
     private final DictionaryService dictionaryService;
 
     @AuditLog
-    @ApiOperation("登入接口")
+    @Operation(description = "登入接口")
     @PostMapping(value = "/login",headers = {"version=v1"})
     public JsonResponse<TokenVo> login(HttpServletResponse response,
                                        @Valid @RequestBody LoginVo loginVo) {
@@ -88,14 +88,14 @@ public class OtherController extends JsonController {
     }
 
     @AuditLog
-    @ApiOperation("登出接口")
+    @Operation(description = "登出接口")
     @PostMapping(value = "/logout",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> logout() {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
         return succeed(userService.logout(currentUser.getUsername()));
     }
 
-    @ApiOperation("获取登入验证码")
+    @Operation(description = "获取登入验证码")
     @GetMapping(value = "/img_code")
     public void getImgCode(@NotBlank @Length(max = 32) @RequestParam String imgCodeId, HttpServletResponse response) {
         String code = RandomUtil.getRandomNumbersAndLetters(6);
@@ -121,7 +121,7 @@ public class OtherController extends JsonController {
     }
 
     @AuditLog
-    @ApiOperation("刷新token接口")
+    @Operation(description = "刷新token接口")
     @PostMapping(value = "/refresh",headers = {"version=v1"})
     public JsonResponse<TokenVo> refresh(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -141,7 +141,7 @@ public class OtherController extends JsonController {
         throw Exceptions.throwBusinessException(UserErrorCode.REFRESH_TOKEN_ILLEGAL);
     }
 
-    @ApiOperation("获取系统启动初始化配置项")
+    @Operation(description = "获取系统启动初始化配置项")
     @PostMapping(value = "/get_init_config",headers = {"version=v1","jwt"})
     public JsonResponse<List<DictVo>>  getInitConfig() {
         List<DictDto> dictDtoList = dictionaryService.getAllInitConfig();

@@ -9,8 +9,8 @@ import com.php25.qiuqiu.admin.vo.out.AuditLogPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.service.AuditLogService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @author penghuiping
  * @date 2021/3/11 15:18
  */
-@Api(tags = "审计日志")
+@Tag(name = "审计日志")
 @RestController
 @RequestMapping(value = "/api/audit_log",produces = {"application/json"})
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ public class AuditLogController extends JsonController {
     private final AuditLogVoMapper auditLogVoMapper;
 
 
-    @ApiOperation("审计日志分页查询")
+    @Operation(description = "审计日志分页查询")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<AuditLogPageOutVo>> page(@Valid @RequestBody AuditLogPageVo auditLogPageVo) {
         PageDto<AuditLogDto> dataGrid = auditLogService.page(auditLogPageVo.getUsername(),auditLogPageVo.getPageNum(), auditLogPageVo.getPageSize());

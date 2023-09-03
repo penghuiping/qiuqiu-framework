@@ -18,8 +18,8 @@ import com.php25.qiuqiu.job.dto.JobDto;
 import com.php25.qiuqiu.job.dto.JobUpdateDto;
 import com.php25.qiuqiu.job.service.JobService;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * @date 2021/3/9 10:29
  */
 @Slf4j
-@Api(tags = "定时任务")
+@Tag(name = "定时任务")
 @RestController
 @RequestMapping(value = "/api/job",produces = {"application/json"})
 @RequiredArgsConstructor
@@ -50,7 +50,7 @@ public class JobController extends JsonController {
     private final JobVoMapper jobVoMapper;
 
 
-    @ApiOperation("分页查询定时任务列表")
+    @Operation(description = "分页查询定时任务列表")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<JobVo>> page(@Valid @RequestBody JobPageVo jobPageVo) {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
@@ -65,7 +65,7 @@ public class JobController extends JsonController {
     }
 
     @AuditLog
-    @ApiOperation("创建定时任务")
+    @Operation(description = "创建定时任务")
     @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody JobCreateVo jobCreateVo) {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
@@ -74,7 +74,7 @@ public class JobController extends JsonController {
     }
 
     @AuditLog
-    @ApiOperation("更新定时任务")
+    @Operation(description = "更新定时任务")
     @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody JobUpdateVo jobUpdateVo) {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
@@ -83,7 +83,7 @@ public class JobController extends JsonController {
     }
 
     @AuditLog
-    @ApiOperation("删除定时任务")
+    @Operation(description = "删除定时任务")
     @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody JobIdVo jobIdVo) {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
@@ -91,7 +91,7 @@ public class JobController extends JsonController {
     }
 
 
-    @ApiOperation("获取所有任务列表")
+    @Operation(description = "获取所有任务列表")
     @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
     public JsonResponse<List<JobVo>> findAll() {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
