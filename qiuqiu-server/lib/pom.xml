@@ -17,6 +17,7 @@
 
     <modules>
         <module>core</module>
+        <module>db</module>
         <module>web</module>
         <module>redis</module>
         <module>validation</module>

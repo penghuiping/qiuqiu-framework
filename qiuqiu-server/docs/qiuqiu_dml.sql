@@ -1,4 +1,4 @@
-INSERT INTO t_user (id, nickname, username, password, data_access_level, create_time, last_modified_time, group_id, enable) VALUES (1, '超级管理员', 'admin', '123456','GROUP_DATA', now(), now(), 1, 1);
+INSERT INTO t_user (id, nickname, username, password, data_access_level, create_user,update_user,create_time, update_time, group_id, enable) VALUES (1, '超级管理员', 'admin', '123456','GROUP_DATA','admin','admin', now(), now(), 1, 1);
 INSERT INTO t_user_role (user_id, role_id) VALUES (1, 1);
 INSERT INTO t_role (id, name, description, enable) VALUES (1, 'admin', '超级管理员', 1);
 

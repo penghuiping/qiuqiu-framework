@@ -1,19 +1,21 @@
 package com.php25.qiuqiu.admin.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.injector.AbstractMethod;
-import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.extension.injector.methods.InsertBatchSomeColumn;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.google.common.collect.Lists;
+import com.php25.common.core.dto.CurrentUser;
+import com.php25.common.core.mess.SpringContextHolder;
+import com.php25.common.db.FindCurrentUserStrategy;
+import com.php25.common.db.SqlInjectorPlus;
+import com.php25.common.db.UserDataPermissionHandler;
+import com.php25.common.web.RequestUtil;
+import com.php25.qiuqiu.user.service.GroupService;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.logging.slf4j.Slf4jImpl;
-import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +30,7 @@ import org.sqlite.SQLiteDataSource;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author penghuiping
@@ -97,6 +100,18 @@ public class DbConfig {
         mybatisSqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/mapper/**/*.xml"));
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        DataPermissionInterceptor dp = new DataPermissionInterceptor();
+        dp.setDataPermissionHandler(new UserDataPermissionHandler(groupId -> {
+            GroupService groupService = SpringContextHolder.getApplicationContext().getBean(GroupService.class);
+            List<Long> groupDtos = groupService.findAllGroupsId(groupId);
+            if (null == groupDtos || groupDtos.isEmpty()) {
+                return Lists.newArrayList();
+            }
+            return groupDtos.stream()
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
+        }, RequestUtil::getCurrentUser, "com.php25.qiuqiu.user.dao"));
+        interceptor.addInnerInterceptor(dp);
         mybatisSqlSessionFactoryBean.setPlugins(interceptor);
         GlobalConfig globalConfig = new GlobalConfig();
         globalConfig.setSqlInjector(new SqlInjectorPlus());
@@ -105,14 +120,4 @@ public class DbConfig {
     }
 }
 
-class SqlInjectorPlus extends DefaultSqlInjector {
 
-    @Override
-    public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
-        //继承原有方法
-        List<AbstractMethod> methodList = super.getMethodList(mapperClass,tableInfo);
-        //注入新方法
-        methodList.add(new InsertBatchSomeColumn());
-        return methodList;
-    }
-}

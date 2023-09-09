@@ -127,7 +127,7 @@ create table t_user
     username varchar,
     password varchar,
     create_time datetime,
-    last_modified_time datetime,
+    update_time datetime,
     data_access_level varchar,
     group_id int,
     enable int

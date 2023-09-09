@@ -48,7 +48,7 @@ public class RequestUtil {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
         Object object = requestAttributes.getAttribute(CURRENT_USER, 0);
         if (null == object) {
-            throw Exceptions.throwIllegalStateException("无法获取当前登录用户");
+            return null;
         }
         return (CurrentUser) object;
     }

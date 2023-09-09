@@ -173,8 +173,10 @@ create table t_user
     nickname           varchar(255) comment '用户昵称',
     username           varchar(50) comment '用户名',
     password           varchar(255) comment '密码',
+    create_user        varchar(255) comment '创建人',
+    update_user        varchar(255) comment '更新人',
     create_time        datetime comment '创建时间',
-    last_modified_time datetime comment '最后修改时间',
+    update_time datetime comment '最后修改时间',
     data_access_level  varchar(50) comment '数据访问级别',
     group_id           bigint comment '用户组id',
     enable             tinyint not null comment '0: 无效,1:有效,2:软删除'

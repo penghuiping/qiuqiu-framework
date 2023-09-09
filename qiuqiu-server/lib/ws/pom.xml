@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.php25</groupId>
     <artifactId>ws</artifactId>
-    <version>V.2.5.1</version>
+    <version>V.2.7.1</version>
     <parent>
         <groupId>com.php25</groupId>
         <artifactId>common-parent</artifactId>

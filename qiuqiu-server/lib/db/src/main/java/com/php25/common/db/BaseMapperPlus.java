@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.dao;
+package com.php25.common.db;
 
 
 

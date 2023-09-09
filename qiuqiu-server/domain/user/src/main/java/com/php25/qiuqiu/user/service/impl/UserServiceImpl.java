@@ -1,6 +1,7 @@
 package com.php25.qiuqiu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.php25.common.core.dto.DataAccessLevel;
 import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.DigestUtil;
@@ -9,7 +10,6 @@ import com.php25.common.core.util.crypto.constant.SignAlgorithm;
 import com.php25.common.core.util.crypto.key.SecretKeyUtil;
 import com.php25.common.core.util.jwt.JwtUtil;
 import com.php25.common.core.util.jwt.UserRoleInfo;
-import com.php25.qiuqiu.user.constant.DataAccessLevel;
 import com.php25.qiuqiu.user.constant.UserConstants;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.group.GroupDto;

@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
+import com.php25.common.core.dto.DataAccessLevel;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.core.util.TimeUtil;
-import com.php25.qiuqiu.user.constant.DataAccessLevel;
 import com.php25.qiuqiu.user.dao.UserDao;
 import com.php25.qiuqiu.user.dao.UserRoleDao;
 import com.php25.qiuqiu.user.dao.po.UserPo;
@@ -159,8 +159,8 @@ public class UserRepositoryImpl implements UserRepository {
         if(null != userPo.getCreateTime()) {
             user.setCreateTime(TimeUtil.toLocalDateTime(userPo.getCreateTime()));
         }
-        if (null != userPo.getLastModifiedTime()) {
-            user.setLastModifiedTime(TimeUtil.toLocalDateTime(userPo.getLastModifiedTime()));
+        if (null != userPo.getUpdateTime()) {
+            user.setLastModifiedTime(TimeUtil.toLocalDateTime(userPo.getUpdateTime()));
         }
         return user;
     }
@@ -173,7 +173,7 @@ public class UserRepositoryImpl implements UserRepository {
                     .toInstant(ZoneOffset.ofHours(8))));
         }
         if (null != user.getLastModifiedTime()) {
-            userPo.setLastModifiedTime(Date.from(user.getLastModifiedTime()
+            userPo.setUpdateTime(Date.from(user.getLastModifiedTime()
                     .toInstant(ZoneOffset.ofHours(8))));
         }
         return userPo;

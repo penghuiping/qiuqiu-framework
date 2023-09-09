@@ -46,12 +46,12 @@
         <brave.version>5.13.7</brave.version>
         <core>V.2.7.1</core>
         <redis>V.2.7.1</redis>
-        <db>V.2.5.1</db>
-        <ws>V.2.5.1</ws>
-        <mq>V.2.5.1</mq>
+        <db>V.2.7.1</db>
+        <ws>V.2.7.1</ws>
+        <mq>V.2.7.1</mq>
         <validation>V.2.7.1</validation>
         <web>V.2.7.1</web>
-        <timer>V.2.5.1</timer>
+        <timer>V.2.7.1</timer>
     </properties>
 
     <dependencyManagement>
@@ -212,6 +212,12 @@
                 <groupId>com.php25</groupId>
                 <artifactId>core</artifactId>
                 <version>${core}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.php25</groupId>
+                <artifactId>db</artifactId>
+                <version>${db}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>

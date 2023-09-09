@@ -1,7 +1,6 @@
 package com.php25.qiuqiu.user.dto.user;
 
-import com.php25.qiuqiu.user.constant.DataAccessLevel;
-import com.php25.qiuqiu.user.constant.UserConstants;
+import com.php25.common.core.dto.DataAccessLevel;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;

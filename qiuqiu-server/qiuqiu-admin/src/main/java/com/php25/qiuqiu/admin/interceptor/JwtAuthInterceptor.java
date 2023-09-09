@@ -6,6 +6,7 @@ import com.php25.common.core.exception.Exceptions;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.web.RequestUtil;
 import com.php25.qiuqiu.user.constant.UserErrorCode;
+import com.php25.qiuqiu.user.dto.user.UserDto;
 import com.php25.qiuqiu.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,10 +54,12 @@ public class JwtAuthInterceptor implements AsyncHandlerInterceptor {
             throw Exceptions.throwBusinessException(UserErrorCode.JWT_ILLEGAL);
         }
         String username = userService.getUsernameFromJwt(jwt);
-        CurrentUser currentUser = new CurrentUserDto();
+        UserDto userDto = userService.getUserInfo(username);
+        CurrentUserDto currentUser = new CurrentUserDto();
         currentUser.setUsername(username);
+        currentUser.setDataAccessLevel(userDto.getDataAccessLevel());
+        currentUser.setGroupCode(userDto.getGroup().getId().toString());
         RequestUtil.setCurrentUser(currentUser);
-
         String uri = request.getRequestURI();
         //在例外中的uri不需要校验权限
         for (String excludeUri : excludeUris) {

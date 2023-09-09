@@ -4,11 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.php25.common.db.BaseGroupPo;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * @author penghuiping
@@ -17,7 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @TableName(value = "t_user")
-public class UserPo {
+public class UserPo extends BaseGroupPo {
     /**
      * id,自增
      */
@@ -41,22 +39,6 @@ public class UserPo {
      */
     @TableField("password")
     private String password;
-
-    /**
-     * 创建时间
-     */
-    @TableField(value = "create_time")
-    private Date createTime;
-
-    /**
-     * 最后修改时间
-     */
-    @TableField("last_modified_time")
-    private Date lastModifiedTime;
-
-
-    @TableField("group_id")
-    private Long groupId;
 
     /**
      * 是否可用 0:不可用 1:可用

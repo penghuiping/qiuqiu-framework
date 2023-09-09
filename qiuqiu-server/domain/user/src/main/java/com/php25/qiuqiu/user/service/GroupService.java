@@ -37,6 +37,14 @@ public interface GroupService {
     List<Long> findGroupsId(String username);
 
     /**
+     * 通过组id获取用户对应组及子组id列表
+     *
+     * @param groupId 组id
+     * @return 组及子组id列表
+     */
+    List<Long> findAllGroupsId(String groupId);
+
+    /**
      * 通过username获取用户对应组id
      *
      * @param username 用户名

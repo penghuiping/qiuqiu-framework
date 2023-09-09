@@ -73,6 +73,21 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public List<Long> findAllGroupsId(String groupId) {
+        List<Group> groups = groupRepository.findEnabledGroupsByIds(Lists.newArrayList(Long.parseLong(groupId)));
+        List<GroupDto> groupDtos = groups.stream().map(groupDtoMapper::toDto).collect(Collectors.toList());
+        TreeNode<GroupDto> groupTree = this.getAllGroupTree();
+
+        Set<Long> res = new HashSet<>();
+        for (GroupDto groupDto : groupDtos) {
+            List<GroupDto> group0s = Trees.getAllSuccessorNodes(groupTree, groupDto);
+            List<Long> tmp = group0s.stream().map(GroupDto::getId).collect(Collectors.toList());
+            res.addAll(tmp);
+        }
+        return new ArrayList<>(res);
+    }
+
+    @Override
     public TreeNode<GroupDto> getAllGroupTree() {
         List<Group> groups = (List<Group>) groupRepository.findAll();
         List<GroupDto> groupDtoList = groups.stream().map(groupDtoMapper::toDto).collect(Collectors.toList());

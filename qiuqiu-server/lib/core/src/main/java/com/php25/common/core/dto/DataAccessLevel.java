@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.constant;
+package com.php25.common.core.dto;
 
 /**
  * @author penghuiping

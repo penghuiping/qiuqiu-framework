@@ -63,5 +63,9 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct-processor</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.php25</groupId>
+            <artifactId>db</artifactId>
+        </dependency>
     </dependencies>
 </project>

@@ -1,11 +1,9 @@
 package com.php25.qiuqiu.user.dao;
+import com.php25.common.db.BaseMapperPlus;
 import org.apache.ibatis.annotations.Param;
 import java.util.Collection;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.php25.qiuqiu.user.dao.po.UserRolePo;
-
-import java.util.List;
 
 /**
  * @author penghuiping
