@@ -67,7 +67,7 @@ public class OtherController extends JsonController {
     private final DictionaryService dictionaryService;
 
     @AuditLog
-    @Operation(description = "登入接口")
+    @Operation(summary = "登入接口")
     @PostMapping(value = "/login",headers = {"version=v1"})
     public JsonResponse<TokenVo> login(HttpServletResponse response,
                                        @Valid @RequestBody LoginVo loginVo) {
@@ -88,14 +88,14 @@ public class OtherController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "登出接口")
+    @Operation(summary = "登出接口")
     @PostMapping(value = "/logout",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> logout() {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
         return succeed(userService.logout(currentUser.getUsername()));
     }
 
-    @Operation(description = "获取登入验证码")
+    @Operation(summary = "获取登入验证码")
     @GetMapping(value = "/img_code")
     public void getImgCode(@NotBlank @Length(max = 32) @RequestParam String imgCodeId, HttpServletResponse response) {
         String code = RandomUtil.getRandomNumbersAndLetters(6);
@@ -121,7 +121,7 @@ public class OtherController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "刷新token接口")
+    @Operation(summary = "刷新token接口")
     @PostMapping(value = "/refresh",headers = {"version=v1"})
     public JsonResponse<TokenVo> refresh(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -141,7 +141,7 @@ public class OtherController extends JsonController {
         throw Exceptions.throwBusinessException(UserErrorCode.REFRESH_TOKEN_ILLEGAL);
     }
 
-    @Operation(description = "获取系统启动初始化配置项")
+    @Operation(summary = "获取系统启动初始化配置项")
     @PostMapping(value = "/get_init_config",headers = {"version=v1","jwt"})
     public JsonResponse<List<DictVo>>  getInitConfig() {
         List<DictDto> dictDtoList = dictionaryService.getAllInitConfig();

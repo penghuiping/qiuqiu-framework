@@ -50,7 +50,7 @@ public class JobController extends JsonController {
     private final JobVoMapper jobVoMapper;
 
 
-    @Operation(description = "分页查询定时任务列表")
+    @Operation(summary = "分页查询定时任务列表")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<JobVo>> page(@Valid @RequestBody JobPageVo jobPageVo) {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
@@ -65,7 +65,7 @@ public class JobController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "创建定时任务")
+    @Operation(summary = "创建定时任务")
     @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody JobCreateVo jobCreateVo) {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
@@ -74,7 +74,7 @@ public class JobController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "更新定时任务")
+    @Operation(summary = "更新定时任务")
     @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody JobUpdateVo jobUpdateVo) {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
@@ -83,7 +83,7 @@ public class JobController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "删除定时任务")
+    @Operation(summary = "删除定时任务")
     @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody JobIdVo jobIdVo) {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
@@ -91,7 +91,7 @@ public class JobController extends JsonController {
     }
 
 
-    @Operation(description = "获取所有任务列表")
+    @Operation(summary = "获取所有任务列表")
     @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
     public JsonResponse<List<JobVo>> findAll() {
         CurrentUser currentUser = RequestUtil.getCurrentUser();

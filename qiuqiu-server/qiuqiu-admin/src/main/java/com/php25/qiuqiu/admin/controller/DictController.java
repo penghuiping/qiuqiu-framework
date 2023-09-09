@@ -42,7 +42,7 @@ public class DictController extends JsonController {
     private final DictVoMapper dictVoMapper;
 
 
-    @Operation(description = "数据字典分页查询")
+    @Operation(summary = "数据字典分页查询")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<DictVo>> page(@Valid @RequestBody DictPageVo dictPageVo) {
         PageDto<DictDto> dataGrid = dictionaryService.page(dictPageVo.getKey(), dictPageVo.getPageNum(), dictPageVo.getPageSize());
@@ -55,7 +55,7 @@ public class DictController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "创建字典记录")
+    @Operation(summary = "创建字典记录")
     @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody DictCreateVo dictCreateVo) {
         return succeed(dictionaryService.create(
@@ -65,7 +65,7 @@ public class DictController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "更新字典记录")
+    @Operation(summary = "更新字典记录")
     @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody DictUpdateVo dictUpdateVo) {
         DictDto dictDto = dictVoMapper.toDictDto(dictUpdateVo);
@@ -74,14 +74,14 @@ public class DictController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "删除字典记录")
+    @Operation(summary = "删除字典记录")
     @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody DictKeyVo dictKeyVo) {
         return succeed(dictionaryService.delete(dictKeyVo.getKey()));
     }
 
     @AuditLog
-    @Operation(description = "刷新缓存")
+    @Operation(summary = "刷新缓存")
     @PostMapping(value = "/refresh",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> refresh(@Valid @RequestBody DictKeyVo dictKeyVo) {
         return succeed(dictionaryService.removeCache(dictKeyVo.getKey()));

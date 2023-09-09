@@ -42,7 +42,7 @@ public class GroupController extends JsonController {
     private final GroupVoMapper groupVoMapper;
 
 
-    @Operation(description = "获取系统中所有组列表")
+    @Operation(summary = "获取系统中所有组列表")
     @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
     public JsonResponse<TreeVo> getAll() {
         TreeNode<GroupDto> res = groupService.getAllGroupTree();
@@ -52,7 +52,7 @@ public class GroupController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "创建用户组")
+    @Operation(summary = "创建用户组")
     @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody GroupCreateVo groupCreateVo) {
         GroupCreateDto groupCreateDto = groupVoMapper.toCreateDto(groupCreateVo);
@@ -60,7 +60,7 @@ public class GroupController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "更新用户组")
+    @Operation(summary = "更新用户组")
     @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody GroupUpdateVo groupUpdateVo) {
         GroupDto groupDto = groupVoMapper.toGroupDto(groupUpdateVo);
@@ -68,7 +68,7 @@ public class GroupController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "删除用户组")
+    @Operation(summary = "删除用户组")
     @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody GroupDeleteVo groupDeleteVo) {
         return succeed(groupService.delete(groupDeleteVo.getGroupId()));

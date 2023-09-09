@@ -37,7 +37,7 @@ public class AuditLogController extends JsonController {
     private final AuditLogVoMapper auditLogVoMapper;
 
 
-    @Operation(description = "审计日志分页查询")
+    @Operation(summary = "审计日志分页查询")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<AuditLogPageOutVo>> page(@Valid @RequestBody AuditLogPageVo auditLogPageVo) {
         PageDto<AuditLogDto> dataGrid = auditLogService.page(auditLogPageVo.getUsername(),auditLogPageVo.getPageNum(), auditLogPageVo.getPageSize());

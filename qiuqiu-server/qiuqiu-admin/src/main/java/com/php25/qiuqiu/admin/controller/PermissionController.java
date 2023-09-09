@@ -40,7 +40,7 @@ public class PermissionController extends JsonController {
 
     private final PermissionVoMapper permissionVoMapper;
 
-    @Operation(description = "获取权限列表，用于table页面展示")
+    @Operation(summary = "获取权限列表，用于table页面展示")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<List<PermissionVo>> page() {
         PageDto<PermissionDto> page = permissionService.page("", 1, 100);
@@ -48,7 +48,7 @@ public class PermissionController extends JsonController {
         return succeed(permissionVos);
     }
 
-    @Operation(description = "获取所有有效的权限列表")
+    @Operation(summary = "获取所有有效的权限列表")
     @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
     public JsonResponse<List<PermissionVo>> getAll() {
         List<PermissionDto> permissionDtos = permissionService.getAll();
@@ -56,7 +56,7 @@ public class PermissionController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "更新权限信息")
+    @Operation(summary = "更新权限信息")
     @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody PermissionUpdateVo permissionVo) {
         PermissionDto permissionDto = permissionVoMapper.toDto(permissionVo);
@@ -64,7 +64,7 @@ public class PermissionController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "创建权限信息")
+    @Operation(summary = "创建权限信息")
     @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody PermissionCreateVo permissionVo) {
         PermissionCreateDto permissionDto = permissionVoMapper.toCreateDto(permissionVo);
@@ -72,7 +72,7 @@ public class PermissionController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "删除权限信息")
+    @Operation(summary = "删除权限信息")
     @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody PermissionDeleteVo permissionVo) {
         return succeed(permissionService.delete(permissionVo.getPermission()));

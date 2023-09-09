@@ -47,7 +47,7 @@ public class ResourceController extends JsonController {
     private final ResourceVoMapper resourceVoMapper;
 
 
-    @Operation(description = "创建资源")
+    @Operation(summary = "创建资源")
     @AuditLog
     @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody ResourceCreateVo resourceCreateVo) {
@@ -63,7 +63,7 @@ public class ResourceController extends JsonController {
         return succeed(resourceService.create(resourceCreateDto));
     }
 
-    @Operation(description = "更新资源")
+    @Operation(summary = "更新资源")
     @AuditLog
     @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody ResourceUpdateVo resourceUpdateVo) {
@@ -80,7 +80,7 @@ public class ResourceController extends JsonController {
         return succeed(true);
     }
 
-    @Operation(description = "删除资源")
+    @Operation(summary = "删除资源")
     @AuditLog
     @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody ResourceDeleteVo resourceDeleteVo) {
@@ -92,7 +92,7 @@ public class ResourceController extends JsonController {
     }
 
 
-    @Operation(description = "分页查询资源列表")
+    @Operation(summary = "分页查询资源列表")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<List<ResourceVo>> page() {
         PageDto<ResourceDto> dataGrid = resourceService.page("", 1, 200);
@@ -100,7 +100,7 @@ public class ResourceController extends JsonController {
         return succeed(res);
     }
 
-    @Operation(description = "获取系统中所有内置资源")
+    @Operation(summary = "获取系统中所有内置资源")
     @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
     public JsonResponse<List<ResourcePermissionVo>> getAll() {
         List<ResourceDetailDto> permissions = resourceService.getAll();
@@ -115,7 +115,7 @@ public class ResourceController extends JsonController {
         return succeed(resourcePermissionVos);
     }
 
-    @Operation(description = "获取资源详情")
+    @Operation(summary = "获取资源详情")
     @PostMapping(value = "/detail",headers = {"version=v1","jwt"})
     public JsonResponse<ResourceDetailVo> detail(@Valid @RequestBody ResourceIdVo resourceIdVo) {
         ResourceDetailDto resourceDetailDto = resourceService.detail(resourceIdVo.getName());

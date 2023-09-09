@@ -65,7 +65,7 @@ public class UserController extends JsonController {
     private final RedisManager redisManager;
 
 
-    @Operation(description = "获取用户信息接口")
+    @Operation(summary = "获取用户信息接口")
     @PostMapping(value = "/info",headers = {"version=v1","jwt"})
     public JsonResponse<UserVo> getUserInfo() {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
@@ -98,7 +98,7 @@ public class UserController extends JsonController {
     }
 
 
-    @Operation(description = "获取用户详细信息接口")
+    @Operation(summary = "获取用户详细信息接口")
     @PostMapping(value = "/detail",headers = {"version=v1","jwt"})
     public JsonResponse<UserVo> detail(@RequestBody UserDetailVo user) {
         UserDto userDto = userService.detail(user.getUserId());
@@ -130,7 +130,7 @@ public class UserController extends JsonController {
     }
 
 
-    @Operation(description = "用户列表分页查询")
+    @Operation(summary = "用户列表分页查询")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<UserPageOutVo>> page(@Valid @RequestBody UserPageVo userPageVo) {
         PageDto<UserPageDto> result = userService.page(userPageVo.getUsername(), userPageVo.getPageNum(), userPageVo.getPageSize());
@@ -144,7 +144,7 @@ public class UserController extends JsonController {
 
     @AvoidRepeat(keyStrategy = SpElKeyStrategy.class,expression = "#userCreateVo.username")
     @AuditLog
-    @Operation(description = "创建用户")
+    @Operation(summary = "创建用户")
     @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody UserCreateVo userCreateVo) {
         UserCreateDto userCreateDto = userVoMapper.toDto(userCreateVo);
@@ -152,7 +152,7 @@ public class UserController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "更新用户")
+    @Operation(summary = "更新用户")
     @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody UserUpdateVo userUpdateVo) {
         UserUpdateDto userUpdateDto = userVoMapper.toDto(userUpdateVo);
@@ -163,7 +163,7 @@ public class UserController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "删除用户")
+    @Operation(summary = "删除用户")
     @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody UserDeleteVo userDeleteVo) {
         for (Long userId : userDeleteVo.getUserIds()) {

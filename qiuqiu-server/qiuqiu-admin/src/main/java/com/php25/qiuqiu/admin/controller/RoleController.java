@@ -52,7 +52,7 @@ public class RoleController extends JsonController {
     private final RoleVoMapper roleVoMapper;
 
 
-    @Operation(description = "获取系统中所有角色列表")
+    @Operation(summary = "获取系统中所有角色列表")
     @PostMapping(value = "/get_all",headers = {"version=v1","jwt"})
     public JsonResponse<List<RoleVo>> getAll() {
         List<RoleDto> roleDtoList = roleService.getAllRoles();
@@ -62,7 +62,7 @@ public class RoleController extends JsonController {
 
 
     @AuditLog
-    @Operation(description = "新增角色")
+    @Operation(summary = "新增角色")
     @PostMapping(value = "/create",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> create(@Valid @RequestBody RoleCreateVo roleCreateVo) {
         List<ResourcePermissionVo> resourcePermissionVos = roleCreateVo.getResourcePermissions();
@@ -87,7 +87,7 @@ public class RoleController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "更新角色")
+    @Operation(summary = "更新角色")
     @PostMapping(value = "/update",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> update(@Valid @RequestBody RoleUpdateVo roleUpdateVo) {
         List<ResourcePermissionVo> resourcePermissionVos = roleUpdateVo.getResourcePermissions();
@@ -112,14 +112,14 @@ public class RoleController extends JsonController {
     }
 
     @AuditLog
-    @Operation(description = "删除角色")
+    @Operation(summary = "删除角色")
     @PostMapping(value = "/delete",headers = {"version=v1","jwt"})
     public JsonResponse<Boolean> delete(@Valid @RequestBody RoleDeleteVo roleDeleteVo) {
         return succeed(roleService.delete(roleDeleteVo.getRoleIds()));
     }
 
 
-    @Operation(description = "获取角色信息接口")
+    @Operation(summary = "获取角色信息接口")
     @PostMapping(value = "/detail",headers = {"version=v1","jwt"})
     public JsonResponse<RoleDetailOutVo> detail(@Valid @RequestBody RoleDetailVo roleDetailVo) {
         RoleDetailDto roleDetailDto = roleService.detail(roleDetailVo.getRoleId());
@@ -145,7 +145,7 @@ public class RoleController extends JsonController {
         return succeed(roleDetailOutVo);
     }
 
-    @Operation(description = "获取角色分页列表接口")
+    @Operation(summary = "获取角色分页列表接口")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<RolePageOutVo>> page(@Valid @RequestBody RolePageVo rolePageVo) {
         PageDto<RolePageDto> page = roleService.page(rolePageVo.getRoleName(), rolePageVo.getPageNum(), rolePageVo.getPageSize());

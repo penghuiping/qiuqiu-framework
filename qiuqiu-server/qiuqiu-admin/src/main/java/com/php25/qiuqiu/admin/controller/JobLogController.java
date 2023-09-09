@@ -42,7 +42,7 @@ public class JobLogController extends JsonController {
     private final JobLogVoMapper jobLogVoMapper;
 
 
-    @Operation(description = "任务日志分页查询")
+    @Operation(summary = "任务日志分页查询")
     @PostMapping(value = "/page", headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<JobLogVo>> page(@Valid @RequestBody JobLogPageVo jobLogPageVo) {
         CurrentUser currentUser = RequestUtil.getCurrentUser();
