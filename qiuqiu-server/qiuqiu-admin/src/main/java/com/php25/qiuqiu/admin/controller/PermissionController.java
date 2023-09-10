@@ -3,7 +3,7 @@ package com.php25.qiuqiu.admin.controller;
 import com.php25.common.core.dto.PageDto;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
-import com.php25.qiuqiu.admin.mapper.PermissionVoMapper;
+import com.php25.qiuqiu.admin.copyer.PermissionVoCopyer;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionCreateVo;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionUpdateVo;
@@ -38,7 +38,7 @@ public class PermissionController extends JsonController {
 
     private final PermissionService permissionService;
 
-    private final PermissionVoMapper permissionVoMapper;
+    private final PermissionVoCopyer permissionVoMapper;
 
     @Operation(summary = "获取权限列表，用于table页面展示")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})

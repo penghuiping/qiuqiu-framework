@@ -5,7 +5,7 @@ import com.php25.common.core.dto.PageDto;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
 import com.php25.common.web.RequestUtil;
-import com.php25.qiuqiu.admin.mapper.JobLogVoMapper;
+import com.php25.qiuqiu.admin.copyer.JobLogVoCopyer;
 import com.php25.qiuqiu.admin.vo.in.job.JobLogPageVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.job.JobLogVo;
@@ -39,7 +39,7 @@ public class JobLogController extends JsonController {
 
     private final JobService jobService;
 
-    private final JobLogVoMapper jobLogVoMapper;
+    private final JobLogVoCopyer jobLogVoMapper;
 
 
     @Operation(summary = "任务日志分页查询")

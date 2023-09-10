@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.monitor.mapper;
+package com.php25.qiuqiu.monitor.copyer;
 
 import com.php25.qiuqiu.monitor.dto.DictDto;
 import com.php25.qiuqiu.monitor.entity.Dict;
@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
  * @date 2021/7/5 13:48
  */
 @Mapper(componentModel = "spring")
-public interface DictDtoMapper {
+public interface DictDtoCopyer {
 
     /**
      * entity转dto

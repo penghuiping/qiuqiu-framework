@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.mapper;
+package com.php25.qiuqiu.admin.copyer;
 
 import com.php25.qiuqiu.admin.vo.in.user.UserCreateVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserUpdateVo;
@@ -17,8 +17,8 @@ import org.mapstruct.Mapping;
  * @date 2021/7/6 13:35
  */
 @Mapper(componentModel = "spring")
-@DecoratedWith(UserVoMapperDecorator.class)
-public interface UserVoMapper {
+@DecoratedWith(UserVoCopyerDecorator.class)
+public interface UserVoCopyer {
 
     /**
      * dto转vo

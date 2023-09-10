@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.monitor.mapper;
+package com.php25.qiuqiu.monitor.copyer;
 
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.entity.AuditLog;
@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
  * @date 2021/7/5 13:54
  */
 @Mapper(componentModel = "spring")
-public interface AuditLogDtoMapper {
+public interface AuditLogDtoCopyer {
 
     /**
      * dto转entity

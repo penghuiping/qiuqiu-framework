@@ -3,7 +3,7 @@ package com.php25.qiuqiu.admin.controller;
 import com.php25.common.core.dto.PageDto;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
-import com.php25.qiuqiu.admin.mapper.ResourceVoMapper;
+import com.php25.qiuqiu.admin.copyer.ResourceVoCopyer;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceCreateVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceIdVo;
@@ -44,7 +44,7 @@ public class ResourceController extends JsonController {
 
     private final ResourceService resourceService;
 
-    private final ResourceVoMapper resourceVoMapper;
+    private final ResourceVoCopyer resourceVoMapper;
 
 
     @Operation(summary = "创建资源")

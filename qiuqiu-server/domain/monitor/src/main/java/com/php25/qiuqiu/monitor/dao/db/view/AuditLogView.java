@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.monitor.dao.view;
+package com.php25.qiuqiu.monitor.dao.db.view;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Getter;

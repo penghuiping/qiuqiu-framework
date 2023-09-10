@@ -3,7 +3,7 @@ package com.php25.qiuqiu.admin.controller;
 import com.php25.common.core.dto.PageDto;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
-import com.php25.qiuqiu.admin.mapper.DictVoMapper;
+import com.php25.qiuqiu.admin.copyer.DictVoCopyer;
 import com.php25.qiuqiu.admin.vo.in.DictPageVo;
 import com.php25.qiuqiu.admin.vo.in.dict.DictCreateVo;
 import com.php25.qiuqiu.admin.vo.in.dict.DictKeyVo;
@@ -39,7 +39,7 @@ public class DictController extends JsonController {
 
     private final DictionaryService dictionaryService;
 
-    private final DictVoMapper dictVoMapper;
+    private final DictVoCopyer dictVoMapper;
 
 
     @Operation(summary = "数据字典分页查询")

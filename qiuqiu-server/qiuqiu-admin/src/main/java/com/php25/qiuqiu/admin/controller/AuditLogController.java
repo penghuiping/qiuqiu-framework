@@ -3,7 +3,7 @@ package com.php25.qiuqiu.admin.controller;
 import com.php25.common.core.dto.PageDto;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
-import com.php25.qiuqiu.admin.mapper.AuditLogVoMapper;
+import com.php25.qiuqiu.admin.copyer.AuditLogVoCopyer;
 import com.php25.qiuqiu.admin.vo.in.AuditLogPageVo;
 import com.php25.qiuqiu.admin.vo.out.AuditLogPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.PageResultVo;
@@ -34,7 +34,7 @@ public class AuditLogController extends JsonController {
 
     private final AuditLogService auditLogService;
 
-    private final AuditLogVoMapper auditLogVoMapper;
+    private final AuditLogVoCopyer auditLogVoMapper;
 
 
     @Operation(summary = "审计日志分页查询")

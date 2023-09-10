@@ -1,46 +1,49 @@
-package com.php25.qiuqiu.monitor.dao.po;
+package com.php25.qiuqiu.monitor.dao.db.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.php25.common.db.BaseGroupPo;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-
 /**
  * @author penghuiping
- * @date 2021/3/11 14:52
+ * @date 2021/3/11 16:16
  */
 @Setter
 @Getter
-@TableName("t_audit_log")
-public class AuditLogPo extends BaseGroupPo {
+@TableName("t_dict")
+public class DictPo  {
 
     /**
-     * 日志id
+     * 自增id
      */
     @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
-     * 系统用户名
+     * 键
      */
-    @TableField
-    private String username;
+    @TableField("code")
+    private String key0;
 
     /**
-     * 系统接口地址
+     * 值
      */
     @TableField
-    private String uri;
+    private String value;
 
     /**
-     * 接口入参
+     * 描述
      */
     @TableField
-    private String params;
+    private String description;
+
+    /**
+     * true: 有效,false: 无效
+     */
+    @TableField
+    private Boolean enable;
+
 }

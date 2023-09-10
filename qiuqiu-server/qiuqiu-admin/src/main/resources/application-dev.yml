@@ -82,10 +82,10 @@ spring:
   ########################################################
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    driverClassName: com.p6spy.engine.spy.P6SpyDriver
-#    driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:p6spy:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&queryInterceptors=brave.mysql8.TracingQueryInterceptor&exceptionInterceptors=brave.mysql8.TracingExceptionInterceptor&zipkinServiceName=mysql8
-#    url: jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&queryInterceptors=brave.mysql8.TracingQueryInterceptor&exceptionInterceptors=brave.mysql8.TracingExceptionInterceptor&zipkinServiceName=mysql8
+#    driverClassName: com.p6spy.engine.spy.P6SpyDriver
+    driverClassName: com.mysql.cj.jdbc.Driver
+#    url: jdbc:p6spy:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&queryInterceptors=brave.mysql8.TracingQueryInterceptor&exceptionInterceptors=brave.mysql8.TracingExceptionInterceptor&zipkinServiceName=mysql8
+    url: jdbc:mysql://${app.db.ip}:${app.db.port}/${app.db.name}?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&queryInterceptors=brave.mysql8.TracingQueryInterceptor&exceptionInterceptors=brave.mysql8.TracingExceptionInterceptor&zipkinServiceName=mysql8
     username: ${app.db.username}
     password: ${app.db.password}
     minIdle: 1
@@ -125,7 +125,7 @@ spring:
 
   cloud:
     function:
-      definition: timerJobEnabledChannel;auditLogChannel;timerJobDisabledChannel; mergeStatisticLoadedJobExecutionChannel;statisticLoadedJobExecutionChannel;dictChannel;wsSessionChannel;
+      definition: timerJobEnabledChannel;auditLogChannel;timerJobDisabledChannel; mergeStatisticLoadedJobExecutionChannel;statisticLoadedJobExecutionChannel;dictChannel;wsSessionChannel;logs;
     stream:
       bindings:
         dictChannel-in-0:
@@ -200,6 +200,10 @@ spring:
         timerJobEnabledChannel-out-0:
           destination: time_job_enabled-exchange
           contentType: application/json
+        logs-in-0:
+          group: logs
+          destination: logs-exchange
+          contentType: application/json
       rabbit:
         bindings:
           auditLogChannel-in-0:
@@ -218,6 +222,11 @@ spring:
               auto-bind-dlq: true
               republish-to-dlq: true
           timerJobEnabledChannel-in-0:
+            consumer:
+              acknowledgeMode: AUTO
+              auto-bind-dlq: true
+              republish-to-dlq: true
+          logs-in-0:
             consumer:
               acknowledgeMode: AUTO
               auto-bind-dlq: true
@@ -275,9 +284,17 @@ httpClient:
   connectionTimeout: 5000
   readTimeout: 5000
   writeTimeout: 5000
-########################################################
-### logstash 集中日志
-########################################################
-logstash:
-  ip: ${app.logstash.host}
-  port: ${app.logstash.port}
+#########################################################
+#### es
+#########################################################
+easy-es:
+  enable: true #默认为true,若为false则认为不启用本框架
+  address : 127.0.0.1:9200 # es的连接地址,必须含端口 若为集群,则可以用逗号隔开 例如:127.0.0.1:9200,127.0.0.2:9200
+  username: elastic #若无 则可省略此行配置
+  password: 123456 #若无 则可省略此行配置
+#########################################################
+#### logstash 集中日志
+#########################################################
+#logstash:
+#  ip: ${app.logstash.host}
+#  port: ${app.logstash.port}

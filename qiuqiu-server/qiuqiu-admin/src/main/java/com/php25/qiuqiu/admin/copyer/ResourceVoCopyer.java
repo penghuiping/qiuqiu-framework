@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.mapper;
+package com.php25.qiuqiu.admin.copyer;
 
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceCreateVo;
 import com.php25.qiuqiu.admin.vo.in.resource.ResourceUpdateVo;
@@ -15,7 +15,7 @@ import org.mapstruct.Mapper;
  * @date 2021/7/2 13:25
  */
 @Mapper(componentModel = "spring")
-public interface ResourceVoMapper {
+public interface ResourceVoCopyer {
 
     /**
      * vo转dto

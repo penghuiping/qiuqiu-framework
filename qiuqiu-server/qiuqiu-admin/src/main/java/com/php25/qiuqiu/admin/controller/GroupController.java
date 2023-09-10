@@ -5,7 +5,7 @@ import com.php25.common.core.tree.TreeNode;
 import com.php25.common.core.tree.Trees;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
-import com.php25.qiuqiu.admin.mapper.GroupVoMapper;
+import com.php25.qiuqiu.admin.copyer.GroupVoCopyer;
 import com.php25.qiuqiu.admin.vo.in.group.GroupCreateVo;
 import com.php25.qiuqiu.admin.vo.in.group.GroupDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.group.GroupUpdateVo;
@@ -39,7 +39,7 @@ public class GroupController extends JsonController {
 
     private final GroupService groupService;
 
-    private final GroupVoMapper groupVoMapper;
+    private final GroupVoCopyer groupVoMapper;
 
 
     @Operation(summary = "获取系统中所有组列表")

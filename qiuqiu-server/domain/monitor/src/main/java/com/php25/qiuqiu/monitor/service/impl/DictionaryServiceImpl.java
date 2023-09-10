@@ -6,7 +6,7 @@ import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.qiuqiu.monitor.dto.DictDto;
 import com.php25.qiuqiu.monitor.entity.Dict;
-import com.php25.qiuqiu.monitor.mapper.DictDtoMapper;
+import com.php25.qiuqiu.monitor.copyer.DictDtoCopyer;
 import com.php25.qiuqiu.monitor.repository.DictRepository;
 import com.php25.qiuqiu.monitor.service.DictionaryService;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class DictionaryServiceImpl implements DictionaryService, DisposableBean 
 
     private final StreamBridge streamBridge;
 
-    private final DictDtoMapper dictDtoMapper;
+    private final DictDtoCopyer dictDtoMapper;
 
     @Value("${server.id}")
     private String serverId;

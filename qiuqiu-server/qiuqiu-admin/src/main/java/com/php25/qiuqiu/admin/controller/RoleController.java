@@ -3,7 +3,7 @@ package com.php25.qiuqiu.admin.controller;
 import com.php25.common.core.dto.PageDto;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
-import com.php25.qiuqiu.admin.mapper.RoleVoMapper;
+import com.php25.qiuqiu.admin.copyer.RoleVoCopyer;
 import com.php25.qiuqiu.admin.vo.in.role.RoleCreateVo;
 import com.php25.qiuqiu.admin.vo.in.role.RoleDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.role.RoleDetailVo;
@@ -49,7 +49,7 @@ public class RoleController extends JsonController {
 
     private final RoleService roleService;
 
-    private final RoleVoMapper roleVoMapper;
+    private final RoleVoCopyer roleVoMapper;
 
 
     @Operation(summary = "获取系统中所有角色列表")

@@ -6,7 +6,7 @@ import com.php25.common.core.dto.PageDto;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
 import com.php25.common.web.RequestUtil;
-import com.php25.qiuqiu.admin.mapper.JobVoMapper;
+import com.php25.qiuqiu.admin.copyer.JobVoCopyer;
 import com.php25.qiuqiu.admin.vo.in.job.JobCreateVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobIdVo;
 import com.php25.qiuqiu.admin.vo.in.job.JobPageVo;
@@ -23,7 +23,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,7 +46,7 @@ public class JobController extends JsonController {
 
     private final JobService jobService;
 
-    private final JobVoMapper jobVoMapper;
+    private final JobVoCopyer jobVoMapper;
 
 
     @Operation(summary = "分页查询定时任务列表")

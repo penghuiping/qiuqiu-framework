@@ -1,12 +1,12 @@
-package com.php25.qiuqiu.monitor.dao;
+package com.php25.qiuqiu.monitor.dao.db;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.php25.common.db.DataPermission;
-import com.php25.qiuqiu.monitor.dao.po.AuditLogPo;
-import com.php25.qiuqiu.monitor.dao.view.AuditLogView;
+import com.php25.qiuqiu.monitor.dao.db.po.AuditLogPo;
+import com.php25.qiuqiu.monitor.dao.db.view.AuditLogView;
 import org.apache.ibatis.annotations.Param;
 
 /**

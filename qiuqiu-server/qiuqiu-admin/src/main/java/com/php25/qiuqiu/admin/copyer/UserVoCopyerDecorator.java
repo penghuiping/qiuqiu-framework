@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.mapper;
+package com.php25.qiuqiu.admin.copyer;
 
 import com.php25.qiuqiu.admin.vo.out.user.UserVo;
 import com.php25.qiuqiu.user.dto.user.UserDto;
@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author penghuiping
  * @date 2021/7/8 09:40
  */
-public abstract class UserVoMapperDecorator implements UserVoMapper {
+public abstract class UserVoCopyerDecorator implements UserVoCopyer {
 
     @Autowired
-    private UserVoMapper delegate;
+    private UserVoCopyer delegate;
 
 
     @Override

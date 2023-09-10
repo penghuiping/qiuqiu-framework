@@ -8,7 +8,7 @@ import com.php25.common.repeat.SpElKeyStrategy;
 import com.php25.common.web.JsonController;
 import com.php25.common.web.JsonResponse;
 import com.php25.common.web.RequestUtil;
-import com.php25.qiuqiu.admin.mapper.UserVoMapper;
+import com.php25.qiuqiu.admin.copyer.UserVoCopyer;
 import com.php25.qiuqiu.admin.vo.in.user.UserCreateVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserDeleteVo;
 import com.php25.qiuqiu.admin.vo.in.user.UserDetailVo;
@@ -56,7 +56,7 @@ public class UserController extends JsonController {
 
     private final UserService userService;
 
-    private final UserVoMapper userVoMapper;
+    private final UserVoCopyer userVoMapper;
 
     @Operation(summary = "获取用户信息接口")
     @PostMapping(value = "/info",headers = {"version=v1","jwt"})

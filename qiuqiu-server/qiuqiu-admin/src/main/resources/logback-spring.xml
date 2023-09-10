@@ -108,33 +108,65 @@
     <springProperty scope="context" name="log_stash_ip" source="logstash.ip"/>
     <springProperty scope="context" name="log_stash_port" source="logstash.port"/>
 
-    <appender name="LOG_STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>${log_stash_ip}:${log_stash_port}</destination>
+<!--    <appender name="LOG_STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+<!--        <destination>${log_stash_ip}:${log_stash_port}</destination>-->
+<!--        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder"/>-->
+<!--    </appender>-->
+
+<!--    &lt;!&ndash; 异步输出 &ndash;&gt;-->
+<!--    <appender name="ASYNC-LOG_STASH" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--        &lt;!&ndash; 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 &ndash;&gt;-->
+<!--        <discardingThreshold>0</discardingThreshold>-->
+<!--        &lt;!&ndash; 更改默认的队列的深度,该值会影响性能.默认值为256 &ndash;&gt;-->
+<!--        <queueSize>${QUEUE_SIZE}</queueSize>-->
+<!--        &lt;!&ndash; 添加附加的appender,最多只能添加一个 &ndash;&gt;-->
+<!--        <appender-ref ref="LOG_STASH"/>-->
+<!--        <includeCallerData>true</includeCallerData>-->
+<!--    </appender>-->
+
+    <appender name="LOG-RABBIT" class="org.springframework.amqp.rabbit.logback.AmqpAppender">
+        <!--默认值-->
+        <host>localhost</host>
+        <!--默认值-->
+        <port>5672</port>
+        <!--默认值-->
+        <virtualHost>/</virtualHost>
+        <!--默认值-->
+        <username>guest</username>
+        <!--默认值-->
+        <password>guest</password>
+        <!--默认值 false，改为 true -->
+        <declareExchange>true</declareExchange>
+        <exchangeName>logs-exchange</exchangeName>
         <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
     <!-- 异步输出 -->
-    <appender name="ASYNC-LOG_STASH" class="ch.qos.logback.classic.AsyncAppender">
+    <appender name="ASYNC-LOG-RABBIT" class="ch.qos.logback.classic.AsyncAppender">
         <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
         <discardingThreshold>0</discardingThreshold>
         <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
         <queueSize>${QUEUE_SIZE}</queueSize>
         <!-- 添加附加的appender,最多只能添加一个 -->
-        <appender-ref ref="LOG_STASH"/>
+        <appender-ref ref="LOG-RABBIT"/>
         <includeCallerData>true</includeCallerData>
     </appender>
+
+
 
     <springProfile name="dev">
         <root level="INFO">
             <appender-ref ref="ASYNC-CONSOLE"/>
-            <appender-ref ref="ASYNC-LOG_STASH"/>
+            <appender-ref ref="ASYNC-LOG-RABBIT"/>
+<!--            <appender-ref ref="ASYNC-LOG_STASH"/>-->
         </root>
     </springProfile>
 
     <springProfile name="docker">
         <root level="INFO">
             <appender-ref ref="ASYNC-CONSOLE"/>
-            <appender-ref ref="ASYNC-LOG_STASH"/>
+            <appender-ref ref="ASYNC-LOG-RABBIT"/>
+<!--            <appender-ref ref="ASYNC-LOG_STASH"/>-->
             <appender-ref ref="ASYNC-FILE"/>
             <appender-ref ref="ASYNC-FILE-ERROR"/>
         </root>

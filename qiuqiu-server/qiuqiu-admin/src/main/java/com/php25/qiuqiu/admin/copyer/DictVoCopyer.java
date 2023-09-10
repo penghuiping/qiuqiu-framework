@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.mapper;
+package com.php25.qiuqiu.admin.copyer;
 
 import com.php25.qiuqiu.admin.vo.in.dict.DictUpdateVo;
 import com.php25.qiuqiu.admin.vo.out.DictVo;
@@ -10,7 +10,7 @@ import org.mapstruct.Mapper;
  * @date 2021/7/2 09:44
  */
 @Mapper(componentModel = "spring")
-public interface DictVoMapper {
+public interface DictVoCopyer {
 
     /**
      * dto转vo

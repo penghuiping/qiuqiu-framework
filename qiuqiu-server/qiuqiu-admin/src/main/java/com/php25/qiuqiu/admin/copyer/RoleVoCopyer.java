@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.mapper;
+package com.php25.qiuqiu.admin.copyer;
 
 import com.php25.qiuqiu.admin.vo.in.role.RoleCreateVo;
 import com.php25.qiuqiu.admin.vo.in.role.RoleUpdateVo;
@@ -17,7 +17,7 @@ import org.mapstruct.Mapper;
  * @date 2021/7/2 14:00
  */
 @Mapper(componentModel = "spring")
-public interface RoleVoMapper {
+public interface RoleVoCopyer {
 
     /**
      * 把dto转成vo

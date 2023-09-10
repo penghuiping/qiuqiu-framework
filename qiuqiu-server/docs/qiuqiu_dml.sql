@@ -14,6 +14,7 @@ INSERT INTO t_resource (name, description, enable) VALUES ('dict', '数据字典
 INSERT INTO t_resource (name, description, enable) VALUES ('sys_monitor', '系统监控', 1);
 INSERT INTO t_resource (name, description, enable) VALUES ('tracing', '调用链监控', 1);
 INSERT INTO t_resource (name, description, enable) VALUES ('audit_log', '审计日志', 1);
+INSERT INTO t_resource (name, description, enable) VALUES ('system_log', '系统日志', 1);
 
 INSERT INTO t_permission (name, description, enable) VALUES ('detail', '获取详情', 1);
 INSERT INTO t_permission (name, description, enable) VALUES ('page', '分页查询', 1);
@@ -53,6 +54,7 @@ INSERT INTO t_resource_permission(resource,permission) VALUES ('group','create')
 INSERT INTO t_resource_permission(resource,permission) VALUES ('group','update');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('group','delete');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('audit_log','page');
+INSERT INTO t_resource_permission(resource,permission) VALUES ('system_log','page');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('dict','page');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('dict','create');
 INSERT INTO t_resource_permission(resource,permission) VALUES ('dict','update');
@@ -102,6 +104,7 @@ INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'g
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'group','update');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'group','delete');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'audit_log','page');
+INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'system_log','page');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'dict','page');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'dict','create');
 INSERT INTO t_role_resource_permission(role_id,resource,permission) VALUES (1,'dict','update');

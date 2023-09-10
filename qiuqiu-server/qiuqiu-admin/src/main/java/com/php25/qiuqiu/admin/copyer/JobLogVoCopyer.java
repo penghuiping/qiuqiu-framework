@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.mapper;
+package com.php25.qiuqiu.admin.copyer;
 
 import com.php25.qiuqiu.admin.vo.out.job.JobLogVo;
 import com.php25.qiuqiu.job.dto.JobLogDto;
@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
  * @date 2021/7/2 10:32
  */
 @Mapper(componentModel = "spring")
-public interface JobLogVoMapper {
+public interface JobLogVoCopyer {
 
     /**
      * dto转vo

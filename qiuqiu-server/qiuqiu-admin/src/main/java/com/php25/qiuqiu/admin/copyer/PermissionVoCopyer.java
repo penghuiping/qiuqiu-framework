@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.mapper;
+package com.php25.qiuqiu.admin.copyer;
 
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionCreateVo;
 import com.php25.qiuqiu.admin.vo.in.permission.PermissionUpdateVo;
@@ -12,7 +12,7 @@ import org.mapstruct.Mapper;
  * @date 2021/7/2 10:39
  */
 @Mapper(componentModel = "spring")
-public interface PermissionVoMapper {
+public interface PermissionVoCopyer {
 
     /**
      * dto转vo

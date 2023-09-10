@@ -1,7 +1,7 @@
-package com.php25.qiuqiu.monitor.dao;
+package com.php25.qiuqiu.monitor.dao.db;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.php25.qiuqiu.monitor.dao.po.DictPo;
+import com.php25.qiuqiu.monitor.dao.db.po.DictPo;
 
 /**
  * @author penghuiping

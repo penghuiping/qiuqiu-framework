@@ -5,7 +5,7 @@ import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.util.JsonUtil;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.entity.AuditLog;
-import com.php25.qiuqiu.monitor.mapper.AuditLogDtoMapper;
+import com.php25.qiuqiu.monitor.copyer.AuditLogDtoCopyer;
 import com.php25.qiuqiu.monitor.repository.AuditLogRepository;
 import com.php25.qiuqiu.monitor.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class AuditLogServiceImpl implements AuditLogService {
 
     private final AuditLogRepository auditLogRepository;
 
-    private final AuditLogDtoMapper auditLogDtoMapper;
+    private final AuditLogDtoCopyer auditLogDtoMapper;
 
     private final StreamBridge streamBridge;
 

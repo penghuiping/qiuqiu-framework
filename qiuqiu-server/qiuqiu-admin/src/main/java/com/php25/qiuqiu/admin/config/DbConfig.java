@@ -7,9 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionIntercepto
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.google.common.collect.Lists;
-import com.php25.common.core.dto.CurrentUser;
 import com.php25.common.core.mess.SpringContextHolder;
-import com.php25.common.db.FindCurrentUserStrategy;
 import com.php25.common.db.SqlInjectorPlus;
 import com.php25.common.db.UserDataPermissionHandler;
 import com.php25.common.web.RequestUtil;
@@ -88,7 +86,7 @@ public class DbConfig {
         mapperScannerConfigurer
                 .setBasePackage("com.php25.qiuqiu.user.dao," +
                         "com.php25.qiuqiu.job.dao," +
-                        "com.php25.qiuqiu.monitor.dao,");
+                        "com.php25.qiuqiu.monitor.dao.db,");
 //                                "com.php25.common.timer.dao");
         return mapperScannerConfigurer;
     }
@@ -111,7 +109,7 @@ public class DbConfig {
                     .collect(Collectors.toList());
         }, RequestUtil::getCurrentUser,
                 "com.php25.qiuqiu.user.dao",
-                "com.php25.qiuqiu.monitor.dao",
+                "com.php25.qiuqiu.monitor.dao.db",
                 "com.php25.qiuqiu.job.dao"));
         interceptor.addInnerInterceptor(dp);
         mybatisSqlSessionFactoryBean.setPlugins(interceptor);

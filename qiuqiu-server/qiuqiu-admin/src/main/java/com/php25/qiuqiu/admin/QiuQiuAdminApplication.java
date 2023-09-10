@@ -1,5 +1,6 @@
 package com.php25.qiuqiu.admin;
 
+import cn.easyes.starter.register.EsMapperScan;
 import com.php25.common.config.EnableWeb;
 import com.php25.common.redis.config.EnableRedisManager;
 import com.php25.common.timer.config.EnableTimer;

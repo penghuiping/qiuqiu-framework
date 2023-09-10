@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.admin.mapper;
+package com.php25.qiuqiu.admin.copyer;
 
 import com.php25.qiuqiu.admin.vo.in.group.GroupCreateVo;
 import com.php25.qiuqiu.admin.vo.in.group.GroupUpdateVo;
@@ -11,7 +11,7 @@ import org.mapstruct.Mapper;
  * @date 2021/7/2 09:51
  */
 @Mapper(componentModel = "spring")
-public interface GroupVoMapper {
+public interface GroupVoCopyer {
 
     /**
      * vo转dto
