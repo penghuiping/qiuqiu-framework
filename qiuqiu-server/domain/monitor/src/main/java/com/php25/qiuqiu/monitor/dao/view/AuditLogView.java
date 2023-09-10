@@ -1,18 +1,19 @@
-package com.php25.qiuqiu.admin.vo.out;
+package com.php25.qiuqiu.monitor.dao.view;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author penghuiping
- * @date 2021/3/11 15:29
+ * @date 2023/9/10 11:14
  */
 @Setter
 @Getter
-public class AuditLogPageOutVo {
+public class AuditLogView {
+
     /**
      * 日志id
      */
@@ -24,13 +25,15 @@ public class AuditLogPageOutVo {
     private String username;
 
     /**
-     * 组id
+     * 用户组id
      */
+    @TableField("group_id")
     private String groupId;
 
     /**
-     * 组名
+     * 用户组名
      */
+    @TableField("group_name")
     private String groupName;
 
     /**
@@ -46,6 +49,6 @@ public class AuditLogPageOutVo {
     /**
      * 创建时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime createTime;
+    @TableField("create_time")
+    private Date createTime;
 }

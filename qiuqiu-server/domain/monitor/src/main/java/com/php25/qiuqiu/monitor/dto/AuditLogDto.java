@@ -24,6 +24,16 @@ public class AuditLogDto {
     private String username;
 
     /**
+     * 用户组id
+     */
+    private String groupId;
+
+    /**
+     * 用户组名
+     */
+    private String groupName;
+
+    /**
      * 系统接口地址
      */
     private String uri;

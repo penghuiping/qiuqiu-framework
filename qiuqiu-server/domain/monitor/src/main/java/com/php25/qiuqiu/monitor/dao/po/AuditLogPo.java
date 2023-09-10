@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.php25.common.db.BaseGroupPo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +18,7 @@ import java.util.Date;
 @Setter
 @Getter
 @TableName("t_audit_log")
-public class AuditLogPo {
+public class AuditLogPo extends BaseGroupPo {
 
     /**
      * 日志id
@@ -42,10 +43,4 @@ public class AuditLogPo {
      */
     @TableField
     private String params;
-
-    /**
-     * 创建时间
-     */
-    @TableField("create_time")
-    private Date createTime;
 }

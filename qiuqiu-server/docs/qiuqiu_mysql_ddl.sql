@@ -5,12 +5,51 @@ create table t_audit_log
     id          bigint primary key auto_increment comment 'id主键',
     uri         varchar(255) comment '访问的接口资源',
     params      varchar(255) comment '请求参数',
-    create_time datetime comment '创建日期',
+    create_user        varchar(255) comment '创建人',
+    update_user        varchar(255) comment '更新人',
+    create_time        datetime comment '创建时间',
+    update_time datetime comment '最后修改时间',
+    group_id           bigint comment '用户组id',
     username    varchar(255) comment '用户名'
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci
     COMMENT '审计日志表';
+
+drop table if exists t_audit_log_2022;
+create table t_audit_log_2022
+(
+    id          bigint primary key auto_increment comment 'id主键',
+    uri         varchar(255) comment '访问的接口资源',
+    params      varchar(255) comment '请求参数',
+    create_user        varchar(255) comment '创建人',
+    update_user        varchar(255) comment '更新人',
+    create_time        datetime comment '创建时间',
+    update_time datetime comment '最后修改时间',
+    group_id           bigint comment '用户组id',
+    username    varchar(255) comment '用户名'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci
+    COMMENT '审计日志表';
+
+drop table if exists t_audit_log_2023;
+create table t_audit_log_2023
+(
+    id          bigint primary key auto_increment comment 'id主键',
+    uri         varchar(255) comment '访问的接口资源',
+    params      varchar(255) comment '请求参数',
+    create_user        varchar(255) comment '创建人',
+    update_user        varchar(255) comment '更新人',
+    create_time        datetime comment '创建时间',
+    update_time datetime comment '最后修改时间',
+    group_id           bigint comment '用户组id',
+    username    varchar(255) comment '用户名'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci
+    COMMENT '审计日志表';
+
 
 ## 数据字典表
 drop table if exists t_dict;

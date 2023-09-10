@@ -48,7 +48,7 @@ public class DbConfig {
         return sqLiteDataSource;
     }
 
-    @Profile(value = {"dev","docker"})
+    @Profile(value = {"dev", "docker"})
     @Bean
     public DataSource hikariDataSource(DbProperties dbProperties) {
         HikariDataSource hikariDataSource = new HikariDataSource();
@@ -87,8 +87,8 @@ public class DbConfig {
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer
                 .setBasePackage("com.php25.qiuqiu.user.dao," +
-                                "com.php25.qiuqiu.job.dao," +
-                                "com.php25.qiuqiu.monitor.dao," );
+                        "com.php25.qiuqiu.job.dao," +
+                        "com.php25.qiuqiu.monitor.dao,");
 //                                "com.php25.common.timer.dao");
         return mapperScannerConfigurer;
     }
@@ -99,7 +99,6 @@ public class DbConfig {
         mybatisSqlSessionFactoryBean.setDataSource(dataSource);
         mybatisSqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/mapper/**/*.xml"));
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         DataPermissionInterceptor dp = new DataPermissionInterceptor();
         dp.setDataPermissionHandler(new UserDataPermissionHandler(groupId -> {
             GroupService groupService = SpringContextHolder.getApplicationContext().getBean(GroupService.class);
@@ -110,9 +109,12 @@ public class DbConfig {
             return groupDtos.stream()
                     .map(Object::toString)
                     .collect(Collectors.toList());
-        }, RequestUtil::getCurrentUser, "com.php25.qiuqiu.user.dao"));
+        }, RequestUtil::getCurrentUser,
+                "com.php25.qiuqiu.user.dao",
+                "com.php25.qiuqiu.monitor.dao"));
         interceptor.addInnerInterceptor(dp);
         mybatisSqlSessionFactoryBean.setPlugins(interceptor);
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         GlobalConfig globalConfig = new GlobalConfig();
         globalConfig.setSqlInjector(new SqlInjectorPlus());
         mybatisSqlSessionFactoryBean.setGlobalConfig(globalConfig);

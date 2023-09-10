@@ -30,6 +30,11 @@
         width="150">
       </el-table-column>
       <el-table-column
+        label="用户组"
+        prop="groupName"
+        width="150">
+      </el-table-column>
+      <el-table-column
         label="接口地址"
         prop="uri"
         width="250">

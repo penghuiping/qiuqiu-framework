@@ -3,10 +3,13 @@ package com.php25.qiuqiu.monitor.repository.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.php25.common.core.dto.CurrentUserDto;
 import com.php25.common.core.util.StringUtil;
 import com.php25.common.core.util.TimeUtil;
+import com.php25.common.web.RequestUtil;
 import com.php25.qiuqiu.monitor.dao.AuditLogDao;
 import com.php25.qiuqiu.monitor.dao.po.AuditLogPo;
+import com.php25.qiuqiu.monitor.dao.view.AuditLogView;
 import com.php25.qiuqiu.monitor.entity.AuditLog;
 import com.php25.qiuqiu.monitor.repository.AuditLogRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +36,10 @@ public class AuditLogRepositoryImpl implements AuditLogRepository {
         AuditLogPo auditLogPo = new AuditLogPo();
         BeanUtils.copyProperties(auditLog, auditLogPo);
         auditLogPo.setCreateTime(Date.from(auditLog.getCreateTime().toInstant(ZoneOffset.ofHours(8))));
+        auditLogPo.setUpdateTime(Date.from(auditLog.getCreateTime().toInstant(ZoneOffset.ofHours(8))));
+        auditLogPo.setCreateUser(auditLog.getUsername());
+        auditLogPo.setUpdateUser(auditLog.getUsername());
+        auditLogPo.setGroupId(StringUtil.isNotBlank(auditLog.getGroupId())?Long.parseLong(auditLog.getGroupId()):null);
         if (null == auditLog.getId()) {
             //新增
             return auditLogDao.insert(auditLogPo) > 0;
@@ -44,12 +51,12 @@ public class AuditLogRepositoryImpl implements AuditLogRepository {
 
     @Override
     public IPage<AuditLog> page(String username, Integer pageNum, Integer pageSize) {
-        IPage<AuditLogPo> iPage = auditLogDao.selectPage(new Page<>(pageNum, pageSize)
-                , Wrappers.<AuditLogPo>lambdaQuery().eq(StringUtil.isNotBlank(username),AuditLogPo::getUsername, username).orderByDesc(AuditLogPo::getId));
+        IPage<AuditLogView> iPage = auditLogDao.selectPageByUsername(new Page<>(pageNum, pageSize),username);
         IPage<AuditLog> result = new Page<>();
         List<AuditLog> auditLogList = iPage.getRecords().stream().map(auditLogPo -> {
             AuditLog auditLog = new AuditLog();
             BeanUtils.copyProperties(auditLogPo, auditLog);
+            auditLog.setGroupId(auditLogPo.getGroupId()==null?"": auditLogPo.getGroupId().toString());
             auditLog.setCreateTime(TimeUtil.toLocalDateTime(auditLogPo.getCreateTime()));
             return auditLog;
         }).collect(Collectors.toList());

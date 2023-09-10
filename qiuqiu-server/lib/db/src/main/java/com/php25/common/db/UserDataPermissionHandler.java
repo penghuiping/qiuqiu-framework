@@ -25,6 +25,7 @@ import java.util.Set;
  * @date 2023/9/9 19:32
  */
 public class UserDataPermissionHandler implements DataPermissionHandler {
+    private static final Logger log = LoggerFactory.getLogger(UserDataPermissionHandler.class);
     private final Set<String> daoMethodNames;
 
     private final FindAllSubgroupStrategy findAllSubgroupStrategy;
@@ -65,7 +66,6 @@ public class UserDataPermissionHandler implements DataPermissionHandler {
 
         if (DataAccessLevel.GROUP_AND_CHILDREN_DATA.equals(currentUserDto.getDataAccessLevel())) {
             List<String> groupIds = findAllSubgroupStrategy.find(groupCode);
-            groupIds.add(groupCode);
             ExpressionList items = new ExpressionList();
             for (String groupId : groupIds) {
                 items.addExpressions(new StringValue(groupId));

@@ -1,6 +1,9 @@
 package com.php25.qiuqiu.monitor.aop;
 
+import com.php25.common.core.dto.CurrentUser;
+import com.php25.common.core.dto.CurrentUserDto;
 import com.php25.common.core.util.JsonUtil;
+import com.php25.common.web.RequestUtil;
 import com.php25.qiuqiu.monitor.dto.AuditLogDto;
 import com.php25.qiuqiu.monitor.service.AuditLogService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,10 +46,10 @@ public class AuditLogAspect {
         MethodSignature signature = (MethodSignature) point.getSignature();
         String methodName = signature.getMethod().getName();
         String className = point.getTarget().getClass().getName();
-        Object username0 = getRequestAttributes().getAttribute("username",0);
+        CurrentUserDto currentUser = (CurrentUserDto) RequestUtil.getCurrentUser();
         String username = "anonymous";
-        if(username0 != null) {
-            username = username0.toString();
+        if(currentUser != null) {
+            username = currentUser.getUsername();
         }
 
         List<Object> args = Arrays.stream(point.getArgs()).filter(o -> !(o instanceof HttpServletResponse) && !(o instanceof HttpServletRequest)).collect(Collectors.toList());
@@ -57,11 +60,11 @@ public class AuditLogAspect {
         auditLogDto.setUsername(username);
         auditLogDto.setCreateTime(LocalDateTime.now());
 
+        auditLogDto.setGroupId(currentUser == null?"":currentUser.getGroupCode());
+
         auditLogService.create(auditLogDto);
         return obj;
     }
 
-    private RequestAttributes getRequestAttributes() {
-        return RequestContextHolder.getRequestAttributes();
-    }
+
 }

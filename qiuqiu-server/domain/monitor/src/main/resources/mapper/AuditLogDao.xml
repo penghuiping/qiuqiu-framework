@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.php25.qiuqiu.monitor.dao.AuditLogDao">
+
+    <select id="selectPageByUsername" resultType="com.php25.qiuqiu.monitor.dao.view.AuditLogView">
+        select a.id, a.username, a.group_id, b.name as group_name, a.uri, a.params, a.create_time
+        from t_audit_log a
+        join t_group b on a.group_id = b.id
+        where 1=1
+        <if test="username != null and username != ''">
+            and a.username = #{username}
+        </if>
+        order by a.id desc
+    </select>
+</mapper>
