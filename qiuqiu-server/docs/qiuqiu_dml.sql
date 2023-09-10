@@ -1,4 +1,4 @@
-INSERT INTO t_user (id, nickname, username, password, data_access_level, create_user,update_user,create_time, update_time, group_id, enable) VALUES (1, '超级管理员', 'admin', '123456','GROUP_DATA','admin','admin', now(), now(), 1, 1);
+INSERT INTO t_user (id, nickname, username, password, data_access_level, create_user,update_user,create_time, update_time, group_id, enable) VALUES (1, '超级管理员', 'admin', '123456','GROUP_AND_CHILDREN_DATA','admin','admin', now(), now(), 1, 1);
 INSERT INTO t_user_role (user_id, role_id) VALUES (1, 1);
 INSERT INTO t_role (id, name, description, enable) VALUES (1, 'admin', '超级管理员', 1);
 
@@ -129,7 +129,7 @@ INSERT INTO t_dict (id, code, value, description, enable) VALUES (3, 'init:url:k
 INSERT INTO t_dict (id, code, value, description, enable) VALUES (4, 'init:url:grafana', 'http://localhost:3000/d/QUKIKSynz/jvm-micrometer?orgId=1&refresh=30s&kiosk=tv', 'grafana的url地址', 1);
 INSERT INTO t_dict (id, code, value, description, enable) VALUES (5, 'init:url:zipkin', 'http://localhost:9411/', 'zipkin的url地址', 1);
 
-INSERT INTO t_group (id, name, description, parent_id, enable) VALUES (1, 'root', '总部', null, 1);
+INSERT INTO t_group (id, name, description, parent_id, enable) VALUES (1, '总部', '总部', null, 1);
 
 
 INSERT INTO t_timer_job (id, class_name, name, description, group_id) VALUES ('4d7f14ed-bdf7-4bde-b5a3-54bb1986fa36', 'com.php25.qiuqiu.admin.job.SystemMonitorInfoPrintJob', 'sys_metrics_monitor', '系统metrics监控', 1);

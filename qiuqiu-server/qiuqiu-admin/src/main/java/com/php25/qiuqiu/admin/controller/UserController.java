@@ -3,7 +3,6 @@ package com.php25.qiuqiu.admin.controller;
 import com.php25.common.core.dto.CurrentUser;
 import com.php25.common.core.dto.PageDto;
 import com.php25.common.core.util.StringUtil;
-import com.php25.common.redis.RedisManager;
 import com.php25.common.repeat.AvoidRepeat;
 import com.php25.common.repeat.SpElKeyStrategy;
 import com.php25.common.web.JsonController;
@@ -19,7 +18,6 @@ import com.php25.qiuqiu.admin.vo.out.PageResultVo;
 import com.php25.qiuqiu.admin.vo.out.resource.ResourcePermissionVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserPageOutVo;
 import com.php25.qiuqiu.admin.vo.out.user.UserVo;
-import com.php25.qiuqiu.media.service.ImageService;
 import com.php25.qiuqiu.monitor.aop.AuditLog;
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleDto;
@@ -60,11 +58,6 @@ public class UserController extends JsonController {
 
     private final UserVoMapper userVoMapper;
 
-    private final ImageService imageService;
-
-    private final RedisManager redisManager;
-
-
     @Operation(summary = "获取用户信息接口")
     @PostMapping(value = "/info",headers = {"version=v1","jwt"})
     public JsonResponse<UserVo> getUserInfo() {
@@ -92,7 +85,7 @@ public class UserController extends JsonController {
             resourcePermissionVos.add(resourcePermissionVo);
         }
         userVo.setResourcePermissions(resourcePermissionVos);
-        userVo.setGroupName(userDto.getGroup().getDescription());
+        userVo.setGroupName(userDto.getGroup().getName());
         userVo.setGroupId(userDto.getGroup().getId());
         return succeed(userVo);
     }

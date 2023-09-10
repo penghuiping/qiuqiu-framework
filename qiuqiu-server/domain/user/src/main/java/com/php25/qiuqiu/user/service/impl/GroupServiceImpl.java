@@ -9,7 +9,7 @@ import com.php25.qiuqiu.user.dto.group.GroupCreateDto;
 import com.php25.qiuqiu.user.dto.group.GroupDto;
 import com.php25.qiuqiu.user.entity.Group;
 import com.php25.qiuqiu.user.entity.User;
-import com.php25.qiuqiu.user.mapper.GroupDtoMapper;
+import com.php25.qiuqiu.user.copyer.GroupDtoCopyer;
 import com.php25.qiuqiu.user.repository.GroupRepository;
 import com.php25.qiuqiu.user.repository.UserRepository;
 import com.php25.qiuqiu.user.service.GroupService;
@@ -38,7 +38,7 @@ public class GroupServiceImpl implements GroupService {
 
     private final UserService userService;
 
-    private final GroupDtoMapper groupDtoMapper;
+    private final GroupDtoCopyer groupDtoMapper;
 
 
     private GroupDto findById(Long groupId) {

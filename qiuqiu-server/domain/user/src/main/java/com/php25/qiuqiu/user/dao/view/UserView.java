@@ -1,19 +1,18 @@
-package com.php25.qiuqiu.user.entity;
+package com.php25.qiuqiu.user.dao.view;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
- * 用户
- *
  * @author penghuiping
- * @date 2021/2/3 11:30
+ * @date 2023/9/10 14:25
  */
-@Getter
 @Setter
-public class User {
+@Getter
+public class UserView {
 
     /**
      * id,自增
@@ -31,29 +30,28 @@ public class User {
     private String username;
 
     /**
-     * 密码
-     */
-    private String password;
-
-    /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    @TableField("create_time")
+    private Date createTime;
 
     /**
      * 最后修改时间
      */
-    private LocalDateTime lastModifiedTime;
+    @TableField("update_time")
+    private Date updateTime;
 
 
     /**
      * 用户组id
      */
+    @TableField("group_id")
     private Long groupId;
 
     /**
      * 用户组名
      */
+    @TableField("group_name")
     private String groupName;
 
 
@@ -66,5 +64,6 @@ public class User {
     /**
      * 数据访问层级
      */
+    @TableField("data_access_level")
     private String dataAccessLevel;
 }

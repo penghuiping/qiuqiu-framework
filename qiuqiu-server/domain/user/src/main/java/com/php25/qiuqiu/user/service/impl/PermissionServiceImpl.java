@@ -7,7 +7,7 @@ import com.php25.qiuqiu.user.constant.UserErrorCode;
 import com.php25.qiuqiu.user.dto.permission.PermissionCreateDto;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
 import com.php25.qiuqiu.user.entity.Permission;
-import com.php25.qiuqiu.user.mapper.PermissionDtoMapper;
+import com.php25.qiuqiu.user.copyer.PermissionDtoCopyer;
 import com.php25.qiuqiu.user.repository.PermissionRepository;
 import com.php25.qiuqiu.user.service.PermissionService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     private final PermissionRepository permissionRepository;
 
-    private final PermissionDtoMapper permissionDtoMapper;
+    private final PermissionDtoCopyer permissionDtoMapper;
 
     @Override
     public Boolean create(PermissionCreateDto permission) {

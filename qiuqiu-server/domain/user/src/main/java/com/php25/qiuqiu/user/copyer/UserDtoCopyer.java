@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.mapper;
+package com.php25.qiuqiu.user.copyer;
 
 import com.php25.qiuqiu.user.dto.user.UserCreateDto;
 import com.php25.qiuqiu.user.dto.user.UserDto;
@@ -12,7 +12,7 @@ import org.mapstruct.Mapper;
  * @date 2021/7/2 17:22
  */
 @Mapper(componentModel = "spring")
-public interface UserDtoMapper {
+public interface UserDtoCopyer {
 
     /**
      * dto转entity

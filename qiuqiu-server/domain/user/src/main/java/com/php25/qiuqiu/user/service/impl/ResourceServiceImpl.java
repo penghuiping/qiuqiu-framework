@@ -12,7 +12,7 @@ import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.resource.ResourceUpdateDto;
 import com.php25.qiuqiu.user.entity.Resource;
 import com.php25.qiuqiu.user.entity.ResourcePermission;
-import com.php25.qiuqiu.user.mapper.ResourceDtoMapper;
+import com.php25.qiuqiu.user.copyer.ResourceDtoCopyer;
 import com.php25.qiuqiu.user.repository.ResourceRepository;
 import com.php25.qiuqiu.user.service.ResourceService;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class ResourceServiceImpl implements ResourceService {
 
     private final ResourceRepository resourceRepository;
 
-    private final ResourceDtoMapper resourceDtoMapper;
+    private final ResourceDtoCopyer resourceDtoMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

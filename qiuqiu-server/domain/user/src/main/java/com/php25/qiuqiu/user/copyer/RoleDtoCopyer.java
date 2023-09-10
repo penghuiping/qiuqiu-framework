@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.mapper;
+package com.php25.qiuqiu.user.copyer;
 
 import com.php25.qiuqiu.user.dto.resource.ResourcePermissionDto;
 import com.php25.qiuqiu.user.dto.role.RoleCreateDto;
@@ -15,7 +15,7 @@ import org.mapstruct.Mapper;
  * @date 2021/7/2 16:55
  */
 @Mapper(componentModel = "spring")
-public interface RoleDtoMapper {
+public interface RoleDtoCopyer {
 
 
     /**

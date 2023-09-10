@@ -1,4 +1,4 @@
-package com.php25.qiuqiu.user.mapper;
+package com.php25.qiuqiu.user.copyer;
 
 import com.php25.qiuqiu.user.dto.permission.PermissionCreateDto;
 import com.php25.qiuqiu.user.dto.permission.PermissionDto;
@@ -10,7 +10,7 @@ import org.mapstruct.Mapper;
  * @date 2021/7/2 14:40
  */
 @Mapper(componentModel = "spring")
-public interface PermissionDtoMapper {
+public interface PermissionDtoCopyer {
 
     /**
      * dto转entity

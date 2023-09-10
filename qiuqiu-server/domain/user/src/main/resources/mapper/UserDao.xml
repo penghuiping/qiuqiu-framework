@@ -14,5 +14,13 @@
             #{item.groupId,jdbcType=NUMERIC},#{item.enable,jdbcType=BOOLEAN},#{item.dataAccessLevel,jdbcType=VARCHAR})
         </foreach>
     </insert>
+    <select id="selectPageByUsername" resultType="com.php25.qiuqiu.user.dao.view.UserView">
+        select a.id, a.nickname,a.username,a.create_time,a.update_time,a.group_id,b.name as group_name,a.enable,a.data_access_level from t_user a join t_group b on a.group_id=b.id
+        where 1=1
+        <if test="username != null and username != ''">
+            and a.username=#{username}
+        </if>
+        order by a.id desc
+    </select>
 
 </mapper>

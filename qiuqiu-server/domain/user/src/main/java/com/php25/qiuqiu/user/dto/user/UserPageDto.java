@@ -19,6 +19,10 @@ public class UserPageDto {
 
     private String username;
 
+    private String groupId;
+
+    private String groupName;
+
     private LocalDateTime createTime;
 
     private LocalDateTime lastModifiedTime;

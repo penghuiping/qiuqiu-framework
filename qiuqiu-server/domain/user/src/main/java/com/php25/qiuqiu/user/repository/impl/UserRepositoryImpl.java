@@ -12,6 +12,7 @@ import com.php25.qiuqiu.user.dao.UserDao;
 import com.php25.qiuqiu.user.dao.UserRoleDao;
 import com.php25.qiuqiu.user.dao.po.UserPo;
 import com.php25.qiuqiu.user.dao.po.UserRolePo;
+import com.php25.qiuqiu.user.dao.view.UserView;
 import com.php25.qiuqiu.user.entity.User;
 import com.php25.qiuqiu.user.entity.UserRole;
 import com.php25.qiuqiu.user.repository.UserRepository;
@@ -143,10 +144,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public IPage<User> page(String username, Integer pageNum, Integer pageSize) {
-        IPage<UserPo> page = userDao.selectPage(new Page<>(pageNum, pageSize),
-                Wrappers.<UserPo>lambdaQuery().eq(StringUtil.isNotBlank(username), UserPo::getUsername, username));
+        IPage<UserView> page = userDao.selectPageByUsername(new Page<>(pageNum, pageSize),username);
         Page<User> userPage = new Page<>();
-        userPage.setRecords(page.getRecords().stream().map(this::toUser).collect(Collectors.toList()));
+        userPage.setRecords(page.getRecords().stream().map(this::toUser0).collect(Collectors.toList()));
         userPage.setCurrent(pageNum);
         userPage.setTotal(page.getTotal());
         userPage.setSize(pageSize);
@@ -161,6 +161,18 @@ public class UserRepositoryImpl implements UserRepository {
         }
         if (null != userPo.getUpdateTime()) {
             user.setLastModifiedTime(TimeUtil.toLocalDateTime(userPo.getUpdateTime()));
+        }
+        return user;
+    }
+
+    private User toUser0(UserView userView) {
+        User user = new User();
+        BeanUtils.copyProperties(userView, user);
+        if(null != userView.getCreateTime()) {
+            user.setCreateTime(TimeUtil.toLocalDateTime(userView.getCreateTime()));
+        }
+        if (null != userView.getUpdateTime()) {
+            user.setLastModifiedTime(TimeUtil.toLocalDateTime(userView.getUpdateTime()));
         }
         return user;
     }

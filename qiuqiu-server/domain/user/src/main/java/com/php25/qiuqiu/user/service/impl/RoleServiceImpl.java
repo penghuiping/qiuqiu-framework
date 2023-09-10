@@ -13,8 +13,8 @@ import com.php25.qiuqiu.user.dto.role.RoleUpdateDto;
 import com.php25.qiuqiu.user.entity.ResourcePermission;
 import com.php25.qiuqiu.user.entity.Role;
 import com.php25.qiuqiu.user.entity.RoleResourcePermission;
-import com.php25.qiuqiu.user.mapper.ResourceDtoMapper;
-import com.php25.qiuqiu.user.mapper.RoleDtoMapper;
+import com.php25.qiuqiu.user.copyer.ResourceDtoCopyer;
+import com.php25.qiuqiu.user.copyer.RoleDtoCopyer;
 import com.php25.qiuqiu.user.repository.ResourceRepository;
 import com.php25.qiuqiu.user.repository.RoleRepository;
 import com.php25.qiuqiu.user.repository.UserRepository;
@@ -49,9 +49,9 @@ public class RoleServiceImpl implements RoleService, InitializingBean {
 
     private Map<String, Set<ResourcePermissionDto>> rolePermissionMap;
 
-    private final RoleDtoMapper roleDtoMapper;
+    private final RoleDtoCopyer roleDtoMapper;
 
-    private final ResourceDtoMapper resourceDtoMapper;
+    private final ResourceDtoCopyer resourceDtoMapper;
 
     @Override
     public void afterPropertiesSet() throws Exception {
