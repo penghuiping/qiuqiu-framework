@@ -28,7 +28,9 @@ public class SystemLogRepositoryImpl implements SystemLogRepository {
     @Override
     public PageDto<SystemLog> page(String keywords, Integer pageNum, Integer pageSize) {
         LambdaEsQueryWrapper<SystemLogPo> wrapper = new LambdaEsQueryWrapper<>();
-        wrapper.eq(StringUtil.isNotBlank(keywords), SystemLogPo::getMessage, keywords);
+        wrapper.eq(StringUtil.isNotBlank(keywords), SystemLogPo::getMessage, keywords)
+                .orderByDesc(SystemLogPo::getTimestamp);
+
         EsPageInfo<SystemLogPo> pageInfo = systemLogDao.pageQuery(wrapper, pageNum, pageSize);
         PageDto<SystemLog> pageDto = new PageDto<>();
         pageDto.setTotal(pageInfo.getTotal());

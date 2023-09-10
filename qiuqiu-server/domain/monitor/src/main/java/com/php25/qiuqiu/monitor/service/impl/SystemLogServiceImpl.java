@@ -41,7 +41,6 @@ public class SystemLogServiceImpl implements SystemLogService {
     @Bean
     public Consumer<String> logs() {
         return message -> {
-            System.out.println(message);
             SystemLogPo systemLogPo = JsonUtil.fromJson(message, SystemLogPo.class);
             systemLogDao.insert(systemLogPo);
         };

@@ -23,7 +23,7 @@ public class SystemLogPo {
     private String id;
 
     @JsonProperty("@timestamp")
-    @IndexField(fieldType = FieldType.TEXT)
+    @IndexField(fieldType = FieldType.KEYWORD)
     private String timestamp;
 
     @IndexField(fieldType = FieldType.TEXT)
@@ -37,6 +37,6 @@ public class SystemLogPo {
     @IndexField(fieldType = FieldType.TEXT)
     private String threadName;
 
-    @IndexField(fieldType = FieldType.TEXT)
+    @IndexField(fieldType = FieldType.KEYWORD)
     private String level;
 }
