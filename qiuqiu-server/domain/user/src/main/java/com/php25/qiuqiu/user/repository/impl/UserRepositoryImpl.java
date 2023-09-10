@@ -118,7 +118,7 @@ public class UserRepositoryImpl implements UserRepository {
         UserPo userPo = fromUser(user);
         if (isInsert) {
             //新增
-            userPo.setDataAccessLevel(DataAccessLevel.GROUP_DATA.name());
+            userPo.setDataAccessLevel(DataAccessLevel.GROUP_AND_CHILDREN_DATA.name());
             int res = userDao.insert(userPo);
             user.setId(userPo.getId());
             return res>0;

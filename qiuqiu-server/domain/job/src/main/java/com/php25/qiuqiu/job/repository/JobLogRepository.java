@@ -22,11 +22,10 @@ public interface JobLogRepository {
     /**
      * 分页
      *
-     * @param groupIds 组id
      * @param jobName  任务名
      * @param pageNum  页码
      * @param pageSize 每页大小
      * @return 分页数据
      */
-    IPage<JobLog> page(List<Long> groupIds, String jobName, Integer pageNum, Integer pageSize);
+    IPage<JobLog> page(String jobName, Integer pageNum, Integer pageSize);
 }

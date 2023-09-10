@@ -65,6 +65,7 @@ class UserListVo {
   id: number
   username: string
   nickname: string
+  groupName: string
   createTime: string
   lastModifiedTime: string
   enable: boolean
@@ -73,19 +74,21 @@ class UserListVo {
     id: number,
     username: string,
     nickname: string,
+    groupName: string,
     createTime: string,
     lastModifiedTime: string,
     enable: boolean) {
     this.id = id
     this.username = username
     this.nickname = nickname
+    this.groupName = groupName
     this.createTime = createTime
     this.lastModifiedTime = lastModifiedTime
     this.enable = enable
   }
 
   static newInstant (): UserListVo {
-    return new UserListVo(-1, '', '', '', '', false)
+    return new UserListVo(-1, '', '', '', '', '', false)
   }
 }
 

@@ -34,6 +34,11 @@
         width="0">
       </el-table-column>
       <el-table-column
+        label="用户组"
+        prop="groupName"
+        width="0">
+      </el-table-column>
+      <el-table-column
         label="昵称"
         prop="nickname"
         width="150">

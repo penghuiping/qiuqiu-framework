@@ -88,11 +88,10 @@ public class JobExecutionRepositoryImpl implements JobExecutionRepository {
     }
 
     @Override
-    public IPage<JobExecution> page(List<Long> groupIds, String jobName, Integer pageNum, Integer pageSize) {
+    public IPage<JobExecution> page(String jobName, Integer pageNum, Integer pageSize) {
         IPage<JobExecutionPo> iPage = jobExecutionDao.selectPage(new Page<>(pageNum, pageSize)
                 , Wrappers.<JobExecutionPo>lambdaQuery()
-                        .eq(StringUtil.isNotBlank(jobName),JobExecutionPo::getJobName, jobName)
-                        .in(null != groupIds && !groupIds.isEmpty(),JobExecutionPo::getGroupId, groupIds));
+                        .eq(StringUtil.isNotBlank(jobName),JobExecutionPo::getJobName, jobName));
         IPage<JobExecution> result = new Page<>();
         List<JobExecution> jobExecutions = iPage.getRecords().stream().map(jobExecutionPo -> {
             JobExecution jobExecution = new JobExecution();

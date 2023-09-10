@@ -57,11 +57,10 @@ public class JobModelRepositoryImpl implements JobModelRepository {
     }
 
     @Override
-    public IPage<JobModel> page(List<Long> groupIds, String name, Integer pageNum, Integer pageSize) {
+    public IPage<JobModel> page(String name, Integer pageNum, Integer pageSize) {
         IPage<JobModelPo> iPage = jobModelDao.selectPage(new Page<>(pageNum, pageSize)
                 , Wrappers.<JobModelPo>lambdaQuery()
-                        .eq(StringUtil.isNotBlank(name),JobModelPo::getName, name)
-                        .in(null != groupIds && !groupIds.isEmpty(),JobModelPo::getGroupId, groupIds));
+                        .eq(StringUtil.isNotBlank(name),JobModelPo::getName, name));
         IPage<JobModel> result = new Page<>();
         List<JobModel> jobModels = iPage.getRecords().stream().map(jobModelPo -> {
             JobModel jobModel = new JobModel();

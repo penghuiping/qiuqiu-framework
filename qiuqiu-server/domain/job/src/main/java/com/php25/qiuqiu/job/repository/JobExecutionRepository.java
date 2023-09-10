@@ -53,5 +53,5 @@ public interface JobExecutionRepository {
 
     List<JobExecution> findAll();
 
-    IPage<JobExecution> page(List<Long> groupIds, String jobName, Integer pageNum, Integer pageSize);
+    IPage<JobExecution> page(String jobName, Integer pageNum, Integer pageSize);
 }

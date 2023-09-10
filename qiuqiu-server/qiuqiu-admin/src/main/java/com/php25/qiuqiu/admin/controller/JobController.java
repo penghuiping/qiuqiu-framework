@@ -53,8 +53,7 @@ public class JobController extends JsonController {
     @Operation(summary = "分页查询定时任务列表")
     @PostMapping(value = "/page",headers = {"version=v1","jwt"})
     public JsonResponse<PageResultVo<JobVo>> page(@Valid @RequestBody JobPageVo jobPageVo) {
-        CurrentUser currentUser = RequestUtil.getCurrentUser();
-        PageDto<JobDto> dataGrid = jobService.page(currentUser.getUsername(), jobPageVo.getJobName(),
+        PageDto<JobDto> dataGrid = jobService.page(jobPageVo.getJobName(),
                 jobPageVo.getPageNum(), jobPageVo.getPageSize());
         PageResultVo<JobVo> res = new PageResultVo<>();
         List<JobVo> jobVos = dataGrid.getData().stream().map(jobVoMapper::toVo).collect(Collectors.toList());

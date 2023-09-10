@@ -21,13 +21,12 @@ public interface JobService {
     /**
      * Job列表分页查询
      *
-     * @param username 登入用户名
      * @param name     job名字搜索
      * @param pageNum  页码
      * @param pageSize 当前第几页
      * @return job分页列表
      */
-    PageDto<JobDto> page(String username, String name, Integer pageNum, Integer pageSize);
+    PageDto<JobDto> page(String name, Integer pageNum, Integer pageSize);
 
     /**
      * 获取属于当前用户的所有job列表

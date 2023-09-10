@@ -39,13 +39,12 @@ public interface JobModelRepository {
     /**
      * 获取分页任务数据
      *
-     * @param groupIds 组id
      * @param name     任务名字
      * @param pageNum  页码
      * @param pageSize 每页记录数
      * @return 分页数据
      */
-    IPage<JobModel> page(List<Long> groupIds, String name, Integer pageNum, Integer pageSize);
+    IPage<JobModel> page(String name, Integer pageNum, Integer pageSize);
 
     /**
      * 获取所有的任务

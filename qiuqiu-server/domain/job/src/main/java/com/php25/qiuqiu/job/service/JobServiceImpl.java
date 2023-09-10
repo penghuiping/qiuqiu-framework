@@ -79,9 +79,8 @@ public class JobServiceImpl implements JobService {
     private String serverId;
 
     @Override
-    public PageDto<JobDto> page(String username, String name, Integer pageNum, Integer pageSize) {
-        List<Long> groupIds = groupService.findGroupsId(username);
-        IPage<JobModel> page = jobModelRepository.page(groupIds, name, pageNum, pageSize);
+    public PageDto<JobDto> page(String name, Integer pageNum, Integer pageSize) {
+        IPage<JobModel> page = jobModelRepository.page(name, pageNum, pageSize);
         List<JobDto> jobDtoList = page.getRecords()
                 .stream().map(jobDtoMapper::toDto)
                 .collect(Collectors.toList());
@@ -132,8 +131,8 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public PageDto<JobLogDto> pageJobLog(String username, String jobName, Integer pageNum, Integer pageSize) {
-        List<Long> groupsId = groupService.findGroupsId(username);
-        IPage<JobLog> page = jobLogRepository.page(groupsId, jobName, pageNum, pageSize);
+
+        IPage<JobLog> page = jobLogRepository.page(jobName, pageNum, pageSize);
         PageDto<JobLogDto> dataGrid = new PageDto<>();
         List<JobLogDto> jobLogDtoList = page.getRecords().stream()
                 .map(jobDtoMapper::toDto0)
@@ -213,8 +212,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public PageDto<JobExecutionDto> pageJobExecution(String username, String jobName, Integer pageNum, Integer pageSize) {
-        List<Long> groupIds = groupService.findGroupsId(username);
-        IPage<JobExecution> page = this.jobExecutionRepository.page(groupIds, jobName, pageNum, pageSize);
+        IPage<JobExecution> page = this.jobExecutionRepository.page(jobName, pageNum, pageSize);
         PageDto<JobExecutionDto> dataGrid = new PageDto<>();
         dataGrid.setTotal(page.getTotal());
         dataGrid.setData(page.getRecords().stream().map(jobDtoMapper::toDto1).collect(Collectors.toList()));

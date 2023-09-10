@@ -42,11 +42,10 @@ public class JobLogRepositoryImpl implements JobLogRepository {
     }
 
     @Override
-    public IPage<JobLog> page(List<Long> groupIds, String jobName, Integer pageNum, Integer pageSize) {
+    public IPage<JobLog> page(String jobName, Integer pageNum, Integer pageSize) {
         IPage<JobLogPo> iPage = jobLogDao.selectPage(new Page<>(pageNum, pageSize)
                 , Wrappers.<JobLogPo>lambdaQuery()
-                        .eq(StringUtil.isNotBlank(jobName),JobLogPo::getJobName, jobName)
-                        .in(null != groupIds && !groupIds.isEmpty(),JobLogPo::getGroupId, groupIds).orderByDesc(JobLogPo::getId));
+                        .eq(StringUtil.isNotBlank(jobName),JobLogPo::getJobName, jobName));
         IPage<JobLog> result = new Page<>();
         List<JobLog> jobLogs = iPage.getRecords().stream().map(jobLogPo -> {
             JobLog auditLog = new JobLog();

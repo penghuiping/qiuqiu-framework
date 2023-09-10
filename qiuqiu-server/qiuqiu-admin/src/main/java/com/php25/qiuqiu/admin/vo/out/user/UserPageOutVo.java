@@ -30,6 +30,11 @@ public class UserPageOutVo {
     private String username;
 
     /**
+     * 用户组
+     */
+    private String groupName;
+
+    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
